@@ -23,6 +23,8 @@ using System.Collections;
 
 namespace XLua
 {
+    [CSharpCallLua]
+    public delegate object LuaTableDelegate(string tableName, int id, string key);
     public partial class LuaTable : LuaBase
     {
         public LuaTable(int reference, LuaEnv luaenv) : base(reference, luaenv)

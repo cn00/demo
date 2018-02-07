@@ -1,0 +1,3 @@
+[submodule "YamlDotNet"]
+	path = Assets/Plugins/.YamlDotNet
+	url = git@github.com:aaubry/YamlDotNet.git
