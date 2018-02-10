@@ -33,6 +33,7 @@ public enum ESceneRoot
 public class BundleConfig : ScriptableObject
 {
     public const string ABResourceDir = "Assets/ABResources";
+    public const string BundleConfigAssetPath = "Assets/BuildTools/BundleConfig.asset";
     [Serializable]
     public class DirCfg
     {
@@ -65,11 +66,11 @@ public class BundleConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>("Assets/ProjectConfig.asset");
+            mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>(BundleConfigAssetPath);
             if(mInstance == null)
             {
                 mInstance = new BundleConfig();
-                AssetDatabase.CreateAsset(mInstance, "Assets/ProjectConfig.asset");
+                AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
             }
         }
 
@@ -80,7 +81,7 @@ public class BundleConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            mInstance = AssetBundle.LoadFromFile("Assets/BundleConfig.asset.bd").LoadAsset<BundleConfig>("Assets/BundleConfig.asset");
+            mInstance = AssetBundle.LoadFromFile(BundleConfigAssetPath" + ".bd").LoadAsset<BundleConfig>(BundleConfigAssetPath);
             if(mInstance == null)
             {
                 mInstance = new BundleConfig();
@@ -90,22 +91,6 @@ public class BundleConfig : ScriptableObject
         return mInstance;
     }
 
-#endif
-
-
-#if UNITY_EDITOR
-    [MenuItem("Tools/Create BundleConfig.asset")]
-    public static BundleConfig create()
-    {
-        BundleConfig instance = AssetDatabase.LoadAssetAtPath<BundleConfig>("Assets/BuildTools/BundleConfig.asset");
-        if(instance == null)
-        {
-            instance = new BundleConfig();
-            AssetDatabase.CreateAsset(instance, "Assets/BuildTools/BundleConfig.asset");
-        }
-
-        return instance;
-    }
 #endif
 }
 

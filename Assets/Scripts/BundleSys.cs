@@ -296,7 +296,7 @@ public class BundleSys : MonoBehaviour
 
     public IEnumerator GetScene(string bundleName, BundleCallback callBack = null)
     {
-        yield return _GetBundle(BundleConfig.ABSceneRoots[ESceneRoot.Level], bundleName, callBack);
+        yield return _GetBundle("Level", bundleName, callBack);
     }
 
     public IEnumerator GetSceneInfo(string bundleName, string resSubPath, BundleCallback callBack = null)

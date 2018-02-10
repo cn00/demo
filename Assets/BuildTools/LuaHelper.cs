@@ -1,40 +1,48 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using UnityEngine;
 using XLua;
 
-using UnityEditor;
 using System.Collections;
 using System.IO;
 
-public class EditorLuaHelper : MonoBehaviour
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+public class LuaHelper
 {
+    static LuaHelper mInstance = null;
+    public LuaHelper Instance
+    {
+        get
+        {
+            return mInstance ?? (mInstance = new LuaHelper());
+        }
+    }
+
     static LuaEnv luaEnv = null;
 
+#if UNITY_EDITOR
     public static bool mInited = false;
     [InitializeOnLoadMethod]
     public static bool Init()
     {
-        if(EditorApplication.isPlayingOrWillChangePlaymode)
-            return false;
-        if(!mInited)
+        luaEnv = new LuaEnv();
+        luaEnv.AddLoader((ref string filename) =>
         {
-            luaEnv = new LuaEnv();
-            luaEnv.AddLoader((ref string filename) =>
-            {
-                var assetName = "Assets/ABResources/Lua/" + filename.Replace(".", "/") + ProjectConfig.Instance().LuaExtension;
-                //Debug.Log("<Color=green>lua: " + assetName + "</Color>");
-                var bytes = File.ReadAllBytes(assetName);
-                return bytes;
-            });
+            var assetName = "Assets/ABResources/Lua/" + filename.Replace(".", "/") + ProjectConfig.Instance().LuaExtension;
+            //Debug.Log("<Color=green>lua: " + assetName + "</Color>");
+            var bytes = File.ReadAllBytes(assetName);
+            return bytes;
+        });
 
-            luaEnv.DoString("require 'utility.BridgingClass'");
+        luaEnv.DoString("require 'utility.BridgingClass'");
 
-            Debug.Log("<Color=green>EditorLuaHelper Init OK</Color>");
-            mInited = true;
-        }
+        Debug.Log("<Color=green>EditorLuaHelper Init OK</Color>");
+        mInited = true;
         return true;
     }
+#endif
 
     public static TValue Get<TValue>(string tableName, int id, string key)
     {
@@ -59,7 +67,6 @@ public class EditorLuaHelper : MonoBehaviour
     }
     public static string EditorText(int id)
     {
-        return EditorLuaHelper.Get<string>("EditorText", id, "zh");//FGEditorSetting.LanguageName
+        return LuaHelper.Get<string>("EditorText", id, "zh");//FGEditorSetting.LanguageName
     }
 }
-#endif

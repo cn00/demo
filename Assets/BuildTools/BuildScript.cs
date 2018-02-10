@@ -273,7 +273,7 @@ public class BuildScript
         pi.WorkingDirectory = "..\\tools\\table\\";
         Process.Start(pi);
 
-        EditorLuaHelper.Init();
+        LuaHelper.Init();
     }
 
     [MenuItem("Tools/Open GUI Xls Convert Tool")]
@@ -506,7 +506,7 @@ public class BuildScript
             foreach(var StreamSceneDir in BundleConfig.Instance().ABSceneRoots)
             {
                 float count = 0;
-                var files = Directory.GetFiles(BundleConfig.ABResourceDir + "/" + StreamSceneDir.Value, "*_terrain.unity", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(BundleConfig.ABResourceDir + "/" + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
                     var f = UPath.go(i);
