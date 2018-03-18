@@ -83,11 +83,12 @@ public class ProjectConfig : MonoBehaviour
     {
 #if UNITY_EDITOR
         return InstanceEditor();
-        //#else
-        return ( InstanceRuntime());
+        #else
+        return InstanceRuntime();
 #endif
     }
 
+#if UNITY_EDITOR
     public static ProjectConfig InstanceEditor()
     {
         if(mInstance == null)
@@ -102,6 +103,7 @@ public class ProjectConfig : MonoBehaviour
 
         return mInstance;
     }
+#endif
 
     public static ProjectConfig InstanceRuntime()
     {

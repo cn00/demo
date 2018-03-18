@@ -9,7 +9,7 @@ using XLua;
 using UnityEditor;
 #endif
 
-public class LuaSingleton : Singleton<LuaSingleton>
+public class LuaSingleton : SingletonMB<LuaSingleton>
 {
     //all lua behaviour shared one luaenv only!
     internal static LuaEnv luaEnv = new LuaEnv();
@@ -82,6 +82,13 @@ public class LuaSingleton : Singleton<LuaSingleton>
 #else
         textBytes = LuaLoader(ref filename);
 #endif
+        //sweep utf bom
+        if(textBytes[0] == 0xef)
+        {
+            textBytes[0] = (int)' ';
+            textBytes[1] = (int)' ';
+            textBytes[2] = (int)' ';
+        }
         return textBytes;
     }
 

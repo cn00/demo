@@ -176,7 +176,7 @@ public static class UPath
 }
 
 [LuaCallCSharp]
-public class BundleSys : Singleton<BundleSys>
+public class BundleSys : SingletonMB<BundleSys>
 {
 
     static string mCacheRoot = "";
@@ -268,28 +268,28 @@ public class BundleSys : Singleton<BundleSys>
         return true;
     }
 
-    public IEnumerator SysEnterCo()
+    public override IEnumerator Init()
     {
-        //if(CGameRoot.Instance.UseBundle)
-        {
-            ////load all manifest bundles
-            //foreach(var i in BundleConfig.ABResRoots)
-            //{
-            //    var bundleMB = mLoadedBundles[i.Value] = new AssetBundleMB();
-            //    yield return _GetBundle(i.Value, i.Value, (UnityEngine.Object manifestBundle) =>
-            //    {
-            //        var manifest = (manifestBundle as AssetBundle).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            //        bundleMB.Manifest = manifest;
-            //    });
-            //}
+        ////if(CGameRoot.Instance.UseBundle)
+        //{
+        //    //load all manifest bundles
+        //    foreach(var i in BundleConfig.ABResRoots)
+        //    {
+        //        var bundleMB = mLoadedBundles[i.Value] = new AssetBundleMB();
+        //        yield return _GetBundle(i.Value, i.Value, (UnityEngine.Object manifestBundle) =>
+        //        {
+        //            var manifest = (manifestBundle as AssetBundle).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+        //            bundleMB.Manifest = manifest;
+        //        });
+        //    }
 
-            //// streamed scene have no manifest?
-            //foreach(var i in BundleConfig.ABSceneRoots)
-            //{
-            //    mLoadedBundles[i.Value] = new AssetBundleMB();
-            //}
-        }
-        yield return null;//SysEnterCo();
+        //    // streamed scene have no manifest?
+        //    foreach(var i in BundleConfig.ABSceneRoots)
+        //    {
+        //        mLoadedBundles[i.Value] = new AssetBundleMB();
+        //    }
+        //}
+        yield return base.Init();//SysEnterCo();
     }
 
     /// <summary>
@@ -298,7 +298,7 @@ public class BundleSys : Singleton<BundleSys>
     public IEnumerator GetAudio(string bundleName, string resSubPath, BundleCallback callBack = null)
     {
 #if !UNITY_EDITOR
-        yield return GetBundle("Audio", bundleName, resSubPath, callBack);
+        yield return GetBundle(bundleName, resSubPath, callBack);
 #else
         if(ProjectConfig.Instance().UseBundle)
             yield return GetBundle(bundleName, resSubPath, callBack);

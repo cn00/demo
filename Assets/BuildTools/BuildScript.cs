@@ -88,7 +88,7 @@ public class BuildScript
     }
 
     #region AssetBundle
-    public static void BuildBundle(string indir, string outdir, BuildTarget targetPlatfrom)
+    public static void BuildBundle(string indir, string outdir, BuildTarget targetPlatfrom, bool rebuild = false)
     {
         try
         {
@@ -143,7 +143,7 @@ public class BuildScript
         }
     }
 
-    static AssetBundleBuild? CreateAssetBundleBuild(string assetDir, string assetBundleName, List<string> excludes)
+    static AssetBundleBuild? CreateAssetBundleBuild(string assetDir, string assetBundleName, List<string> excludes, bool rebuild = false)
     {
         var ab = new AssetBundleBuild();
         ab.assetBundleName = assetBundleName + BundlePostfix;
@@ -177,7 +177,7 @@ public class BuildScript
             assetNames.Add(f);
 
             var finfo = new FileInfo(f);
-            //if(finfo.LastWriteTime.ToFileTimeUtc() > newWriteTime)
+            if(rebuild || finfo.LastWriteTime.ToFileTimeUtc() > newWriteTime)
             {
                 ++nnew;
                 newWriteTime = finfo.LastWriteTime.ToFileTimeUtc();

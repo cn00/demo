@@ -13,13 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mDirs:
   - dir: Assets/ABResources/common
-    include: 1
-    preDownload: 0
+    include: 0
+    rebuild: 0
   - dir: Assets/ABResources/lua
     include: 0
-    preDownload: 0
+    rebuild: 0
   - dir: Assets/ABResources/ui
     include: 1
-    preDownload: 0
+    rebuild: 0
   ABSceneRoots:
   - Scene

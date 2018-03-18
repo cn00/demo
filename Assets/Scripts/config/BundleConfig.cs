@@ -35,12 +35,13 @@ public class BundleConfig : ScriptableObject
     public const string AssetBundleRoot = "AssetBundle/";
     public const string ABResourceRoot = "Assets/ABResources/";
     public const string BundleConfigAssetPath = ABResourceRoot + "common/config/BundleConfig.asset";
+
     [Serializable]
     public class DirCfg
     {
         public string dir = "";
         public bool include = false;
-        public bool preDownload = false;
+        public bool rebuild = false;
     }
     [HideInInspector, SerializeField]
     public DirCfg[] mDirs = new DirCfg[0];
@@ -63,7 +64,18 @@ public class BundleConfig : ScriptableObject
     static BundleConfig mInstance = null;
 #if UNITY_EDITOR
     [MenuItem("Tools/Create BundleConfig.asset")]
+#endif
     public static BundleConfig Instance()
+    {
+#if UNITY_EDITOR
+        return InstanceEditor();
+#else
+        return InstanceRuntime();
+#endif
+    }
+
+#if UNITY_EDITOR
+    public static BundleConfig InstanceEditor()
     {
         if(mInstance == null)
         {
@@ -77,8 +89,9 @@ public class BundleConfig : ScriptableObject
 
         return mInstance;
     }
-#else
-    public static BundleConfig Instance()
+#endif
+
+    public static BundleConfig InstanceRuntime()
     {
         if(mInstance == null)
         {
@@ -92,7 +105,6 @@ public class BundleConfig : ScriptableObject
         return mInstance;
     }
 
-#endif
 }
 
 #if UNITY_EDITOR
@@ -133,18 +145,19 @@ public class BundleConfigExtension : Editor
         foreach(var i in Directory.GetDirectories(BundleConfig.ABResourceRoot, "*", SearchOption.TopDirectoryOnly))
         {
             bool include = false;
-            bool preDownload = false;
+            bool rebuild = false;
             BundleConfig.DirCfg dir = null;
             var ui = UPath.go(i);
             if(mDirs.TryGetValue(ui, out dir) && dir != null)
             {
                 include = dir.include;
-                preDownload = dir.preDownload;
+                rebuild = dir.rebuild;
             }
-            dirs[ui] = (new BundleConfig.DirCfg {
+            dirs[ui] = (new BundleConfig.DirCfg
+            {
                 dir = ui,
                 include = include,
-                preDownload = preDownload
+                rebuild = rebuild
             });
         }
         mDirs = dirs;
@@ -164,7 +177,7 @@ public class BundleConfigExtension : Editor
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Name", guiOpts);
         EditorGUILayout.LabelField("Include", guiOpts);
-        EditorGUILayout.LabelField("preDownload", guiOpts);
+        EditorGUILayout.LabelField("Rebuild", guiOpts);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
@@ -185,20 +198,20 @@ public class BundleConfigExtension : Editor
             allPreDownload = allPreDownloadTmp;
             foreach(var i in mDirs)
             {
-                mDirs[i.Key].preDownload = allPreDownloadTmp;
+                mDirs[i.Key].rebuild = allPreDownloadTmp;
             }
         }
         EditorGUILayout.EndHorizontal();
 
         allInclude = mDirs.Where(i => i.Value.include).Count() == mBehavior.mDirs.Count();
-        allPreDownload = mDirs.Where(i => i.Value.preDownload).Count() == mBehavior.mDirs.Count();
+        allPreDownload = mDirs.Where(i => i.Value.rebuild).Count() == mBehavior.mDirs.Count();
 
         foreach(var i in mDirs)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResourceRoot + "/", "  "), guiOpts);
+            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResourceRoot, "  "), guiOpts);
             mDirs[i.Key].include = EditorGUILayout.Toggle("", i.Value.include, guiOpts);
-            mDirs[i.Key].preDownload = EditorGUILayout.Toggle("", i.Value.preDownload, guiOpts);
+            mDirs[i.Key].rebuild = EditorGUILayout.Toggle("", i.Value.rebuild, guiOpts);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -211,7 +224,7 @@ public class BundleConfigExtension : Editor
         {
             foreach(var i in mDirs.Where(ii => ii.Value.include))
             {
-                BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResourceRoot + "/", ""), BuildTarget.Android);
+                BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResourceRoot, ""), BuildTarget.Android, i.Value.rebuild);
             }
         }
         //if(GUI.Button(rect.Split(2, 4), "Clean Build"))

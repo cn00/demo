@@ -38,4 +38,5 @@ sysinfo.txt
 *.unitypackage
 
 *.tmp
-*.bak.*
+*.bak.*.lastWriteTime
+.*

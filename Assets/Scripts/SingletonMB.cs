@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
+public class SingletonMB<T> : MonoBehaviour where T: MonoBehaviour
 {
     public static GameObject Global
     {
@@ -37,11 +37,18 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 
     private void Awake()
     {
-        Init();
+        Inited = false;
+        StartCoroutine(Init());
     }
 
-    public virtual bool Init()
+    public bool Inited
     {
-        return true;
+        get;
+        protected set;
+    }
+    public virtual IEnumerator Init()
+    {
+        Inited = true;
+        yield return null;
     }
 }

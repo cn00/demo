@@ -12,28 +12,6 @@ public class LuaAsset
     [SerializeField]
     public string path = "";
 
-    private string mText = "";
-    public string text
-    {
-        get
-        {
-            if(string.IsNullOrEmpty(mText))
-            {
-#if UNITY_EDITOR
-                mText = File.ReadAllText(path);
-                var assetName = path;
-                var fileUrl = "file://" + Application.dataPath + "/" + assetName;
-                Debug.Log(fileUrl);
-
-                WWW www = new WWW(fileUrl);
-#else
-
-#endif
-            }
-            return mText;
-        }
-    }
-
     [SerializeField]
     private Object textAsset = null;
     public Object Asset
@@ -48,7 +26,7 @@ public class LuaAsset
                 return;
             textAsset = value;
 #if UNITY_EDITOR
-            path = AssetDatabase.GetAssetPath(textAsset).Replace("Assets/ABResources/", "");
+            path = AssetDatabase.GetAssetPath(textAsset).Replace(BundleConfig.ABResourceRoot, "");
 #endif
         }
     }

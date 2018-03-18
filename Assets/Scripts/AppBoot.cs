@@ -13,6 +13,15 @@ public class AppBoot : MonoBehaviour
         AppLog.d("AppBoot.Start");
         try
         {
+            bool ok = false;
+            GameObject ui = null;
+            BundleSys.Instance.GetBundle("ui/login.bd", "ui/login/login.prefab", asset => {
+                ui = asset as GameObject;
+                ok = true;
+            });
+            while(!ok)
+                ;
+            GameObject.Instantiate(ui);
         }
         catch (Exception e)
         {
