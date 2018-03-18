@@ -10,6 +10,13 @@ using XLua;
 
 public static class AssetExtern
 {
+    public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
+    {
+        var asset = bundle.LoadAsset<T>(BundleConfig.ABResourceRoot + subPath);
+        AppLog.d(subPath);
+        return asset;
+    }
+
     public static T GetXml<T>(this AssetBundle bundle, string path)
     {
         var stream = bundle.LoadAsset<TextAsset>(path);
@@ -270,38 +277,19 @@ public class BundleSys : SingletonMB<BundleSys>
 
     public override IEnumerator Init()
     {
-        ////if(CGameRoot.Instance.UseBundle)
-        //{
-        //    //load all manifest bundles
-        //    foreach(var i in BundleConfig.ABResRoots)
-        //    {
-        //        var bundleMB = mLoadedBundles[i.Value] = new AssetBundleMB();
-        //        yield return _GetBundle(i.Value, i.Value, (UnityEngine.Object manifestBundle) =>
-        //        {
-        //            var manifest = (manifestBundle as AssetBundle).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-        //            bundleMB.Manifest = manifest;
-        //        });
-        //    }
-
-        //    // streamed scene have no manifest?
-        //    foreach(var i in BundleConfig.ABSceneRoots)
-        //    {
-        //        mLoadedBundles[i.Value] = new AssetBundleMB();
-        //    }
-        //}
-        yield return base.Init();//SysEnterCo();
+        yield return base.Init();
     }
 
     /// <summary>
     /// 以加载后的 AudioClip 为参数调用 callBack
     /// </summary>
-    public IEnumerator GetAudio(string bundleName, string resSubPath, BundleCallback callBack = null)
+    public IEnumerator GetAudio(string bundleName, BundleCallback callBack = null, string resSubPath = null)
     {
 #if !UNITY_EDITOR
-        yield return GetBundle(bundleName, resSubPath, callBack);
+        yield return GetBundle(bundleName, callBack, resSubPath);
 #else
-        if(ProjectConfig.Instance().UseBundle)
-            yield return GetBundle(bundleName, resSubPath, callBack);
+        if(ProjectConfig.Instance.UseBundle)
+            yield return GetBundle(bundleName, callBack, resSubPath);
         else
         {
             //FIXME: remove this
@@ -332,15 +320,15 @@ public class BundleSys : SingletonMB<BundleSys>
     /// <summary>
     /// 开启新协程执行, Lua 中不使用协程需要用这类方式调用
     /// </summary>
-    public void GetBundleCo(string bundleName, string resSubPath, BundleCallback callBack = null)
+    public void GetBundleCo(string bundleName, BundleCallback callBack = null, string resSubPath = null)
     {
-        StartCoroutine(GetBundle(bundleName, resSubPath, callBack));
+        StartCoroutine(GetBundle(bundleName, callBack, resSubPath));
     }
 
     /// <summary>
     /// 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundleName, string resSubPath, BundleCallback callBack = null)
+    public IEnumerator GetBundle(string bundleName, BundleCallback callBack = null, string resSubPath = null)
     {
         // 从 AssetBundle 加载
         //if(CGameRoot.Instance.UseBundle)
@@ -348,7 +336,10 @@ public class BundleSys : SingletonMB<BundleSys>
             UnityEngine.Object resObj = null;
             yield return _GetBundle(bundleName, (UnityEngine.Object bundle) =>
             {
-                resObj = (bundle as AssetBundle).LoadAsset(BundleConfig.ABResourceRoot + resSubPath);
+                if(!string.IsNullOrEmpty(resSubPath))
+                    resObj = (bundle as AssetBundle).LoadAsset(BundleConfig.ABResourceRoot + resSubPath);
+                else
+                    resObj = bundle as AssetBundle;
             });
             if(callBack != null)
                 callBack(resObj);
@@ -368,7 +359,13 @@ public class BundleSys : SingletonMB<BundleSys>
         {
             yield break;
         }
-        var bundleMB = mLoadedBundles[rootName];
+
+        AssetBundleMB bundleMB = null;
+        if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
+        {
+             bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
+        }
+
         if(bundleMB.Bundles.ContainsKey(bundleName))
         {
             if(callBack != null)
@@ -379,8 +376,8 @@ public class BundleSys : SingletonMB<BundleSys>
         if(string.IsNullOrEmpty(bundleName))
             yield break;
 
-        var version = ProjectConfig.Instance().Version.ToString();
-        var subPath = rootName + "/" + bundleName;
+        var version = ProjectConfig.Instance.Version.ToString();
+        var subPath = bundleName;
 #if UNITY_EDITOR
         var cachePath = CacheRoot + "/" + version + "/" + subPath;
 #else

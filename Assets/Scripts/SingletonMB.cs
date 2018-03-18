@@ -46,6 +46,11 @@ public class SingletonMB<T> : MonoBehaviour where T: MonoBehaviour
         get;
         protected set;
     }
+
+    /// <summary>
+    /// load resources etc.
+    /// </summary>
+    /// <returns></returns>
     public virtual IEnumerator Init()
     {
         Inited = true;

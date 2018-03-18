@@ -21,7 +21,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
         get
         {
 #if UNITY_EDITOR
-            var version = ProjectConfig.Instance().Version.ToString();
+            var version = ProjectConfig.Instance.Version.ToString();
             return BundleSys.CacheRoot + version + "/md5.xml";
 #else
             return BundleSys.CacheRoot + "/md5.xml";
@@ -68,7 +68,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
                 if(string.IsNullOrEmpty(www.error))
                 {
                     // 覆盖硬编码版本号
-                    ProjectConfig.Instance().Version = new FGVersion(www.text.Trim());
+                    ProjectConfig.Instance.Version = new FGVersion(www.text.Trim());
                 }
                 else
                 {
@@ -76,7 +76,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
                 }
             });
         }
-        LocalVersion = ProjectConfig.Instance().Version.V;
+        LocalVersion = ProjectConfig.Instance.Version.V;
         Debug.LogFormat("LocalVersion {0}", LocalVersion.ToString());
 
         yield return null;
@@ -224,7 +224,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
 
             DownloadDiffFiles();
 
-            ProjectConfig.Instance().Version = RemoteVersion;
+            ProjectConfig.Instance.Version = RemoteVersion;
 
             // 更新完成后保存
             var cacheUrl = BundleSys.CacheRoot + "/resversion.txt";

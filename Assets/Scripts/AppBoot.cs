@@ -4,29 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class AppBoot : MonoBehaviour
+public class AppBoot : SingletonMB<AppBoot>
 {
 
     // Use this for initialization
-    void Start()
+    public override IEnumerator Init()
     {
-        AppLog.d("AppBoot.Start");
-        try
-        {
-            bool ok = false;
-            GameObject ui = null;
-            BundleSys.Instance.GetBundle("ui/login.bd", "ui/login/login.prefab", asset => {
-                ui = asset as GameObject;
-                ok = true;
-            });
-            while(!ok)
-                ;
-            GameObject.Instantiate(ui);
-        }
-        catch (Exception e)
-        {
-            AppLog.e(e);
-        }
+        AssetBundle bd = null;
+        yield return BundleSys.Instance.GetBundle("ui/login.bd", (bundle => {
+           bd = bundle as AssetBundle;
+        }));
+        AppLog.d("AppBoot.Start {0}", bd);
+        GameObject obj = bd.LoadABAsset<GameObject>("ui/login/login.prefab");
+        obj.SetLuaAb(bd);
+        var ui = GameObject.Instantiate(obj);
+
+        yield return base.Init();
     }
 
     // Update is called once per frame

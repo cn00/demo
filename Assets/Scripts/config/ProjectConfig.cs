@@ -55,7 +55,7 @@ public class FGVersion
 #if UNITY_EDITOR
 [ExecuteInEditMode]
 #endif
-public class ProjectConfig : MonoBehaviour
+public class ProjectConfig : ScriptableObject
 {
     #region property
     public FGVersion Version;
@@ -65,27 +65,26 @@ public class ProjectConfig : MonoBehaviour
 
     public const string ProjectConfigPath = BundleConfig.ABResourceRoot + "common/config/ProjectConfig.asset";
 
-    [Serializable]
-    public class DirCfg
-    {
-        public string dir = "";
-        public bool include = false;
-        public bool preDownload = false;
-    }
-    [HideInInspector, SerializeField]
-    public DirCfg[] mDirs = new DirCfg[0];
-
     static ProjectConfig mInstance = null;
+
 #if UNITY_EDITOR
     [MenuItem("Tools/Create ProjectConfig.asset")]
-#endif
-    public static ProjectConfig Instance()
+    public static ProjectConfig CreateInstance()
     {
-#if UNITY_EDITOR
-        return InstanceEditor();
-        #else
-        return InstanceRuntime();
+        return Instance;
+    }
 #endif
+
+    public static ProjectConfig Instance
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return InstanceEditor();
+#else
+            return InstanceRuntime();
+#endif
+        }
     }
 
 #if UNITY_EDITOR
@@ -110,15 +109,11 @@ public class ProjectConfig : MonoBehaviour
         if(mInstance == null)
         {
             //mInstance;
-            bool ok = false;
-            var TimeOut = 5;
-            var timeCount = 0;
-            BundleSys.Instance.GetBundleCo(ProjectConfigPath + ".bd", ProjectConfigPath, asset =>
+
+            BundleSys.Instance.GetBundleCo(ProjectConfigPath + ".bd", asset =>
             {
-                ok = true;
                 mInstance = asset as ProjectConfig;
-            });
-            while(!ok);
+            }, ProjectConfigPath);
 
             if(mInstance == null)
             {

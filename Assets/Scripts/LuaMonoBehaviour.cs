@@ -16,6 +16,19 @@ using System;
 using UnityEditor;
 #endif
 
+public static class GameObjectExtension
+{
+    public static void SetLuaAb(this GameObject self, AssetBundle ab)
+    {
+        var ins = GameObject.Instantiate(self);
+        var luambs = ins.GetComponentsInChildren<LuaMonoBehaviour>();
+        foreach(var i in luambs)
+        {
+            i.SetAB(ab);
+        }
+    }
+}
+
 [LuaCallCSharp]
 public class LuaMonoBehaviour : MonoBehaviour
 {
@@ -35,7 +48,24 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private LuaTable luaTable;
 
+    public AssetBundle Bundle { get; protected set; }
+    public bool SetAB(AssetBundle bundle)
+    {
+        Bundle = bundle;
+        return true;
+    }
+
     void Awake()
+    {
+
+        //if(luaAwake != null)
+        //{
+        //    luaAwake();
+        //}
+    }
+
+    // Use this for initialization
+    void Start()
     {
         var luaInstance = LuaSingleton.Instance;
         luaTable = luaInstance.GetLuaTable(luaScript.path, this, "LuaMonoBehaviour");
@@ -47,15 +77,6 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
-        if(luaAwake != null)
-        {
-            luaAwake();
-        }
-    }
-
-    // Use this for initialization
-    void Start()
-    {
         if(luaStart != null)
         {
             luaStart();

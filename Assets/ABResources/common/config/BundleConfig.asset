@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mDirs:
   - dir: Assets/ABResources/common
-    include: 0
+    include: 1
     rebuild: 0
   - dir: Assets/ABResources/lua
     include: 0

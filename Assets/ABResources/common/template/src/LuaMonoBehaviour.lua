@@ -9,7 +9,7 @@
 local t = {
 
 	Start = function ()
-		print("lua t.start..."..this.transform.position:ToString())
+		print("lua t.start..."..self.transform.position:ToString())
 
 		Button:GetComponent("Button").onClick:AddListener(function()
 			print("clicked, you input is '" .. InputField:GetComponent("InputField").text .."'")

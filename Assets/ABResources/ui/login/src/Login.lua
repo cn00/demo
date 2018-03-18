@@ -1,7 +1,7 @@
 local Login = {
 
 	Start = function ()
-		print("lua Login.start..."..this.transform.position:ToString())
+		print("lua Login.start..."..self.transform.position:ToString())
 
 		Button:GetComponent("Button").onClick:AddListener(function()
 			print("clicked, you input is '" .. InputField:GetComponent("InputField").text .."'")
