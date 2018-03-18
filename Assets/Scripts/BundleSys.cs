@@ -176,7 +176,7 @@ public static class UPath
 }
 
 [LuaCallCSharp]
-public class BundleSys : MonoBehaviour
+public class BundleSys : Singleton<BundleSys>
 {
 
     static string mCacheRoot = "";
@@ -231,8 +231,6 @@ public class BundleSys : MonoBehaviour
         }
     }
 
-    static BundleSys mInstance = null;
-    public static BundleSys Instance { get { return mInstance ?? (mInstance = new BundleSys()); } }
     public static string PlatformName(RuntimePlatform platform)
     {
         switch(platform)
@@ -294,64 +292,16 @@ public class BundleSys : MonoBehaviour
         yield return null;//SysEnterCo();
     }
 
-    public IEnumerator GetScene(string bundleName, BundleCallback callBack = null)
-    {
-        yield return _GetBundle("Level", bundleName, callBack);
-    }
-
-    public IEnumerator GetSceneInfo(string bundleName, string resSubPath, BundleCallback callBack = null)
-    {
-        yield return GetBundle("Level", bundleName, resSubPath, callBack);
-    }
-
-    public IEnumerator GetLua(string bundleName, BundleCallback callBack = null)
-    {
-        yield return _GetBundle("Lua", bundleName, callBack);
-    }
-
-    public IEnumerator GetPreDownload(string bundleName, BundleCallback callBack = null)
-    {
-        yield return _GetBundle("PreDownload", bundleName, callBack);
-    }
-
-    public void GetPreDownloadRes(string bundleName, string prefabName, BundleCallback callBack = null)
-    {
-        StartCoroutine(_GetBundle("PreDownload", bundleName, bundle =>
-        {
-            var obj = (bundle as AssetBundle).LoadAsset(prefabName);
-            if(callBack != null)
-            {
-                callBack(obj);
-            }
-        }));
-    }
-
-    /// <summary>
-    /// 以加载后的 (Object)Prefab 为参数调用 callBack
-    /// 开启新协程执行, Lua 中不使用协程需要用这类方式调用
-    /// </summary>
-    public void GetUIPrefab(string bundleName, string prefabName, BundleCallback callBack = null)
-    {
-        StartCoroutine( _GetBundle("UI", bundleName, bundle=>
-        {
-            var obj = (bundle as AssetBundle).LoadAsset(prefabName);
-            if(callBack !=null)
-            {
-                callBack(obj);
-            }
-        }));
-    }
-
     /// <summary>
     /// 以加载后的 AudioClip 为参数调用 callBack
     /// </summary>
     public IEnumerator GetAudio(string bundleName, string resSubPath, BundleCallback callBack = null)
     {
 #if !UNITY_EDITOR
-        yield return GetBundle("Audio], bundleName, resSubPath, callBack);
+        yield return GetBundle("Audio", bundleName, resSubPath, callBack);
 #else
         if(ProjectConfig.Instance().UseBundle)
-            yield return GetBundle("Audio", bundleName, resSubPath, callBack);
+            yield return GetBundle(bundleName, resSubPath, callBack);
         else
         {
             //FIXME: remove this
@@ -379,31 +329,26 @@ public class BundleSys : MonoBehaviour
 #endif
     }
 
-    public IEnumerator GetUI(string bundleName, BundleCallback callBack = null)
-    {
-        yield return _GetBundle("UI", bundleName, callBack);
-    }
-
     /// <summary>
     /// 开启新协程执行, Lua 中不使用协程需要用这类方式调用
     /// </summary>
-    public void GetBundleCo(string rootName, string bundleName, string resSubPath, BundleCallback callBack = null)
+    public void GetBundleCo(string bundleName, string resSubPath, BundleCallback callBack = null)
     {
-        StartCoroutine(GetBundle(rootName, bundleName, resSubPath, callBack));
+        StartCoroutine(GetBundle(bundleName, resSubPath, callBack));
     }
 
     /// <summary>
     /// 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string rootName, string bundleName, string resSubPath, BundleCallback callBack = null)
+    public IEnumerator GetBundle(string bundleName, string resSubPath, BundleCallback callBack = null)
     {
         // 从 AssetBundle 加载
         //if(CGameRoot.Instance.UseBundle)
         {
             UnityEngine.Object resObj = null;
-            yield return _GetBundle(rootName, bundleName, (UnityEngine.Object bundle) =>
+            yield return _GetBundle(bundleName, (UnityEngine.Object bundle) =>
             {
-                resObj = (bundle as AssetBundle).LoadAsset(BundleConfig.ABResourceDir + "/" + rootName + "/" + resSubPath);
+                resObj = (bundle as AssetBundle).LoadAsset(BundleConfig.ABResourceRoot + resSubPath);
             });
             if(callBack != null)
                 callBack(resObj);
@@ -415,9 +360,10 @@ public class BundleSys : MonoBehaviour
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    IEnumerator _GetBundle(string rootName, string bundleName, BundleCallback callBack = null)
+    IEnumerator _GetBundle(string bundlePath, BundleCallback callBack = null)
     {
-
+        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
+        string bundleName = bundlePath;
         if(string.IsNullOrEmpty(rootName) || string.IsNullOrEmpty(bundleName))
         {
             yield break;
@@ -485,7 +431,7 @@ public class BundleSys : MonoBehaviour
             foreach(var i in deps)
             {
                 Debug.Log("Dependencies: " + i);
-                yield return _GetBundle(rootName, i);
+                yield return _GetBundle(i);
             }
         }
 

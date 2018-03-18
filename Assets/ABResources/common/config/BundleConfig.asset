@@ -7,25 +7,19 @@ MonoBehaviour:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d12f3b43fa28a34db6ddec2b134938a, type: 3}
   m_Name: BundleConfig
   m_EditorClassIdentifier: 
   mDirs:
-  - dir: Assets/ABResources/Lua
-    include: 0
-    preDownload: 1
-  - dir: Assets/ABResources/PreDownload
-    include: 0
-    preDownload: 1
-  - dir: Assets/ABResources/template_modle
+  - dir: Assets/ABResources/common
     include: 1
     preDownload: 0
-  - dir: Assets/ABResources/TestGroup1
+  - dir: Assets/ABResources/lua
     include: 0
-    preDownload: 1
-  - dir: Assets/ABResources/TestGroup2
-    include: 0
-    preDownload: 1
+    preDownload: 0
+  - dir: Assets/ABResources/ui
+    include: 1
+    preDownload: 0
   ABSceneRoots:
   - Scene

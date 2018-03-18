@@ -1,0 +1,1822 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"role",
+				"roleName"
+			],
+			[
+				"pro",
+				"productDescription"
+			],
+			[
+				"trans",
+				"translated"
+			],
+			[
+				"tr",
+				"transf"
+			],
+			[
+				"in",
+				"inputf"
+			],
+			[
+				"si",
+				"size"
+			],
+			[
+				"sie",
+				"sizey"
+			],
+			[
+				"mod",
+				"modified"
+			],
+			[
+				"pr",
+				"prefixdir"
+			],
+			[
+				"rena",
+				"renameedlist"
+			],
+			[
+				"diff",
+				"diffimglist"
+			],
+			[
+				"base",
+				"basebranch"
+			],
+			[
+				"fun",
+				"fun\tfunction"
+			],
+			[
+				"h",
+				"h1\tTag"
+			],
+			[
+				"stat",
+				"STATUS"
+			],
+			[
+				"__",
+				"__CYGWIN__"
+			],
+			[
+				"sqli",
+				"SQLite3"
+			],
+			[
+				"fa",
+				"FALSE"
+			],
+			[
+				"for",
+				"forp\tfor k,v in pairs()"
+			],
+			[
+				"el",
+				"elseif"
+			],
+			[
+				"get",
+				"getPositionY"
+			],
+			[
+				"g",
+				"gBehaviorInfoIdxs"
+			],
+			[
+				"mvarT",
+				"mvarTimeScale"
+			],
+			[
+				"Funch",
+				"FunChangeBehavior"
+			],
+			[
+				"beh",
+				"behaviorInfoIdx"
+			],
+			[
+				"json",
+				"jsonFile"
+			],
+			[
+				"off",
+				"offsetY"
+			],
+			[
+				"offset",
+				"offsetX"
+			],
+			[
+				"lva",
+				"lvarWillAction"
+			],
+			[
+				"_",
+				"_ItemCallback"
+			],
+			[
+				"mst",
+				"mStageItems"
+			],
+			[
+				"FunUpda",
+				"FunUpdateName"
+			],
+			[
+				"FunCrea",
+				"FunCreateRichText"
+			],
+			[
+				"ri",
+				"richText"
+			],
+			[
+				"rich",
+				"RichText"
+			],
+			[
+				"set",
+				"setText"
+			],
+			[
+				"Re",
+				"RenameTips"
+			],
+			[
+				"exit",
+				"onExit"
+			],
+			[
+				"target",
+				"targetPlatform"
+			],
+			[
+				"rem",
+				"removeFromParent"
+			],
+			[
+				"re",
+				"return"
+			],
+			[
+				"actM",
+				"actMainScene"
+			],
+			[
+				"UIAc",
+				"UIActivityLayer"
+			],
+			[
+				"ACT",
+				"ACT_PLATFORMs"
+			],
+			[
+				"up",
+				"upload"
+			],
+			[
+				"con",
+				"content_ttf"
+			],
+			[
+				"not",
+				"notice"
+			],
+			[
+				"m",
+				"mUrl"
+			],
+			[
+				"video",
+				"videoPlayer"
+			],
+			[
+				"tit",
+				"titleLabel"
+			],
+			[
+				"Lg",
+				"LG"
+			],
+			[
+				"mp4",
+				"mp4name"
+			],
+			[
+				"mvars",
+				"mvarSkillRatio"
+			],
+			[
+				"DEF_DIR_SC_S",
+				"DEF_DIR_SC_SCENE"
+			],
+			[
+				"mva",
+				"mvarPlayMode"
+			],
+			[
+				"PLATFORM_OS_IP",
+				"PLATFORM_OS_IPAD"
+			],
+			[
+				"Go",
+				"GotyeAPI"
+			],
+			[
+				"lua",
+				"lua_binding"
+			],
+			[
+				"is",
+				"isAttached"
+			],
+			[
+				"LO",
+				"LOGE"
+			],
+			[
+				"fu",
+				"function\tfunction"
+			],
+			[
+				"init",
+				"initMethod"
+			],
+			[
+				"ret",
+				"ret_length"
+			],
+			[
+				"setTi",
+				"setTitleText"
+			],
+			[
+				"Charge",
+				"actChargeMessageCenter"
+			],
+			[
+				"setTime",
+				"setConnectionTimeout"
+			],
+			[
+				"F",
+				"FunLoginOrLogo"
+			],
+			[
+				"ver",
+				"version_ttf"
+			],
+			[
+				"local",
+				"local_y"
+			],
+			[
+				"error",
+				"errorCode"
+			],
+			[
+				"res",
+				"response"
+			],
+			[
+				"DEF",
+				"DEF_DIR_SC_SCENE"
+			],
+			[
+				"def",
+				"defineRequire"
+			],
+			[
+				"server",
+				"serverName"
+			],
+			[
+				"FunC",
+				"FunCloseWindow"
+			],
+			[
+				"even",
+				"eventType"
+			],
+			[
+				"ChangeToLog",
+				"ChangeToLogin"
+			],
+			[
+				"setp",
+				"setPercentage"
+			],
+			[
+				"create",
+				"createWithTTF"
+			],
+			[
+				"t",
+				"texture"
+			],
+			[
+				"Fun",
+				"FunGetLayer"
+			],
+			[
+				"add",
+				"addChild"
+			],
+			[
+				"time",
+				"time_limit"
+			],
+			[
+				"UIF",
+				"actUIFettersGiftLayer"
+			],
+			[
+				"sta",
+				"stageID"
+			],
+			[
+				"pvarF",
+				"pvarFontSize"
+			],
+			[
+				"pl",
+				"PLATFORM_OS_WINDOWS"
+			],
+			[
+				"Fu",
+				"FUNC_TIME_COAST"
+			],
+			[
+				"fS",
+				"fScaleY"
+			],
+			[
+				"map",
+				"mapres"
+			],
+			[
+				"meth",
+				"methodName"
+			],
+			[
+				"me",
+				"methodName"
+			],
+			[
+				"Lo",
+				"LOGD"
+			],
+			[
+				"L",
+				"LOGD"
+			],
+			[
+				"La",
+				"Label"
+			],
+			[
+				"pa",
+				"paramCode"
+			],
+			[
+				"tar",
+				"targets"
+			],
+			[
+				"ta",
+				"target"
+			],
+			[
+				"lu",
+				"luajit"
+			],
+			[
+				"par",
+				"pram5"
+			],
+			[
+				"fi",
+				"filename"
+			],
+			[
+				"setc",
+				"setContentSize"
+			],
+			[
+				"svn",
+				"SVN_VERSION"
+			],
+			[
+				"src",
+				"srclist"
+			],
+			[
+				"upda",
+				"update"
+			],
+			[
+				"str",
+				"strFilePath"
+			],
+			[
+				"setAn",
+				"setAnchorPoint"
+			],
+			[
+				"main",
+				"mainSceneImages"
+			],
+			[
+				"uiF",
+				"actUIFightExit"
+			],
+			[
+				"nch",
+				"nChapterType"
+			],
+			[
+				"app_",
+				"app_main"
+			],
+			[
+				"ls",
+				"lstrItemName"
+			],
+			[
+				"unl",
+				"unloadLayer"
+			],
+			[
+				"layer",
+				"layerType"
+			],
+			[
+				"prin",
+				"print"
+			],
+			[
+				"act",
+				"actTwistedMain"
+			],
+			[
+				"Lay",
+				"LayerType"
+			],
+			[
+				"cel",
+				"cell_create_count"
+			],
+			[
+				"ac",
+				"actServerListCell"
+			],
+			[
+				"ser",
+				"serverListBtn"
+			],
+			[
+				"Ac",
+				"ActServerListCell"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "doc/todo.md",
+			"settings":
+			{
+				"buffer_size": 19,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 508.0,
+		"last_filter": "form",
+		"selected_items":
+		[
+			[
+				"form",
+				"CodeFormatter: Format Code"
+			],
+			[
+				"utf",
+				"ConvertToUTF8: Reload with Encoding"
+			],
+			[
+				"json",
+				"Pretty JSON: Format and Sort JSON"
+			],
+			[
+				"inden",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"dis",
+				"Package Control: Disable Package"
+			],
+			[
+				"format",
+				"CodeFormatter: Format as HTML Syntax"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"for",
+				"Project: Add Folder"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"convert",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"con",
+				"ConvertToUTF8: Reload with Encoding"
+			],
+			[
+				"utf8",
+				"ConvertToUTF8: Reload with Encoding"
+			],
+			[
+				"package install",
+				"Package Control: Install Package"
+			],
+			[
+				"color",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"javas",
+				"Format: Javascript"
+			],
+			[
+				"git bran",
+				"Git: Change Branch"
+			],
+			[
+				"git cha",
+				"Git: Change Branch"
+			],
+			[
+				"git log",
+				"Git: Log Current File"
+			],
+			[
+				"git che",
+				"Git: Change Branch"
+			],
+			[
+				"git co",
+				"Git: Quick Commit (current file)"
+			],
+			[
+				"git chec",
+				"Git: Change Branch"
+			],
+			[
+				"log",
+				"Git: Log Current File"
+			],
+			[
+				"bl",
+				"Git: Blame"
+			],
+			[
+				"quick",
+				"Git: Quick Commit (current file)"
+			],
+			[
+				"git:bl",
+				"Git: Blame"
+			],
+			[
+				"enab",
+				"Package Control: Enable Package"
+			],
+			[
+				"disab",
+				"Package Control: Disable Package"
+			],
+			[
+				"diff",
+				"Git: Diff Tool Current File"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				":w",
+				":w - Save"
+			],
+			[
+				":",
+				":$ - EOF"
+			],
+			[
+				"git com",
+				"Git: Quick Commit (current file)"
+			],
+			[
+				"git add",
+				"Git: Add Current File"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"package",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"gbk",
+				"Package Control: Enable Package"
+			],
+			[
+				"blame",
+				"Git: Blame"
+			],
+			[
+				"di",
+				"Git: Diff Current File"
+			],
+			[
+				"xml",
+				"xml2json"
+			],
+			[
+				"xml2",
+				"xml2json"
+			],
+			[
+				"bla",
+				"Git: Blame"
+			],
+			[
+				"markdown",
+				"Set Syntax: Markdown"
+			],
+			[
+				"git:add",
+				"Git: Quick Commit (repo, only already added files)"
+			],
+			[
+				"git",
+				"Git: Gitk"
+			],
+			[
+				"forma",
+				"FormatLua: Format Lua code"
+			],
+			[
+				"lua",
+				"Git: Pull Using Rebase"
+			],
+			[
+				"graph",
+				"Git: Graph All"
+			],
+			[
+				"clang",
+				"Package Control: Enable Package"
+			],
+			[
+				"snippet",
+				"Snippet: #!/usr/bin/env"
+			],
+			[
+				"code",
+				"CodeFormatter: Format Code"
+			],
+			[
+				"setting",
+				"Preferences: Settings"
+			],
+			[
+				"xdebug",
+				"Xdebug: Start Debugging (Launch Browser)"
+			],
+			[
+				"xde",
+				"Xdebug: Add/Remove Breakpoint"
+			],
+			[
+				"git:checkout tag",
+				"Git: Checkout Tag"
+			],
+			[
+				"ind",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"in",
+				"Snippet: for i,v in ipairs()"
+			],
+			[
+				"pretty",
+				"Pretty JSON: Minify (compress) JSON"
+			],
+			[
+				"git:bla",
+				"Git: Blame"
+			],
+			[
+				"ma",
+				"Markdown HTML Preview"
+			],
+			[
+				"make",
+				"Markdown HTML Preview"
+			],
+			[
+				"svn:blame",
+				"SVN: (File) Blame"
+			],
+			[
+				"git:commit",
+				"Git: Quick Commit"
+			],
+			[
+				"git:co",
+				"Git: Commit"
+			],
+			[
+				"mark",
+				"Markdown Slideshow"
+			],
+			[
+				"git log ",
+				"Git: Diff Staged Files (Ignore Whitespace)"
+			],
+			[
+				"svn:commit",
+				"SVN: (File) Commit"
+			],
+			[
+				"git diff",
+				"Git: Diff Current File"
+			],
+			[
+				"git check",
+				"Git: Checkout Current File"
+			],
+			[
+				"gitdi",
+				"Git: Diff Current File"
+			],
+			[
+				"packageinstall",
+				"Package Control: Install Package"
+			],
+			[
+				"svn up",
+				"SVN: Update"
+			],
+			[
+				"pacakge conins",
+				"Package Control: Install Package"
+			],
+			[
+				"package ins",
+				"Package Control: List Packages"
+			],
+			[
+				"pa",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 618.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"help()",
+			"print(9)",
+			"prinf(9)",
+			"os.print(oP)",
+			"git",
+			"help",
+			"import urllib.request,os; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ','%20')).read())"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/unity_template/doc"
+	],
+	"file_history":
+	[
+		"/D/unity_template/.gitmodules",
+		"/D/UnityIPhoneXSupport/Assets/Editor/UnityIPhoneXSupport.cs",
+		"/D/a3/string.tmp/trans_escape_char.sql",
+		"/D/a3/client/stringdb/download.php",
+		"/D/unity_template/Assets/Editor/BuildTools/BundleConfig.cs",
+		"/D/fg/client/ABExample/ABExample.lua",
+		"/D/unity_template/Assets/ABResources/Lua/lua/main.lua",
+		"/D/fg/client/Assets/ABResources/README.md",
+		"/D/fg/client/Assets/ABResources/TODO.md",
+		"/D/unity_template/Assets/BuildTools/BundleConfig.asset",
+		"/D/a3/client.header",
+		"/D/fg/client/Assets/Scripts/System/BundleSys.cs",
+		"/D/unity_template/doc/design.md",
+		"/D/a3/client/Unity/UnityAppController.mm",
+		"/D/a3/client/docs/备用线路切换.md",
+		"/D/unity_template/AssetBundle/Android/1.0.0/md5.yaml",
+		"/D/unity_template/doc/todo.md",
+		"/D/a3/client/docs/TODO.md",
+		"/D/a3/client/Unity/iospatch/UnityAppController.mm.patch",
+		"/D/a3/.git/config",
+		"/C/Users/lenghaijun/AppData/Local/Temp/BannerResources.cs-revHEAD.svn000.tmp.cs",
+		"/D/a3/document/屏蔽字库/forbidden_words.md",
+		"/D/a3/document/屏蔽字库/forbidden_words.sort_unique.txt",
+		"/D/a3/document/屏蔽字库/forbidden_words.sort_unique.oneline.txt",
+		"/D/a3/document/屏蔽字库/屏蔽词库--版属要求2018.01.25.txt",
+		"/C/Users/lenghaijun/AppData/Local/Temp/7zO4BD2B77D/屏蔽词库--版属要求2018.01.25.txt",
+		"/D/a3/client/stringdb/out/genfiles/strings.sqlite3-journal",
+		"/D/a3/client/stringdb/genfiles/strigns_db_input.csv",
+		"/D/a3/client/stringdb/FixedStringAppStringD_Item.cs",
+		"/D/a3/tutorial.jp.md",
+		"/D/a3/network_config_ios_dev.json",
+		"/D/a3/img.jp.path.md",
+		"/D/a3/0001-fixed.patch",
+		"/D/a3/0002-index-on-master-153b71dfb-fixed.patch",
+		"/D/fg/.git/config",
+		"/D/a3/client/Unity/Assets/Plugins/iOS/BilibiliGameSdk/BLGameSDK.projmods",
+		"/D/Documents/Tencent Files/897469961/FileRecv/gm_scout_lang_cn.txt",
+		"/D/fg/client/Assets/Tools/BuildScript.cs",
+		"/D/unity_template/Assets/BuildTools/EditorLuaHelper.cs",
+		"/D/unity_template/.gitignore",
+		"/D/fg/tools/table/src/out/AbilityConfigXlsxCopy.lua",
+		"/D/fg/tools/table/src/out/AbilityConfig.lua",
+		"/D/fg/tools/table/src/out/AbilityConfigXlsx.lua",
+		"/D/fg/tools/table/out/AbilityConfig.lua",
+		"/D/fg/tools/table/src/Convert/bin/Debug/out/AISet.lua.txt",
+		"/D/fg/tools/table/src/bin/out/HeroBase.lua.txt",
+		"/D/fg/tools/table/src/Convert/bin/out/lua/HeroBase.lua.txt",
+		"/D/unity_template/AssetBundle/Android/1.0.0/Lua/Lua.manifest",
+		"/D/unity_template/AssetBundle/Android/1.0.0/Lua/lua.bd.manifest",
+		"/D/unity_template/AssetBundle/Android/1.0.0/Lua/utility.bd.manifest",
+		"/D/unity_template/AssetBundle/Android/1.0.0/resversion.txt",
+		"/D/unity_template/AssetBundle/Android/1.0.0/Lua/assets/abresources/lua/lua.bd.manifest",
+		"/D/unity_template/AssetBundle/Android/1.0.0/Lua/assets/abresources/lua/utility.bd.manifest",
+		"/D/unity_template/AssetBundle/Android/1.0.0/test1/test1.manifest",
+		"/D/unity_template/Assets/ABResources/Lua/Utility/BridgingClass.lua",
+		"/D/fg/client/Assets/ABResources/Lua/lua/main.lua",
+		"/D/fg/client/Assets/Editor/BuildScript.cs",
+		"/D/unity_template/.git/config",
+		"/D/unity_template/.git/modules/YamlDotNet/config",
+		"/D/unity_template/Assets/Plugins/.YamlDotNet/.git",
+		"/D/unity_template/Assets/Plugins/.YamlDotNet/.gitmodules",
+		"/D/unity_template/.git/modules/YamlDotNet/description",
+		"/D/unity_template/Assets/Plugins/YamlDotNet/.gitmodules",
+		"/D/unity_template/Assets/Plugins/YamlDotNet/BuildUtils.UnityPrerequisites/Unity Subset v3.5/UnityScript.license.txt",
+		"/D/unity_template/Assets/Plugins/YamlDotNet/.git",
+		"/D/unity_template/Assets/Plugins/YamlDotNet/PerformanceTests/YamlDotNet.PerformanceTests.Lib/ISerializationTest.cs",
+		"/D/unity_template/.git/info/exclude",
+		"/D/unity_template/Assets/Scripts/BundleSys.cs",
+		"/D/a3/document/CB1/CB1前端资源/EtudeLessonInfo/xl/worksheets/sheet1.xml",
+		"/D/a3/document/CB1/CB1前端资源/EtudeLessonInfo/xl/sharedStrings.xml",
+		"/D/a3/document/CB1/CB1前端资源/EtudeLessonInfo/xl/workbook.xml",
+		"/D/a3/document/CB1/CB1前端资源/EtudeLessonInfo/xl/worksheets/_rels/sheet1.xml.rels",
+		"/D/fg/docs/skill.md",
+		"/D/unity_template/Assets/ABResources/test2/b1/.lastWriteTime",
+		"/D/unity_template/Assets/Editor/BuildTools/BundleConfig.asset",
+		"/D/unity_hotfix/.gitignore",
+		"/F/UnityProjects/xLua/.git/config",
+		"/D/cloc/Unix/t/00_C.t",
+		"/D/cloc/tests/inputs/foo_bar/bar/foo/momo/tbfm.sh",
+		"/D/cloc/tests/inputs/assembly.cs",
+		"/D/unity_hotfix/LICENSE",
+		"/D/a3/client/Unity/Assets/Application/Resource/String/strings_db_input.csv",
+		"/C/Users/lenghaijun/AppData/Local/Temp/7zOCAC791F8/manifest",
+		"/G/cb1_ios/Assets/Application/Editor/Project/AssetBundle/Work/iOS/manifest.asset",
+		"/D/a3/tmp/0_png.diff/0_list.md",
+		"/C/Users/lenghaijun/AppData/Local/Microsoft/Windows/INetCache/IE/6ROLQ6SF/ios_bili_cb1[1].json",
+		"/D/a3/client/Unity/Assets/Editor/XcodeSettingsPostProcesser.cs",
+		"/I/cb1_ios/Assets/Application/Editor/Project/AssetBundle/Work/iOS/manifest.asset",
+		"/D/a3/client/Unity/Assets/StreamingAssets/mankai.png",
+		"/D/a3/client/Unity/Unity.csproj",
+		"/D/a3/client/Unity/Library/metadata/0e/0e0bd59954335f0499f1f4c1911f9c85.info",
+		"/C/Users/lenghaijun/AppData/Local/Temp/7zO0C34D30E/access.log",
+		"/D/a3/jp.path.md",
+		"/D/a3/client/Unity/Assets/Application/Resource/Img/Tutorial/Tutorial_11_01.png",
+		"/D/a3/document/CB1/CB1后台文本/20180201返回资源（全）/strings.txt",
+		"/D/a3/network_config/ios_bili_cb1.json",
+		"/D/a3/network_config/ios_bili_tstest.json",
+		"/D/a3/string.tmp/mutiline.sed",
+		"/D/a3/client/Unity/Assets/Application/Resource/Img/StoryBg01/StoryBg01_027_01.png.meta",
+		"/D/a3/client/docs/探索性测试",
+		"/D/a3/client/docs/sql_strings.md",
+		"/D/a3/client/docs/sed_mutiline_match.md",
+		"/D/a3/string.tmp/strings-n.csv",
+		"/D/a3/client/docs/mutiline.sed",
+		"/D/a3/client/docs/iOS_11_beta_Profile.mobileconfig",
+		"/D/a3/TODO.md",
+		"/C/Users/lenghaijun/AppData/Local/Temp/7zO8C50108E/ios_bili_test.json",
+		"/D/a3/sql/mankai_pro_udb01.sql",
+		"/D/a3/client/docs/strings.md",
+		"/D/xy/c/shell/gen_ipa.sh",
+		"/D/a3/string.tmp/strings.csv",
+		"/D/a3/shell/b64encode.cs",
+		"/C/Users/lenghaijun/AppData/Local/Microsoft/Windows/INetCache/IE/J7JQ23KI/ios_bili_yc[1].json",
+		"/C/Users/lenghaijun/AppData/Local/Temp/talk_master.asset-revHEAD.svn000.tmp.asset",
+		"/D/a3/.git/packed-refs",
+		"/D/a3/.git/hooks/applypatch-msg.sample",
+		"/D/a3/unity_build/genAB",
+		"/D/a3/unity_build/killN",
+		"/D/cygwin64/home/lenghaijun/.bash_profile",
+		"/D/cygwin64/home/lenghaijun/.bash_config/setup",
+		"/D/cygwin64/home/lenghaijun/.bash_config/.gitignore",
+		"/D/a3/client/Unity/Library/BuildSettings.asset",
+		"/D/a3/client/Unity/Library/EditorUserBuildSettings.asset",
+		"/D/a3/client/Unity/Library/EditorUserSettings.asset",
+		"/D/a3/client/Unity/ProjectSettings/EditorSettings.asset",
+		"/D/cygwin64/home/lenghaijun/.bash_config/export_cn",
+		"/D/cygwin64/home/lenghaijun/.bash_config/alias_cn",
+		"/D/cygwin64/home/lenghaijun/.vimrc"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 168.0,
+		"where_history":
+		[
+			"D:\\fg\\client\\Assets\\ABResources\\Lua",
+			"D:\\fg\\client\\Assets\\ABResources\\Lua\\lua"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"iPhone10",
+			"echo",
+			"mkdir",
+			"strings",
+			"origin_bash_rc",
+			"0.1.0",
+			"channel",
+			"bundleversion",
+			"version",
+			"1.1",
+			"1.10",
+			"buildnu",
+			",",
+			"\"",
+			"test",
+			"\";.*",
+			"CacheRoot",
+			"/Users/a3/.jenkins/workspace/trunk_ios/",
+			", non-interlaced",
+			"8-bit/color ",
+			" image data",
+			"image data",
+			"date ",
+			"md5",
+			"font",
+			"UnitySendMessage",
+			" Samlpe of ",
+			" Sample of ",
+			"@property (nonatomic, assign) NSInteger",
+			"@property (nonatomic, strong) NSString *",
+			"checkOrder",
+			"\":(unsigned long)",
+			"\":(long)",
+			":",
+			":%@\\n",
+			"userinfo",
+			" , ",
+			"virtual void BL",
+			"_CreateNSString",
+			"realname",
+			"override string BL",
+			"override void BL",
+			"iosProj",
+			"expotOptionsPlist",
+			"achivePath",
+			"CFBundleURLTypes",
+			"_accessKey",
+			"ScoutPlay",
+			"*李*洪*志*",
+			"taobao",
+			"c",
+			"０",
+			"0.3/android_bili/1.0.18/30264-29640.zip",
+			"ActBLGameSDKDelegate",
+			"[]",
+			"[ ]",
+			"process",
+			"}]\"",
+			"”",
+			".origin",
+			"target",
+			"client/Unity/Assets/",
+			"^R",
+			"diffimglist",
+			".cs",
+			"AssetBundle/Work",
+			"/admin/account.php",
+			"^R",
+			"ACT_",
+			"if ",
+			"jpstr",
+			"UrlEncoding",
+			"googleWebTranslateUrl",
+			"prettify",
+			"sgr",
+			"setRandomTheme",
+			"randomColor",
+			"color",
+			"prounce",
+			"rest",
+			"trans",
+			"/**",
+			"/*",
+			" -e ",
+			"css:",
+			"./fuel/appadm/views/common/engine/selection/index.php",
+			"^。",
+			".cs",
+			"exam",
+			">\n",
+			"Time",
+			"example",
+			"HeroListUIPanel",
+			"HeroListUIProxy",
+			"abprefab",
+			"LoginUIPanel",
+			"mGameObj",
+			"EmailPanel",
+			"EmailProxy",
+			"EmailPanel",
+			"onClick",
+			"AddListener",
+			"onClick",
+			"OnClick",
+			"CS.UnityEngine",
+			"CS.UnityEngine.GameObject",
+			"gameobj",
+			"fun",
+			"cortain",
+			"mGridInfos",
+			">",
+			"**",
+			"CustomLoader",
+			"时，CustomLoader",
+			"requ",
+			"EditorLuaHelper",
+			"error",
+			"./img",
+			"·",
+			"<mIsObstruct>true</mIsObstruct>",
+			"(1.0, 0.0, 7.0)",
+			"障碍物",
+			"Cube",
+			"Root",
+			"ornamentRoot",
+			"s2",
+			"Type",
+			"672330483"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"bash_rc",
+			"",
+			"=test",
+			"",
+			"    int",
+			"    string ",
+			"\":",
+			":\n",
+			"\":@\"",
+			", ",
+			"virtual void ",
+			"override string ",
+			"override void ",
+			"iosProjDir",
+			"exportOptionsPlist",
+			"archivePath",
+			"A3BLGameSDKDelegate",
+			"[ ]",
+			"[]",
+			"rpprocess",
+			"trprocess",
+			"",
+			"modified",
+			"modifiedlist",
+			"",
+			"str",
+			"soundmark",
+			"trans",
+			"\n",
+			"",
+			"ABExamplePanel",
+			"ABExampleProxy",
+			"abcom",
+			"ABExamplePanel",
+			"gameObject",
+			"ABExamplePanel",
+			"ABExampleProxy",
+			"ABExamplePanel",
+			"mGameObj",
+			"callback",
+			"*",
+			"####",
+			"./Editor/img",
+			"`",
+			", ",
+			"[YamlIgnore, XmlIgnore]",
+			"---\nname:"
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "doc/todo.md",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 19,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19,
+								19
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 60.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 130.0
+	},
+	"pinned_build_system": "",
+	"project": "unity_template.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": false,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"loadingui",
+				"Lua\\lua\\UI\\LoadingUIPanel.lua"
+			],
+			[
+				"loginuiproxy",
+				"Lua\\lua\\Proxy\\LoginUIProxy.lua"
+			],
+			[
+				"skillba",
+				"Lua\\Table\\SkillBase.lua"
+			],
+			[
+				"loadinguiproxy",
+				"Lua\\lua\\Proxy\\LoadingUIProxy.lua"
+			],
+			[
+				"gameproxymgr",
+				"Lua\\lua\\GameProxyMgr.lua"
+			],
+			[
+				"heroba",
+				"Lua\\Table\\HeroBase.lua"
+			],
+			[
+				"bridg",
+				"lua\\BridgingClass.lua.txt"
+			],
+			[
+				"bridgingclass",
+				"Script\\Modules\\other\\BridgingClass.txt"
+			],
+			[
+				"sk",
+				"Scripts\\System\\Character\\Skill.cs"
+			],
+			[
+				"loginsys",
+				"Scripts\\System\\LoginSys.cs"
+			],
+			[
+				"",
+				"proto\\LoginResponse.proto"
+			],
+			[
+				"config",
+				"minetest\\src\\config.h"
+			],
+			[
+				"database-leveldb.cpp",
+				"minetest\\src\\database-leveldb.cpp"
+			],
+			[
+				"irrlicht.cpp",
+				"irrlicht\\source\\Irrlicht\\Irrlicht.cpp"
+			],
+			[
+				"renderingengine.cpp",
+				"minetest\\src\\client\\renderingengine.cpp"
+			],
+			[
+				"c_content",
+				"minetest\\src\\script\\common\\c_content.cpp"
+			],
+			[
+				"irrlicht/makefile",
+				"irrlicht\\source\\Irrlicht\\Makefile"
+			],
+			[
+				"cprofiler.cpp",
+				"irrlicht\\source\\Irrlicht\\CProfiler.cpp"
+			],
+			[
+				"cfilesystem.cpp",
+				"irrlicht\\source\\Irrlicht\\CFileSystem.cpp"
+			],
+			[
+				"irrmath.h",
+				"irrlicht\\include\\irrMath.h"
+			],
+			[
+				"irrlichttypes.h",
+				"minetest\\src\\irrlichttypes.h"
+			],
+			[
+				"irrtypes.h",
+				"irrlicht-1.7.2\\include\\irrTypes.h"
+			],
+			[
+				"make",
+				"irrlicht\\examples\\Makefile"
+			],
+			[
+				"irrstring.h",
+				"include\\irrString.h"
+			],
+			[
+				"login",
+				"examples\\login\\logind.lua"
+			],
+			[
+				"src/ui/uiloginmain.lua",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"network",
+				"cocos\\network\\NetWork.cpp"
+			],
+			[
+				"loginmain",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"actchatmessage.lua",
+				"src\\framwork\\actChatMessage.lua"
+			],
+			[
+				"gamewor",
+				"src\\framwork\\actGameWorld.lua"
+			],
+			[
+				"src/net/actprotobuf.lua",
+				"src\\net\\actProtobuf.lua"
+			],
+			[
+				"messa",
+				"src\\net\\actMessageCenter.lua"
+			],
+			[
+				"3016_s2c_rechargerewardreponse_pb",
+				"src\\net\\protobuf\\3016_S2C_RechargeRewardReponse_pb.lua"
+			],
+			[
+				"messagecen",
+				"src\\net\\actMessageCenter.lua"
+			],
+			[
+				"sdkmana",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"src/net/actmessagecenter.lua",
+				"src\\net\\actMessageCenter.lua"
+			],
+			[
+				"appdel",
+				"Classes\\AppDelegate.cpp"
+			],
+			[
+				"device",
+				"cocos\\platform\\android\\CCDevice-android.cpp"
+			],
+			[
+				"checkup",
+				"src\\framwork\\actCheckUpdate.lua"
+			],
+			[
+				"worldbosss",
+				"src\\manager\\actWorldBossStaegeManger.lua"
+			],
+			[
+				"usert",
+				"src\\table\\usertextcontent.lua"
+			],
+			[
+				"src/manager/actrechargemanager.lua",
+				"src\\manager\\actRechargeManager.lua"
+			],
+			[
+				"wordboss",
+				"src\\manager\\actWorldBossStaegeManger.lua"
+			],
+			[
+				"rank",
+				"src\\manager\\actWordRankManager.lua"
+			],
+			[
+				"src/manager/actgamesdkmanager.lua",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"gamesdkmana",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"scenelaye",
+				"src\\scenelayer\\actSceneMapLayer.lua"
+			],
+			[
+				"fightob",
+				"src\\obj\\actFightObj.lua"
+			],
+			[
+				"fightscene",
+				"src\\scene\\actFightSceneIntegral.lua"
+			],
+			[
+				"ser",
+				"src\\table\\serverip.lua"
+			],
+			[
+				"uimain",
+				"src\\ui\\UIMain.lua"
+			],
+			[
+				"main",
+				"src\\main.lua"
+			],
+			[
+				"src/ui/uirechargeitems.lua",
+				"src\\ui\\UIRechargeItems.lua"
+			],
+			[
+				"rechargereward",
+				"src\\table\\rechargereward.lua"
+			],
+			[
+				"rechargema",
+				"src\\manager\\actRechargeManager.lua"
+			],
+			[
+				"ccconsol",
+				"cocos\\base\\CCConsole.cpp"
+			],
+			[
+				"odsock",
+				"cocos\\network\\ODSocket.cpp"
+			],
+			[
+				"message",
+				"src\\net\\actMessageCenter.lua"
+			],
+			[
+				"uilogin",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"gamesdkma",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"gamesdk",
+				"gamesdk\\GameSdk.h"
+			],
+			[
+				"chargema",
+				"src\\manager\\actRechargeManager.lua"
+			],
+			[
+				"recharge",
+				"src\\manager\\actRechargeManager.lua"
+			],
+			[
+				"charge",
+				"src\\ui\\UIRechargeItems.lua"
+			],
+			[
+				"serverlis",
+				"src\\ui\\UIServerList.lua"
+			],
+			[
+				"ccconsole",
+				"cocos\\base\\CCConsole.cpp"
+			],
+			[
+				"ccconso",
+				"cocos\\base\\CCConsole.cpp"
+			],
+			[
+				"sdkman",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"serverip",
+				"src\\table\\serverip.lua"
+			],
+			[
+				"actmessagecenter.lua",
+				"src\\net\\actMessageCenter.lua"
+			],
+			[
+				"actworldbossstaegemanger.lua",
+				"src\\manager\\actWorldBossStaegeManger.lua"
+			],
+			[
+				"gamede",
+				"src\\GameDef.lua"
+			],
+			[
+				"chatmess",
+				"src\\framwork\\actChatMessage.lua"
+			],
+			[
+				"scheduler",
+				"cocos\\scripting\\lua-bindings\\auto\\api\\Scheduler.lua"
+			],
+			[
+				"loginscene.lua",
+				"src\\framwork\\actLoginScene.lua"
+			],
+			[
+				"gamesdk.lua",
+				"cocos\\scripting\\lua-bindings\\auto\\api\\GameSdk.lua"
+			],
+			[
+				"uiloginmain",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"lua_cocos2dx_spine",
+				"cocos\\scripting\\lua-bindings\\manual\\spine\\lua_cocos2dx_spine_manual.cpp"
+			],
+			[
+				"confg",
+				"src\\config.lua"
+			],
+			[
+				"ui_efc_login",
+				"res\\spine\\ui_efc_login.json"
+			],
+			[
+				"loginma",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"lua_cocos2dx_spine_manual",
+				"cocos\\scripting\\lua-bindings\\manual\\spine\\lua_cocos2dx_spine_manual.cpp"
+			],
+			[
+				"gamed",
+				"src\\GameDef.lua"
+			],
+			[
+				"luabasic",
+				"cocos\\scripting\\lua-bindings\\manual\\LuaBasicConversions.cpp"
+			],
+			[
+				"logins",
+				"src\\framwork\\actLoginScene.lua"
+			],
+			[
+				"uistory",
+				"src\\ui\\UIStoryMain.lua"
+			],
+			[
+				"actrolevoicemanager",
+				"src\\manager\\actRoleVoiceManager.lua"
+			],
+			[
+				"sayakabu",
+				"src\\ui\\UISayakaButton.lua"
+			],
+			[
+				"asset",
+				"extensions\\assets-manager\\AssetsManager.cpp"
+			],
+			[
+				"checkupd",
+				"src\\framwork\\actCheckUpdate.lua"
+			],
+			[
+				"cocos/audio/android/audioplayerprovider.cpp",
+				"cocos\\audio\\android\\AudioPlayerProvider.cpp"
+			],
+			[
+				"ccnode",
+				"cocos\\2d\\CCNode.cpp"
+			],
+			[
+				"createrole",
+				"src\\framwork\\actCreateRoleScene.lua"
+			],
+			[
+				"uiloginmain_huawei",
+				"src\\ui\\UILoginMain_huawei.lua"
+			],
+			[
+				"server",
+				"src\\manager\\actLoginServerManager.lua"
+			],
+			[
+				"con",
+				"src\\config.lua"
+			],
+			[
+				"serverli",
+				"src\\ui\\UIServerList.lua"
+			],
+			[
+				"confi",
+				"src\\config.lua"
+			],
+			[
+				"checkupda",
+				"src\\framwork\\actCheckUpdate.lua"
+			],
+			[
+				"gamesdkm",
+				"src\\manager\\actGameSdkManager.lua"
+			],
+			[
+				"ndroid/audioplayerprovider.cpp",
+				"cocos\\audio\\android\\AudioPlayerProvider.cpp"
+			],
+			[
+				"pcmaudioplayer.cpp",
+				"cocos\\audio\\android\\PcmAudioPlayer.cpp"
+			],
+			[
+				"rolevo",
+				"src\\manager\\actRoleVoiceManager.lua"
+			],
+			[
+				"audiomana",
+				"src\\manager\\actAudioManager.lua"
+			],
+			[
+				"rolevoi",
+				"src\\manager\\actRoleVoiceManager.lua"
+			],
+			[
+				"voice",
+				"src\\manager\\actRoleVoiceManager.lua"
+			],
+			[
+				"uimami",
+				"src\\ui\\UIMamiButton.lua"
+			],
+			[
+				"src/manager/actbeginnerdirectormanager.lua",
+				"src\\manager\\actBeginnerDirectorManager.lua"
+			],
+			[
+				"uimamibutton",
+				"src\\ui\\UIMamiButton.lua"
+			],
+			[
+				"actsceneuilayer.lua",
+				"src\\scenelayer\\actSceneUILayer.lua"
+			],
+			[
+				"fightru",
+				"src\\ui\\UIFightRU.lua"
+			],
+			[
+				"userte",
+				"src\\table\\usertextcontent.lua"
+			],
+			[
+				"eventhall",
+				"src\\ui\\UIEventHallLayer.lua"
+			],
+			[
+				"uimamibutton.lua",
+				"src\\ui\\UIMamiButton.lua"
+			],
+			[
+				"mainpla",
+				"src\\obj\\actMainPlayer.lua"
+			],
+			[
+				"layer",
+				"src\\manager\\LayerManager.lua"
+			],
+			[
+				"madokabu",
+				"src\\ui\\UIMadokaButton.lua"
+			],
+			[
+				"madokarock",
+				"src\\ui\\UIMadokaRocker.lua"
+			],
+			[
+				"skeletonanima",
+				"cocos\\editor-support\\spine\\SkeletonAnimation.cpp"
+			],
+			[
+				"madokajson",
+				"res\\spine\\madoka.json"
+			],
+			[
+				"uimadoka",
+				"src\\ui\\UIMadokaButton.lua"
+			],
+			[
+				"mybeha",
+				"src\\component\\MyBehaviorComponent.lua"
+			],
+			[
+				"nearmoster",
+				"src\\component\\NearMonsterBehaviorComponent.lua"
+			],
+			[
+				"uiloginm",
+				"src\\ui\\UILoginMain.lua"
+			],
+			[
+				"luacocos_auto",
+				"cocos\\scripting\\lua-bindings\\auto\\lua_cocos2dx_auto.cpp"
+			],
+			[
+				"cocos_auto",
+				"cocos\\scripting\\js-bindings\\auto\\jsb_cocos2dx_auto.cpp"
+			],
+			[
+				"madokabeh",
+				"src\\component\\MadokaBehaviorComponent.lua"
+			],
+			[
+				"sayakabe",
+				"src\\component\\SayakaBehaviorComponent.lua"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 464.0,
+		"last_filter": "runincoco",
+		"selected_items":
+		[
+			[
+				"runincoco",
+				"performFunctionInCocosThread"
+			]
+		],
+		"width": 588.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 188.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

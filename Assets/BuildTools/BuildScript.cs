@@ -101,7 +101,7 @@ public class BuildScript
             // lua
             foreach(var f in Directory.GetFiles(indir, "*.lua*", SearchOption.AllDirectories))
             {
-                File.Copy(f, f.Replace(".lua", ".lua.txt"));
+                File.Move(f, f.Replace(".lua", ".lua.txt"));
             }
             AssetDatabase.Refresh();
 
@@ -132,9 +132,10 @@ public class BuildScript
 
             foreach(var f in Directory.GetFiles(indir, "*.lua.txt*", SearchOption.AllDirectories))
             {
-                File.Delete(f);
+                File.Move(f, f.Replace(".lua.txt", ".lua"));
             }
             AssetDatabase.Refresh();
+
         }
         finally
         {
@@ -176,7 +177,7 @@ public class BuildScript
             assetNames.Add(f);
 
             var finfo = new FileInfo(f);
-            if(finfo.LastWriteTime.ToFileTimeUtc() > newWriteTime)
+            //if(finfo.LastWriteTime.ToFileTimeUtc() > newWriteTime)
             {
                 ++nnew;
                 newWriteTime = finfo.LastWriteTime.ToFileTimeUtc();
@@ -273,7 +274,7 @@ public class BuildScript
         pi.WorkingDirectory = "..\\tools\\table\\";
         Process.Start(pi);
 
-        LuaHelper.Init();
+        //LuaHelper.Init();
     }
 
     [MenuItem("Tools/Open GUI Xls Convert Tool")]
@@ -483,7 +484,7 @@ public class BuildScript
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundle(BundleConfig.ABResourceDir + "/" + i, i, buildTarget);
+                BuildBundle(BundleConfig.ABResourceRoot + i, i, buildTarget);
             }
         }
         finally
@@ -506,7 +507,7 @@ public class BuildScript
             foreach(var StreamSceneDir in BundleConfig.Instance().ABSceneRoots)
             {
                 float count = 0;
-                var files = Directory.GetFiles(BundleConfig.ABResourceDir + "/" + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(BundleConfig.ABResourceRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
                     var f = UPath.go(i);
