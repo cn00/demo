@@ -12,7 +12,7 @@ using UnityEditor;
 public class LuaSingleton : SingletonMB<LuaSingleton>
 {
     //all lua behaviour shared one luaenv only!
-    internal static LuaEnv luaEnv = new LuaEnv();
+    internal LuaEnv luaEnv = new LuaEnv();
     public LuaEnv GlobalEnv
     {
         get { return luaEnv; }
@@ -35,34 +35,31 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
 
         return luaTable;
     }
-    public byte[] LuaLoaderEditor(ref string filename)
+    public byte[] LuaLoader(ref string filename)
     {
         var LuaExtension = ProjectConfig.Instance.LuaExtension;
+
         if(filename.EndsWith(LuaExtension))
         {
             filename = filename.Remove(filename.LastIndexOf(LuaExtension));
         }
+
+        byte[] bytes = null;
+#if UNITY_EDITOR
         if(ProjectConfig.Instance.UseBundle)
+#endif
         {
-            var assetName = BundleConfig.ABResourceRoot + filename.Replace(".", "/") + LuaExtension;
-            //Debug.Log("<Color=green>lua: " + assetName + "</Color>");
-            var bytes = File.ReadAllBytes(assetName);
-            return bytes;
+            var data = AssetHelper.Instance.GetLoadedAsset<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
+            bytes = data.bytes;
         }
+#if UNITY_EDITOR
         else
         {
-            return null;
+            var assetName = BundleConfig.ABResRoot + filename.Replace(".", "/") + LuaExtension;
+            bytes = File.ReadAllBytes(assetName);
         }
-    }
-
-    public byte[] LuaLoader(ref string filename)
-    {
-        var assetName = BundleConfig.ABResourceRoot + filename.Replace(".", "/") + ProjectConfig.Instance.LuaExtension;
-        var bundleRoot = filename.Substring(0, filename.IndexOf('/'));
-        var bundlePath = "";
-        var bundle = AssetBundle.LoadFromFile(bundlePath);
-        var textAsset = bundle.LoadAsset<TextAsset>(filename);
-        var bytes = textAsset.bytes;
+#endif
+        AppLog.d("<Color=green>lua: " + filename + "</Color>{0}", bytes);
         return bytes;
     }
 
@@ -71,42 +68,34 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
 #endif
     public override IEnumerator Init()
     {
-#if UNITY_EDITOR
-        luaEnv.AddLoader(LuaLoaderEditor);
-#else
         luaEnv.AddLoader(LuaLoader);
-#endif
-        luaEnv.DoString("require 'lua.utility.BridgingClass'");
 
-        return base.Init();
-    }
+        //luaEnv.DoString("require 'lua.utility.BridgingClass'");
 
-    byte[] GetLuaBytes(string filename)
-    {
         byte[] textBytes = null;
-#if UNITY_EDITOR
-        textBytes = LuaLoaderEditor(ref filename);
-#else
-        textBytes = LuaLoader(ref filename);
-#endif
-        return textBytes;
+        yield return AssetHelper.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
+            textBytes = asset.Data;
+        });
+        GetLuaTable(textBytes);
+
+        yield return base.Init();
     }
 
-    public LuaTable GetLuaTable(string filename, LuaMonoBehaviour self, string name = "LuaMonoBehaviour")
+    private void Update()
     {
-        var env = NewEnv(self);
-        return GetLuaTable(filename, env, name);
+
     }
 
-    public LuaTable GetLuaTable(string filename, LuaTable env, string name)
+    public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")
     {
-        byte[] textBytes = null;
+        LuaTable env = null;
+        if(self != null)
+            env = NewEnv(self);
+        return GetLuaTable(textBytes, env, name);
+    }
 
-        LuaMonoBehaviour self = env.Get<LuaMonoBehaviour>("self");
-        if(self != null && self.Bundle != null)
-            textBytes = self.Bundle.LoadABAsset<TextAsset>(filename + ".txt").bytes;
-        else
-            textBytes = GetLuaBytes(filename);
+    public LuaTable GetLuaTable(byte[] textBytes, LuaTable env, string name)
+    {
         //sweep utf bom
         if(textBytes[0] == 0xef)
         {
@@ -115,9 +104,16 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
             textBytes[2] = (byte)' ';
         }
 
-        var lua = luaEnv.DoString(Encoding.UTF8.GetString(textBytes), name, env);
+        var table = luaEnv.DoString(Encoding.UTF8.GetString(textBytes), name, env);
         //env.Dispose();
-        var luaTable = lua[0] as LuaTable;
-        return luaTable;
+        if(table != null && table.Length > 0)
+        {
+            var luaTable = table[0] as LuaTable;
+            return luaTable;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

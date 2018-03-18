@@ -16,3 +16,5 @@ function BridgingClass.reload( tbName )
 	package.loaded[tbName] = nil;
     require (tbName)
 end
+
+return BridgingClass

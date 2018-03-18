@@ -12,6 +12,7 @@ using System.Linq;
 using SevenZip;
 
 using Md5SchemeDic = System.Collections.Generic.Dictionary<string, Md5SchemeInfo>;
+using System.Collections;
 
 [ExecuteInEditMode]
 public class BuildScript
@@ -22,7 +23,6 @@ public class BuildScript
     static string APP_NAME = "game";
     static string DATETIME = DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss");
     static string TARGET_DIR = "bin/";
-    public const string BundlePostfix = ".bd";
 
     const string BundleWorkingSpace = "AssetBundle/";
 
@@ -64,7 +64,6 @@ public class BuildScript
         ".bak",
         ".unity",
         ".meta",
-        ".lua",
     };
 
     static string TargetName(BuildTarget target)
@@ -146,7 +145,7 @@ public class BuildScript
     static AssetBundleBuild? CreateAssetBundleBuild(string assetDir, string assetBundleName, List<string> excludes, bool rebuild = false)
     {
         var ab = new AssetBundleBuild();
-        ab.assetBundleName = assetBundleName + BundlePostfix;
+        ab.assetBundleName = assetBundleName + BundleConfig.BundlePostfix;
 
         // 如果上次打包以来为更新过此 bundle 未编辑过则跳过
         long newWriteTime = 0;
@@ -484,7 +483,7 @@ public class BuildScript
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundle(BundleConfig.ABResourceRoot + i, i, buildTarget);
+                BuildBundle(BundleConfig.ABResRoot + i, i, buildTarget);
             }
         }
         finally
@@ -507,7 +506,7 @@ public class BuildScript
             foreach(var StreamSceneDir in BundleConfig.Instance().ABSceneRoots)
             {
                 float count = 0;
-                var files = Directory.GetFiles(BundleConfig.ABResourceRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(BundleConfig.ABResRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
                     var f = UPath.go(i);

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -12,10 +13,15 @@ public static class AssetExtern
 {
     public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
     {
-        var asset = bundle.LoadAsset<T>(BundleConfig.ABResourceRoot + subPath);
+        var asset = bundle.LoadAsset<T>(BundleConfig.ABResRoot + subPath);
         AppLog.d(subPath);
         return asset;
     }
+
+    //public static T GetScriptableObject<T>(this WWW www) where T : UnityEngine.Object
+    //{
+    //}
+
 
     public static T GetXml<T>(this AssetBundle bundle, string path)
     {
@@ -183,7 +189,21 @@ public static class UPath
 }
 
 [LuaCallCSharp]
-public class BundleSys : SingletonMB<BundleSys>
+public class DataObject : UnityEngine.Object
+{
+    public byte[] Data { get; protected set; }
+    public DataObject(byte[] data)
+    {
+        Data = data;
+    }
+    public override string ToString()
+    {
+        return "DataObject:" + base.ToString();
+    }
+}
+
+[LuaCallCSharp]
+public class AssetHelper : SingletonMB<AssetHelper>
 {
 
     static string mCacheRoot = "";
@@ -263,7 +283,7 @@ public class BundleSys : SingletonMB<BundleSys>
     }
 
     [CSharpCallLua]
-    public delegate void BundleCallback(UnityEngine.Object BundleMB);
+    public delegate void AssetCallback<T>(T obj) where T: UnityEngine.Object;
     Dictionary<string/*rootName*/, AssetBundleMB> mLoadedBundles = new Dictionary<string,AssetBundleMB>();
 
     public bool SysEnter()
@@ -281,103 +301,136 @@ public class BundleSys : SingletonMB<BundleSys>
     }
 
     /// <summary>
-    /// 以加载后的 AudioClip 为参数调用 callBack
-    /// </summary>
-    public IEnumerator GetAudio(string bundleName, BundleCallback callBack = null, string resSubPath = null)
-    {
-#if !UNITY_EDITOR
-        yield return GetBundle(bundleName, callBack, resSubPath);
-#else
-        if(ProjectConfig.Instance.UseBundle)
-            yield return GetBundle(bundleName, callBack, resSubPath);
-        else
-        {
-            //FIXME: remove this
-            //yield break;
-
-            var assetName = "ABResources/" + "Audio" + "/" + resSubPath;
-            var fileUrl = "file://" + Application.dataPath + "/" + assetName;
-            Debug.Log(fileUrl);
-
-            yield return Www(fileUrl, (WWW www) =>
-            {
-                if(string.IsNullOrEmpty(www.error))
-                {
-                    var clip = WWWAudioExtensions.GetAudioClip(www);
-                    if(callBack != null)
-                        callBack(clip);
-
-                }
-                else
-                {
-                    Debug.LogError(fileUrl + ": " + www.error);
-                }
-            });
-        }
-#endif
-    }
-
-    /// <summary>
     /// 开启新协程执行, Lua 中不使用协程需要用这类方式调用
     /// </summary>
-    public void GetBundleCo(string bundleName, BundleCallback callBack = null, string resSubPath = null)
+    public void GetBundleCo(string assetSubPath, AssetCallback<UnityEngine.Object> callBack = null)
     {
-        StartCoroutine(GetBundle(bundleName, callBack, resSubPath));
+        StartCoroutine(GetAsset(assetSubPath, callBack));
+    }
+
+    public T GetLoadedAsset<T>(string assetSubPath) where T : UnityEngine.Object
+    {
+        var trim = new char[] { ' ', '.', '/' };
+        assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
+        var dirs = assetSubPath.Split('/');
+        string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
+        var bundle = GetLoadedBundle(bundleName);
+        T asset = null;
+        if(bundle != null)
+        {
+            asset = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
+        }
+        if(asset == null)
+        {
+            AppLog.w("[{0}/{1}] not exist.", bundleName, assetSubPath);
+        }
+        return asset;
     }
 
     /// <summary>
     /// 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundleName, BundleCallback callBack = null, string resSubPath = null)
+    public IEnumerator GetAsset(string assetSubPath, AssetCallback<UnityEngine.Object> callBack = null)
     {
-        // 从 AssetBundle 加载
-        //if(CGameRoot.Instance.UseBundle)
+        yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
+    }
+
+    public IEnumerator GetAsset<T>(string assetSubPath, AssetCallback<T> callBack = null) where T : UnityEngine.Object
+    {
+        UnityEngine.Object resObj = null;
+#if UNITY_EDITOR
+        if(ProjectConfig.Instance.UseBundle)
+#endif
         {
-            UnityEngine.Object resObj = null;
-            yield return _GetBundle(bundleName, (UnityEngine.Object bundle) =>
+            var trim = new char[] { ' ', '.', '/' };
+            //assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
+            var dirs = assetSubPath.Split('/');
+            string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
+            yield return GetBundle(bundleName, (bundle) =>
             {
-                if(!string.IsNullOrEmpty(resSubPath))
-                    resObj = (bundle as AssetBundle).LoadAsset(BundleConfig.ABResourceRoot + resSubPath);
+                // text
+                var textPath = assetSubPath;
+                if(textPath.IsText())
+                {
+                    if(textPath.EndsWith(".lua"))
+                        textPath += ".txt";
+                    var textAsset = bundle.LoadAsset<TextAsset>(BundleConfig.ABResRoot + textPath);
+                    resObj = new DataObject(textAsset.bytes);
+                    AppLog.d("{0}={2}={1}", textPath, textAsset.text, resObj);
+                }
                 else
-                    resObj = bundle as AssetBundle;
+                {
+                    resObj = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
+                }
             });
-            if(callBack != null)
-                callBack(resObj);
-            Debug.Log("<Color=green>from bundle: " + resSubPath + "</Color>");
+            AppLog.d("<Color=green>from bundle: " + assetSubPath + "</Color>");
         }
+#if UNITY_EDITOR
+        // 编辑器从原始文件加载资源
+        else
+        {
+            // text
+            if(assetSubPath.IsText())
+            {
+                resObj = new DataObject(File.ReadAllBytes(BundleConfig.ABResRoot + assetSubPath));
+                //resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(BundleConfig.ABResRoot + assetSubPath);
+            }
+            else
+            {
+                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BundleConfig.ABResRoot + assetSubPath);
+            }
+            AppLog.d("<Color=green>from asset file: " + assetSubPath + "</Color>");
+        }
+#endif
+        if(callBack != null)
+            callBack((T)resObj);
+    }
+
+    public AssetBundle GetLoadedBundle(string bundlePath)
+    {
+        if(string.IsNullOrEmpty(bundlePath))
+        {
+            AppLog.e("bundlePath [{0}] not correct.", bundlePath);
+            return null;
+        }
+        AssetBundleMB bundleMB = null;
+        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
+
+        if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
+        {
+            return null;
+        }
+
+        if(bundleMB.Bundles.ContainsKey(bundlePath))
+        {
+            return bundleMB.Bundles[bundlePath];
+        }
+        return null;
     }
 
     /// <summary>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    IEnumerator _GetBundle(string bundlePath, BundleCallback callBack = null)
+    public IEnumerator GetBundle(string bundlePath, AssetCallback<UnityEngine.AssetBundle> callBack = null)
     {
-        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
-        string bundleName = bundlePath;
-        if(string.IsNullOrEmpty(rootName) || string.IsNullOrEmpty(bundleName))
+        var bundle = GetLoadedBundle(bundlePath);
+        if(bundle != null)
         {
+            if(callBack != null)
+                callBack(bundle);
             yield break;
         }
 
+        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
         AssetBundleMB bundleMB = null;
         if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
         {
-             bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
+            bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
         }
-
-        if(bundleMB.Bundles.ContainsKey(bundleName))
-        {
-            if(callBack != null)
-                callBack(bundleMB.Bundles[bundleName]);
-            yield break;
-        }
-
-        if(string.IsNullOrEmpty(bundleName))
-            yield break;
 
         var version = ProjectConfig.Instance.Version.ToString();
-        var subPath = bundleName;
+        var subPath = bundlePath;
 #if UNITY_EDITOR
         var cachePath = CacheRoot + "/" + version + "/" + subPath;
 #else
@@ -386,13 +439,12 @@ public class BundleSys : SingletonMB<BundleSys>
         var fileUrl = "file://" + cachePath;
         var isLocal = true;
         if(!File.Exists(cachePath)
-            //|| UpdateSys.Instance.NeedUpdate(subPath)
+        //|| UpdateSys.Instance.NeedUpdate(subPath)
         )
         {
             isLocal = false;
             fileUrl = HttpRoot + "/" + version + "/" + subPath + BundleConfig.CompressedExtension;
         }
-        Debug.Log(fileUrl);
 
         yield return Www(fileUrl, (WWW www) =>
         {
@@ -400,7 +452,7 @@ public class BundleSys : SingletonMB<BundleSys>
             {
                 if(isLocal)
                 {
-                    bundleMB.Bundles[bundleName] = www.assetBundle;
+                    bundleMB.Bundles[bundlePath] = www.assetBundle;
                 }
                 else
                 {
@@ -409,7 +461,7 @@ public class BundleSys : SingletonMB<BundleSys>
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
-                    bundleMB.Bundles[bundleName] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
+                    bundleMB.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
                     AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
                     //UpdateSys.Instance.Updated(subPath);
@@ -424,16 +476,16 @@ public class BundleSys : SingletonMB<BundleSys>
         // Dependencies
         if(bundleMB.Manifest != null)
         {
-            var deps = bundleMB.Manifest.GetAllDependencies(bundleName);
+            var deps = bundleMB.Manifest.GetAllDependencies(bundlePath);
             foreach(var i in deps)
             {
-                Debug.Log("Dependencies: " + i);
-                yield return _GetBundle(i);
+                AppLog.d("Dependencies: " + i);
+                yield return GetBundle(i);
             }
         }
 
         if(callBack != null)
-            callBack(bundleMB.Bundles[bundleName]);
+            callBack(bundleMB.Bundles[bundlePath]);
 
         yield return null;
     }

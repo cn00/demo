@@ -22,9 +22,9 @@ public class UpdateSys : SingletonMB<UpdateSys>
         {
 #if UNITY_EDITOR
             var version = ProjectConfig.Instance.Version.ToString();
-            return BundleSys.CacheRoot + version + "/md5.xml";
+            return AssetHelper.CacheRoot + version + "/md5.xml";
 #else
-            return BundleSys.CacheRoot + "/md5.xml";
+            return AssetHelper.CacheRoot + "/md5.xml";
 #endif
         }
     }
@@ -57,13 +57,13 @@ public class UpdateSys : SingletonMB<UpdateSys>
 
     public IEnumerator GetLocalVersion()
     {
-        var cacheUrl = BundleSys.CacheRoot + "/resversion.txt";
+        var cacheUrl = AssetHelper.CacheRoot + "/resversion.txt";
         var localVersionUrl = "file://" + cacheUrl;
         Debug.Log(localVersionUrl);
 
         if(File.Exists(cacheUrl))
         {
-            yield return BundleSys.Www(localVersionUrl, (WWW www) =>
+            yield return AssetHelper.Www(localVersionUrl, (WWW www) =>
             {
                 if(string.IsNullOrEmpty(www.error))
                 {
@@ -84,9 +84,9 @@ public class UpdateSys : SingletonMB<UpdateSys>
 
     public IEnumerator GetRemoteVersion()
     {
-        var remoteVersionUrl = BundleSys.HttpRoot + "/resversion.txt";
+        var remoteVersionUrl = AssetHelper.HttpRoot + "/resversion.txt";
         Debug.Log(remoteVersionUrl);
-        yield return BundleSys.Www(remoteVersionUrl, (WWW www) =>
+        yield return AssetHelper.Www(remoteVersionUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
@@ -111,7 +111,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
         {
             yield break;
         }
-        yield return BundleSys.Www(localMd5Url, (WWW www) =>
+        yield return AssetHelper.Www(localMd5Url, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
@@ -129,10 +129,10 @@ public class UpdateSys : SingletonMB<UpdateSys>
     public IEnumerator GetRemoteMd5List()
     {
         var cachePath = mLocalMd5Path;
-        var remoteMd5Url = BundleSys.HttpRoot + "/" + RemoteVersion + "/md5.xml" + BundleConfig.CompressedExtension;
+        var remoteMd5Url = AssetHelper.HttpRoot + "/" + RemoteVersion + "/md5.xml" + BundleConfig.CompressedExtension;
 
         byte[] bytes = null;
-        yield return BundleSys.Www(remoteMd5Url, (WWW www) =>
+        yield return AssetHelper.Www(remoteMd5Url, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
@@ -145,7 +145,7 @@ public class UpdateSys : SingletonMB<UpdateSys>
         });
         MemoryStream outStream = new MemoryStream();
         BundleHelper.DecompressFileLZMA(new MemoryStream(bytes), outStream);
-        BundleSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
+        AssetHelper.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
         mRemoteMd5 = YamlHelper.Deserialize<Md5SchemeDic>(outStream.ToString());
 
@@ -162,22 +162,22 @@ public class UpdateSys : SingletonMB<UpdateSys>
         {
             var subPath = i.Value.fname;
 #if UNITY_EDITOR
-            var cachePath = BundleSys.CacheRoot + "/" + RemoteVersion + "/" + subPath;
+            var cachePath = AssetHelper.CacheRoot + "/" + RemoteVersion + "/" + subPath;
 #else
-        var cachePath = BundleSys.CacheRoot + "/" + subPath;
+        var cachePath = AssetHelper.CacheRoot + "/" + subPath;
 #endif
-            var diffFileUrl = BundleSys.HttpRoot + "/" +  RemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
+            var diffFileUrl = AssetHelper.HttpRoot + "/" +  RemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
             Debug.Log(diffFileUrl);
 
-            //yield return BundleSys.Www(fileUrl, (WWW www) =>
-            StartCoroutine(BundleSys.Www(diffFileUrl, (WWW www) =>
+            //yield return AssetHelper.Www(fileUrl, (WWW www) =>
+            StartCoroutine(AssetHelper.Www(diffFileUrl, (WWW www) =>
             {
                 if(string.IsNullOrEmpty(www.error))
                 {
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
-                    BundleSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
+                    AssetHelper.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
                     ++count;
                     if(count == mDiffList.Count)
                         mAllDownloadOK = true;
@@ -227,10 +227,10 @@ public class UpdateSys : SingletonMB<UpdateSys>
             ProjectConfig.Instance.Version = RemoteVersion;
 
             // 更新完成后保存
-            var cacheUrl = BundleSys.CacheRoot + "/resversion.txt";
+            var cacheUrl = AssetHelper.CacheRoot + "/resversion.txt";
             var strRemoteVersion = RemoteVersion.ToString();
             byte[] bytes = System.Text.Encoding.Default.GetBytes(strRemoteVersion);
-            BundleSys.AsyncSave(cacheUrl, bytes, bytes.Length);
+            AssetHelper.AsyncSave(cacheUrl, bytes, bytes.Length);
         }
         //else
         //{

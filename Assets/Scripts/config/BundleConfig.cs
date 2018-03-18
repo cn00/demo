@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System;
+using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,6 +26,35 @@ public enum ESceneRoot
     Level,
 }
 
+public static class PathExtension
+{
+    public static bool IsImage(this string self)
+    {
+        var matches = Regex.Matches(self, BundleConfig.ImagesRegex);
+        return matches.Count > 0;
+    }
+    public static bool IsAudio(this string self)
+    {
+        var matches = Regex.Matches(self, BundleConfig.AudiosRegex);
+        return matches.Count > 0;
+    }
+    public static bool IsVideo(this string self)
+    {
+        var matches = Regex.Matches(self, BundleConfig.VideosRegex);
+        return matches.Count > 0;
+    }
+    public static bool IsObject(this string self)
+    {
+        var matches = Regex.Matches(self, BundleConfig.ObjectRegex);
+        return matches.Count > 0;
+    }
+    public static bool IsText(this string self)
+    {
+        var matches = Regex.Matches(self, BundleConfig.TextRegex);
+        return matches.Count > 0;
+    }
+}
+
 
 /// <summary>
 /// Assets/ABResources 下需要打包的资源目录配置
@@ -33,8 +63,14 @@ public enum ESceneRoot
 public class BundleConfig : ScriptableObject
 {
     public const string AssetBundleRoot = "AssetBundle/";
-    public const string ABResourceRoot = "Assets/ABResources/";
-    public const string BundleConfigAssetPath = ABResourceRoot + "common/config/BundleConfig.asset";
+    public const string ABResRoot = "Assets/ABResources/";
+    public const string BundleConfigAssetPath = ABResRoot + "common/config/BundleConfig.asset";
+
+    public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
+    public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
+    public const string VideosRegex = "(.mov$|.mpg$|.mp4$|.avi$|.asf$|.mpeg$)";
+    public const string ObjectRegex = "(.asset$|.prefab$)";
+    public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
 
     [Serializable]
     public class DirCfg
@@ -46,6 +82,7 @@ public class BundleConfig : ScriptableObject
     [HideInInspector, SerializeField]
     public DirCfg[] mDirs = new DirCfg[0];
 
+    public const string BundlePostfix = ".bd";
     public const string CompressedExtension = ".lzma";
 
     public List<string> ABResGroups
@@ -142,7 +179,7 @@ public class BundleConfigExtension : Editor
             mDirs[i.dir] = i;
         }
         var dirs = new Dictionary<string, BundleConfig.DirCfg>();
-        foreach(var i in Directory.GetDirectories(BundleConfig.ABResourceRoot, "*", SearchOption.TopDirectoryOnly))
+        foreach(var i in Directory.GetDirectories(BundleConfig.ABResRoot, "*", SearchOption.TopDirectoryOnly))
         {
             bool include = false;
             bool rebuild = false;
@@ -209,7 +246,7 @@ public class BundleConfigExtension : Editor
         foreach(var i in mDirs)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResourceRoot, "  "), guiOpts);
+            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResRoot, "  "), guiOpts);
             mDirs[i.Key].include = EditorGUILayout.Toggle("", i.Value.include, guiOpts);
             mDirs[i.Key].rebuild = EditorGUILayout.Toggle("", i.Value.rebuild, guiOpts);
             EditorGUILayout.EndHorizontal();
@@ -222,10 +259,7 @@ public class BundleConfigExtension : Editor
         }
         if(GUI.Button(rect.Split(1, 4), "BAndroid"))
         {
-            foreach(var i in mDirs.Where(ii => ii.Value.include))
-            {
-                BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResourceRoot, ""), BuildTarget.Android, i.Value.rebuild);
-            }
+            Build();
         }
         //if(GUI.Button(rect.Split(2, 4), "Clean Build"))
         //{
@@ -238,6 +272,14 @@ public class BundleConfigExtension : Editor
             EditorUtility.SetDirty(mBehavior);
             //AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+    }
+
+    void Build()
+    {
+        foreach(var i in mDirs.Where(ii => ii.Value.include))
+        {
+            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResRoot, ""), BuildTarget.Android, i.Value.rebuild);
         }
     }
 }

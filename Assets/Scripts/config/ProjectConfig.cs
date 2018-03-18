@@ -63,7 +63,7 @@ public class ProjectConfig : ScriptableObject
     public string LuaExtension = ".lua";
     #endregion property
 
-    public const string ProjectConfigPath = BundleConfig.ABResourceRoot + "common/config/ProjectConfig.asset";
+    public const string ProjectConfigPath = BundleConfig.ABResRoot + "common/config/ProjectConfig.asset";
 
     static ProjectConfig mInstance = null;
 
@@ -110,10 +110,10 @@ public class ProjectConfig : ScriptableObject
         {
             //mInstance;
 
-            BundleSys.Instance.GetBundleCo(ProjectConfigPath + ".bd", asset =>
+            AssetHelper.Instance.GetBundleCo(ProjectConfigPath, asset =>
             {
                 mInstance = asset as ProjectConfig;
-            }, ProjectConfigPath);
+            });
 
             if(mInstance == null)
             {

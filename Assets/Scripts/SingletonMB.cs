@@ -38,7 +38,6 @@ public class SingletonMB<T> : MonoBehaviour where T: MonoBehaviour
     private void Awake()
     {
         Inited = false;
-        StartCoroutine(Init());
     }
 
     public bool Inited

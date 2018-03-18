@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using XLua;
 using System;
+using System.Text;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -18,15 +19,7 @@ using UnityEditor;
 
 public static class GameObjectExtension
 {
-    public static void SetLuaAb(this GameObject self, AssetBundle ab)
-    {
-        var ins = GameObject.Instantiate(self);
-        var luambs = ins.GetComponentsInChildren<LuaMonoBehaviour>();
-        foreach(var i in luambs)
-        {
-            i.SetAB(ab);
-        }
-    }
+
 }
 
 [LuaCallCSharp]
@@ -48,27 +41,18 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private LuaTable luaTable;
 
-    public AssetBundle Bundle { get; protected set; }
-    public bool SetAB(AssetBundle bundle)
+    public bool Inited { get; protected set; }
+    IEnumerator Init()
     {
-        Bundle = bundle;
-        return true;
-    }
+        Inited = false;
+        byte[] textBytes = null;
 
-    void Awake()
-    {
-
-        //if(luaAwake != null)
-        //{
-        //    luaAwake();
-        //}
-    }
-
-    // Use this for initialization
-    void Start()
-    {
+        var luaPath = luaScript.path;
+        yield return AssetHelper.Instance.GetAsset<DataObject>(luaPath, asset => {
+            textBytes = asset.Data;
+        });
         var luaInstance = LuaSingleton.Instance;
-        luaTable = luaInstance.GetLuaTable(luaScript.path, this, "LuaMonoBehaviour");
+        luaTable = luaInstance.GetLuaTable(textBytes, this, "LuaMonoBehaviour");
 
         Action luaAwake = luaTable.Get<Action>("awake");
         luaTable.Get("Start", out luaStart);
@@ -77,15 +61,32 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
+        if(luaAwake != null)
+        {
+            luaAwake();
+        }
         if(luaStart != null)
         {
             luaStart();
         }
+
+        Inited = true;
+        yield return null;
+    }
+
+    void Awake()
+    {
+        StartCoroutine(Init());
+    }
+
+    // Use this for initialization
+    void Start()
+    {
     }
 
     private void FixedUpdate()
     {
-        if(luaFixedUpdate != null)
+        if(!Inited && luaFixedUpdate != null)
         {
             luaFixedUpdate();
         }
@@ -99,7 +100,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(luaUpdate != null)
+        if(!Inited && luaUpdate != null)
         {
             luaUpdate();
         }
@@ -112,7 +113,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(luaLateUpdate != null)
+        if(!Inited && luaLateUpdate != null)
         {
             luaLateUpdate();
         }
@@ -120,7 +121,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void OnDestroy()
     {
-        if(luaOnDestroy != null)
+        if(!Inited && luaOnDestroy != null)
         {
             luaOnDestroy();
         }

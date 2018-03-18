@@ -1,3 +1,3 @@
 Lua_Table = _G["Lua_Table"] or {}
 
-require "utility.BridgingClass"
+require "lua.utility.BridgingClass"

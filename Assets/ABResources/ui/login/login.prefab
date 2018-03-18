@@ -72,6 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4296630443335492}
   - component: {fileID: 114405189668645924}
+  - component: {fileID: 111303667848293604}
   m_Layer: 0
   m_Name: login
   m_TagString: Untagged
@@ -163,6 +164,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!111 &111303667848293604
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1636341453899542}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 1603431622aee0748a5d4782509ce8e8, type: 2}
+  m_Animations:
+  - {fileID: 0}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114131625601807630
 MonoBehaviour:
   m_ObjectHideFlags: 1

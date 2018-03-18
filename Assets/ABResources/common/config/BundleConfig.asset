@@ -14,12 +14,12 @@ MonoBehaviour:
   mDirs:
   - dir: Assets/ABResources/common
     include: 1
-    rebuild: 0
+    rebuild: 1
   - dir: Assets/ABResources/lua
-    include: 0
-    rebuild: 0
+    include: 1
+    rebuild: 1
   - dir: Assets/ABResources/ui
     include: 1
-    rebuild: 0
+    rebuild: 1
   ABSceneRoots:
   - Scene

@@ -18,6 +18,13 @@
 
 * 每一个分类目录下的子目录作为一个 `AssetBundle`
 
+* 每个资源可通过 `ABResources` 后两段目录定位所在包, 
+```
+例如: `ABResources/pathTo/bundle/subPath/asset.xxx`
+可通过截取前两段目录获得包路径: pathTo/bundle.bd
+然后通过全路径 LoadAsset 获取资源
+```
+
 * 每一个 `AssetBundle` 尽可能减少依赖, 公共资源放在每个根目录下的 `Common` 文件夹下
 
 * 关卡场景 `StreamingScene` 和 关卡 Xml 数据导出目录为 `Assets/ABResources/Level` 
