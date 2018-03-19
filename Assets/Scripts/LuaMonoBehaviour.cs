@@ -39,7 +39,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaLateUpdate;
     private Action luaOnDestroy;
 
-    private LuaTable luaTable;
+    private LuaTable luaTable = null;
 
     public bool Inited { get; protected set; }
     IEnumerator Init()
@@ -125,10 +125,10 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaOnDestroy();
         }
+        luaTable.Dispose();
         luaOnDestroy = null;
         luaUpdate = null;
         luaStart = null;
-        luaTable.Dispose();
         injections = null;
     }
 }

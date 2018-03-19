@@ -308,13 +308,16 @@ public class AssetHelper : SingletonMB<AssetHelper>
         StartCoroutine(GetAsset(assetSubPath, callBack));
     }
 
-    public T GetLoadedAsset<T>(string assetSubPath) where T : UnityEngine.Object
+    /// <summary>
+    /// 同步方式加载资源, 用于加载少量小型资源
+    /// </summary>
+    public T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
     {
         var trim = new char[] { ' ', '.', '/' };
         assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
         var dirs = assetSubPath.Split('/');
         string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
-        var bundle = GetLoadedBundle(bundleName);
+        var bundle = GetBundleSync(bundleName);
         T asset = null;
         if(bundle != null)
         {
@@ -328,7 +331,7 @@ public class AssetHelper : SingletonMB<AssetHelper>
     }
 
     /// <summary>
-    /// 以加载后的 (Object)res 为参数调用 callBack 
+    /// 异步方式加载资源, 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
     public IEnumerator GetAsset(string assetSubPath, AssetCallback<UnityEngine.Object> callBack = null)
     {
@@ -356,14 +359,13 @@ public class AssetHelper : SingletonMB<AssetHelper>
                         textPath += ".txt";
                     var textAsset = bundle.LoadAsset<TextAsset>(BundleConfig.ABResRoot + textPath);
                     resObj = new DataObject(textAsset.bytes);
-                    AppLog.d("{0}={2}={1}", textPath, textAsset.text, resObj);
                 }
                 else
                 {
                     resObj = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
                 }
             });
-            AppLog.d("<Color=green>from bundle: " + assetSubPath + "</Color>");
+            AppLog.d("from <Color=yellow>bundle</Color>: " + assetSubPath);
         }
 #if UNITY_EDITOR
         // 编辑器从原始文件加载资源
@@ -373,39 +375,44 @@ public class AssetHelper : SingletonMB<AssetHelper>
             if(assetSubPath.IsText())
             {
                 resObj = new DataObject(File.ReadAllBytes(BundleConfig.ABResRoot + assetSubPath));
-                //resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(BundleConfig.ABResRoot + assetSubPath);
             }
             else
             {
                 resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BundleConfig.ABResRoot + assetSubPath);
             }
-            AppLog.d("<Color=green>from asset file: " + assetSubPath + "</Color>");
+            AppLog.d("from <Color=green>file</Color>: " + assetSubPath);
         }
 #endif
         if(callBack != null)
             callBack((T)resObj);
     }
 
-    public AssetBundle GetLoadedBundle(string bundlePath)
+    public AssetBundle GetBundleSync(string bundlePath)
     {
         if(string.IsNullOrEmpty(bundlePath))
         {
             AppLog.e("bundlePath [{0}] not correct.", bundlePath);
             return null;
         }
-        AssetBundleMB bundleMB = null;
-        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
 
+        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
+        AssetBundleMB bundleMB = null;
         if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
         {
-            return null;
+            bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
         }
 
+        AssetBundle bundle = null;
         if(bundleMB.Bundles.ContainsKey(bundlePath))
         {
-            return bundleMB.Bundles[bundlePath];
+            bundle = bundleMB.Bundles[bundlePath];
         }
-        return null;
+        else
+        {
+            bundle = AssetBundle.LoadFromFile(bundlePath);
+            bundleMB.Bundles[bundlePath] = bundle;
+        }
+        return bundle;
     }
 
     /// <summary>
@@ -414,7 +421,7 @@ public class AssetHelper : SingletonMB<AssetHelper>
     /// </summary>
     public IEnumerator GetBundle(string bundlePath, AssetCallback<UnityEngine.AssetBundle> callBack = null)
     {
-        var bundle = GetLoadedBundle(bundlePath);
+        var bundle = GetBundleSync(bundlePath);
         if(bundle != null)
         {
             if(callBack != null)

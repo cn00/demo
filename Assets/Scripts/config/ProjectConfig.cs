@@ -108,12 +108,7 @@ public class ProjectConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            //mInstance;
-
-            AssetHelper.Instance.GetBundleCo(ProjectConfigPath, asset =>
-            {
-                mInstance = asset as ProjectConfig;
-            });
+            mInstance = AssetHelper.Instance.GetAssetSync<ProjectConfig>(ProjectConfigPath);
 
             if(mInstance == null)
             {

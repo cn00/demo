@@ -49,7 +49,7 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
         if(ProjectConfig.Instance.UseBundle)
 #endif
         {
-            var data = AssetHelper.Instance.GetLoadedAsset<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
+            var data = AssetHelper.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
             bytes = data.bytes;
         }
 #if UNITY_EDITOR
@@ -59,7 +59,7 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
             bytes = File.ReadAllBytes(assetName);
         }
 #endif
-        AppLog.d("<Color=green>lua: " + filename + "</Color>{0}", bytes);
+        AppLog.d("<Color=green>LuaLoader: " + filename + "</Color> {0}", bytes);
         return bytes;
     }
 
@@ -105,7 +105,6 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
         }
 
         var table = luaEnv.DoString(Encoding.UTF8.GetString(textBytes), name, env);
-        //env.Dispose();
         if(table != null && table.Length > 0)
         {
             var luaTable = table[0] as LuaTable;

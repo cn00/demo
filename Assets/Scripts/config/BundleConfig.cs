@@ -132,7 +132,7 @@ public class BundleConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            mInstance = AssetBundle.LoadFromFile(BundleConfigAssetPath + ".bd").LoadAsset<BundleConfig>(BundleConfigAssetPath);
+            mInstance = AssetHelper.Instance.GetAssetSync<BundleConfig>(BundleConfigAssetPath);
             if(mInstance == null)
             {
                 mInstance = new BundleConfig();
