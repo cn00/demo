@@ -12,6 +12,15 @@
 
 #### 资源打包目录说明
 
+* 总揽:
+```
+ABResources
+├── 分类目录
+│   ├── AssetBundle 目录
+│   │   ├── 内容(文件或文件夹)
+... ... ...
+```
+
 * `ABResources` 目录为 `AssetBundle` 打包源目录
 
 * 其下每一个子文件夹为一个 `AssetBundle` 分类目录
@@ -32,15 +41,6 @@
 * `PreDownload` 文件夹下的资源打成 `AssetBundle` 后将预先更新下载, 其他目录将在首次加载时更新下载
 
 * 资源服务器地址在 `BundleSys.HttpRoot`, 检查更新将拉取此地址资源
-
-* 总揽:
-```
-ABResources
-├── 分类根目录
-│   ├── AssetBundle 目录
-│   │   ├── 内容(文件或文件夹)
-... ... ...
-```
 
 * 示例:
 ```

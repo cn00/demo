@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class AppBoot : SingletonMB<AppBoot>
+public class AppBoot : SingleMono<AppBoot>
 {
 
     // Use this for initialization
     public override IEnumerator Init()
     {
-        yield return LuaSingleton.Instance.Init();
+        yield return LuaHelper.Instance.Init();
 
         GameObject obj = null;
+        AppLog.d("AppBoot.Start {0}", obj);
         yield return AssetHelper.Instance.GetAsset("ui/login/login.prefab", (asset => {
            obj = asset as GameObject;
         }));

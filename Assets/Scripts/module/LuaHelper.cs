@@ -9,7 +9,7 @@ using XLua;
 using UnityEditor;
 #endif
 
-public class LuaSingleton : SingletonMB<LuaSingleton>
+public class LuaHelper : SingleMono<LuaHelper>
 {
     //all lua behaviour shared one luaenv only!
     internal LuaEnv luaEnv = new LuaEnv();
@@ -27,7 +27,7 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
         luaTable.SetMetaTable(meta);
         meta.Dispose();
 
-        luaTable.Set("self", lb);
+        luaTable.Set("mono", lb);
         foreach(var injection in lb.injections)
         {
             luaTable.Set(injection.name, injection);
@@ -59,7 +59,7 @@ public class LuaSingleton : SingletonMB<LuaSingleton>
             bytes = File.ReadAllBytes(assetName);
         }
 #endif
-        AppLog.d("<Color=green>LuaLoader: " + filename + "</Color> {0}", bytes);
+        AppLog.d("<Color=green>LuaLoader: " + filename + "</Color>");
         return bytes;
     }
 

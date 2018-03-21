@@ -9,7 +9,7 @@
 local t = {
 
 	Start = function ()
-		print("lua t.start..."..self.transform.position:ToString())
+		print("lua t.start ... " .. mono.transform.position:ToString())
 
 		Button:GetComponent("Button").onClick:AddListener(function()
 			print("clicked, you input is '" .. InputField:GetComponent("InputField").text .."'")
@@ -17,6 +17,10 @@ local t = {
 	end,
 
 }
+
+function t.Update()
+	print("lua t.Update ... ")
+end
 
 print("LuaMonoBehaiour.t")
 

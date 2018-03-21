@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
@@ -17,11 +18,6 @@ public static class AssetExtern
         AppLog.d(subPath);
         return asset;
     }
-
-    //public static T GetScriptableObject<T>(this WWW www) where T : UnityEngine.Object
-    //{
-    //}
-
 
     public static T GetXml<T>(this AssetBundle bundle, string path)
     {
@@ -172,23 +168,6 @@ public static class BundleHelper
 
 }
 
-public static class UPath
-{
-    public static string upath(this string self)
-    {
-        return self.Trim()
-            .Replace("\\", "/")
-            .Replace("//", "/");
-    }
-    public static string go(string path)
-    {
-        return path.Trim()
-            .Replace("\\", "/")
-            .Replace("//", "/");
-    }
-}
-
-[LuaCallCSharp]
 public class DataObject : UnityEngine.Object
 {
     public byte[] Data { get; protected set; }
@@ -198,14 +177,13 @@ public class DataObject : UnityEngine.Object
     }
     public override string ToString()
     {
-        return "DataObject:" + base.ToString();
+        return Encoding.UTF8.GetString(Data);
     }
 }
 
 [LuaCallCSharp]
-public class AssetHelper : SingletonMB<AssetHelper>
+public class AssetHelper : SingleMono<AssetHelper>
 {
-
     static string mCacheRoot = "";
     public static string CacheRoot
     {
@@ -276,15 +254,19 @@ public class AssetHelper : SingletonMB<AssetHelper>
         }
     }
 
-    public class AssetBundleMB
+    public class BundleGroup
     {
         public AssetBundleManifest Manifest = null;
         public Dictionary<string, AssetBundle> Bundles = new Dictionary<string, AssetBundle>();
+        public bool CleanGroup()
+        {
+            return true;
+        }
     }
 
     [CSharpCallLua]
     public delegate void AssetCallback<T>(T obj) where T: UnityEngine.Object;
-    Dictionary<string/*rootName*/, AssetBundleMB> mLoadedBundles = new Dictionary<string,AssetBundleMB>();
+    Dictionary<string/*rootName*/, BundleGroup> mLoadedBundles = new Dictionary<string,BundleGroup>();
 
     public bool SysEnter()
     {
@@ -348,6 +330,15 @@ public class AssetHelper : SingletonMB<AssetHelper>
             var trim = new char[] { ' ', '.', '/' };
             //assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
             var dirs = assetSubPath.Split('/');
+
+            string manifestBundleName = dirs[0] + '/' + dirs[0];
+            yield return GetBundle(manifestBundleName, (bundle) =>
+            {
+                var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                mLoadedBundles[dirs[0]].Manifest = manifext;
+            });
+            AppLog.d("load <Color=red>manifest</Color>: " + manifestBundleName);
+
             string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
             yield return GetBundle(bundleName, (bundle) =>
             {
@@ -365,7 +356,7 @@ public class AssetHelper : SingletonMB<AssetHelper>
                     resObj = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
                 }
             });
-            AppLog.d("from <Color=yellow>bundle</Color>: " + assetSubPath);
+            AppLog.d("from <Color=green>bundle</Color> : " + assetSubPath);
         }
 #if UNITY_EDITOR
         // 编辑器从原始文件加载资源
@@ -396,21 +387,28 @@ public class AssetHelper : SingletonMB<AssetHelper>
         }
 
         string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
-        AssetBundleMB bundleMB = null;
-        if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
+        BundleGroup bundleGroup = null;
+        if(!mLoadedBundles.TryGetValue(rootName, out bundleGroup))
         {
-            bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
+            bundleGroup = mLoadedBundles[rootName] = new BundleGroup();
         }
 
         AssetBundle bundle = null;
-        if(bundleMB.Bundles.ContainsKey(bundlePath))
+        if(bundleGroup.Bundles.ContainsKey(bundlePath))
         {
-            bundle = bundleMB.Bundles[bundlePath];
+            bundle = bundleGroup.Bundles[bundlePath];
         }
         else
         {
-            bundle = AssetBundle.LoadFromFile(bundlePath);
-            bundleMB.Bundles[bundlePath] = bundle;
+            var version = ProjectConfig.Instance.Version.ToString();
+            var subPath = bundlePath;
+#if UNITY_EDITOR
+            var cachePath = CacheRoot + "/" + version + "/" + subPath;
+#else
+            var cachePath = CacheRoot + "/" + subPath;
+#endif
+            bundle = AssetBundle.LoadFromFile(cachePath);
+            bundleGroup.Bundles[bundlePath] = bundle;
         }
         return bundle;
     }
@@ -419,21 +417,33 @@ public class AssetHelper : SingletonMB<AssetHelper>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundlePath, AssetCallback<UnityEngine.AssetBundle> callBack = null)
+    public IEnumerator GetBundle(string bundleName, AssetCallback<UnityEngine.AssetBundle> callBack = null)
     {
-        var bundle = GetBundleSync(bundlePath);
+        string bundlePath = bundleName;
+        if(string.IsNullOrEmpty(bundlePath))
+        {
+            AppLog.e("bundlePath [{0}] not correct.", bundlePath);
+            yield break;
+        }
+
+        string groupName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
+        BundleGroup bundleGroup = null;
+        if(!mLoadedBundles.TryGetValue(groupName, out bundleGroup))
+        {
+            bundleGroup = mLoadedBundles[groupName] = new BundleGroup();
+        }
+
+        AssetBundle bundle = null;
+        if(bundleGroup.Bundles.ContainsKey(bundlePath))
+        {
+            bundle = bundleGroup.Bundles[bundlePath];
+        }
+
         if(bundle != null)
         {
             if(callBack != null)
                 callBack(bundle);
             yield break;
-        }
-
-        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
-        AssetBundleMB bundleMB = null;
-        if(!mLoadedBundles.TryGetValue(rootName, out bundleMB))
-        {
-            bundleMB = mLoadedBundles[rootName] = new AssetBundleMB();
         }
 
         var version = ProjectConfig.Instance.Version.ToString();
@@ -453,13 +463,14 @@ public class AssetHelper : SingletonMB<AssetHelper>
             fileUrl = HttpRoot + "/" + version + "/" + subPath + BundleConfig.CompressedExtension;
         }
 
+        AppLog.d(fileUrl);
         yield return Www(fileUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
                 if(isLocal)
                 {
-                    bundleMB.Bundles[bundlePath] = www.assetBundle;
+                    bundleGroup.Bundles[bundlePath] = www.assetBundle;
                 }
                 else
                 {
@@ -468,7 +479,7 @@ public class AssetHelper : SingletonMB<AssetHelper>
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
-                    bundleMB.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
+                    bundleGroup.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
                     AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
                     //UpdateSys.Instance.Updated(subPath);
@@ -481,9 +492,9 @@ public class AssetHelper : SingletonMB<AssetHelper>
         });
 
         // Dependencies
-        if(bundleMB.Manifest != null)
+        if(bundleGroup.Manifest != null)
         {
-            var deps = bundleMB.Manifest.GetAllDependencies(bundlePath);
+            var deps = bundleGroup.Manifest.GetAllDependencies(bundlePath);
             foreach(var i in deps)
             {
                 AppLog.d("Dependencies: " + i);
@@ -492,7 +503,7 @@ public class AssetHelper : SingletonMB<AssetHelper>
         }
 
         if(callBack != null)
-            callBack(bundleMB.Bundles[bundlePath]);
+            callBack(bundleGroup.Bundles[bundlePath]);
 
         yield return null;
     }
@@ -505,15 +516,17 @@ public class AssetHelper : SingletonMB<AssetHelper>
         {
             while(!www.isDone && string.IsNullOrEmpty(www.error))
             {
+                //yield return www;
                 if(progressCallback != null)
                 {
                     progressCallback(www.progress);
                     if(DateTime.Now > timeout && www.progress < 0.1f)
                     {
-                        Debug.Log("<Colro=red>timeout: " + url + "</Color>");
+                        AppLog.d("<Colro=red>timeout: " + url + "</Color>");
                         break;
                     }
                 }
+
                 yield return null;
             }
 
@@ -541,6 +554,18 @@ public class AssetHelper : SingletonMB<AssetHelper>
         yield return null;
     }
 
+    // TODO: not correct
+    public static T WwwSync<T>(string url) where T : UnityEngine.Object
+    {
+        WWW www = new WWW(url);
+        while(!www.isDone && string.IsNullOrEmpty(www.error))
+        {
+            Thread.Sleep(1000);
+        }
+        UnityEngine.Object obj = new DataObject(www.bytes);
+        www.Dispose();
+        return (T)obj;
+    }
     /// <summary>
     /// 在新线程中异步保存文件
     /// </summary>

@@ -13,7 +13,7 @@ using Md5SchemeDic = System.Collections.Generic.Dictionary<string, Md5SchemeInfo
 using Md5Scheme = System.Collections.Generic.List<Md5SchemeInfo>;
 
 [LuaCallCSharp]
-public class UpdateSys : SingletonMB<UpdateSys>
+public class UpdateSys : SingleMono<UpdateSys>
 {
 
     string mLocalMd5Path

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using XLua;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -28,6 +29,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     [SerializeField,HideInInspector]
     public LuaAsset luaScript = new LuaAsset();
 
+    [HideInInspector]
     public GameObject[] injections;
 
     internal static float lastGCTime = 0;
@@ -48,10 +50,11 @@ public class LuaMonoBehaviour : MonoBehaviour
         byte[] textBytes = null;
 
         var luaPath = luaScript.path;
-        yield return AssetHelper.Instance.GetAsset<DataObject>(luaPath, asset => {
+        yield return AssetHelper.Instance.GetAsset<DataObject>(luaPath, asset =>
+        {
             textBytes = asset.Data;
         });
-        var luaInstance = LuaSingleton.Instance;
+        var luaInstance = LuaHelper.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, "LuaMonoBehaviour");
 
         Action luaAwake = luaTable.Get<Action>("awake");
@@ -86,7 +89,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!Inited && luaFixedUpdate != null)
+        if(Inited && luaFixedUpdate != null)
         {
             luaFixedUpdate();
         }
@@ -100,20 +103,20 @@ public class LuaMonoBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!Inited && luaUpdate != null)
+        if(Inited && luaUpdate != null)
         {
             luaUpdate();
         }
         if(Time.time - lastGCTime > GCInterval)
         {
-            LuaSingleton.Instance.GlobalEnv.Tick();
+            LuaHelper.Instance.GlobalEnv.Tick();
             lastGCTime = Time.time;
         }
     }
 
     private void LateUpdate()
     {
-        if(!Inited && luaLateUpdate != null)
+        if(Inited && luaLateUpdate != null)
         {
             luaLateUpdate();
         }
@@ -121,7 +124,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void OnDestroy()
     {
-        if(!Inited && luaOnDestroy != null)
+        if(Inited && luaOnDestroy != null)
         {
             luaOnDestroy();
         }
@@ -143,12 +146,48 @@ public class LuaMonoBehaviourEditor : Editor
         mObj = (LuaMonoBehaviour)target;
     }
 
+    static bool mFoldInjections = true;
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+        mObj.luaScript.Asset = EditorGUILayout.ObjectField("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
+
+        var size = mObj.injections.Length;
+        EditorGUILayout.BeginHorizontal();
+        {
+            mFoldInjections = EditorGUILayout.Foldout(mFoldInjections, "Injections", true);
+            size = EditorGUILayout.IntField(size);
+        }
+        EditorGUILayout.EndHorizontal();
+
+        if(size != mObj.injections.Length)
+        {
+            var oldobjs = mObj.injections;
+            mObj.injections = new GameObject[size];
+            var isfx = mObj.injections.IsFixedSize;
+            for(int i = 0; i < Math.Min(size, oldobjs.Length); ++i)
+            {
+                mObj.injections[i] = oldobjs[i];
+            }
+        }
+
+        if(mFoldInjections)
+        {
+            for(var i = 0; i < mObj.injections.Length; ++i)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    mObj.injections[i] = (GameObject)EditorGUILayout.ObjectField(mObj.injections[i], typeof(GameObject), true);
+                    if(mObj.injections[i])
+                    {
+                        mObj.injections[i].name = EditorGUILayout.TextField(mObj.injections[i].name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+        }
         //if(GUI.changed)
         {
-            mObj.luaScript.Asset = EditorGUILayout.ObjectField("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
         }
     }
 }

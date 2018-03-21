@@ -1,28 +1,26 @@
 ﻿
-local LoginHelper = {
+local LoginHelper = {}
 
-	Start = function ()
-        print("LoginHelper.Start")
+function LoginHelper.Start ()
+    print("LoginHelper.Start")
 
-	end,
+end
 
-	FixedUpdate = function ()
+function LoginHelper.FixedUpdate ()
 
-	end,
+end
 
-	Update = function ()
+function LoginHelper.Update ()
 
-	end,
+end
 
-	LateUpdate = function ()
+function LoginHelper.LateUpdate ()
 
-	end,
+end
 
-	OnDestroy = function ()
-        print("LoginHelper.OnDestroy")
+function LoginHelper.OnDestroy ()
+    print("LoginHelper.OnDestroy")
 
-	end,
+end
     
-}
-
 return LoginHelper

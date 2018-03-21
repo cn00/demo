@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SingletonMB<T> : MonoBehaviour where T: MonoBehaviour
+public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
 {
     public static GameObject Global
     {

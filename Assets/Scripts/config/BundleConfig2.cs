@@ -10,75 +10,21 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 #endif
 
-public enum EABRoot
-{
-    PreDownload,
-    Resources,
-    UI,
-    Level,
-    Effect,
-    Lua,
-    Audio,
-    Font,
-}
-public enum ESceneRoot
-{
-    Level,
-}
-
-public static class PathExtension
-{
-    public static string upath(this string self)
-    {
-        return self.Trim()
-            .Replace("\\", "/")
-            .Replace("//", "/");
-    }
-
-    public static bool IsImage(this string self)
-    {
-        var matches = Regex.Matches(self, BundleConfig.ImagesRegex);
-        return matches.Count > 0;
-    }
-    public static bool IsAudio(this string self)
-    {
-        var matches = Regex.Matches(self, BundleConfig.AudiosRegex);
-        return matches.Count > 0;
-    }
-    public static bool IsVideo(this string self)
-    {
-        var matches = Regex.Matches(self, BundleConfig.VideosRegex);
-        return matches.Count > 0;
-    }
-    public static bool IsObject(this string self)
-    {
-        var matches = Regex.Matches(self, BundleConfig.ObjectRegex);
-        return matches.Count > 0;
-    }
-    public static bool IsText(this string self)
-    {
-        var matches = Regex.Matches(self, BundleConfig.TextRegex);
-        return matches.Count > 0;
-    }
-}
-
-
 /// <summary>
 /// Assets/ABResources 下需要打包的资源目录配置
 /// </summary>
 [ExecuteInEditMode]
-public class BundleConfig : ScriptableObject
+public class BundleConfig2 : ScriptableObject
 {
     public const string AssetBundleRoot = "AssetBundle/";
     public const string ABResRoot = "Assets/ABResources/";
-    public const string BundleConfigAssetPath = ABResRoot + "common/config/BundleConfig.asset";
+    public const string BundleConfigAssetPath = ABResRoot + "common/config/BundleConfig2.asset";
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
     public const string VideosRegex = "(.mov$|.mpg$|.mp4$|.avi$|.asf$|.mpeg$)";
     public const string ObjectRegex = "(.asset$|.prefab$)";
     public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
-    public const string PunctuationRegex = "([!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
 
     [Serializable]
     public class DirCfg
@@ -106,11 +52,11 @@ public class BundleConfig : ScriptableObject
         "Scene",
     };
 
-    static BundleConfig mInstance = null;
+    static BundleConfig2 mInstance = null;
 #if UNITY_EDITOR
-    [MenuItem("Tools/Create BundleConfig.asset")]
+    [MenuItem("Tools/Create BundleConfig2.asset")]
 #endif
-    public static BundleConfig Instance()
+    public static BundleConfig2 Instance()
     {
 #if UNITY_EDITOR
         return InstanceEditor();
@@ -120,14 +66,14 @@ public class BundleConfig : ScriptableObject
     }
 
 #if UNITY_EDITOR
-    public static BundleConfig InstanceEditor()
+    public static BundleConfig2 InstanceEditor()
     {
         if(mInstance == null)
         {
-            mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>(BundleConfigAssetPath);
+            mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig2>(BundleConfigAssetPath);
             if(mInstance == null)
             {
-                mInstance = new BundleConfig();
+                mInstance = new BundleConfig2();
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
             }
         }
@@ -136,14 +82,14 @@ public class BundleConfig : ScriptableObject
     }
 #endif
 
-    public static BundleConfig InstanceRuntime()
+    public static BundleConfig2 InstanceRuntime()
     {
         if(mInstance == null)
         {
-            mInstance = AssetHelper.Instance.GetAssetSync<BundleConfig>(BundleConfigAssetPath);
+            mInstance = AssetHelper.Instance.GetAssetSync<BundleConfig2>(BundleConfigAssetPath);
             if(mInstance == null)
             {
-                mInstance = new BundleConfig();
+                mInstance = new BundleConfig2();
             }
         }
 
@@ -153,30 +99,17 @@ public class BundleConfig : ScriptableObject
 }
 
 #if UNITY_EDITOR
-static class RectExtension
-{
-    public static Rect Split(this Rect rect, int index, int count)
-    {
-        int r = (int)rect.width % count; // Remainder used to compensate width and position.
-        int width = (int)(rect.width / count);
-        rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);
-        if(index > 0)
-        { rect.x += width * index + (r - (count - 1 - index)); }
 
-        return rect;
-    }
-}
-
-[CustomEditor(typeof(BundleConfig))]
-public class BundleConfigExtension : Editor
+[CustomEditor(typeof(BundleConfig2))]
+public class BundleConfig2Extension : Editor
 {
     bool allInclude = false;
     bool allPreDownload = false;
-    BundleConfig mBehavior = null;
-    Dictionary<string, BundleConfig.DirCfg> mDirs = new Dictionary<string, BundleConfig.DirCfg>();
+    BundleConfig2 mBehavior = null;
+    Dictionary<string, BundleConfig2.DirCfg> mDirs = new Dictionary<string, BundleConfig2.DirCfg>();
     public void OnEnable()
     {
-        mBehavior = (BundleConfig)target;
+        mBehavior = (BundleConfig2)target;
         Refresh();
     }
 
@@ -186,19 +119,19 @@ public class BundleConfigExtension : Editor
         {
             mDirs[i.dir] = i;
         }
-        var dirs = new Dictionary<string, BundleConfig.DirCfg>();
-        foreach(var i in Directory.GetDirectories(BundleConfig.ABResRoot, "*", SearchOption.TopDirectoryOnly))
+        var dirs = new Dictionary<string, BundleConfig2.DirCfg>();
+        foreach(var i in Directory.GetDirectories(BundleConfig2.ABResRoot, "*", SearchOption.TopDirectoryOnly))
         {
             bool include = false;
             bool rebuild = false;
-            BundleConfig.DirCfg dir = null;
+            BundleConfig2.DirCfg dir = null;
             var ui = i.upath();
             if(mDirs.TryGetValue(ui, out dir) && dir != null)
             {
                 include = dir.include;
                 rebuild = dir.rebuild;
             }
-            dirs[ui] = (new BundleConfig.DirCfg
+            dirs[ui] = (new BundleConfig2.DirCfg
             {
                 dir = ui,
                 include = include,
@@ -254,7 +187,7 @@ public class BundleConfigExtension : Editor
         foreach(var i in mDirs)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResRoot, "  "), guiOpts);
+            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig2.ABResRoot, "  "), guiOpts);
             mDirs[i.Key].include = EditorGUILayout.Toggle("", i.Value.include, guiOpts);
             mDirs[i.Key].rebuild = EditorGUILayout.Toggle("", i.Value.rebuild, guiOpts);
             EditorGUILayout.EndHorizontal();
@@ -287,7 +220,7 @@ public class BundleConfigExtension : Editor
     {
         foreach(var i in mDirs.Where(ii => ii.Value.include))
         {
-            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResRoot, ""), BuildTarget.Android, i.Value.rebuild);
+            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig2.ABResRoot, ""), BuildTarget.Android, i.Value.rebuild);
         }
     }
 }

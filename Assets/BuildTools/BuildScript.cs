@@ -112,7 +112,7 @@ public class BuildScript
             {
 
                 ++count;
-                var udir = UPath.go(dir);
+                var udir = dir.upath();
                 var assetBundleName = udir.Substring(udir.LastIndexOf("/") + 1); //.Replace(BundleConfig.ABResourceDir + "/", "");//
                 UnityEngine.Debug.Log("pack: " + assetBundleName);
                 var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions);
@@ -124,7 +124,7 @@ public class BuildScript
                     buildMap.ToArray(),
                     (
                         BuildAssetBundleOptions.UncompressedAssetBundle
-                    //| BuildAssetBundleOptions.AppendHashToAssetBundleName
+                      //| BuildAssetBundleOptions.DeterministicAssetBundle
                     ),
                     targetPlatfrom);
             }
@@ -180,7 +180,7 @@ public class BuildScript
             {
                 ++nnew;
                 newWriteTime = finfo.LastWriteTime.ToFileTimeUtc();
-                UnityEngine.Debug.Log(UPath.go(f) + ": " + DateTime.FromFileTimeUtc(newWriteTime));
+                UnityEngine.Debug.Log(f.upath() + ": " + DateTime.FromFileTimeUtc(newWriteTime));
             }
         }
         ab.assetNames = assetNames.ToArray();
@@ -414,7 +414,7 @@ public class BuildScript
             foreach(var f in files)
             {
                 ++i;
-                EditorUtility.DisplayCancelableProgressBar("compressing ...", UPath.go(f), (float)(i) / files.Length);
+                EditorUtility.DisplayCancelableProgressBar("compressing ...", (f.upath()), (float)(i) / files.Length);
 
                 BundleHelper.CompressFileLZMA(f, f + BundleConfig.CompressedExtension);
                 //File.Delete(f);
@@ -458,7 +458,7 @@ public class BuildScript
             {
                 ++i;
                 var md5 = BundleHelper.Md5(f);
-                var subPath = UPath.go(f).Replace(rootDir, "").Replace(BundleConfig.CompressedExtension, "");
+                var subPath = f.upath().Replace(rootDir, "").Replace(BundleConfig.CompressedExtension, "");
                 md5List[subPath] = (new Md5SchemeInfo(subPath, md5, subPath.Contains("PreDownload")));
             }
 
@@ -509,7 +509,7 @@ public class BuildScript
                 var files = Directory.GetFiles(BundleConfig.ABResRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
-                    var f = UPath.go(i);
+                    var f = i.upath();
                     UnityEngine.Debug.Log(f);
                     EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
                     StreamingSceneBuild(
