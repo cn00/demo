@@ -465,8 +465,9 @@ public class AssetHelper : SingleMono<AssetHelper>
                 }
                 else
                 {
+#if UNITY_EDITOR
                     AsyncSave(cachePath + BundleConfig.CompressedExtension, www.bytes, www.bytes.Length);
-
+#endif
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
