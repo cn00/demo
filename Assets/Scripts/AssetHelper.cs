@@ -14,7 +14,7 @@ public static class AssetExtern
 {
     public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
     {
-        var asset = bundle.LoadAsset<T>(BundleConfig.ABResRoot + subPath);
+        var asset = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + subPath);
         AppLog.d(subPath);
         return asset;
     }
@@ -191,7 +191,7 @@ public class AssetHelper : SingleMono<AssetHelper>
         {
             if(string.IsNullOrEmpty(mCacheRoot))
             {
-                var cacheDirName = "AssetBundle";
+                var cacheDirName = "AssetBundle/";
 #if UNITY_EDITOR
                 cacheDirName += PlatformName(RuntimePlatform.Android);
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
@@ -264,7 +264,7 @@ public class AssetHelper : SingleMono<AssetHelper>
         }
     }
 
-    Dictionary<string/*rootName*/, BundleGroup> mLoadedBundles = new Dictionary<string,BundleGroup>();
+    Dictionary<string/*group*/, BundleGroup> mLoadedBundles = new Dictionary<string,BundleGroup>();
 
     public bool SysEnter()
     {
@@ -293,7 +293,7 @@ public class AssetHelper : SingleMono<AssetHelper>
         T asset = null;
         if(bundle != null)
         {
-            asset = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
+            asset = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
         }
         if(asset == null)
         {
@@ -338,12 +338,12 @@ public class AssetHelper : SingleMono<AssetHelper>
                 {
                     if(textPath.EndsWith(".lua"))
                         textPath += ".txt";
-                    var textAsset = bundle.LoadAsset<TextAsset>(BundleConfig.ABResRoot + textPath);
+                    var textAsset = bundle.LoadAsset<TextAsset>(BundleConfig.BundleResRoot + textPath);
                     resObj = new DataObject(textAsset.bytes);
                 }
                 else
                 {
-                    resObj = bundle.LoadAsset<T>(BundleConfig.ABResRoot + assetSubPath);
+                    resObj = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
                 }
             });
             AppLog.d("from <Color=green>bundle</Color> : " + assetSubPath);
@@ -355,11 +355,11 @@ public class AssetHelper : SingleMono<AssetHelper>
             // text
             if(assetSubPath.IsText())
             {
-                resObj = new DataObject(File.ReadAllBytes(BundleConfig.ABResRoot + assetSubPath));
+                resObj = new DataObject(File.ReadAllBytes(BundleConfig.BundleResRoot + assetSubPath));
             }
             else
             {
-                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BundleConfig.ABResRoot + assetSubPath);
+                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BundleConfig.BundleResRoot + assetSubPath);
             }
             AppLog.d("from <Color=green>file</Color>: " + assetSubPath);
         }
@@ -399,6 +399,7 @@ public class AssetHelper : SingleMono<AssetHelper>
 #endif
             bundle = AssetBundle.LoadFromFile(cachePath);
             bundleGroup.Bundles[bundlePath] = bundle;
+            AppLog.w("GetBundleSync: {0}", bundlePath);
         }
         return bundle;
     }

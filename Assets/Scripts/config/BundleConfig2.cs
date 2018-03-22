@@ -11,13 +11,13 @@ using UnityEditor;
 #endif
 
 /// <summary>
-/// Assets/ABResources 下需要打包的资源目录配置
+/// Assets/BundleRes 下需要打包的资源目录配置
 /// </summary>
 [ExecuteInEditMode]
 public class BundleConfig2 : ScriptableObject
 {
     public const string AssetBundleRoot = "AssetBundle/";
-    public const string ABResRoot = "Assets/ABResources/";
+    public const string ABResRoot = "Assets/BundleRes/";
     public const string BundleConfigAssetPath = ABResRoot + "common/config/BundleConfig2.asset";
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";

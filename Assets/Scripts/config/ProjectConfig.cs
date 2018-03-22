@@ -63,7 +63,7 @@ public class ProjectConfig : ScriptableObject
     public string LuaExtension = ".lua";
     #endregion property
 
-    public const string ProjectConfigPath = BundleConfig.ABResRoot + "common/config/ProjectConfig.asset";
+    public const string ProjectConfigPath = BundleConfig.BundleResRoot + "common/config/ProjectConfig.asset";
 
     static ProjectConfig mInstance = null;
 

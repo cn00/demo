@@ -55,11 +55,11 @@ public class LuaHelper : SingleMono<LuaHelper>
 #if UNITY_EDITOR
         else
         {
-            var assetName = BundleConfig.ABResRoot + filename.Replace(".", "/") + LuaExtension;
+            var assetName = BundleConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
             bytes = File.ReadAllBytes(assetName);
         }
 #endif
-        AppLog.d("<Color=green>LuaLoader: " + filename + "</Color>");
+        AppLog.d("<Color=green>require: " + filename + "</Color>");
         return bytes;
     }
 

@@ -24,7 +24,7 @@ public class BuildScript
     static string DATETIME = DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss");
     static string TARGET_DIR = "bin/";
 
-    const string BundleWorkingSpace = "AssetBundle/";
+    const string BundleOutDir = "AssetBundle/";
 
     private static string[] FindEnabledEditorScenes()
     {
@@ -93,7 +93,7 @@ public class BuildScript
     {
         try
         {
-            outdir = BundleWorkingSpace + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + outdir;
+            outdir = BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + outdir;
             if(!Directory.Exists(outdir))
             {
                 Directory.CreateDirectory(outdir);
@@ -210,7 +210,7 @@ public class BuildScript
     }
     public static void StreamingSceneBuild(string[] scenes, string outName, BuildTarget targetPlatform)
     {
-        string SceneOutPath = BundleWorkingSpace + TargetName(targetPlatform) + "/" + PlayerSettings.bundleVersion + "/Level/" + outName + ".fg";
+        string SceneOutPath = BundleOutDir + TargetName(targetPlatform) + "/" + PlayerSettings.bundleVersion + "/Level/" + outName + ".fg";
 
         var dir = Path.GetDirectoryName(SceneOutPath);
         if(!Directory.Exists(dir))
@@ -248,7 +248,7 @@ public class BuildScript
         ProcessStartInfo pi = new ProcessStartInfo(
 #if UNITY_EDITOR_WIN
             "explorer.exe",
-            "Assets\\ABResources\\Lua\\Table"
+            "Assets\\BundleRes\\Lua\\Table"
 #elif UNITY_EDITOR_OSX
             "open",
             BundleConfig.ABResourceDir + "/Lua/Table"
@@ -266,10 +266,10 @@ public class BuildScript
         ProcessStartInfo pi = new ProcessStartInfo(
 #if UNITY_EDITOR_WIN
             "Convert.exe",
-            "../../table ../../client/Assets/ABResources/Lua/Table"
+            "../../table ../../client/Assets/BundleRes/Lua/Table"
 #elif UNITY_EDITOR_OSX
             "mono",
-            "Convert.exe ../../table ../../client/Assets/ABResources/Lua/Table"
+            "Convert.exe ../../table ../../client/Assets/BundleRes/Lua/Table"
 #endif
         );
         pi.WorkingDirectory = "..\\tools\\table\\";
@@ -408,7 +408,7 @@ public class BuildScript
         {
             var version = (PlayerSettings.bundleVersion);
             // compress
-            var files = (from f in Directory.GetFiles(BundleWorkingSpace + TargetName(buildTarget) + "/" + version.ToString(), "*", SearchOption.AllDirectories)
+            var files = (from f in Directory.GetFiles(BundleOutDir + TargetName(buildTarget) + "/" + version.ToString(), "*", SearchOption.AllDirectories)
                          where Path.GetExtension(f) != ".manifest" && Path.GetExtension(f) != BundleConfig.CompressedExtension
                          || Path.GetExtension(f) == ""
                          select f).ToArray();
@@ -430,12 +430,12 @@ public class BuildScript
 
     public static void GenVersionFile(BuildTarget buildTarget)
     {
-        var versionUrl = BundleWorkingSpace + TargetName(buildTarget) + "/resversion.txt";
+        var versionUrl = BundleOutDir + TargetName(buildTarget) + "/resversion.txt";
         StreamWriter writer = new StreamWriter(versionUrl);
         var version = new FGVersion(PlayerSettings.bundleVersion);
         writer.Write(version.ToString());
         writer.Close();
-        File.Copy(versionUrl, BundleWorkingSpace + TargetName(buildTarget) + "/" + PlayerSettings.bundleVersion + "/resversion.txt", true);
+        File.Copy(versionUrl, BundleOutDir + TargetName(buildTarget) + "/" + PlayerSettings.bundleVersion + "/resversion.txt", true);
     }
 
     [MenuItem("Build/Android/GenMd5List"), ExecuteInEditMode]
@@ -450,7 +450,7 @@ public class BuildScript
         try
         {
             var version = (PlayerSettings.bundleVersion);
-            var rootDir = BundleWorkingSpace + TargetName(buildTarget) + "/" + version.ToString() + "/";
+            var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/";
             Md5SchemeDic md5List = new Md5SchemeDic();//<string/*path*/, Md5SchemeInfo>
             var files = (from f in Directory.GetFiles(rootDir, "*", SearchOption.AllDirectories)
                          where Path.GetExtension(f) == BundleConfig.CompressedExtension
@@ -485,7 +485,7 @@ public class BuildScript
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundle(BundleConfig.ABResRoot + i, i, buildTarget);
+                BuildBundle(BundleConfig.BundleResRoot + i, i, buildTarget);
             }
         }
         finally
@@ -508,7 +508,7 @@ public class BuildScript
             foreach(var StreamSceneDir in BundleConfig.Instance().ABSceneRoots)
             {
                 float count = 0;
-                var files = Directory.GetFiles(BundleConfig.ABResRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(BundleConfig.BundleResRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
                     var f = i.upath();

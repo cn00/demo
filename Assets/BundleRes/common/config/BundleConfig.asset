@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Name: BundleConfig
   m_EditorClassIdentifier: 
   mDirs:
-  - dir: Assets/ABResources/common
+  - dir: Assets/BundleRes/common
     include: 1
     rebuild: 1
-  - dir: Assets/ABResources/lua
+  - dir: Assets/BundleRes/Lua
     include: 1
     rebuild: 1
-  - dir: Assets/ABResources/ui
+  - dir: Assets/BundleRes/ui
     include: 1
     rebuild: 1
   ABSceneRoots:

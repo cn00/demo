@@ -70,14 +70,13 @@ public static class PathExtension
 
 
 /// <summary>
-/// Assets/ABResources 下需要打包的资源目录配置
+/// Assets/BundleRes 下需要打包的资源目录配置
 /// </summary>
 [ExecuteInEditMode]
 public class BundleConfig : ScriptableObject
 {
-    public const string AssetBundleRoot = "AssetBundle/";
-    public const string ABResRoot = "Assets/ABResources/";
-    public const string BundleConfigAssetPath = ABResRoot + "common/config/BundleConfig.asset";
+    public const string BundleResRoot = "Assets/BundleRes/";
+    public const string BundleConfigAssetPath = BundleResRoot + "common/config/BundleConfig.asset";
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
@@ -193,7 +192,7 @@ public class BundleConfigExtension : Editor
             mDirs[i.dir] = i;
         }
         var dirs = new Dictionary<string, BundleConfig.DirCfg>();
-        foreach(var i in Directory.GetDirectories(BundleConfig.ABResRoot, "*", SearchOption.TopDirectoryOnly))
+        foreach(var i in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
         {
             bool include = false;
             bool rebuild = false;
@@ -260,7 +259,7 @@ public class BundleConfigExtension : Editor
         foreach(var i in mDirs)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.ABResRoot, "  "), guiOpts);
+            EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.BundleResRoot, "  "), guiOpts);
             mDirs[i.Key].include = EditorGUILayout.Toggle("", i.Value.include, guiOpts);
             mDirs[i.Key].rebuild = EditorGUILayout.Toggle("", i.Value.rebuild, guiOpts);
             EditorGUILayout.EndHorizontal();
@@ -293,7 +292,7 @@ public class BundleConfigExtension : Editor
     {
         foreach(var i in mDirs.Where(ii => ii.Value.include))
         {
-            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.ABResRoot, ""), BuildTarget.Android, i.Value.rebuild);
+            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.BundleResRoot, ""), BuildTarget.Android, i.Value.rebuild);
         }
     }
 }
