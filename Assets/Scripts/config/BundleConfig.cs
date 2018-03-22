@@ -34,6 +34,12 @@ public static class PathExtension
             .Replace("\\", "/")
             .Replace("//", "/");
     }
+    public static string wpath(this string self)
+    {
+        return self.Trim()
+            .Replace("/", "\\")
+            .Replace("\\\\", "\\");
+    }
 
     public static bool IsImage(this string self)
     {

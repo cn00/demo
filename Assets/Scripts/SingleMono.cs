@@ -53,6 +53,7 @@ public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
     public virtual IEnumerator Init()
     {
         Inited = true;
+        AppLog.d("SingleMono [{0}] inited.", typeof(T).ToString());
         yield return null;
     }
 }

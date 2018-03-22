@@ -22,7 +22,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         {
 #if UNITY_EDITOR
             var version = ProjectConfig.Instance.Version.ToString();
-            return AssetHelper.CacheRoot + version + "/md5.xml";
+            return AssetHelper.CacheRoot + "/" + version + "/md5.xml";
 #else
             return AssetHelper.CacheRoot + "/md5.xml";
 #endif
@@ -167,7 +167,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         var cachePath = AssetHelper.CacheRoot + "/" + subPath;
 #endif
             var diffFileUrl = AssetHelper.HttpRoot + "/" +  RemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
-            Debug.Log(diffFileUrl);
+            AppLog.d(diffFileUrl);
 
             //yield return AssetHelper.Www(fileUrl, (WWW www) =>
             StartCoroutine(AssetHelper.Www(diffFileUrl, (WWW www) =>

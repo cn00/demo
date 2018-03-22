@@ -191,16 +191,16 @@ public class AssetHelper : SingleMono<AssetHelper>
         {
             if(string.IsNullOrEmpty(mCacheRoot))
             {
-                var cacheDirName = "/AssetBundle/";
+                var cacheDirName = "AssetBundle";
 #if UNITY_EDITOR
                 cacheDirName += PlatformName(RuntimePlatform.Android);
-                mCacheRoot = Application.dataPath + "/.." + cacheDirName;
+                mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #elif UNITY_ANDROID
                 cacheDirName += PlatformName(RuntimePlatform.Android);
-                mCacheRoot = Application.persistentDataPath + cacheDirName;
+                mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_IPHONE
                 cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer);
-                mCacheRoot = Application.persistentDataPath + cacheDirName;
+                mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_WINDOWS
                 cacheDirName += PlatformName(RuntimePlatform.WindowsPlayer);
                 mCacheRoot = Application.streamingAssetsPath + "/../" + cacheDirName;
@@ -219,7 +219,7 @@ public class AssetHelper : SingleMono<AssetHelper>
         {
             if(string.IsNullOrEmpty(mHttpRoot))
             {
-                mHttpRoot = "http://192.168.8.36:8008/share/fg/AssetBundle/";
+                mHttpRoot = "http://10.23.114.141:8008/";
 #if UNITY_EDITOR
                 mHttpRoot += PlatformName(RuntimePlatform.Android);
 #elif UNITY_ANDROID
@@ -264,8 +264,6 @@ public class AssetHelper : SingleMono<AssetHelper>
         }
     }
 
-    [CSharpCallLua]
-    public delegate void AssetCallback<T>(T obj) where T: UnityEngine.Object;
     Dictionary<string/*rootName*/, BundleGroup> mLoadedBundles = new Dictionary<string,BundleGroup>();
 
     public bool SysEnter()
@@ -280,14 +278,6 @@ public class AssetHelper : SingleMono<AssetHelper>
     public override IEnumerator Init()
     {
         yield return base.Init();
-    }
-
-    /// <summary>
-    /// 开启新协程执行, Lua 中不使用协程需要用这类方式调用
-    /// </summary>
-    public void GetBundleCo(string assetSubPath, AssetCallback<UnityEngine.Object> callBack = null)
-    {
-        StartCoroutine(GetAsset(assetSubPath, callBack));
     }
 
     /// <summary>
@@ -315,12 +305,12 @@ public class AssetHelper : SingleMono<AssetHelper>
     /// <summary>
     /// 异步方式加载资源, 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetAsset(string assetSubPath, AssetCallback<UnityEngine.Object> callBack = null)
+    public IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
     {
         yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
     }
 
-    public IEnumerator GetAsset<T>(string assetSubPath, AssetCallback<T> callBack = null) where T : UnityEngine.Object
+    public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
         UnityEngine.Object resObj = null;
 #if UNITY_EDITOR
@@ -417,7 +407,7 @@ public class AssetHelper : SingleMono<AssetHelper>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundleName, AssetCallback<UnityEngine.AssetBundle> callBack = null)
+    public IEnumerator GetBundle(string bundleName, Action<UnityEngine.AssetBundle> callBack = null)
     {
         string bundlePath = bundleName;
         if(string.IsNullOrEmpty(bundlePath))

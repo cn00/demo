@@ -29,10 +29,8 @@ function Login.OnDestroy ()
 
 end
 
-   
-
 local yield_return = util.async_to_sync(function (to_yield, cb)
-	self:YieldAndCallback(to_yield, cb)
+	mono:YieldAndCallback(to_yield, cb)
 end)
 
 return Login

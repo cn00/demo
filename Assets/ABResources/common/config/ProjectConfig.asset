@@ -15,5 +15,5 @@ MonoBehaviour:
     Major: 0
     Minor: 1
     Patch: 0
-  UseBundle: 1
+  UseBundle: 0
   LuaExtension: .lua

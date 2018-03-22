@@ -30,11 +30,13 @@ public class LuaMonoBehaviour : MonoBehaviour
     public LuaAsset luaScript = new LuaAsset();
 
     [HideInInspector]
-    public GameObject[] injections;
+    public GameObject[] injections = new GameObject[0];
 
     internal static float lastGCTime = 0;
     internal const float GCInterval = 1;//1 second 
 
+    //private Action luaAwake;
+    private Action luaOnEnable;
     private Action luaStart;
     private Action luaFixedUpdate;
     private Action luaUpdate;
@@ -57,16 +59,18 @@ public class LuaMonoBehaviour : MonoBehaviour
         var luaInstance = LuaHelper.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, "LuaMonoBehaviour");
 
-        Action luaAwake = luaTable.Get<Action>("awake");
+        //luaAwake = luaTable.Get<Action>("Awake");
+        //luaTable.Get("Awake", out luaAwake);
+        luaTable.Get("OnEnable", out luaOnEnable);
         luaTable.Get("Start", out luaStart);
         luaTable.Get("FixedUpdate", out luaFixedUpdate);
         luaTable.Get("Update", out luaUpdate);
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
-        if(luaAwake != null)
+        if(luaOnEnable != null)
         {
-            luaAwake();
+            luaOnEnable();
         }
         if(luaStart != null)
         {
@@ -79,12 +83,21 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void Awake()
     {
-        StartCoroutine(Init());
+    }
+
+    private void OnEnable()
+    {
     }
 
     // Use this for initialization
     void Start()
     {
+        if(!Inited)
+            StartCoroutine(Init());
+        if(luaStart != null)
+        {
+            luaStart();
+        }
     }
 
     private void FixedUpdate()
@@ -134,6 +147,27 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaStart = null;
         injections = null;
     }
+
+    public void YieldAndCallback(object to_yield, Action callback)
+    {
+        StartCoroutine(CoroutineBody(to_yield, callback));
+    }
+
+    private IEnumerator CoroutineBody(object to_yield, Action callback)
+    {
+        AppLog.d("CoroutineBody: {0}, {1}", to_yield, callback);
+        if(to_yield is IEnumerator)
+        {
+            yield return StartCoroutine((IEnumerator)to_yield);
+        }
+        else
+        {
+            yield return to_yield;
+        }
+        if(callback != null)
+            callback();
+    }
+
 }
 
 #if UNITY_EDITOR
