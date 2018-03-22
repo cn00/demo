@@ -292,7 +292,7 @@ public class BundleConfigExtension : Editor
     {
         foreach(var i in mDirs.Where(ii => ii.Value.include))
         {
-            BuildScript.BuildBundle(i.Key, i.Key.Replace(BundleConfig.BundleResRoot, ""), BuildTarget.Android, i.Value.rebuild);
+            BuildScript.BuildBundle(i.Key, BuildTarget.Android, i.Value.rebuild);
         }
     }
 }

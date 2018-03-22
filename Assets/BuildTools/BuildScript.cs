@@ -89,11 +89,11 @@ public class BuildScript
     }
 
     #region AssetBundle
-    public static void BuildBundle(string indir, string outdir, BuildTarget targetPlatfrom, bool rebuild = false)
+    public static void BuildBundle(string indir, BuildTarget targetPlatfrom, bool rebuild = false)
     {
         try
         {
-            outdir = BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + outdir;
+            var outdir = BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
             if(!Directory.Exists(outdir))
             {
                 Directory.CreateDirectory(outdir);
@@ -121,15 +121,16 @@ public class BuildScript
                 if(ab != null)
                     buildMap.Add(ab.Value);
                 EditorUtility.DisplayCancelableProgressBar("BuildBundle ...", udir, count / dirs.Length);
-                BuildPipeline.BuildAssetBundles(
-                    outdir,
-                    buildMap.ToArray(),
-                    (
-                        BuildAssetBundleOptions.UncompressedAssetBundle
-                      //| BuildAssetBundleOptions.DeterministicAssetBundle
-                    ),
-                    targetPlatfrom);
             }
+            BuildPipeline.BuildAssetBundles(
+                outdir,
+                buildMap.ToArray(),
+                (
+                    BuildAssetBundleOptions.UncompressedAssetBundle
+                    //| BuildAssetBundleOptions.DeterministicAssetBundle
+                ),
+                targetPlatfrom
+            );
 
             foreach(var f in Directory.GetFiles(indir, "*.lua.txt*", SearchOption.AllDirectories))
             {
@@ -137,6 +138,7 @@ public class BuildScript
             }
             AssetDatabase.Refresh();
 
+            Compress(outdir, targetPlatfrom);
         }
         finally
         {
@@ -389,10 +391,10 @@ public class BuildScript
     public static void AndroidAssetBundleBuild()
     {
         AssetBundleBuildAll(BuildTarget.Android);
-        StreamingSceneBuild(BuildTarget.Android);
+        //StreamingSceneBuild(BuildTarget.Android);
 
-        // compress
-        Compress(BuildTarget.Android);
+        //// compress
+        //Compress(BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion, BuildTarget.Android);
 
         GenMd5List(BuildTarget.Android);
 
@@ -402,13 +404,13 @@ public class BuildScript
         // TODO: upload to http server
     }
 
-    public static void Compress(BuildTarget buildTarget)
+    public static void Compress(string indir, BuildTarget buildTarget)
     {
         try
         {
             var version = (PlayerSettings.bundleVersion);
             // compress
-            var files = (from f in Directory.GetFiles(BundleOutDir + TargetName(buildTarget) + "/" + version.ToString(), "*", SearchOption.AllDirectories)
+            var files = (from f in Directory.GetFiles(indir, "*", SearchOption.AllDirectories)
                          where Path.GetExtension(f) != ".manifest" && Path.GetExtension(f) != BundleConfig.CompressedExtension
                          || Path.GetExtension(f) == ""
                          select f).ToArray();
@@ -485,7 +487,7 @@ public class BuildScript
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundle(BundleConfig.BundleResRoot + i, i, buildTarget);
+                BuildBundle(i, buildTarget);
             }
         }
         finally
