@@ -108,11 +108,12 @@ public class ProjectConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            mInstance = AssetHelper.Instance.GetAssetSync<ProjectConfig>(ProjectConfigPath);
+            //mInstance = AssetSys.Instance.GetAssetSync<ProjectConfig>(ProjectConfigPath);
 
             if(mInstance == null)
             {
                 mInstance = new ProjectConfig();
+                mInstance.Version = new FGVersion("0.1.0");
                 mInstance.UseBundle = true;
             }
         }

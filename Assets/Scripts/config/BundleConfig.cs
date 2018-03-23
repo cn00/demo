@@ -75,6 +75,7 @@ public static class PathExtension
 [ExecuteInEditMode]
 public class BundleConfig : ScriptableObject
 {
+    public const string ManifestName = "manifest.yaml";
     public const string BundleResRoot = "Assets/BundleRes/";
     public const string BundleConfigAssetPath = BundleResRoot + "common/config/BundleConfig.asset";
 
@@ -83,7 +84,20 @@ public class BundleConfig : ScriptableObject
     public const string VideosRegex = "(.mov$|.mpg$|.mp4$|.avi$|.asf$|.mpeg$)";
     public const string ObjectRegex = "(.asset$|.prefab$)";
     public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
-    public const string PunctuationRegex = "([!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
+    public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
+
+    public static string LocalManifestPath
+    {
+        get
+        {
+#if UNITY_EDITOR
+            var version = ProjectConfig.Instance.Version.ToString();
+            return AssetSys.CacheRoot + version + "/" + BundleConfig.ManifestName;
+#else
+            return AssetSys.CacheRoot + BundleConfig.ManifestName;
+#endif
+        }
+    }
 
     [Serializable]
     public class DirCfg
@@ -145,7 +159,7 @@ public class BundleConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            mInstance = AssetHelper.Instance.GetAssetSync<BundleConfig>(BundleConfigAssetPath);
+            mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(BundleConfigAssetPath);
             if(mInstance == null)
             {
                 mInstance = new BundleConfig();

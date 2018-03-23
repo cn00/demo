@@ -6,35 +6,28 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
 using XLua;
+using System.Text;
 
-using YamlDotNet.Helpers;
+using BundleManifestDic = System.Collections.Generic.Dictionary<string, BundleInfo>;
 
-using Md5SchemeDic = System.Collections.Generic.Dictionary<string, Md5SchemeInfo>;
-using Md5Scheme = System.Collections.Generic.List<Md5SchemeInfo>;
+public static class BytesExtension
+{
+    public static string Utf8String(this byte[] self)
+    {
+        return Encoding.UTF8.GetString(self);
+    }
+}
 
 [LuaCallCSharp]
 public class UpdateSys : SingleMono<UpdateSys>
 {
 
-    string mLocalMd5Path
-    {
-        get
-        {
-#if UNITY_EDITOR
-            var version = ProjectConfig.Instance.Version.ToString();
-            return AssetHelper.CacheRoot + "/" + version + "/md5.xml";
-#else
-            return AssetHelper.CacheRoot + "/md5.xml";
-#endif
-        }
-    }
+    Version mLocalVersion;
+    Version mRemoteVersion;
 
-    Version LocalVersion;
-    Version RemoteVersion;
-
-    Md5SchemeDic mLocalMd5 = new  Md5SchemeDic();//<string/*path*/, Md5SchemeInfo>
-    Md5SchemeDic mRemoteMd5 = new Md5SchemeDic();//<string/*path*/, Md5SchemeInfo>
-    Md5SchemeDic mDiffList = new Md5SchemeDic();// <string/*path*/, Md5SchemeInfo>
+    BundleManifestDic mLocalManifest = new  BundleManifestDic();//<string/*path*/, Md5SchemeInfo>
+    BundleManifestDic mRemoteManifest = new BundleManifestDic();//<string/*path*/, Md5SchemeInfo>
+    BundleManifestDic mDiffList = new BundleManifestDic();// <string/*path*/, Md5SchemeInfo>
 
     bool mAllDownloadOK = false;
 
@@ -43,27 +36,27 @@ public class UpdateSys : SingleMono<UpdateSys>
         return true;
     }
 
-    public IEnumerator SysEnterCo()
+    public override IEnumerator Init()
     {
 
         yield return GetLocalVersion();
         yield return GetRemoteVersion();
 
         // TODO: 检查更新打开这一行
-        // yield return CheckUpdate();
+        yield return CheckUpdate();
 
-        yield return null;// base.SysEnterCo();
+        yield return base.Init();
     }
 
     public IEnumerator GetLocalVersion()
     {
-        var cacheUrl = AssetHelper.CacheRoot + "/resversion.txt";
+        var cacheUrl = AssetSys.CacheRoot + "/resversion.txt";
         var localVersionUrl = "file://" + cacheUrl;
-        Debug.Log(localVersionUrl);
+        AppLog.d(localVersionUrl);
 
         if(File.Exists(cacheUrl))
         {
-            yield return AssetHelper.Www(localVersionUrl, (WWW www) =>
+            yield return AssetSys.Www(localVersionUrl, (WWW www) =>
             {
                 if(string.IsNullOrEmpty(www.error))
                 {
@@ -72,67 +65,69 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
                 else
                 {
-                    Debug.LogError(www.error);
+                    AppLog.e(www.error);
                 }
             });
         }
-        LocalVersion = ProjectConfig.Instance.Version.V;
-        Debug.LogFormat("LocalVersion {0}", LocalVersion.ToString());
+        mLocalVersion = ProjectConfig.Instance.Version.V;
+        AppLog.d("LocalVersion {0}", mLocalVersion.ToString());
 
         yield return null;
     }
 
     public IEnumerator GetRemoteVersion()
     {
-        var remoteVersionUrl = AssetHelper.HttpRoot + "/resversion.txt";
-        Debug.Log(remoteVersionUrl);
-        yield return AssetHelper.Www(remoteVersionUrl, (WWW www) =>
+        var remoteVersionUrl = AssetSys.HttpRoot + "/resversion.txt";
+        AppLog.d(remoteVersionUrl);
+        yield return AssetSys.Www(remoteVersionUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
-                RemoteVersion = new Version(www.text.Trim());
-                Debug.LogFormat("RemoteVersion {0}", RemoteVersion.ToString());
+                mRemoteVersion = new Version(www.text.Trim());
+                AppLog.d("RemoteVersion {0}", mRemoteVersion.ToString());
             }
             else
             {
-                RemoteVersion = LocalVersion;
-                Debug.LogError(remoteVersionUrl + ": " + www.error);
+                mRemoteVersion = mLocalVersion;
+                AppLog.e(remoteVersionUrl + ": " + www.error);
             }
         });
         yield return null;
     }
 
-    public IEnumerator GetLocalMd5List()
+    public IEnumerator GetLocalManifest()
     {
-        var cachePath = mLocalMd5Path;
+        var cachePath = BundleConfig.LocalManifestPath;
         var localMd5Url = "file://" + cachePath;
 
         if(!File.Exists(cachePath))
         {
             yield break;
         }
-        yield return AssetHelper.Www(localMd5Url, (WWW www) =>
+        yield return AssetSys.Www(localMd5Url, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
-                mLocalMd5 = YamlHelper.Deserialize<Md5SchemeDic>(www.text);
+                AppLog.d("deserialize mLocalManifest {0}", www.text);
+                mLocalManifest = YamlHelper.Deserialize<BundleManifestDic>(www.text);
+                AppLog.d("deserialize mLocalManifest 1");
             }
             else
             {
-                Debug.LogError("get local md5 list error: " + www.error);
+                AppLog.e("get local md5 list error: " + www.error);
             }
         });
 
         yield return null;
     }
 
-    public IEnumerator GetRemoteMd5List()
+    public IEnumerator GetRemoteManifest()
     {
-        var cachePath = mLocalMd5Path;
-        var remoteMd5Url = AssetHelper.HttpRoot + "/" + RemoteVersion + "/md5.xml" + BundleConfig.CompressedExtension;
+        var cachePath = BundleConfig.LocalManifestPath;
+        var remoteManifestUrl = AssetSys.HttpRoot + "/" + mRemoteVersion + "/" + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
 
         byte[] bytes = null;
-        yield return AssetHelper.Www(remoteMd5Url, (WWW www) =>
+        yield return AssetSys.Www(remoteManifestUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
             {
@@ -140,15 +135,17 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             else
             {
-                Debug.LogError(remoteMd5Url+ ": " + www.error);
+                AppLog.e(remoteManifestUrl+ ": " + www.error);
             }
         });
-        MemoryStream outStream = new MemoryStream();
+        var outStream = new MemoryStream();
         BundleHelper.DecompressFileLZMA(new MemoryStream(bytes), outStream);
-        AssetHelper.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
+        AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
-        mRemoteMd5 = YamlHelper.Deserialize<Md5SchemeDic>(outStream.ToString());
-
+        AppLog.d("deserialize mRemoteManifest 0");
+        mRemoteManifest = YamlHelper.Deserialize<BundleManifestDic>(outStream);
+        AppLog.d("deserialize mRemoteManifest 1");
+        outStream.Dispose();
         yield return null;
     }
 
@@ -158,26 +155,31 @@ public class UpdateSys : SingleMono<UpdateSys>
     public void DownloadDiffFiles()
     {
         int count = 0;
-        foreach(var i in mDiffList.Where(info=>info.Value.preDownload))
+        foreach(var i in mDiffList)//.Where(info=>info.Value.preDownload))
         {
-            var subPath = i.Value.fname;
+            var subPath = i.Key;
 #if UNITY_EDITOR
-            var cachePath = AssetHelper.CacheRoot + "/" + RemoteVersion + "/" + subPath;
+            var cachePath = AssetSys.CacheRoot + "/" + mRemoteVersion + "/" + subPath;
 #else
-        var cachePath = AssetHelper.CacheRoot + "/" + subPath;
+            var cachePath = AssetSys.CacheRoot + "/" + subPath;
 #endif
-            var diffFileUrl = AssetHelper.HttpRoot + "/" +  RemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
+            var diffFileUrl = AssetSys.HttpRoot + "/" +  mRemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
             AppLog.d(diffFileUrl);
 
-            //yield return AssetHelper.Www(fileUrl, (WWW www) =>
-            StartCoroutine(AssetHelper.Www(diffFileUrl, (WWW www) =>
+            //yield return AssetSys.Www(fileUrl, (WWW www) =>
+            StartCoroutine(AssetSys.Www(diffFileUrl, (WWW www) =>
             {
                 if(string.IsNullOrEmpty(www.error))
                 {
-                    MemoryStream outStream = new MemoryStream();
-                    BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
+                    //// 异步存盘
+                    //MemoryStream outStream = new MemoryStream();
+                    //BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
+                    //AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
-                    AssetHelper.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
+                    // or 同步存盘
+                    var fstream = new FileStream(cachePath, FileMode.Create);
+                    BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), fstream);
+
                     ++count;
                     if(count == mDiffList.Count)
                         mAllDownloadOK = true;
@@ -185,7 +187,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
                 else
                 {
-                    Debug.LogError("DownloadDiffFiles: " + i + www.error);
+                    AppLog.e("DownloadDiffFiles: " + i + www.error);
                 }
             }));
 
@@ -197,9 +199,9 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Diff()
     {
-        foreach(var i in mRemoteMd5)
+        foreach(var i in mRemoteManifest)
         {
-            if(mLocalMd5.ContainsKey(i.Key))
+            if(mLocalManifest.ContainsKey(i.Key))
             {
                 continue;
             }
@@ -217,24 +219,24 @@ public class UpdateSys : SingleMono<UpdateSys>
         //if(LocalVersion != RemoteVersion)// 允许回档到历史版本?
         {
             // download md5 list & uncompress & clean zip
-            yield return GetLocalMd5List();
-            yield return GetRemoteMd5List();
+            yield return GetLocalManifest();
+            yield return GetRemoteManifest();
 
             Diff();
 
             DownloadDiffFiles();
 
-            ProjectConfig.Instance.Version = RemoteVersion;
+            ProjectConfig.Instance.Version = mRemoteVersion;
 
             // 更新完成后保存
-            var cacheUrl = AssetHelper.CacheRoot + "/resversion.txt";
-            var strRemoteVersion = RemoteVersion.ToString();
+            var cacheUrl = AssetSys.CacheRoot + "/resversion.txt";
+            var strRemoteVersion = mRemoteVersion.ToString();
             byte[] bytes = System.Text.Encoding.Default.GetBytes(strRemoteVersion);
-            AssetHelper.AsyncSave(cacheUrl, bytes, bytes.Length);
+            AssetSys.AsyncSave(cacheUrl, bytes, bytes.Length);
         }
         //else
         //{
-        //    Debug.Log("no update");
+        //    AppLog.d("no update");
         //}
 
         yield return null;
@@ -242,7 +244,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public bool NeedUpdate(string subPath)
     {
-        Md5SchemeInfo info = null;
+        BundleInfo info = null;
         if(mDiffList.TryGetValue(subPath, out info))
         {
             return info != null;
@@ -257,17 +259,14 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         if(mDiffList.ContainsKey(subPath))
         {
-            mLocalMd5[subPath] = mDiffList[subPath];
-            SaveMd5List(mLocalMd5, mLocalMd5Path);
+            mLocalManifest[subPath] = mDiffList[subPath];
+            SaveManifest(mLocalManifest, BundleConfig.LocalManifestPath);
+            mDiffList.Remove(subPath);
         }
     }
 
-    public static void SaveMd5List(Md5SchemeDic dic, string path)
+    public static void SaveManifest(BundleManifestDic dic, string path)
     {
         var yaml = YamlHelper.Serialize(dic, path);
-
-        // test
-        var obj = YamlHelper.Deserialize<Md5SchemeDic>(yaml);
-        //XMLHelper.XmlSerialize(dic.Values.ToList(), mLocalMd5Path);
     }
 }

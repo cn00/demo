@@ -21,6 +21,11 @@ public class YamlHelper
         return yaml;
     }
 
+    public static T Deserialize<T>(MemoryStream stream)
+    {
+        return Deserialize<T>(stream.GetBuffer().Utf8String());
+    }
+
     public static T Deserialize<T>(string yaml)
     {
         var deserializer = new YamlDotNet.Serialization.DeserializerBuilder().Build();

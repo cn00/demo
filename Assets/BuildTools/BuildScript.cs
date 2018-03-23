@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using SevenZip;
 
-using Md5SchemeDic = System.Collections.Generic.Dictionary<string, Md5SchemeInfo>;
+using Md5SchemeDic = System.Collections.Generic.Dictionary<string, BundleInfo>;
 using System.Collections;
 
 [ExecuteInEditMode]
@@ -116,7 +116,7 @@ public class BuildScript
                 ++count;
                 var udir = dir.upath();
                 var assetBundleName = udir.Substring(udir.LastIndexOf("/") + 1); //.Replace(BundleConfig.ABResourceDir + "/", "");//
-                UnityEngine.Debug.Log("pack: " + assetBundleName);
+                AppLog.d("pack: " + assetBundleName);
                 var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions);
                 if(ab != null)
                     buildMap.Add(ab.Value);
@@ -184,7 +184,7 @@ public class BuildScript
             {
                 ++nnew;
                 newWriteTime = finfo.LastWriteTime.ToFileTimeUtc();
-                UnityEngine.Debug.Log(f.upath() + ": " + DateTime.FromFileTimeUtc(newWriteTime));
+                AppLog.d(f.upath() + ": " + DateTime.FromFileTimeUtc(newWriteTime));
             }
         }
         ab.assetNames = assetNames.ToArray();
@@ -194,7 +194,7 @@ public class BuildScript
             StreamWriter writer = new StreamWriter(flastWriteTime);
             writer.Write(newWriteTime);
             writer.Close();
-            UnityEngine.Debug.Log(assetDir + "> " + DateTime.FromFileTimeUtc(newWriteTime));
+            AppLog.d(assetDir + "> " + DateTime.FromFileTimeUtc(newWriteTime));
 
             return ab;
         }
@@ -396,7 +396,7 @@ public class BuildScript
         //// compress
         //Compress(BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion, BuildTarget.Android);
 
-        GenMd5List(BuildTarget.Android);
+        GenBundleManifest(BuildTarget.Android);
 
         // version 
         GenVersionFile(BuildTarget.Android);
@@ -440,35 +440,35 @@ public class BuildScript
         File.Copy(versionUrl, BundleOutDir + TargetName(buildTarget) + "/" + PlayerSettings.bundleVersion + "/resversion.txt", true);
     }
 
-    [MenuItem("Build/Android/GenMd5List"), ExecuteInEditMode]
-    public static void AndroidGenMd5List()
+    [MenuItem("Build/Android/GenBundleManifest")]
+    public static void AndroidGenBundleManifest()
     {
-        GenMd5List(BuildTarget.Android);
+        GenBundleManifest(BuildTarget.Android);
         EditorUtility.ClearProgressBar();
     }
 
-    public static void GenMd5List(BuildTarget buildTarget)
+    public static void GenBundleManifest(BuildTarget buildTarget)
     {
         try
         {
             var version = (PlayerSettings.bundleVersion);
             var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/";
-            Md5SchemeDic md5List = new Md5SchemeDic();//<string/*path*/, Md5SchemeInfo>
-            var files = (from f in Directory.GetFiles(rootDir, "*", SearchOption.AllDirectories)
-                         where Path.GetExtension(f) == BundleConfig.CompressedExtension
-                         select f).ToArray();
+            var md5List = new Md5SchemeDic();//<string/*path*/, Md5SchemeInfo>
+            var files = Directory.GetFiles(rootDir, "*" + BundleConfig.CompressedExtension, SearchOption.AllDirectories);
             float i = 0;
             foreach(var f in files)
             {
                 ++i;
-                var md5 = BundleHelper.Md5(f);
-                var subPath = f.upath().Replace(rootDir, "").Replace(BundleConfig.CompressedExtension, "");
-                md5List[subPath] = (new Md5SchemeInfo(subPath, md5, subPath.Contains("PreDownload")));
+                var bf = f.upath().Replace(BundleConfig.CompressedExtension, string.Empty);
+                var md5 = BundleHelper.Md5(bf);
+                var subPath = bf.Replace(rootDir, string.Empty);
+                md5List[subPath] = (new BundleInfo(subPath, md5));
             }
 
             // generate md5 sheet
-            var md5Path = rootDir + "md5.yaml";
+            var md5Path = rootDir + "" + BundleConfig.ManifestName;
             YamlHelper.Serialize(md5List, md5Path);
+            BundleHelper.CompressFileLZMA(md5Path, md5Path + BundleConfig.CompressedExtension);
         }
         finally
         {
@@ -514,7 +514,7 @@ public class BuildScript
                 foreach(var i in files)
                 {
                     var f = i.upath();
-                    UnityEngine.Debug.Log(f);
+                    AppLog.d(f);
                     EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
                     StreamingSceneBuild(
                         new[] { f },

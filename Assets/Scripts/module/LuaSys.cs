@@ -9,7 +9,7 @@ using XLua;
 using UnityEditor;
 #endif
 
-public class LuaHelper : SingleMono<LuaHelper>
+public class LuaSys : SingleMono<LuaSys>
 {
     //all lua behaviour shared one luaenv only!
     internal LuaEnv luaEnv = new LuaEnv();
@@ -49,7 +49,7 @@ public class LuaHelper : SingleMono<LuaHelper>
         if(ProjectConfig.Instance.UseBundle)
 #endif
         {
-            var data = AssetHelper.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
+            var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
             bytes = data.bytes;
         }
 #if UNITY_EDITOR
@@ -73,7 +73,7 @@ public class LuaHelper : SingleMono<LuaHelper>
         //luaEnv.DoString("require 'lua.utility.BridgingClass'");
 
         byte[] textBytes = null;
-        yield return AssetHelper.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
+        yield return AssetSys.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
             textBytes = asset.Data;
         });
         GetLuaTable(textBytes);

@@ -52,12 +52,12 @@ public class LuaMonoBehaviour : MonoBehaviour
         byte[] textBytes = null;
 
         var luaPath = luaScript.path;
-        yield return AssetHelper.Instance.GetAsset<DataObject>(luaPath, asset =>
+        yield return AssetSys.Instance.GetAsset<DataObject>(luaPath, asset =>
         {
             textBytes = asset.Data;
         });
-        var luaInstance = LuaHelper.Instance;
-        luaTable = luaInstance.GetLuaTable(textBytes, this, "LuaMonoBehaviour");
+        var luaInstance = LuaSys.Instance;
+        luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
 
         //luaAwake = luaTable.Get<Action>("Awake");
         //luaTable.Get("Awake", out luaAwake);
@@ -122,7 +122,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
         if(Time.time - lastGCTime > GCInterval)
         {
-            LuaHelper.Instance.GlobalEnv.Tick();
+            LuaSys.Instance.GlobalEnv.Tick();
             lastGCTime = Time.time;
         }
     }

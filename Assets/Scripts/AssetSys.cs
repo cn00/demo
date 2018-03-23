@@ -36,17 +36,13 @@ public static class AssetExtern
 }
 
 [XmlRoot]
-public class Md5SchemeInfo
+public class BundleInfo
 {
-    public string fname { get; set; }
     public string md5 { get; set; }
-    public bool preDownload { get; set; }
-    public Md5SchemeInfo() { }
-    public Md5SchemeInfo(string f, string m, bool pre = false)
+    public BundleInfo() { }
+    public BundleInfo(string f, string m)
     {
-        fname = f;
         md5 = m;
-        preDownload = pre;
     }
 }
 
@@ -73,12 +69,12 @@ public static class BundleHelper
         }
     }
 
-    public static string/*md5*/ CompressFileLZMA(string inFile, string outFile)
+    public static void CompressFileLZMA(string inFile, string outFile)
     {
         if(!File.Exists(inFile))
         {
-            UnityEngine.Debug.LogError(inFile + " not found");
-            return null;
+            AppLog.e(inFile + " not found");
+            return;
         }
 
         SevenZip.Compression.Lzma.Encoder coder = new SevenZip.Compression.Lzma.Encoder();
@@ -99,18 +95,14 @@ public static class BundleHelper
         coder.Code(inStream, outStream, inStream.Length, -1, progressInfo);
         outStream.Flush();
 
-        var md5str = Md5(outStream);
-
         outStream.Close();
         inStream.Close();
-
-        return md5str;
     }
 
     public static string Md5(Stream stream)
     {
         stream.Seek(0, SeekOrigin.Begin);
-        System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+        var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
         byte[] hash_byte = md5.ComputeHash(stream);
 
         var md5str = System.BitConverter.ToString(hash_byte);
@@ -182,9 +174,12 @@ public class DataObject : UnityEngine.Object
 }
 
 [LuaCallCSharp]
-public class AssetHelper : SingleMono<AssetHelper>
+public class AssetSys : SingleMono<AssetSys>
 {
     static string mCacheRoot = "";
+    /// <summary>
+    /// Application.dataPath + "/AssetBundle/"
+    /// </summary>
     public static string CacheRoot
     {
         get
@@ -196,13 +191,10 @@ public class AssetHelper : SingleMono<AssetHelper>
                 cacheDirName += PlatformName(RuntimePlatform.Android);
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #elif UNITY_ANDROID
-                cacheDirName += PlatformName(RuntimePlatform.Android);
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_IPHONE
-                cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer);
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_WINDOWS
-                cacheDirName += PlatformName(RuntimePlatform.WindowsPlayer);
                 mCacheRoot = Application.streamingAssetsPath + "/../" + cacheDirName;
 #else
                 cacheDirName += PlatformName(RuntimePlatform.Android);
@@ -479,7 +471,7 @@ public class AssetHelper : SingleMono<AssetHelper>
             }
             else
             {
-                Debug.LogError(fileUrl + ": " + www.error);
+                AppLog.e(fileUrl + ": " + www.error);
             }
         });
 
@@ -530,7 +522,7 @@ public class AssetHelper : SingleMono<AssetHelper>
                 //    AsyncSave(url.Replace(HttpRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
                 //}
 
-                Debug.LogFormat("loaded <Color=green>{0}</Color> OK", url);
+                AppLog.d("loaded <Color=green>{0}</Color> OK", url);
                 if(endCallback != null)
                 {
                     endCallback(www);
@@ -538,7 +530,7 @@ public class AssetHelper : SingleMono<AssetHelper>
             }
             else
             {
-                Debug.LogError(url + www.error);
+                AppLog.e(url + www.error);
             }
         }
         www.Dispose();
@@ -575,7 +567,7 @@ public class AssetHelper : SingleMono<AssetHelper>
             FileStream stream = (FileStream)result.AsyncState;
             stream.EndWrite(result);
             stream.Close();
-            Debug.Log("Saved:" + fname);
+            AppLog.d("Saved:" + fname);
         }, writer);
     }
 }
