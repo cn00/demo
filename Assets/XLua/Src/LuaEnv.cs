@@ -426,7 +426,12 @@ namespace XLua
 
                 // A non-wrapped Lua error (best interpreted as a string) - wrap it and throw it
                 if (err == null) err = "Unknown Lua Error";
+#if UNITY_EDITOR
                 throw new LuaException(err.ToString());
+#else
+                throw new LuaException(err.ToString().Replace("\n", "\\n"));
+#endif
+
 #if THREAD_SAFE || HOTFIX_ENABLE
             }
 #endif

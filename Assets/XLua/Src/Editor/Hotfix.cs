@@ -421,7 +421,7 @@ namespace XLua
                 }
                 if (method.Name != ".cctor" && !method.IsAbstract && !method.IsPInvokeImpl && method.Body != null && !method.Name.Contains("<"))
                 {
-                    //Debug.Log(method);
+                    //AppLog.d(method);
                     if ((isInline || method.HasGenericParameters || genericInOut(assembly, method, hotfixType)) 
                         ? !injectGenericMethod(assembly, method, hotfixType, stateTable) :
                         !injectMethod(assembly, method, hotfixType, stateTable))
@@ -527,7 +527,7 @@ namespace XLua
 #if XLUA_GENERAL
             System.Console.WriteLine(info);
 #else
-            UnityEngine.Debug.Log(info);
+            AppLog.d(info);
 #endif
         }
 
@@ -536,7 +536,7 @@ namespace XLua
 #if XLUA_GENERAL
             System.Console.WriteLine("Error:" + info);
 #else
-            UnityEngine.Debug.LogError(info);
+            AppLog.e(info);
 #endif
         }
 
@@ -1066,7 +1066,7 @@ namespace XLua
             var inject_tool_path = "./Tools/XLuaHotfixInject.exe";
             if (!File.Exists(inject_tool_path))
             {
-                UnityEngine.Debug.LogError("please install the Tools");
+                AppLog.e("please install the Tools");
                 return;
             }
 
@@ -1114,7 +1114,7 @@ namespace XLua
             hotfix_injection.Start();
             hotfix_injection.WaitForExit();
             File.Delete(hotfix_cfg_in_editor);
-            UnityEngine.Debug.Log(hotfix_injection.StandardOutput.ReadToEnd());
+            AppLog.d(hotfix_injection.StandardOutput.ReadToEnd());
             AssetDatabase.Refresh();
         }
     }

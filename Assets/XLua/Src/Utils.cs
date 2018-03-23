@@ -750,7 +750,7 @@ namespace XLua
                 string memberName = LuaAPI.lua_tostring(L, LuaAPI.xlua_upvalueindex(3));
                 bool isStatic = LuaAPI.lua_toboolean(L, LuaAPI.xlua_upvalueindex(4));
                 LuaCSFunction wrap = null;
-                //UnityEngine.Debug.Log(">>>>> " + type + " " + memberName);
+                //AppLog.d(">>>>> " + type + " " + memberName);
 
                 switch (memberType)
                 {

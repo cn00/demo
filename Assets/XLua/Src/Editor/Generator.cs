@@ -574,7 +574,7 @@ namespace CSObjectWrapEditor
 #if XLUA_GENERAL
                 System.Console.WriteLine("Error: gen wrap file fail! err=" + e.Message + ", stack=" + e.StackTrace);
 #else
-                Debug.LogError("gen wrap file fail! err=" + e.Message + ", stack=" + e.StackTrace);
+                AppLog.e("gen wrap file fail! err=" + e.Message + ", stack=" + e.StackTrace);
 #endif
             }
             finally
@@ -964,7 +964,7 @@ namespace CSObjectWrapEditor
 #endif
 
             var typeMap = types.ToDictionary(type => {
-                //Debug.Log("type:" + type);
+                //AppLog.d("type:" + type);
                 return type.ToString();
             });
 
@@ -1548,7 +1548,7 @@ namespace CSObjectWrapEditor
             GenCodeForClass();
             GenLuaRegister();
             callCustomGen();
-            Debug.Log("finished! use " + (DateTime.Now - start).TotalMilliseconds + " ms");
+            AppLog.d("finished! use " + (DateTime.Now - start).TotalMilliseconds + " ms");
             AssetDatabase.Refresh();
         }
 
@@ -1585,7 +1585,7 @@ namespace CSObjectWrapEditor
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("gen file fail! template=" + template_src + ", err=" + e.Message + ", stack=" + e.StackTrace);
+                    AppLog.e("gen file fail! template=" + template_src + ", err=" + e.Message + ", stack=" + e.StackTrace);
                 }
                 finally
                 {

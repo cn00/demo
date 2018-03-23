@@ -574,7 +574,7 @@ namespace XLua
                 {
                     return LuaAPI.luaL_error(L, "#2 param need a System.Type!");
                 }
-                //UnityEngine.Debug.Log("============================load type by __index:" + type);
+                //AppLog.d("============================load type by __index:" + type);
                 translator.TryDelayWrapLoader(L, type);
                 LuaAPI.lua_pushvalue(L, 2);
                 LuaAPI.lua_rawget(L, 1);
