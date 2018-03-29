@@ -6,6 +6,9 @@
 		},
 		{
 			"path": "Assets\\Scripts"
+		},
+		{
+			"path": "Assets\\BundleRes"
 		}
 	]
 }

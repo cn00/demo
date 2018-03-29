@@ -89,11 +89,13 @@ public class BuildScript
     }
 
     #region AssetBundle
-    public static void BuildBundle(string indir, BuildTarget targetPlatfrom, bool rebuild = false)
+    public static void BuildBundleGroup(string indir, BuildTarget targetPlatfrom, bool rebuild = false)
     {
         try
         {
-            var outdir = BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
+            var outdir = BundleOutDir + TargetName(targetPlatfrom) 
+                + "/" + PlayerSettings.bundleVersion 
+                + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
             if(!Directory.Exists(outdir))
             {
                 Directory.CreateDirectory(outdir);
@@ -112,10 +114,9 @@ public class BuildScript
             var dirs = Directory.GetDirectories(indir, "*", SearchOption.TopDirectoryOnly);
             foreach(var dir in dirs)
             {
-
                 ++count;
                 var udir = dir.upath();
-                var assetBundleName = udir.Substring(udir.LastIndexOf("/") + 1); //.Replace(BundleConfig.ABResourceDir + "/", "");//
+                var assetBundleName = udir.Substring(udir.LastIndexOf('/')+1);
                 AppLog.d("pack: " + assetBundleName);
                 var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions);
                 if(ab != null)
@@ -126,8 +127,9 @@ public class BuildScript
                 outdir,
                 buildMap.ToArray(),
                 (
-                    BuildAssetBundleOptions.UncompressedAssetBundle
-                    //| BuildAssetBundleOptions.DeterministicAssetBundle
+                BuildAssetBundleOptions.None
+                //| BuildAssetBundleOptions.UncompressedAssetBundle
+                | BuildAssetBundleOptions.ChunkBasedCompression
                 ),
                 targetPlatfrom
             );
@@ -138,7 +140,7 @@ public class BuildScript
             }
             AssetDatabase.Refresh();
 
-            Compress(outdir, targetPlatfrom);
+            Compress(outdir);
         }
         finally
         {
@@ -151,31 +153,32 @@ public class BuildScript
         var ab = new AssetBundleBuild();
         ab.assetBundleName = assetBundleName + BundleConfig.BundlePostfix;
 
+        var bundleConfig = BundleConfig.Instance();
+
         // 如果上次打包以来为更新过此 bundle 未编辑过则跳过
         long newWriteTime = 0;
-        long lastWriteTime = 0;
-        var flastWriteTime = assetDir + @"/.lastWriteTime";
-        if(File.Exists(flastWriteTime))
-        {
-            StreamReader reader = new StreamReader(flastWriteTime);
-            if(reader != null)
-            {
-                string s = reader.ReadLine();
-                reader.Close();
-                if(!long.TryParse(s, out lastWriteTime))
-                {
-                    lastWriteTime = 0;
-                }
-                newWriteTime = lastWriteTime;
-            }
-        }
+        //long lastWriteTime = 0;
+        //var flastWriteTime = assetDir + @"/.lastWriteTime";
+        //if(File.Exists(flastWriteTime))
+        //{
+        //    StreamReader reader = new StreamReader(flastWriteTime);
+        //    if(reader != null)
+        //    {
+        //        string s = reader.ReadLine();
+        //        reader.Close();
+        //        if(!long.TryParse(s, out lastWriteTime))
+        //        {
+        //            lastWriteTime = 0;
+        //        }
+        //        newWriteTime = lastWriteTime;
+        //    }
+        //}
 
         var assetNames = new List<string>();
         int nnew = 1; // =0
         foreach(var f in Directory.GetFiles(assetDir, "*.*", SearchOption.AllDirectories))
         {
-            if(excludes.Contains(Path.GetExtension(f))
-                || Path.GetFileName(f) == ".lastWriteTime")
+            if(excludes.Contains(Path.GetExtension(f)))
                 continue;
             assetNames.Add(f);
 
@@ -191,9 +194,6 @@ public class BuildScript
 
         if(nnew > 0)
         {
-            StreamWriter writer = new StreamWriter(flastWriteTime);
-            writer.Write(newWriteTime);
-            writer.Close();
             AppLog.d(assetDir + "> " + DateTime.FromFileTimeUtc(newWriteTime));
 
             return ab;
@@ -296,7 +296,7 @@ public class BuildScript
     [MenuItem("Build/Android_APK")]
     static void BuildAndroidApk()
     {
-        var version = new FGVersion(PlayerSettings.bundleVersion);
+        var version = new AppVersion(PlayerSettings.bundleVersion);
         // TODO: open this when release
         // version.Minor += 1;
         version.Patch = 0;
@@ -315,7 +315,7 @@ public class BuildScript
     [MenuItem("Build/iOS (iL2cpp proj)")]
     static void ExportIOSProj()
     {
-        var version = new FGVersion(PlayerSettings.bundleVersion);
+        var version = new AppVersion(PlayerSettings.bundleVersion);
         //version.Minor += 1;
         version.Patch = 0;
         PlayerSettings.bundleVersion = version.ToString();
@@ -341,7 +341,7 @@ public class BuildScript
     [MenuItem("Build/iOS Sim (iL2cpp proj)")]
     static void ExportIOSProjSim()
     {
-        var version = new FGVersion(PlayerSettings.bundleVersion);
+        var version = new AppVersion(PlayerSettings.bundleVersion);
         PlayerSettings.bundleVersion = version.ToString();
         PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
 //        PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
@@ -404,7 +404,7 @@ public class BuildScript
         // TODO: upload to http server
     }
 
-    public static void Compress(string indir, BuildTarget buildTarget)
+    public static void Compress(string indir)
     {
         try
         {
@@ -434,7 +434,7 @@ public class BuildScript
     {
         var versionUrl = BundleOutDir + TargetName(buildTarget) + "/resversion.txt";
         StreamWriter writer = new StreamWriter(versionUrl);
-        var version = new FGVersion(PlayerSettings.bundleVersion);
+        var version = new AppVersion(PlayerSettings.bundleVersion);
         writer.Write(version.ToString());
         writer.Close();
         File.Copy(versionUrl, BundleOutDir + TargetName(buildTarget) + "/" + PlayerSettings.bundleVersion + "/resversion.txt", true);
@@ -469,6 +469,11 @@ public class BuildScript
             var md5Path = rootDir + "" + BundleConfig.ManifestName;
             YamlHelper.Serialize(md5List, md5Path);
             BundleHelper.CompressFileLZMA(md5Path, md5Path + BundleConfig.CompressedExtension);
+
+            var Groups = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
+            YamlHelper.Serialize(BundleConfig.Instance().Groups, Groups);
+            var groups = YamlHelper.Deserialize<List<BundleConfig.GroupInfo>>(File.ReadAllText(Groups));
+            var l = groups.Count();
         }
         finally
         {
@@ -480,15 +485,18 @@ public class BuildScript
     {
         try
         {
-            var version = new FGVersion(PlayerSettings.bundleVersion);
+            var version = new AppVersion(PlayerSettings.bundleVersion);
             // TODO: open this when release
             // version.Patch += 1;
             PlayerSettings.bundleVersion = version.ToString();
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundle(i, buildTarget);
+                BuildBundleGroup(i, buildTarget);
             }
+
+            var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
+            YamlHelper.Serialize(BundleConfig.Instance().Groups, rootDir);
         }
         finally
         {
@@ -507,10 +515,10 @@ public class BuildScript
     {
         try
         {
-            foreach(var StreamSceneDir in BundleConfig.Instance().ABSceneRoots)
+            foreach(var StreamSceneDir in new string[]{ "Scene" } )
             {
                 float count = 0;
-                var files = Directory.GetFiles(BundleConfig.BundleResRoot + StreamSceneDir, "*_terrain.unity", SearchOption.AllDirectories);
+                var files = Directory.GetFiles(BundleConfig.BundleResRoot + StreamSceneDir, "*.unity", SearchOption.AllDirectories);
                 foreach(var i in files)
                 {
                     var f = i.upath();

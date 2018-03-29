@@ -250,9 +250,13 @@ public class AssetSys : SingleMono<AssetSys>
     {
         public AssetBundleManifest Manifest = null;
         public Dictionary<string, AssetBundle> Bundles = new Dictionary<string, AssetBundle>();
-        public bool CleanGroup()
+        public void CleanGroup()
         {
-            return true;
+            foreach(var i in Bundles.Values)
+            {
+                i.Unload(false);
+            }
+            Bundles.Clear();
         }
     }
 
@@ -538,7 +542,41 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
-    // TODO: not correct
+    /// <summary>
+    /// clean LoadedBundles, null group to clean all
+    /// </summary>
+    /// <param name="group"></param>
+    public void UnloadGroup(string group = null)
+    {
+        if(group == null)
+        {
+            foreach(var i in mLoadedBundles.Keys)
+            {
+                UnloadGroup(i);
+            }
+        }
+        else
+        {
+            BundleGroup outGroup = null;
+            if(mLoadedBundles.TryGetValue(group, out outGroup))
+                outGroup.CleanGroup();
+        }
+    }
+
+    public void UnloadBundle(string path)
+    {
+        var group = path.Substring(0, path.IndexOf('/'));
+        BundleGroup outGroup = null;
+        AssetBundle outBundle = null;
+        if(mLoadedBundles.TryGetValue(group, out outGroup) 
+            && outGroup.Bundles.TryGetValue(path, out outBundle))
+        {
+            outBundle.Unload(false);
+            outGroup.Bundles.Remove(path);
+        }
+    }
+
+    // TODO: not complete
     public static T WwwSync<T>(string url) where T : UnityEngine.Object
     {
         WWW www = new WWW(url);

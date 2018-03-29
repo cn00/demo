@@ -10,13 +10,13 @@ using UnityEditor;
 #endif
 
 [Serializable]
-public class FGVersion
+public class AppVersion
 {
     public int Major = 0; // 主版本
     public int Minor = 0; // 次版本
     public int Patch = 0; // 补丁版本
 
-    public FGVersion(string v)
+    public AppVersion(string v)
     {
         var vs = v.Split('.');
         Major = int.Parse(vs[0]);
@@ -24,7 +24,7 @@ public class FGVersion
         if(vs.Length == 3)
             Patch = int.Parse(vs[2]);
     }
-    public FGVersion(int major, int minor, int build)
+    public AppVersion(int major, int minor, int build)
     {
         Major = major;
         Minor = minor;
@@ -41,9 +41,9 @@ public class FGVersion
         get { return new Version(Major, Minor, Patch); }
     }
 
-    public static implicit operator FGVersion(Version v)
+    public static implicit operator AppVersion(Version v)
     {
-        return new FGVersion(v.Major, v.Minor, v.Build);
+        return new AppVersion(v.Major, v.Minor, v.Build);
     }
 
 }
@@ -58,7 +58,7 @@ public class FGVersion
 public class ProjectConfig : ScriptableObject
 {
     #region property
-    public FGVersion Version;
+    public AppVersion Version;
     public bool UseBundle = false;
     public string LuaExtension = ".lua";
     #endregion property
@@ -113,7 +113,7 @@ public class ProjectConfig : ScriptableObject
             if(mInstance == null)
             {
                 mInstance = new ProjectConfig();
-                mInstance.Version = new FGVersion("0.1.0");
+                mInstance.Version = new AppVersion("0.1.0");
                 mInstance.UseBundle = true;
             }
         }

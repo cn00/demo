@@ -147,7 +147,7 @@ namespace SevenZip
 
 	public interface IWriteCoderProperties
 	{
-		void WriteCoderProperties(System.IO.Stream outStream);
+		void WriteCoderProperties(System.IO.Stream outStream, int offset = 0);
 	}
 
 	public interface ISetDecoderProperties

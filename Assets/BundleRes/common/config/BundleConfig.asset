@@ -11,15 +11,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d12f3b43fa28a34db6ddec2b134938a, type: 3}
   m_Name: BundleConfig
   m_EditorClassIdentifier: 
-  mDirs:
-  - dir: Assets/BundleRes/common
-    include: 1
-    rebuild: 1
-  - dir: Assets/BundleRes/Lua
-    include: 1
-    rebuild: 1
-  - dir: Assets/BundleRes/ui
-    include: 1
-    rebuild: 1
-  ABSceneRoots:
-  - Scene
+  Version:
+    Major: 0
+    Minor: 0
+    Patch: 0
+  mGroups:
+  - mName: chapter_01
+    include: 0
+    rebuild: 0
+    fold: 0
+    mBundles:
+    - mName: level_01_01
+      mModifyTime: 0
+      mBuildTime: 
+      mVersion: 
+  - mName: common
+    include: 0
+    rebuild: 0
+    fold: 0
+    mBundles:
+    - mName: config
+      mModifyTime: 131666022675097850
+      mBuildTime: 
+      mVersion: 
+    - mName: template
+      mModifyTime: 131665125197471573
+      mBuildTime: 
+      mVersion: 
+    - mName: ui
+      mModifyTime: 131655842863345583
+      mBuildTime: 
+      mVersion: 
+  - mName: lua
+    include: 0
+    rebuild: 0
+    fold: 0
+    mBundles:
+    - mName: utility
+      mModifyTime: 131661801099293749
+      mBuildTime: 
+      mVersion: 
+  - mName: scene
+    include: 0
+    rebuild: 0
+    fold: 0
+    mBundles: []
+  - mName: ui
+    include: 0
+    rebuild: 0
+    fold: 1
+    mBundles:
+    - mName: boot
+      mModifyTime: 131665157297118366
+      mBuildTime: 
+      mVersion: 
+    - mName: loading
+      mModifyTime: 131661801100386356
+      mBuildTime: 
+      mVersion: 
+    - mName: login
+      mModifyTime: 131665177600792167
+      mBuildTime: 
+      mVersion: 
