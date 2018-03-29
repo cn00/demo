@@ -93,7 +93,7 @@ public class BuildScript
     {
         try
         {
-            var outdir = BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
+            var outdir = BundleOutDir + TargetName(targetPlatfrom) + "/" + PlayerSettings.bundleVersion + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
             if(!Directory.Exists(outdir))
             {
                 Directory.CreateDirectory(outdir);
@@ -250,10 +250,10 @@ public class BuildScript
         ProcessStartInfo pi = new ProcessStartInfo(
 #if UNITY_EDITOR_WIN
             "explorer.exe",
-            "Assets\\BundleRes\\Lua\\Table"
+            "Assets\\BundleRes\\lua\\table"
 #elif UNITY_EDITOR_OSX
             "open",
-            BundleConfig.ABResourceDir + "/Lua/Table"
+            "Assets/BundleRes/lua/table"
 #endif
         );
         pi.WorkingDirectory = ".";
@@ -271,10 +271,10 @@ public class BuildScript
             "../../table ../../client/Assets/BundleRes/Lua/Table"
 #elif UNITY_EDITOR_OSX
             "mono",
-            "Convert.exe ../../table ../../client/Assets/BundleRes/Lua/Table"
+            "Convert.exe ../../table ../../client/Assets/BundleRes/lua/table"
 #endif
         );
-        pi.WorkingDirectory = "..\\tools\\table\\";
+        pi.WorkingDirectory = "../tools/table/";
         Process.Start(pi);
 
         //LuaHelper.Init();
@@ -287,7 +287,7 @@ public class BuildScript
         ProcessStartInfo pi = new ProcessStartInfo(
             "GameManager.exe"
         );
-        pi.WorkingDirectory = "..\\tools\\table\\";
+        pi.WorkingDirectory = "../tools/table";
         Process.Start(pi);
     }
     #endregion 转表
@@ -371,6 +371,32 @@ public class BuildScript
     {
         string target_dir = TARGET_DIR + "/" + APP_NAME + "-" + DATETIME + ".app";
         GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneOSXIntel, BuildOptions.None);
+    }
+
+
+    [MenuItem("Build/iOS/AssetBundleBuild"), ExecuteInEditMode]
+    public static void iOSAssetBundleBuild()
+    {
+        AssetBundleBuildAll(BuildTarget.iOS);
+        //StreamingSceneBuild(BuildTarget.Android);
+
+        //// compress
+        //Compress(BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion, BuildTarget.Android);
+
+        GenBundleManifest(BuildTarget.iOS);
+
+        // version 
+        GenVersionFile(BuildTarget.iOS);
+
+        // TODO: upload to http server
+    }
+
+
+    [MenuItem("Build/iOS/GenBundleManifest")]
+    public static void iOSGenBundleManifest()
+    {
+        GenBundleManifest(BuildTarget.iOS);
+        EditorUtility.ClearProgressBar();
     }
     #endregion 🍎打包
 
