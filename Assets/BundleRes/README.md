@@ -15,7 +15,7 @@
 * 总揽:
 ```
 ABResources
-├── 分类目录
+├── 分组目录
 │   ├── AssetBundle 目录
 │   │   ├── 内容(文件或文件夹)
 ... ... ...
@@ -23,7 +23,7 @@ ABResources
 
 * `ABResources` 目录为 `AssetBundle` 打包源目录
 
-* 其下每一个子文件夹为一个 `AssetBundle` 分类目录
+* 其下每一个子文件夹为一个分组目录, 不宜在单个分组中存放太多 Bundle
 
 * 每一个分类目录下的子目录作为一个 `AssetBundle`
 
@@ -45,10 +45,6 @@ ABResources
 * 示例:
 ```
 ABResources
-├── PreDownload			// 预下载资源目录, 此目录下资源会在检查更新时全部更新
-│   ├── Common1/		
-│   ├── Common2/
-│  ...
 ├── Effect				// 分类目录
 │   ├── CommonEffect/			// 其下的所有资源包括所有子目录会被打成一个包 Effect/Common.assetBundle
 │   ├── AttackRange/	// Effect/AttackRange.assetBundle

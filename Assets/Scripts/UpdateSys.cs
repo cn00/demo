@@ -8,7 +8,7 @@ using System.Linq;
 using XLua;
 using System.Text;
 
-using BundleManifestDic = System.Collections.Generic.Dictionary<string, BundleInfo>;
+using BundleManifest = System.Collections.Generic.Dictionary<string, BundleInfo>;
 
 public static class BytesExtension
 {
@@ -25,9 +25,9 @@ public class UpdateSys : SingleMono<UpdateSys>
     Version mLocalVersion;
     Version mRemoteVersion;
 
-    BundleManifestDic mLocalManifest = new  BundleManifestDic();//<string/*path*/, Md5SchemeInfo>
-    BundleManifestDic mRemoteManifest = new BundleManifestDic();//<string/*path*/, Md5SchemeInfo>
-    BundleManifestDic mDiffList = new BundleManifestDic();// <string/*path*/, Md5SchemeInfo>
+    BundleManifest mLocalManifest = new  BundleManifest();//<string/*path*/, Md5SchemeInfo>
+    BundleManifest mRemoteManifest = new BundleManifest();//<string/*path*/, Md5SchemeInfo>
+    BundleManifest mDiffList = new BundleManifest();// <string/*path*/, Md5SchemeInfo>
 
     bool mAllDownloadOK = false;
 
@@ -61,7 +61,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 if(string.IsNullOrEmpty(www.error))
                 {
                     // 覆盖硬编码版本号
-                    ProjectConfig.Instance.Version = new FGVersion(www.text.Trim());
+                    ProjectConfig.Instance.Version = new AppVersion(www.text.Trim());
                 }
                 else
                 {
@@ -109,7 +109,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             if(string.IsNullOrEmpty(www.error))
             {
                 AppLog.d("deserialize mLocalManifest {0}", www.text);
-                mLocalManifest = YamlHelper.Deserialize<BundleManifestDic>(www.text);
+                mLocalManifest = YamlHelper.Deserialize<BundleManifest>(www.text);
                 AppLog.d("deserialize mLocalManifest 1");
             }
             else
@@ -143,7 +143,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
         AppLog.d("deserialize mRemoteManifest 0");
-        mRemoteManifest = YamlHelper.Deserialize<BundleManifestDic>(outStream);
+        mRemoteManifest = YamlHelper.Deserialize<BundleManifest>(outStream);
         AppLog.d("deserialize mRemoteManifest 1");
         outStream.Dispose();
         yield return null;
@@ -265,7 +265,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         }
     }
 
-    public static void SaveManifest(BundleManifestDic dic, string path)
+    public static void SaveManifest(BundleManifest dic, string path)
     {
         var yaml = YamlHelper.Serialize(dic, path);
     }

@@ -1300,12 +1300,12 @@ namespace SevenZip.Compression.Lzma
 		public const int kPropSize = 5;
 		Byte[] properties = new Byte[kPropSize];
 
-		public void WriteCoderProperties(System.IO.Stream outStream)
+		public void WriteCoderProperties(System.IO.Stream outStream, int offset = 0)
 		{
 			properties[0] = (Byte)((_posStateBits * 5 + _numLiteralPosStateBits) * 9 + _numLiteralContextBits);
 			for (int i = 0; i < 4; i++)
 				properties[1 + i] = (Byte)((_dictionarySize >> (8 * i)) & 0xFF);
-			outStream.Write(properties, 0, kPropSize);
+			outStream.Write(properties, offset, kPropSize);
 		}
 		
 		UInt32[] tempPrices = new UInt32[Base.kNumFullDistances];

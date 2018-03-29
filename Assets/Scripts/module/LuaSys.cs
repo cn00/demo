@@ -35,6 +35,11 @@ public class LuaSys : SingleMono<LuaSys>
 
         return luaTable;
     }
+
+    public byte[] LuaLoader(string filename)
+    {
+        return LuaLoader(ref filename);
+    }
     public byte[] LuaLoader(ref string filename)
     {
         var LuaExtension = ProjectConfig.Instance.LuaExtension;

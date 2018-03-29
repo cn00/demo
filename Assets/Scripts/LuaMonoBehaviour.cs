@@ -35,7 +35,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     internal static float lastGCTime = 0;
     internal const float GCInterval = 1;//1 second 
 
-    //private Action luaAwake;
+    private Action luaAwake;
     private Action luaOnEnable;
     private Action luaStart;
     private Action luaFixedUpdate;
@@ -46,21 +46,14 @@ public class LuaMonoBehaviour : MonoBehaviour
     private LuaTable luaTable = null;
 
     public bool Inited { get; protected set; }
-    IEnumerator Init()
+    bool Init()
     {
-        Inited = false;
-        byte[] textBytes = null;
+        byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path);
 
-        var luaPath = luaScript.path;
-        yield return AssetSys.Instance.GetAsset<DataObject>(luaPath, asset =>
-        {
-            textBytes = asset.Data;
-        });
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
 
-        //luaAwake = luaTable.Get<Action>("Awake");
-        //luaTable.Get("Awake", out luaAwake);
+        luaTable.Get("Awake", out luaAwake);
         luaTable.Get("OnEnable", out luaOnEnable);
         luaTable.Get("Start", out luaStart);
         luaTable.Get("FixedUpdate", out luaFixedUpdate);
@@ -68,33 +61,33 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
-        if(luaOnEnable != null)
-        {
-            luaOnEnable();
-        }
-        if(luaStart != null)
-        {
-            luaStart();
-        }
-
         Inited = true;
-        yield return null;
+        return true;
     }
 
     void Awake()
     {
+        Inited = false;
+        Init();
+
+        if(Inited && luaAwake != null)
+        {
+            luaAwake();
+        }
     }
 
     private void OnEnable()
     {
+        if(Inited && luaOnEnable != null)
+        {
+            luaOnEnable();
+        }
     }
 
     // Use this for initialization
     void Start()
     {
-        if(!Inited)
-            StartCoroutine(Init());
-        if(luaStart != null)
+        if(Inited && luaStart != null)
         {
             luaStart();
         }
@@ -106,11 +99,6 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaFixedUpdate();
         }
-    }
-
-    private void OnMouseUpAsButton()
-    {
-
     }
 
     // Update is called once per frame
@@ -137,6 +125,11 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void OnDestroy()
     {
+        CleanLua();
+    }
+
+    void CleanLua()
+    {
         if(Inited && luaOnDestroy != null)
         {
             luaOnDestroy();
@@ -146,6 +139,14 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaUpdate = null;
         luaStart = null;
         injections = null;
+    }
+
+    void SetLua(string path)
+    {
+        CleanLua();
+
+        luaScript.path = path;
+        Init();
     }
 
     public void YieldAndCallback(object to_yield, Action callback)
