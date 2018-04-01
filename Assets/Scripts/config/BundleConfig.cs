@@ -70,6 +70,12 @@ public class BundleConfig : ScriptableObject
     public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
     public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
 
+	public string m_ServerRoot="http://10.23.114.141:8008/";
+	public string ServerRoot
+	{
+		get{ return m_ServerRoot.EndsWith("/") ? m_ServerRoot : m_ServerRoot + "/"; }
+	}
+
     public static string LocalManifestPath
     {
         get
@@ -164,14 +170,29 @@ public class BundleConfig : ScriptableObject
     }
 #endif
 
-    public static BundleConfig InstanceRuntime()
+    public static BundleConfig InstanceRuntime ()
     {
-        if(mInstance == null)
+        if (mInstance == null)
         {
-            mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(BundleConfigAssetPath);
+            var assetSubPath = BundleConfigAssetPath.Replace (BundleResRoot, "");
+            var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath (assetSubPath);
+            AppLog.d("BundleConfig.InstanceRuntime: {0}", cachePath);
+            if (File.Exists (cachePath))
+            {
+                mInstance = AssetSys.Instance.GetAssetSync<BundleConfig> (assetSubPath);
+                AppLog.d("AssetBundle.Load({0}),{1}", cachePath, mInstance);
+            }
+            else
+            {
+                var respath = (assetSubPath.Replace(".asset", ""));
+                mInstance = Resources.Load<BundleConfig> (respath);
+                AppLog.d("Resources.Load({0}:{1})", respath, mInstance);
+            }
+
             if(mInstance == null)
             {
-                mInstance = new BundleConfig();
+                mInstance = ScriptableObject.CreateInstance<BundleConfig>();
+                AppLog.d("ScriptableObject.CreateInstance<BundleConfig>: {0}", mInstance);
             }
         }
 
