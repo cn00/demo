@@ -359,7 +359,7 @@ public class BundleConfigExtension : Editor
     {
         foreach(var i in mGroupsDic.Where(ii => ii.Value.include))
         {
-            BuildScript.BuildBundleGroup(i.Key, target, i.Value.rebuild);
+			BuildScript.BuildBundleGroup(BundleConfig.BundleResRoot + i.Key, target, i.Value.rebuild);
         }
         BuildScript.GenBundleManifest(target);
     }
