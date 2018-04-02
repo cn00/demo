@@ -59,6 +59,7 @@ public static class PathExtension
 [ExecuteInEditMode]
 public class BundleConfig : ScriptableObject
 {
+    #region const
     public const string ManifestName = "manifest.yaml";
     public const string BundleResRoot = "Assets/BundleRes/";
     public const string BundleConfigAssetPath = BundleResRoot + "common/config/BundleConfig.asset";
@@ -70,8 +71,21 @@ public class BundleConfig : ScriptableObject
     public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
     public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
 
+    public const string BundlePostfix = ".bd";
+    public const string CompressedExtension = ".lzma";
+
+    #endregion const
+
+    #region static 
+
+    #endregion static
+
 	public string m_ServerRoot="http://10.23.114.141:8008/";
-	public string ServerRoot
+    /// <summary>
+    /// http://ip:port/path/to/root/
+    /// </summary>
+    /// <value>The http root.</value>
+    public string ServerRoot
 	{
 		get{ return m_ServerRoot.EndsWith("/") ? m_ServerRoot : m_ServerRoot + "/"; }
 	}
@@ -91,6 +105,9 @@ public class BundleConfig : ScriptableObject
 
     [SerializeField]
     public AppVersion Version;
+
+    public bool UseBundle = false;
+    public string LuaExtension = ".lua";
 
     [Serializable]
     public class BundleInfo
@@ -131,9 +148,6 @@ public class BundleConfig : ScriptableObject
     [HideInInspector, SerializeField]
     GroupInfo[] mGroups;
     public GroupInfo[] Groups { get { return mGroups; } set { mGroups = value; } }
-
-    public const string BundlePostfix = ".bd";
-    public const string CompressedExtension = ".lzma";
 
     public List<string> ABResGroups
     {

@@ -205,6 +205,10 @@ public class AssetSys : SingleMono<AssetSys>
         }
     } // set in Runtime
     static string mHttpRoot = null;
+    /// <summary>
+    /// http://ip:port/path/to/root/
+    /// </summary>
+    /// <value>The http root.</value>
     public static string HttpRoot
     {
         get
@@ -443,9 +447,9 @@ public class AssetSys : SingleMono<AssetSys>
         var version = ProjectConfig.Instance.Version.ToString();
         var subPath = bundlePath;
 #if UNITY_EDITOR
-        var cachePath = CacheRoot + "/" + version + "/" + subPath;
+        var cachePath = CacheRoot + version + "/" + subPath;
 #else
-        var cachePath = CacheRoot + "/" + subPath;
+        var cachePath = CacheRoot + subPath;
 #endif
         var fileUrl = "file://" + cachePath;
         var isLocal = true;
@@ -454,7 +458,7 @@ public class AssetSys : SingleMono<AssetSys>
         )
         {
             isLocal = false;
-            fileUrl = HttpRoot + "/" + version + "/" + subPath + BundleConfig.CompressedExtension;
+            fileUrl = HttpRoot + version + "/" + subPath + BundleConfig.CompressedExtension;
         }
 
         AppLog.d(fileUrl);
