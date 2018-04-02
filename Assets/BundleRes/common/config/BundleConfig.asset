@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d12f3b43fa28a34db6ddec2b134938a, type: 3}
   m_Name: BundleConfig
   m_EditorClassIdentifier: 
-  m_ServerRoot: http://127.0.0.1:8008/
+  m_ServerRoot: http://172.20.10.2:8008/
   Version:
     Major: 0
     Minor: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
     fold: 0
     mBundles:
     - mName: config
-      mModifyTime: 131670543550000000
+      mModifyTime: 131670667750000000
       mBuildTime: 
       mVersion: 
     - mName: template

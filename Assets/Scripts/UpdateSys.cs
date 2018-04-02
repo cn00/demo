@@ -229,7 +229,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             ProjectConfig.Instance.Version = mRemoteVersion;
 
             // 更新完成后保存
-            var cacheUrl = AssetSys.CacheRoot + "/resversion.txt";
+            var cacheUrl = AssetSys.CacheRoot + "resversion.txt";
             var strRemoteVersion = mRemoteVersion.ToString();
             byte[] bytes = System.Text.Encoding.Default.GetBytes(strRemoteVersion);
             AssetSys.AsyncSave(cacheUrl, bytes, bytes.Length);
