@@ -296,6 +296,15 @@ public class BuildScript
     [MenuItem("Build/Android_APK")]
     static void BuildAndroidApk()
     {
+        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
+        var configDir = Path.GetDirectoryName (configRes);
+        if (!Directory.Exists(configDir))
+        {
+            Directory.CreateDirectory (configDir);
+        }
+        File.Copy (BundleConfig.BundleConfigAssetPath, configRes, true);
+        AssetDatabase.ImportAsset (configRes);
+
         var version = new AppVersion(PlayerSettings.bundleVersion);
         // TODO: open this when release
         // version.Minor += 1;
@@ -518,7 +527,7 @@ public class BuildScript
             //AndroidAssetBundleDelete();
             foreach(var i in BundleConfig.Instance().ABResGroups)
             {
-                BuildBundleGroup(i, buildTarget);
+                BuildBundleGroup(BundleConfig.BundleResRoot + i, buildTarget);
             }
 
             var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
