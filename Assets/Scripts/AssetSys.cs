@@ -35,18 +35,6 @@ public static class AssetExtern
     }
 }
 
-[XmlRoot]
-public class BundleInfo
-{
-    public string md5 { get; set; }
-    public BundleInfo() { }
-    public BundleInfo(string f, string m)
-    {
-        md5 = m;
-    }
-}
-
-
 public static class BundleHelper
 {
     #region 压缩
@@ -75,6 +63,12 @@ public static class BundleHelper
         {
             AppLog.e(inFile + " not found");
             return;
+        }
+
+        var outDir = Path.GetDirectoryName(outFile);
+        if(!Directory.Exists(outDir))
+        {
+            Directory.CreateDirectory(outDir);
         }
 
         SevenZip.Compression.Lzma.Encoder coder = new SevenZip.Compression.Lzma.Encoder();
@@ -178,7 +172,7 @@ public class AssetSys : SingleMono<AssetSys>
 {
     static string mCacheRoot = "";
     /// <summary>
-    /// Application.dataPath + "/AssetBundle/"
+    /// Application.dataPath + "/AssetBundle/${PlatformName}/" 
     /// </summary>
     public static string CacheRoot
     {
@@ -188,9 +182,15 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 var cacheDirName = "AssetBundle/";
 #if UNITY_EDITOR
-                cacheDirName += PlatformName(RuntimePlatform.Android);
+#if UNITY_ANDROID
+                cacheDirName += PlatformName(RuntimePlatform.Android) + "/";
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
-#elif UNITY_ANDROID
+#elif UNITY_IPHONE
+                cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
+                mCacheRoot = Application.dataPath + "/../" + cacheDirName;
+#endif
+#else //!UNITY_EDITOR
+#if UNITY_ANDROID
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
@@ -200,13 +200,14 @@ public class AssetSys : SingleMono<AssetSys>
                 cacheDirName += PlatformName(RuntimePlatform.Android);
                 CacheRoot = Application.streamingAssetsPath + "/../" + cacheDirName;
 #endif
+#endif
             }
             return mCacheRoot;
         }
     } // set in Runtime
     static string mHttpRoot = null;
     /// <summary>
-    /// http://ip:port/path/to/root/
+    /// http://ip:port/path/to/root/platform/
     /// </summary>
     /// <value>The http root.</value>
     public static string HttpRoot
@@ -227,6 +228,7 @@ public class AssetSys : SingleMono<AssetSys>
 #else
                 mHttpRoot += PlatformName(RuntimePlatform.Android);
 #endif
+                mHttpRoot += "/";
             }
             return mHttpRoot;
         }
@@ -277,6 +279,7 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
+        yield return GetBundle("ui/boot" + BundleConfig.BundlePostfix);
         yield return base.Init();
     }
 
@@ -297,7 +300,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         if(asset == null)
         {
-            AppLog.w("[{0}/{1}] not exist.", bundleName, assetSubPath);
+            AppLog.w("[{0}({2}):{1}] not exist.", bundleName, BundleConfig.BundleResRoot + assetSubPath, bundle);
         }
         return asset;
     }
@@ -321,7 +324,7 @@ public class AssetSys : SingleMono<AssetSys>
     {
         UnityEngine.Object resObj = null;
 #if UNITY_EDITOR
-        if(ProjectConfig.Instance.UseBundle)
+        if(BundleConfig.Instance().UseBundle)
 #endif
         {
 //            var trim = new char[] { ' ', '.', '/' };
@@ -397,7 +400,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         else
         {
-            var version = ProjectConfig.Instance.Version.ToString();
+            var version = BundleConfig.Instance().Version.ToString();
             var subPath = bundlePath;
 #if UNITY_EDITOR
             var cachePath = CacheRoot + "/" + version + "/" + subPath;
@@ -407,6 +410,11 @@ public class AssetSys : SingleMono<AssetSys>
             bundle = AssetBundle.LoadFromFile(cachePath);
             bundleGroup.Bundles[bundlePath] = bundle;
             AppLog.w("GetBundleSync: {0}", bundlePath);
+        }
+
+        if(bundle == null)
+        {
+            AppLog.e("[{0}] did not download yet.", bundlePath);
         }
         return bundle;
     }
@@ -444,7 +452,7 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
-        var version = ProjectConfig.Instance.Version.ToString();
+        var version = BundleConfig.Instance().Version.ToString();
         var subPath = bundlePath;
 #if UNITY_EDITOR
         var cachePath = CacheRoot + version + "/" + subPath;
@@ -545,7 +553,7 @@ public class AssetSys : SingleMono<AssetSys>
             }
             else
             {
-                AppLog.e(url + www.error);
+                AppLog.e(url + ": " + www.error);
             }
         }
         www.Dispose();

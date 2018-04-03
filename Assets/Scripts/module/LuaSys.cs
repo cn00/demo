@@ -42,7 +42,7 @@ public class LuaSys : SingleMono<LuaSys>
     }
     public byte[] LuaLoader(ref string filename)
     {
-        var LuaExtension = ProjectConfig.Instance.LuaExtension;
+        var LuaExtension = BundleConfig.Instance().LuaExtension;
 
         if(filename.EndsWith(LuaExtension))
         {
@@ -51,7 +51,7 @@ public class LuaSys : SingleMono<LuaSys>
 
         byte[] bytes = null;
 #if UNITY_EDITOR
-        if(ProjectConfig.Instance.UseBundle)
+        if(BundleConfig.Instance().UseBundle)
 #endif
         {
             var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
@@ -68,15 +68,16 @@ public class LuaSys : SingleMono<LuaSys>
         return bytes;
     }
 
+    private void Awake()
+    {
+        luaEnv.AddLoader(LuaLoader);
+    }
+
 #if UNITY_EDITOR
     [InitializeOnLoadMethod]
 #endif
     public override IEnumerator Init()
     {
-        luaEnv.AddLoader(LuaLoader);
-
-        //luaEnv.DoString("require 'lua.utility.BridgingClass'");
-
         byte[] textBytes = null;
         yield return AssetSys.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
             textBytes = asset.Data;

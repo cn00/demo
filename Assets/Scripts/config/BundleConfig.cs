@@ -8,6 +8,19 @@ using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
 using UnityEditor;
+static class RectExtension
+{
+    public static Rect Split(this Rect rect, int index, int count)
+    {
+        int r = (int)rect.width % count; // Remainder used to compensate width and position.
+        int width = (int)(rect.width / count);
+        rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);
+        if(index > 0)
+        { rect.x += width * index + (r - (count - 1 - index)); }
+
+        return rect;
+    }
+}
 #endif
 
 public static class PathExtension
@@ -53,6 +66,48 @@ public static class PathExtension
 }
 
 
+[Serializable]
+public class AppVersion
+{
+    [Range(0,9)]
+    public int Major = 0; // 主版本
+    [Range(0,9)]
+    public int Minor = 0; // 次版本
+    [Range(0,99)]
+    public int Patch = 0; // 补丁版本
+
+    public AppVersion(string v)
+    {
+        var vs = v.Split('.');
+        Major = int.Parse(vs[0]);
+        Minor = int.Parse(vs[1]);
+        if(vs.Length > 2)
+            Patch = int.Parse(vs[2]);
+    }
+    public AppVersion(int major, int minor, int build)
+    {
+        Major = major;
+        Minor = minor;
+        Patch = build;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("{0}.{1}.{2}", Major, Minor, Patch);
+    }
+
+    public Version V
+    {
+        get { return new Version(Major, Minor, Patch); }
+    }
+
+    public static implicit operator AppVersion(Version v)
+    {
+        return new AppVersion(v.Major, v.Minor, v.Build);
+    }
+
+}
+
 /// <summary>
 /// Assets/BundleRes 下需要打包的资源目录配置
 /// </summary>
@@ -61,8 +116,7 @@ public class BundleConfig : ScriptableObject
 {
     #region const
     public const string ManifestName = "manifest.yaml";
-    public const string BundleResRoot = "Assets/BundleRes/";
-    public const string BundleConfigAssetPath = BundleResRoot + "common/config/BundleConfig.asset";
+    public const string BundleConfigAssetPath = "Assets/BundleRes/common/config/BundleConfig.asset";
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
@@ -80,26 +134,25 @@ public class BundleConfig : ScriptableObject
 
     #endregion static
 
-	public string m_ServerRoot="http://10.23.114.141:8008/";
+    [SerializeField]
+    string m_BundleResRoot = "Assets/BundleRes/";
+    public static string BundleResRoot { get { return Instance().m_BundleResRoot; } }
+
+    public string m_ServerRoot="http://10.23.114.141:8008/";
     /// <summary>
     /// http://ip:port/path/to/root/
     /// </summary>
     /// <value>The http root.</value>
     public string ServerRoot
-	{
-		get{ return m_ServerRoot.EndsWith("/") ? m_ServerRoot : m_ServerRoot + "/"; }
-	}
+    {
+        get { return m_ServerRoot.EndsWith("/") ? m_ServerRoot : m_ServerRoot + "/"; }
+    }
 
     public static string LocalManifestPath
     {
         get
         {
-#if UNITY_EDITOR
-            var version = ProjectConfig.Instance.Version.ToString();
-            return AssetSys.CacheRoot + version + "/" + BundleConfig.ManifestName;
-#else
             return AssetSys.CacheRoot + BundleConfig.ManifestName;
-#endif
         }
     }
 
@@ -110,18 +163,21 @@ public class BundleConfig : ScriptableObject
     public string LuaExtension = ".lua";
 
     [Serializable]
-    public class BundleInfo
+    public class BundleInfo : object
     {
         [SerializeField]
         string mName;
+        [YamlDotNet.Serialization.YamlIgnore]
         public string Name { get { return mName; } set { mName = value; } }
 
         [SerializeField]
         string mModifyTime;
+        [YamlDotNet.Serialization.YamlIgnore]
         public string ModifyTime { get { return mModifyTime; } set { mModifyTime = value; } }
 
         [SerializeField]
-        string mBuildTime;
+        [YamlDotNet.Serialization.YamlIgnore]
+        string mBuildTime = "0";
         public string BuildTime { get { return mBuildTime; } set { mBuildTime = value; } }
 
         [SerializeField]
@@ -130,7 +186,7 @@ public class BundleConfig : ScriptableObject
     }
 
     [Serializable]
-    public class GroupInfo
+    public class GroupInfo : object
     {
         [SerializeField]
         string mName;
@@ -138,7 +194,7 @@ public class BundleConfig : ScriptableObject
 
         public bool include = false;
         public bool rebuild = false;
-        public bool fold = false;
+        public bool show = false;
 
         [SerializeField]
         List<BundleInfo> mBundles;
@@ -146,8 +202,33 @@ public class BundleConfig : ScriptableObject
     }
 
     [HideInInspector, SerializeField]
-    GroupInfo[] mGroups;
-    public GroupInfo[] Groups { get { return mGroups; } set { mGroups = value; } }
+    List<GroupInfo> mGroups;
+    public List<GroupInfo> Groups { get { return mGroups; } set { mGroups = value; } }
+
+    public BundleInfo GetBundleInfo(string path)
+    {
+        var dirs = path.Split('/');
+        GroupInfo group = null;
+        foreach(var i in Groups)
+        {
+            if(i.Name == dirs[0])
+            {
+                group = i;
+                break;
+            }
+        }
+        if(group != null)
+        {
+            foreach(var j in group.Bundles)
+            {
+                if(j.Name == dirs[1])
+                {
+                    return j;
+                }
+            }
+        }
+        return null;
+    }
 
     public List<string> ABResGroups
     {
@@ -182,221 +263,227 @@ public class BundleConfig : ScriptableObject
 
         return mInstance;
     }
+    public void Save()
+    {
+        EditorUtility.SetDirty(this);
+        AssetDatabase.WriteImportSettingsIfDirty(BundleConfigAssetPath);
+        AssetDatabase.ImportAsset(BundleConfigAssetPath, ImportAssetOptions.DontDownloadFromCacheServer);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
 #endif
 
-    public static BundleConfig InstanceRuntime ()
+    public static BundleConfig InstanceRuntime()
     {
-        if (mInstance == null)
+        if(mInstance == null)
         {
-            var assetSubPath = BundleConfigAssetPath.Replace (BundleResRoot, "");
-            var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath (assetSubPath);
-            AppLog.d("BundleConfig.InstanceRuntime: {0}", cachePath);
-            if (File.Exists (cachePath))
+            var assetSubPath = BundleConfigAssetPath.Replace(BundleResRoot, "");
+            var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
+            if(File.Exists(cachePath))
             {
-                mInstance = AssetSys.Instance.GetAssetSync<BundleConfig> (assetSubPath);
-                AppLog.d("AssetBundle.Load({0}),{1}", cachePath, mInstance);
+                mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(assetSubPath);
             }
             else
             {
                 var respath = (assetSubPath.Replace(".asset", ""));
-                mInstance = Resources.Load<BundleConfig> (respath);
-                AppLog.d("Resources.Load({0}:{1})", respath, mInstance);
+                mInstance = Resources.Load<BundleConfig>(respath);
             }
 
             if(mInstance == null)
             {
                 mInstance = ScriptableObject.CreateInstance<BundleConfig>();
-                AppLog.d("ScriptableObject.CreateInstance<BundleConfig>: {0}", mInstance);
             }
         }
 
         return mInstance;
     }
 
-}
-
+    #region CustomEditor
 #if UNITY_EDITOR
-static class RectExtension
-{
-    public static Rect Split(this Rect rect, int index, int count)
-    {
-        int r = (int)rect.width % count; // Remainder used to compensate width and position.
-        int width = (int)(rect.width / count);
-        rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);
-        if(index > 0)
-        { rect.x += width * index + (r - (count - 1 - index)); }
 
-        return rect;
-    }
-}
-
-[CustomEditor(typeof(BundleConfig))]
-public class BundleConfigExtension : Editor
-{
-    bool allInclude = false;
-    bool allRebuild = false;
-    BundleConfig _Target = null;
-    Dictionary<string, BundleConfig.GroupInfo> mGroupsDic = new Dictionary<string, BundleConfig.GroupInfo>();
-    public void OnEnable()
+    [CustomEditor(typeof(BundleConfig))]
+    public class BundleConfigExtension : Editor
     {
-        _Target = (BundleConfig)target;
-        RefreshGroups();
-    }
-
-    void RefreshGroups()
-    {
-        if(_Target.Groups != null)
+        bool allInclude = false;
+        bool allRebuild = false;
+        bool showBundles = true;
+        public void OnEnable()
         {
-            // list to dictionary
-            foreach(var i in _Target.Groups)
-            {
-                mGroupsDic[i.Name] = i;
-            }
+            mInstance = (BundleConfig)target;
+            RefreshGroups();
         }
-        var newGroupsDic = new Dictionary<string, BundleConfig.GroupInfo>();
-        foreach(var group in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
-        {
-            bool include = false;
-            bool rebuild = false;
-            bool fold = false;
-            BundleConfig.GroupInfo old = null;
-            var name = group.upath().Replace(BundleConfig.BundleResRoot, "");
-            if(mGroupsDic.TryGetValue(name, out old) && old != null)
-            {
-                include = old.include;
-                rebuild = old.rebuild;
-                fold = old.fold;
-            }
-            newGroupsDic[name] = (new BundleConfig.GroupInfo
-            {
-                Name = name,
-                include = include,
-                rebuild = rebuild,
-                fold = fold
-            });
 
-            Dictionary<string, BundleConfig.BundleInfo> tempBundles = new Dictionary<string, BundleConfig.BundleInfo>();
-            foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
+        void RefreshGroups()
+        {
+            var newGroups = new List<GroupInfo>();
+            foreach(var group in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
             {
-                var bundleInfo = tempBundles[bundle] = new BundleConfig.BundleInfo();
-                bundleInfo.Name = bundle.upath().Replace(group + "/", "");
-                long time = 0;
-                foreach(var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i=>!i.EndsWith(".meta")))
+                var groupName = group.upath().Replace(BundleConfig.BundleResRoot, "");
+                GroupInfo groupInfo = mInstance.Groups.Find(i => i.Name == groupName);
+                if(groupInfo == null)
                 {
-                    var finfo = new FileInfo(f);
-                    var tutc = finfo.LastWriteTime.ToFileTime();
-                    //AppLog.d("{0}:{1}", f, tutc);
-                    if(time < tutc)
-                        time = tutc;
+                    groupInfo = new GroupInfo()
+                    {
+                        Name = groupName,
+                        Bundles = new List<BundleInfo>(),
+                    };
                 }
-                bundleInfo.ModifyTime = time.ToString();
-            }
-            newGroupsDic[name].Bundles = tempBundles.Values.ToList();
+
+                var newBundles = new List<BundleInfo>();
+                foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
+                {
+                    var bundleName = bundle.upath().Replace(group + "/", "");
+                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
+                    if(bundleInfo == null)
+                    {
+                        bundleInfo = new BundleInfo()
+                        {
+                            Name = bundleName,
+                        };
+                    }
+
+                    long time = 0;
+                    foreach(var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
+                    {
+                        var finfo = new FileInfo(f);
+                        var tutc = finfo.LastWriteTime.ToFileTime();
+                        //AppLog.d("{0}:{1}", f, tutc);
+                        if(time < tutc)
+                            time = tutc;
+                    }
+                    bundleInfo.ModifyTime = time.ToString();
+
+                    if(time > 0)
+                        newBundles.Add(bundleInfo);
+                }//for 2
+                groupInfo.Bundles = newBundles;
+
+                if(groupInfo.Bundles.Count > 0)
+                    newGroups.Add(groupInfo);
+            }//for 1
+            mInstance.Groups = newGroups;
         }
-        mGroupsDic = newGroupsDic;
-        _Target.Groups = mGroupsDic.Values.ToArray();
-    }
 
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-
-        GUILayoutOption[] guiOpts = new GUILayoutOption[]
-        {
-            GUILayout.Width(50),
-            GUILayout.ExpandWidth(true),
-        };
-
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("Group", guiOpts);
-        EditorGUILayout.LabelField("Include", guiOpts);
-        EditorGUILayout.LabelField("Rebuild", guiOpts);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("All", guiOpts);
-        var allIncludeTmp = EditorGUILayout.Toggle("", allInclude, guiOpts);
-        if(allIncludeTmp != allInclude)
-        {
-            allInclude = allIncludeTmp;
-            foreach(var i in mGroupsDic)
-            {
-                mGroupsDic[i.Key].include = allIncludeTmp;
-            }
-        }
-
-        var allRebuildTmp = EditorGUILayout.Toggle("", allRebuild, guiOpts);
-        if(allRebuildTmp != allRebuild)
-        {
-            allRebuild = allRebuildTmp;
-            foreach(var i in mGroupsDic)
-            {
-                i.Value.rebuild = allRebuildTmp;
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-
-        allInclude = mGroupsDic.Where(i => i.Value.include).Count() == _Target.Groups.Count();
-        allRebuild = mGroupsDic.Where(i => i.Value.rebuild).Count() == _Target.Groups.Count();
-
-        foreach(var i in mGroupsDic)
+        void DrawBundles(GUILayoutOption[] guiOpts)
         {
             EditorGUILayout.BeginHorizontal();
             {
-                //EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.BundleResRoot, "  "), guiOpts);
-                i.Value.fold = EditorGUILayout.Foldout(i.Value.fold, i.Key.Replace(BundleConfig.BundleResRoot, ""), true);
-                i.Value.include = EditorGUILayout.Toggle("", i.Value.include, guiOpts);
-                i.Value.rebuild = EditorGUILayout.Toggle("", i.Value.rebuild, guiOpts);
+                EditorGUILayout.LabelField("Group", guiOpts);
+                EditorGUILayout.LabelField("Include", guiOpts);
+                EditorGUILayout.LabelField("Rebuild", guiOpts);
             }
             EditorGUILayout.EndHorizontal();
-            if(i.Value.fold)
+
+            EditorGUILayout.BeginHorizontal();
             {
-                foreach(var f in i.Value.Bundles)
+                EditorGUILayout.LabelField("All", guiOpts);
+                var allIncludeTmp = EditorGUILayout.Toggle("", allInclude, guiOpts);
+                if(allIncludeTmp != allInclude)
                 {
-                    EditorGUILayout.BeginHorizontal();
+                    allInclude = allIncludeTmp;
+                    foreach(var i in mInstance.Groups)
                     {
-                        EditorGUILayout.LabelField(f.Name.Replace(i.Key, "    "), guiOpts);
-                        EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.ModifyTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
+                        i.include = allIncludeTmp;
                     }
-                    EditorGUILayout.EndHorizontal();
                 }
+
+                var allRebuildTmp = EditorGUILayout.Toggle("", allRebuild, guiOpts);
+                if(allRebuildTmp != allRebuild)
+                {
+                    allRebuild = allRebuildTmp;
+                    foreach(var i in mInstance.Groups)
+                    {
+                        i.rebuild = allRebuildTmp;
+                    }
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            allInclude = mInstance.Groups.Where(i => i.include).Count() == mInstance.Groups.Count();
+            allRebuild = mInstance.Groups.Where(i => i.rebuild).Count() == mInstance.Groups.Count();
+
+            foreach(var i in mInstance.Groups)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    //EditorGUILayout.LabelField(i.Key.Replace(BundleConfig.BundleResRoot, "  "), guiOpts);
+                    i.show = EditorGUILayout.Foldout(i.show, i.Name, true);
+                    i.include = EditorGUILayout.Toggle("", i.include, guiOpts);
+                    i.rebuild = EditorGUILayout.Toggle("", i.rebuild, guiOpts);
+                }
+                EditorGUILayout.EndHorizontal();
+
+                if(i.show)
+                {
+                    foreach(var f in i.Bundles)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        {
+                            EditorGUILayout.LabelField("  " + f.Name, guiOpts);
+                            EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.ModifyTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
+                            EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.BuildTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
+                        }
+                        EditorGUILayout.EndHorizontal();
+                    }
+                }
+            }
+
+            var rect = EditorGUILayout.GetControlRect();
+            if(GUI.Button(rect.Split(0, 4), "Refresh"))
+            {
+                RefreshGroups();
+            }
+            if(GUI.Button(rect.Split(1, 4), "BuildAnd"))
+            {
+                Build(BuildTarget.Android);
+            }
+            if(GUI.Button(rect.Split(2, 4), "BuildiOS"))
+            {
+                Build(BuildTarget.iOS);
+            }
+            //if(GUI.Button(rect.Split(2, 4), "Clean Build"))
+            //{
+
+            //}
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            GUILayoutOption[] guiOpts = new GUILayoutOption[]
+            {
+                GUILayout.Width(50),
+                GUILayout.ExpandWidth(true),
+            };
+
+            EditorGUILayout.Space();
+
+            showBundles = EditorGUILayout.Foldout(showBundles, "Bundles", true);
+            if(showBundles)
+            {
+                DrawBundles(guiOpts);
+            }
+
+            if(GUI.changed)
+            {
+                PlayerSettings.bundleVersion = mInstance.Version.ToString();
+                EditorUtility.SetDirty(mInstance);
+                //AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
             }
         }
 
-        var rect = EditorGUILayout.GetControlRect();
-        if(GUI.Button(rect.Split(0, 4), "Refresh"))
+        void Build(BuildTarget target)
         {
-            RefreshGroups();
-        }
-        if(GUI.Button(rect.Split(1, 4), "BuildAnd"))
-        {
-            Build(BuildTarget.Android);
-        }
-        if(GUI.Button(rect.Split(2, 4), "BuildiOS"))
-        {
-            Build(BuildTarget.iOS);
-        }
-        //if(GUI.Button(rect.Split(2, 4), "Clean Build"))
-        //{
-
-        //}
-
-        if(GUI.changed)
-        {
-            _Target.Groups = mGroupsDic.Values.ToArray();
-            EditorUtility.SetDirty(_Target);
-            //AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            foreach(var i in mInstance.Groups.Where(ii => ii.include))
+            {
+                BuildScript.BuildBundleGroup(BundleConfig.BundleResRoot + i.Name, target, i.rebuild);
+            }
+            BuildScript.GenBundleManifest(target);
         }
     }
-
-    void Build(BuildTarget target)
-    {
-        foreach(var i in mGroupsDic.Where(ii => ii.Value.include))
-        {
-			BuildScript.BuildBundleGroup(BundleConfig.BundleResRoot + i.Key, target, i.Value.rebuild);
-        }
-        BuildScript.GenBundleManifest(target);
-    }
-}
 #endif
+    #endregion CustomEditor
+
+}

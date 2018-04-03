@@ -11,7 +11,11 @@ public class App : SingleMono<App>
     {
         yield return LuaSys.Instance.Init();
 
+        yield return AssetSys.Instance.Init();
+
         yield return base.Init();
+
+        gameObject.GetComponent<LuaMonoBehaviour>().enabled = true;
     }
 
     private void Awake()

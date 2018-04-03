@@ -401,7 +401,7 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    System.Collections.Generic.Dictionary<string, BundleInfo> dic = (System.Collections.Generic.Dictionary<string, BundleInfo>)translator.GetObject(L, 1, typeof(System.Collections.Generic.Dictionary<string, BundleInfo>));
+                    System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo> dic = (System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo>)translator.GetObject(L, 1, typeof(System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo>));
                     string path = LuaAPI.lua_tostring(L, 2);
                     
                     UpdateSys.SaveManifest( dic, path );

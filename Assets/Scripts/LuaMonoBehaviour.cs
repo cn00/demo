@@ -68,7 +68,6 @@ public class LuaMonoBehaviour : MonoBehaviour
     void Awake()
     {
         Inited = false;
-        Init();
 
         if(Inited && luaAwake != null)
         {
@@ -78,6 +77,8 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
+        if(!Inited)
+            Init();
         if(Inited && luaOnEnable != null)
         {
             luaOnEnable();

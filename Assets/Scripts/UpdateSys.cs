@@ -8,7 +8,7 @@ using System.Linq;
 using XLua;
 using System.Text;
 
-using BundleManifest = System.Collections.Generic.Dictionary<string, BundleInfo>;
+using BundleManifest = System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo>;
 
 public static class BytesExtension
 {
@@ -50,7 +50,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetLocalVersion()
     {
-        var cacheUrl = AssetSys.CacheRoot + "/resversion.txt";
+        var cacheUrl = AssetSys.CacheRoot + "resversion.txt";
         var localVersionUrl = "file://" + cacheUrl;
         AppLog.d(localVersionUrl);
 
@@ -61,7 +61,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 if(string.IsNullOrEmpty(www.error))
                 {
                     // 覆盖硬编码版本号
-                    ProjectConfig.Instance.Version = new AppVersion(www.text.Trim());
+                    BundleConfig.Instance().Version = new AppVersion(www.text.Trim());
                 }
                 else
                 {
@@ -69,7 +69,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
             });
         }
-        mLocalVersion = ProjectConfig.Instance.Version.V;
+        mLocalVersion = BundleConfig.Instance().Version.V;
         AppLog.d("LocalVersion {0}", mLocalVersion.ToString());
 
         yield return null;
@@ -77,7 +77,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetRemoteVersion()
     {
-        var remoteVersionUrl = AssetSys.HttpRoot + "/resversion.txt";
+        var remoteVersionUrl = AssetSys.HttpRoot + "resversion.txt";
         AppLog.d(remoteVersionUrl);
         yield return AssetSys.Www(remoteVersionUrl, (WWW www) =>
         {
@@ -124,7 +124,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     public IEnumerator GetRemoteManifest()
     {
         var cachePath = BundleConfig.LocalManifestPath;
-        var remoteManifestUrl = AssetSys.HttpRoot + "/" + mRemoteVersion + "/" + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
+        var remoteManifestUrl = AssetSys.HttpRoot + mRemoteVersion + "/" + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
 
         byte[] bytes = null;
         yield return AssetSys.Www(remoteManifestUrl, (WWW www) =>
@@ -155,15 +155,15 @@ public class UpdateSys : SingleMono<UpdateSys>
     public void DownloadDiffFiles()
     {
         int count = 0;
-        foreach(var i in mDiffList)//.Where(info=>info.Value.preDownload))
+        foreach(var i in mDiffList)
         {
             var subPath = i.Key;
 #if UNITY_EDITOR
-            var cachePath = AssetSys.CacheRoot + "/" + mRemoteVersion + "/" + subPath;
+            var cachePath = AssetSys.CacheRoot + mRemoteVersion + "/" + subPath;
 #else
-            var cachePath = AssetSys.CacheRoot + "/" + subPath;
+            var cachePath = AssetSys.CacheRoot + subPath;
 #endif
-            var diffFileUrl = AssetSys.HttpRoot + "/" +  mRemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
+            var diffFileUrl = AssetSys.HttpRoot +  mRemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
             AppLog.d(diffFileUrl);
 
             //yield return AssetSys.Www(fileUrl, (WWW www) =>
@@ -226,7 +226,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
             DownloadDiffFiles();
 
-            ProjectConfig.Instance.Version = mRemoteVersion;
+            BundleConfig.Instance().Version = mRemoteVersion;
 
             // 更新完成后保存
             var cacheUrl = AssetSys.CacheRoot + "resversion.txt";
@@ -244,7 +244,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public bool NeedUpdate(string subPath)
     {
-        BundleInfo info = null;
+        BundleConfig.BundleInfo info = null;
         if(mDiffList.TryGetValue(subPath, out info))
         {
             return info != null;
