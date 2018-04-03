@@ -116,7 +116,8 @@ public class BundleConfig : ScriptableObject
 {
     #region const
     public const string ManifestName = "manifest.yaml";
-    public const string BundleConfigAssetPath = "Assets/BundleRes/common/config/BundleConfig.asset";
+    public const string BundleConfigAssetSubPath = "common/config/BundleConfig.asset";
+    public const string BundleConfigAssetPath = "Assets/BundleRes/" + BundleConfigAssetSubPath;
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
@@ -267,7 +268,6 @@ public class BundleConfig : ScriptableObject
     {
         EditorUtility.SetDirty(this);
         AssetDatabase.WriteImportSettingsIfDirty(BundleConfigAssetPath);
-        AssetDatabase.ImportAsset(BundleConfigAssetPath, ImportAssetOptions.DontDownloadFromCacheServer);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -277,7 +277,7 @@ public class BundleConfig : ScriptableObject
     {
         if(mInstance == null)
         {
-            var assetSubPath = BundleConfigAssetPath.Replace(BundleResRoot, "");
+            var assetSubPath = BundleConfigAssetSubPath;
             var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
             if(File.Exists(cachePath))
             {
@@ -291,7 +291,8 @@ public class BundleConfig : ScriptableObject
 
             if(mInstance == null)
             {
-                mInstance = ScriptableObject.CreateInstance<BundleConfig>();
+                mInstance = CreateInstance<BundleConfig>();
+                mInstance.UseBundle = true;
             }
         }
 
@@ -441,10 +442,6 @@ public class BundleConfig : ScriptableObject
             {
                 Build(BuildTarget.iOS);
             }
-            //if(GUI.Button(rect.Split(2, 4), "Clean Build"))
-            //{
-
-            //}
         }
 
         public override void OnInspectorGUI()
@@ -481,6 +478,11 @@ public class BundleConfig : ScriptableObject
                 BuildScript.BuildBundleGroup(BundleConfig.BundleResRoot + i.Name, target, i.rebuild);
             }
             BuildScript.GenBundleManifest(target);
+        }
+
+        private void OnDestroy()
+        {
+            AssetDatabase.SaveAssets();
         }
     }
 #endif

@@ -15,9 +15,9 @@ MonoBehaviour:
   m_ServerRoot: http://10.23.114.141:8008/
   Version:
     Major: 0
-    Minor: 1
+    Minor: 2
     Patch: 1
-  UseBundle: 0
+  UseBundle: 1
   LuaExtension: .lua
   mGroups:
   - mName: common
@@ -26,7 +26,7 @@ MonoBehaviour:
     show: 0
     mBundles:
     - mName: config
-      mModifyTime: 131672080315168210
+      mModifyTime: 131672099360191750
       mBuildTime: 131672083542089195
       mVersion: F8A0B3366ADD74C6F4A7DA754AEDAE47
     - mName: template

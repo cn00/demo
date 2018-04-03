@@ -277,18 +277,24 @@ public class BuildScript
     }
     #endregion 转表
 
+    static void CopyBundleConfigAsset()
+    {
+        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
+        var configDir = Path.GetDirectoryName(configRes);
+        if(!Directory.Exists(configDir))
+        {
+            Directory.CreateDirectory(configDir);
+        }
+        BundleConfig.Instance().Save();
+        File.Copy(BundleConfig.BundleConfigAssetPath, configRes, true);
+        AssetDatabase.ImportAsset(configRes);
+    }
+
     #region 安卓安装包
     [MenuItem("Build/AndroidApk")]
     static void BuildAndroidApk()
     {
-        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
-        var configDir = Path.GetDirectoryName (configRes);
-        if (!Directory.Exists(configDir))
-        {
-            Directory.CreateDirectory (configDir);
-        }
-        File.Copy (BundleConfig.BundleConfigAssetPath, configRes, true);
-        AssetDatabase.ImportAsset (configRes);
+        CopyBundleConfigAsset();
 
         var version = BundleConfig.Instance().Version;
         // TODO: open this when release

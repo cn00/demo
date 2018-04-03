@@ -11,7 +11,7 @@ local self = boot
 -- local yield_return = util.async_to_sync(async_yield_return)
 -- local print = CS.AppLog.d
 local yield_return = util.async_to_sync(function (to_yield, callback)
-	print("yield_return: {0}, {1}", to_yield, callback)
+	print("yield_return: ", to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 

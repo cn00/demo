@@ -402,11 +402,8 @@ public class AssetSys : SingleMono<AssetSys>
         {
             var version = BundleConfig.Instance().Version.ToString();
             var subPath = bundlePath;
-#if UNITY_EDITOR
-            var cachePath = CacheRoot + "/" + version + "/" + subPath;
-#else
             var cachePath = CacheRoot + "/" + subPath;
-#endif
+
             bundle = AssetBundle.LoadFromFile(cachePath);
             bundleGroup.Bundles[bundlePath] = bundle;
             AppLog.w("GetBundleSync: {0}", bundlePath);
@@ -454,12 +451,9 @@ public class AssetSys : SingleMono<AssetSys>
 
         var version = BundleConfig.Instance().Version.ToString();
         var subPath = bundlePath;
-#if UNITY_EDITOR
-        var cachePath = CacheRoot + version + "/" + subPath;
-#else
         var cachePath = CacheRoot + subPath;
-#endif
         var fileUrl = "file://" + cachePath;
+
         var isLocal = true;
         if(!File.Exists(cachePath)
         //|| UpdateSys.Instance.NeedUpdate(subPath)

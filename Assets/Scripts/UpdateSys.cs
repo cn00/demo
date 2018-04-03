@@ -8,7 +8,7 @@ using System.Linq;
 using XLua;
 using System.Text;
 
-using BundleManifest = System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo>;
+using BundleManifest = System.Collections.Generic.List<BundleConfig.BundleInfo>;
 
 public static class BytesExtension
 {
@@ -157,12 +157,8 @@ public class UpdateSys : SingleMono<UpdateSys>
         int count = 0;
         foreach(var i in mDiffList)
         {
-            var subPath = i.Key;
-#if UNITY_EDITOR
-            var cachePath = AssetSys.CacheRoot + mRemoteVersion + "/" + subPath;
-#else
+            var subPath = i.Name;
             var cachePath = AssetSys.CacheRoot + subPath;
-#endif
             var diffFileUrl = AssetSys.HttpRoot +  mRemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
             AppLog.d(diffFileUrl);
 
@@ -201,11 +197,11 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         foreach(var i in mRemoteManifest)
         {
-            if(mLocalManifest.ContainsKey(i.Key))
+            if(mLocalManifest.Find(j=>j.Name == i.Name) != null)
             {
                 continue;
             }
-            mDiffList[i.Key] = i.Value;
+            mDiffList.Add(i);
         }
     }
 
@@ -244,12 +240,8 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public bool NeedUpdate(string subPath)
     {
-        BundleConfig.BundleInfo info = null;
-        if(mDiffList.TryGetValue(subPath, out info))
-        {
-            return info != null;
-        }
-        return false;
+        BundleConfig.BundleInfo info = mDiffList.Find(i=>i.Name == subPath);
+        return info != null;
     }
 
     /// <summary>
@@ -257,16 +249,17 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Updated(string subPath)
     {
-        if(mDiffList.ContainsKey(subPath))
+        var item = mDiffList.Find(i => i.Name == subPath);
+        if(item != null)
         {
-            mLocalManifest[subPath] = mDiffList[subPath];
+            mLocalManifest.Add(item);
             SaveManifest(mLocalManifest, BundleConfig.LocalManifestPath);
-            mDiffList.Remove(subPath);
+            mDiffList.Remove(item);
         }
     }
 
-    public static void SaveManifest(BundleManifest dic, string path)
+    public static void SaveManifest(BundleManifest manifest, string path)
     {
-        var yaml = YamlHelper.Serialize(dic, path);
+        var yaml = YamlHelper.Serialize(manifest, path);
     }
 }
