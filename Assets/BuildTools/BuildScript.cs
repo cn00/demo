@@ -110,7 +110,7 @@ public class BuildScript
                 var udir = dir.upath();
                 var assetBundleName = udir.Substring(udir.LastIndexOf('/')+1);
                 AppLog.d("pack: " + assetBundleName);
-                var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions);
+                var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions, rebuild);
                 if(ab != null)
                     buildMap.Add(ab.Value);
                 EditorUtility.DisplayCancelableProgressBar("BuildBundle ...", udir, count / dirs.Length);
@@ -155,10 +155,10 @@ public class BuildScript
         ab.assetBundleName = assetBundleName + BundleConfig.BundlePostfix;
 
         var bundleInfo = BundleConfig.Instance().GetBundleInfo(assetDir.Replace(BundleConfig.BundleResRoot, "") + BundleConfig.BundlePostfix);
-        long modifyTime = long.Parse(bundleInfo.ModifyTime);
+        long lastBuildTime = long.Parse(bundleInfo.BuildTime);
 
         var assetNames = new List<string>();
-        int nnew = 1; // =0
+        int nnew = 0;
         foreach(var f in Directory.GetFiles(assetDir, "*.*", SearchOption.AllDirectories))
         {
             if(excludes.Contains(Path.GetExtension(f)))
@@ -166,7 +166,7 @@ public class BuildScript
             assetNames.Add(f);
 
             var finfo = new FileInfo(f);
-            if(rebuild || finfo.LastWriteTime.ToFileTime() > modifyTime)
+            if(rebuild || finfo.LastWriteTime.ToFileTime() > lastBuildTime)
             {
                 ++nnew;
                 //AppLog.d(f.upath() + ": " + DateTime.FromFileTime(modifyTime));

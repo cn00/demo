@@ -25,7 +25,7 @@ MonoBehaviour:
     show: 0
     mBundles:
     - mName: common/config.bd
-      mModifyTime: 131673313449241351
+      mModifyTime: 131673319626655262
       mBuildTime: 131672190710603920
       mVersion: 5F93F8FC4CF30A8FBEF42CB0AAB339D3
     - mName: common/template.bd
@@ -52,13 +52,13 @@ MonoBehaviour:
     mBundles:
     - mName: ui/boot.bd
       mModifyTime: 131673308967232542
-      mBuildTime: 131673313522395397
+      mBuildTime: 131673318333510753
       mVersion: 1652DDBBDB05176CD51FA074BD3C2442
     - mName: ui/loading.bd
-      mModifyTime: 131673313160304171
-      mBuildTime: 131673313522590920
-      mVersion: 69CFCC42332B000231DBDCED4CBA223B
+      mModifyTime: 131673319771284819
+      mBuildTime: 131673319816536523
+      mVersion: 98A56D66B2B29CA7EE8F4FFE175B7483
     - mName: ui/login.bd
       mModifyTime: 131673312403859532
-      mBuildTime: 131673313522666119
+      mBuildTime: 131673318333791195
       mVersion: 4B638C10173F06D3D37B7CFAFD8D59EC
