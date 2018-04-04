@@ -14,6 +14,13 @@ public class YamlHelper
     public static string Serialize<T>(T obj, string path)
     {
         var yaml = Serialize(obj);
+
+        var dir = Path.GetDirectoryName(path);
+        if(!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+
         var writer = new StreamWriter(path);
         writer.Write(yaml);
         writer.Flush();

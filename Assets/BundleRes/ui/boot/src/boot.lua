@@ -26,6 +26,7 @@ boot.coroutine1 = coroutine.create(function()
     end))
     CS.AppLog.d("lua AppBoot.Start {0}", obj);
     local loading = CS.UnityEngine.GameObject.Instantiate(obj);
+    loading.name = "loading"
 
     print("UpdateSys 0")
     yield_return(CS.UpdateSys.Instance:Init())

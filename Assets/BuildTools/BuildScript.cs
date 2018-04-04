@@ -11,8 +11,7 @@ using System.IO;
 using System.Linq;
 using SevenZip;
 
-using ManifestDic = System.Collections.Generic.Dictionary<string, BundleConfig.BundleInfo>;
-using System.Collections;
+using BundleManifest = System.Collections.Generic.List<BundleConfig.BundleInfo>;
 
 [ExecuteInEditMode]
 public class BuildScript
@@ -138,15 +137,14 @@ public class BuildScript
             );
             BundleConfig.Instance().Save();
 
-            foreach(var f in Directory.GetFiles(indir, "*.lua.txt*", SearchOption.AllDirectories))
-            {
-                File.Delete(f);
-            }
-
             Compress(outdir, targetPlatform);
         }
         finally
         {
+            foreach(var f in Directory.GetFiles(indir, "*.lua.txt*", SearchOption.AllDirectories))
+            {
+                File.Delete(f);
+            }
             EditorUtility.ClearProgressBar();
         }
     }
@@ -156,8 +154,7 @@ public class BuildScript
         var ab = new AssetBundleBuild();
         ab.assetBundleName = assetBundleName + BundleConfig.BundlePostfix;
 
-        // 如果上次打包以来为更新过此 bundle 未编辑过则跳过
-        var bundleInfo = BundleConfig.Instance().GetBundleInfo(assetDir.Replace(BundleConfig.BundleResRoot, ""));
+        var bundleInfo = BundleConfig.Instance().GetBundleInfo(assetDir.Replace(BundleConfig.BundleResRoot, "") + BundleConfig.BundlePostfix);
         long modifyTime = long.Parse(bundleInfo.ModifyTime);
 
         var assetNames = new List<string>();
@@ -483,9 +480,15 @@ public class BuildScript
             var version = BundleConfig.Instance().Version;
             var rootDir = BundleOutDir + TargetName(buildTarget) + "/";
             var sourceDir = rootDir + version.ToString() + "/";
-            var manifest = new ManifestDic();//<string/*path*/, BundleInfo>
-            var files = Directory.GetFiles(sourceDir, "*" + BundleConfig.CompressedExtension, SearchOption.AllDirectories);
 
+            var manifestbf = sourceDir + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
+            if(File.Exists(manifestbf))
+            {
+                File.Delete(manifestbf);
+            }
+
+            var manifest = new BundleManifest();//<string/*path*/, BundleInfo>
+            var files = Directory.GetFiles(sourceDir, "*" + BundleConfig.CompressedExtension, SearchOption.AllDirectories);
             float i = 0;
             foreach(var f in files)
             {
@@ -493,19 +496,31 @@ public class BuildScript
                 var bf = f.upath().Replace(version.ToString() + "/", string.Empty).Replace(BundleConfig.CompressedExtension, string.Empty);
                 var md5 = BundleHelper.Md5(bf);
                 var subPath = bf.Replace(rootDir, string.Empty);
-                var bundleInfo = BundleConfig.Instance().GetBundleInfo(subPath.Replace(BundleConfig.BundlePostfix, ""));
+                var bundleInfo = BundleConfig.Instance().GetBundleInfo(subPath);
                 if(bundleInfo != null)
                 {
                     bundleInfo.Version = md5;
-                    manifest[subPath] = bundleInfo;
                 }
+                else
+                {
+                    bundleInfo = new BundleConfig.BundleInfo()
+                    {
+                        Name = subPath,
+                        Version = md5,
+                    };
+                }
+                manifest.Add(bundleInfo);
             }
             BundleConfig.Instance().Save();
 
             // generate md5 sheet
-            var manifestPath = BundleOutDir + TargetName(buildTarget) + "/" + BundleConfig.ManifestName;
+            var manifestPath = rootDir + BundleConfig.ManifestName;
+            if(File.Exists(manifestPath))
+            {
+                File.Copy(manifestPath, manifestPath + ".bak", true);
+            }
             YamlHelper.Serialize(manifest, manifestPath);
-            BundleHelper.CompressFileLZMA(manifestPath, sourceDir + BundleConfig.ManifestName + BundleConfig.CompressedExtension);
+            BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
 
             //var Groups = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
             //YamlHelper.Serialize(BundleConfig.Instance().Groups, Groups);

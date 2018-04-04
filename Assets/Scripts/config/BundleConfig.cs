@@ -115,9 +115,11 @@ public class AppVersion
 public class BundleConfig : ScriptableObject
 {
     #region const
+    public const string BundleResRoot = "Assets/BundleRes/";
+    public const string BundleConfigAssetPath = BundleResRoot + BundleConfigAssetSubPath;
+
     public const string ManifestName = "manifest.yaml";
     public const string BundleConfigAssetSubPath = "common/config/BundleConfig.asset";
-    public const string BundleConfigAssetPath = "Assets/BundleRes/" + BundleConfigAssetSubPath;
 
     public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
@@ -134,10 +136,6 @@ public class BundleConfig : ScriptableObject
     #region static 
 
     #endregion static
-
-    [SerializeField]
-    string m_BundleResRoot = "Assets/BundleRes/";
-    public static string BundleResRoot { get { return Instance().m_BundleResRoot; } }
 
     public string m_ServerRoot="http://10.23.114.141:8008/";
     /// <summary>
@@ -168,7 +166,6 @@ public class BundleConfig : ScriptableObject
     {
         [SerializeField]
         string mName;
-        [YamlDotNet.Serialization.YamlIgnore]
         public string Name { get { return mName; } set { mName = value; } }
 
         [SerializeField]
@@ -177,8 +174,8 @@ public class BundleConfig : ScriptableObject
         public string ModifyTime { get { return mModifyTime; } set { mModifyTime = value; } }
 
         [SerializeField]
-        [YamlDotNet.Serialization.YamlIgnore]
         string mBuildTime = "0";
+        [YamlDotNet.Serialization.YamlIgnore]
         public string BuildTime { get { return mBuildTime; } set { mBuildTime = value; } }
 
         [SerializeField]
@@ -203,30 +200,18 @@ public class BundleConfig : ScriptableObject
     }
 
     [HideInInspector, SerializeField]
-    List<GroupInfo> mGroups;
+    List<GroupInfo> mGroups = new List<GroupInfo>();
     public List<GroupInfo> Groups { get { return mGroups; } set { mGroups = value; } }
 
     public BundleInfo GetBundleInfo(string path)
     {
         var dirs = path.Split('/');
-        GroupInfo group = null;
-        foreach(var i in Groups)
+        var group = Groups.Find(i=>i.Name == dirs[0]);
+        if(group != null && dirs.Length > 1)
         {
-            if(i.Name == dirs[0])
-            {
-                group = i;
-                break;
-            }
-        }
-        if(group != null)
-        {
-            foreach(var j in group.Bundles)
-            {
-                if(j.Name == dirs[1])
-                {
-                    return j;
-                }
-            }
+            var bundleName = dirs[0] + "/" + dirs[1];
+            var bundle = group.Bundles.Find(i=>i.Name == bundleName);
+            return bundle;
         }
         return null;
     }
@@ -243,6 +228,7 @@ public class BundleConfig : ScriptableObject
     public static BundleConfig Instance()
     {
 #if UNITY_EDITOR
+        //return InstanceRuntime();
         return InstanceEditor();
 #else
         return InstanceRuntime();
@@ -278,10 +264,15 @@ public class BundleConfig : ScriptableObject
         if(mInstance == null)
         {
             var assetSubPath = BundleConfigAssetSubPath;
+            AppLog.d("BundleConfig InstanceRuntime 0({0})", assetSubPath);
             var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
             if(File.Exists(cachePath))
             {
-                mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(assetSubPath);
+                // mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(assetSubPath); // 可能造成回环调用
+                AppLog.d("BundleConfig InstanceRuntime(1)");
+                var bundle = AssetBundle.LoadFromFile(cachePath);
+                mInstance = bundle.LoadAsset<BundleConfig>(BundleConfig.BundleResRoot + assetSubPath);
+                AppLog.d("BundleConfig GetAssetSync(2)");
             }
             else
             {
@@ -333,13 +324,14 @@ public class BundleConfig : ScriptableObject
                 var newBundles = new List<BundleInfo>();
                 foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
                 {
-                    var bundleName = bundle.upath().Replace(group + "/", "");
-                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
+                    var bundlePath = bundle.upath().Replace(BundleResRoot, "") + BundlePostfix;
+                    //var bundleName = bundle.upath().Replace(group + "/", "");
+                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundlePath);
                     if(bundleInfo == null)
                     {
                         bundleInfo = new BundleInfo()
                         {
-                            Name = bundleName,
+                            Name = bundlePath,
                         };
                     }
 
