@@ -171,7 +171,7 @@ namespace XLua.TemplateEngine
             }
 
             code.Append("return table.concat(__text_gen)\r\n");
-            //AppLog.d("code compose:"+code.ToString());
+            //UnityEngine.Debug.Log("code compose:"+code.ToString());
             return code.ToString();
         }
 
@@ -209,7 +209,7 @@ namespace XLua.TemplateEngine
             {
 				return LuaAPI.luaL_error(L, String.Format("template compile error:{0}\r\n", e.Message));
             }
-            //AppLog.d("code=" + code);
+            //UnityEngine.Debug.Log("code=" + code);
             if (LuaAPI.luaL_loadbuffer(L, code, "luatemplate") != 0)
             {
                 return LuaAPI.lua_error(L);

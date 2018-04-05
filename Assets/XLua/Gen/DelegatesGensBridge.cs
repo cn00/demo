@@ -178,35 +178,6 @@ namespace XLua
 #endif
 		}
         
-		public object __Gen_Delegate_Imp6(string p0, int p1, string p2)
-		{
-#if THREAD_SAFE || HOTFIX_ENABLE
-            lock (luaEnv.luaEnvLock)
-            {
-#endif
-                RealStatePtr L = luaEnv.rawL;
-                int err_func =LuaAPI.load_error_func(L, errorFuncRef);
-                ObjectTranslator translator = luaEnv.translator;
-                
-                LuaAPI.lua_getref(L, luaReference);
-                
-                LuaAPI.lua_pushstring(L, p0);
-                LuaAPI.xlua_pushinteger(L, p1);
-                LuaAPI.lua_pushstring(L, p2);
-                
-                int __gen_error = LuaAPI.lua_pcall(L, 3, 1, err_func);
-                if (__gen_error != 0)
-                    luaEnv.ThrowExceptionFromError(err_func - 1);
-                
-                
-                object __gen_ret = translator.GetObject(L, err_func + 1, typeof(object));
-                LuaAPI.lua_settop(L, err_func - 1);
-                return  __gen_ret;
-#if THREAD_SAFE || HOTFIX_ENABLE
-            }
-#endif
-		}
-        
         
 		static DelegateBridge()
 		{
@@ -249,11 +220,6 @@ namespace XLua
 		    if (type == typeof(System.Action<DataObject>))
 			{
 			    return new System.Action<DataObject>(__Gen_Delegate_Imp5);
-			}
-		
-		    if (type == typeof(XLua.LuaTableDelegate))
-			{
-			    return new XLua.LuaTableDelegate(__Gen_Delegate_Imp6);
 			}
 		
 		    return null;

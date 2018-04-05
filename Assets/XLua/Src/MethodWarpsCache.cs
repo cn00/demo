@@ -209,7 +209,7 @@ namespace XLua
 
                 for (int i = 0; i < castArray.Length; i++)
                 {
-                    //AppLog.d("inPos:" + inPosArray[i]);
+                    //UnityEngine.Debug.Log("inPos:" + inPosArray[i]);
                     if (luaStackPos > luaTop) //after check
                     {
                         if (paramsType != null && i == castArray.Length - 1)
@@ -233,7 +233,7 @@ namespace XLua
                         }
                         luaStackPos++;
                     }
-                    //AppLog.d("value:" + args[inPosArray[i]]);
+                    //UnityEngine.Debug.Log("value:" + args[inPosArray[i]]);
                 }
 
                 object ret = null;
@@ -245,7 +245,7 @@ namespace XLua
 
                 if (!isVoid)
                 {
-                    //AppLog.d(toInvoke.ToString() + " ret:" + ret);
+                    //UnityEngine.Debug.Log(toInvoke.ToString() + " ret:" + ret);
                     translator.PushAny(L, ret);
                     nRet++;
                 }

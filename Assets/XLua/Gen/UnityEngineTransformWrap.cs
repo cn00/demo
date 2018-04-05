@@ -942,7 +942,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetEnumerator(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     

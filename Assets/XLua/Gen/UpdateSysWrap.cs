@@ -126,7 +126,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.Init(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -154,7 +154,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetLocalVersion(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -182,7 +182,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetRemoteVersion(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -210,7 +210,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetLocalManifest(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -238,7 +238,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetRemoteManifest(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -320,7 +320,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.CheckUpdate(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     

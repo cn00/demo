@@ -635,7 +635,7 @@ namespace XLua
                     {
                         throw new Exception("stack overflow while cast to " + type);
                     }
-                    foreach (PropertyInfo prop in type.GetProperties())
+                    /*foreach (PropertyInfo prop in type.GetProperties())
                     {
                         LuaAPI.xlua_pushasciistring(L, prop.Name);
                         LuaAPI.lua_rawget(L, idx);
@@ -648,11 +648,11 @@ namespace XLua
                             }
                             catch (Exception e)
                             {
-                                throw new Exception("exception in tran prop:" + prop.Name + ", msg=" + e.Message);
+                                throw new Exception("exception in tran " + prop.Name + ", msg=" + e.Message);
                             }
                         }
                         LuaAPI.lua_pop(L, 1);
-                    }
+                    }*/
                     foreach (FieldInfo field in type.GetFields())
                     {
                         LuaAPI.xlua_pushasciistring(L, field.Name);
@@ -666,7 +666,7 @@ namespace XLua
                             }
                             catch (Exception e)
                             {
-                                throw new Exception("exception in tran field:" + field.Name + ", msg=" + e.Message);
+                                throw new Exception("exception in tran " + field.Name + ", msg=" + e.Message);
                             }
                         }
                         LuaAPI.lua_pop(L, 1);

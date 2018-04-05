@@ -673,9 +673,13 @@ namespace XLua
                 {
                     il.Emit(OpCodes.Ldc_I4, Convert.ToInt32(obj));
                 }
-                else if (typeof(long) == type || typeof(ulong) == type)
+                else if (typeof(long) == type)
                 {
                     il.Emit(OpCodes.Ldc_I8, Convert.ToInt64(obj));
+                }
+                else if (typeof(ulong) == type)
+                {
+                    il.Emit(OpCodes.Ldc_I8, (long)Convert.ToUInt64(obj));
                 }
                 else if (typeof(IntPtr) == type || typeof(IntPtr) == type)
                 {
@@ -706,7 +710,7 @@ namespace XLua
                 il.Emit(OpCodes.Ldc_I4, buffer[0]);
                 il.Emit(OpCodes.Ldc_I4, buffer[1]);
                 il.Emit(OpCodes.Ldc_I4, buffer[2]);
-                //AppLog.d(string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
+                //UnityEngine.Debug.Log(string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] & 0x80000000) == 0 ? 0 : 1);
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] >> 16) & 0xFF);
                 il.Emit(OpCodes.Newobj, decimalConstructor);
@@ -1555,7 +1559,7 @@ namespace XLua
                     }
                 }
 
-                Label endOfBlock = endOfBlock = il.DefineLabel();
+                Label endOfBlock = il.DefineLabel();
 
                 if (needCheckParameterType)
                 {
@@ -1605,7 +1609,7 @@ namespace XLua
                     var argStore = il.DeclareLocal(paramRawType);
                     if (paramInfo.IsOptional)
                     {
-                        //AppLog.d(paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
+                        //UnityEngine.Debug.Log(paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
                         emitLiteralLoad(il, paramRawType, paramInfo.DefaultValue, argStore.LocalIndex);
                         il.Emit(OpCodes.Stloc, argStore);
                     }

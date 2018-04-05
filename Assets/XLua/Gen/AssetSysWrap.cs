@@ -154,7 +154,7 @@ namespace XLua.CSObjectWrap
                 {
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.Init(  );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -215,7 +215,7 @@ namespace XLua.CSObjectWrap
                     System.Action<UnityEngine.Object> callBack = translator.GetDelegate<System.Action<UnityEngine.Object>>(L, 3);
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetAsset( assetSubPath, callBack );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -226,7 +226,7 @@ namespace XLua.CSObjectWrap
                     string assetSubPath = LuaAPI.lua_tostring(L, 2);
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetAsset( assetSubPath );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -289,7 +289,7 @@ namespace XLua.CSObjectWrap
                     System.Action<UnityEngine.AssetBundle> callBack = translator.GetDelegate<System.Action<UnityEngine.AssetBundle>>(L, 3);
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetBundle( bundleName, callBack );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -300,7 +300,7 @@ namespace XLua.CSObjectWrap
                     string bundleName = LuaAPI.lua_tostring(L, 2);
                     
                         System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.GetBundle( bundleName );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -333,7 +333,7 @@ namespace XLua.CSObjectWrap
                     UnityEngine.Events.UnityAction<float> progressCallback = translator.GetDelegate<UnityEngine.Events.UnityAction<float>>(L, 3);
                     
                         System.Collections.IEnumerator __cl_gen_ret = AssetSys.Www( url, endCallback, progressCallback );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -345,7 +345,7 @@ namespace XLua.CSObjectWrap
                     UnityEngine.Events.UnityAction<UnityEngine.WWW> endCallback = translator.GetDelegate<UnityEngine.Events.UnityAction<UnityEngine.WWW>>(L, 2);
                     
                         System.Collections.IEnumerator __cl_gen_ret = AssetSys.Www( url, endCallback );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -356,7 +356,7 @@ namespace XLua.CSObjectWrap
                     string url = LuaAPI.lua_tostring(L, 1);
                     
                         System.Collections.IEnumerator __cl_gen_ret = AssetSys.Www( url );
-                        translator.Push(L, __cl_gen_ret);
+                        translator.PushAny(L, __cl_gen_ret);
                     
                     
                     
@@ -384,6 +384,17 @@ namespace XLua.CSObjectWrap
             
 			    int __gen_param_count = LuaAPI.lua_gettop(L);
             
+                if(__gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
+                {
+                    string group = LuaAPI.lua_tostring(L, 2);
+                    bool unloadAllLoadedObjects = LuaAPI.lua_toboolean(L, 3);
+                    
+                    __cl_gen_to_be_invoked.UnloadGroup( group, unloadAllLoadedObjects );
+                    
+                    
+                    
+                    return 0;
+                }
                 if(__gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
                 {
                     string group = LuaAPI.lua_tostring(L, 2);
@@ -423,7 +434,20 @@ namespace XLua.CSObjectWrap
                 AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
             
             
-                
+			    int __gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(__gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
+                {
+                    string path = LuaAPI.lua_tostring(L, 2);
+                    bool unloadAllLoadedObjects = LuaAPI.lua_toboolean(L, 3);
+                    
+                    __cl_gen_to_be_invoked.UnloadBundle( path, unloadAllLoadedObjects );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(__gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
                 {
                     string path = LuaAPI.lua_tostring(L, 2);
                     
@@ -437,6 +461,8 @@ namespace XLua.CSObjectWrap
             } catch(System.Exception __gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
             }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to AssetSys.UnloadBundle!");
             
         }
         
