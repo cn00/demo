@@ -209,11 +209,11 @@ public class UpdateSys : SingleMono<UpdateSys>
             var lversion = "";
             if(local != null )
             {
-                if( local.Version == i.Version)
+                if( local.Md5 == i.Md5)
                     continue;
-                lversion = local.Version;
+                lversion = local.Md5;
             }
-            AppLog.d("diff: {0}:[{1}-{2}]", i.Name, i.Version, lversion);
+            AppLog.d("diff: {0}:[{1}-{2}]", i.Name, i.Md5, lversion);
             mDiffList.Add(i);
         }
     }
@@ -274,7 +274,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 SaveManifest(mLocalManifest, BundleConfig.LocalManifestPath);
 
                 mDiffList.Remove(newi);
-                AppLog.d("Updated: {0}={1}", newi.Name, newi.Version);
+                AppLog.d("Updated: {0}={1}", newi.Name, newi.Md5);
             }
             
             AssetSys.Instance.UnloadBundle(subPath, false);

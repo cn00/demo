@@ -135,7 +135,6 @@ public class BuildScript
                 ),
                 targetPlatform
             );
-            BundleConfig.Instance().Save();
 
             Compress(outdir, targetPlatform);
         }
@@ -169,7 +168,7 @@ public class BuildScript
             if(rebuild || finfo.LastWriteTime.ToFileTime() > lastBuildTime)
             {
                 ++nnew;
-                //AppLog.d(f.upath() + ": " + DateTime.FromFileTime(modifyTime));
+                 //AppLog.d(f.upath() + ": " + DateTime.FromFileTime(modifyTime));
             }
         }
 
@@ -177,6 +176,7 @@ public class BuildScript
         {
             ab.assetNames = assetNames.ToArray();
             bundleInfo.BuildTime = DateTime.Now.ToFileTime().ToString();
+            bundleInfo.Version = BundleConfig.Instance().Version;
             AppLog.d(assetDir + " > " + DateTime.FromFileTime(long.Parse(bundleInfo.BuildTime)));
             return ab;
         }
@@ -274,25 +274,10 @@ public class BuildScript
     }
     #endregion 转表
 
-    static void CopyBundleConfigAsset()
-    {
-        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
-        var configDir = Path.GetDirectoryName(configRes);
-        if(!Directory.Exists(configDir))
-        {
-            Directory.CreateDirectory(configDir);
-        }
-        BundleConfig.Instance().Save();
-        File.Copy(BundleConfig.BundleConfigAssetPath, configRes, true);
-        AssetDatabase.ImportAsset(configRes);
-    }
-
     #region 安卓安装包
     [MenuItem("Build/AndroidApk")]
     static void BuildAndroidApk()
     {
-        CopyBundleConfigAsset();
-
         var version = BundleConfig.Instance().Version;
         // TODO: open this when release
         // version.Minor += 1;
@@ -312,8 +297,6 @@ public class BuildScript
     [MenuItem("Build/iOS (iL2cpp proj)")]
     static void BuildIosIL2cppProj()
     {
-        CopyBundleConfigAsset();
-
         var version = BundleConfig.Instance().Version;
         //version.Minor += 1;
         version.Patch = 0;
@@ -340,8 +323,6 @@ public class BuildScript
     [MenuItem("Build/iOS (iL2cpp proj sim)")]
     static void BuildIosIL2cppProjSim()
     {
-        CopyBundleConfigAsset();
-        
         var version = BundleConfig.Instance().Version;
         PlayerSettings.bundleVersion = version.ToString();
         PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
@@ -353,7 +334,7 @@ public class BuildScript
         {
             target_dir = "ios.proj.sim";
         }
-        
+
         var option = BuildOptions.EnableHeadlessMode 
             | BuildOptions.SymlinkLibraries 
             | BuildOptions.Il2CPP
@@ -508,14 +489,15 @@ public class BuildScript
                 var bundleInfo = BundleConfig.Instance().GetBundleInfo(subPath);
                 if(bundleInfo != null)
                 {
-                    bundleInfo.Version = md5;
+                    bundleInfo.Md5 = md5;
                 }
                 else
                 {
                     bundleInfo = new BundleConfig.BundleInfo()
                     {
                         Name = subPath,
-                        Version = md5,
+                        Md5 = md5,
+                        Version = version,
                     };
                 }
                 manifest.Add(bundleInfo);
@@ -553,6 +535,7 @@ public class BuildScript
             {
                 BuildBundleGroup(BundleConfig.BundleResRoot + i, buildTarget);
             }
+            BundleConfig.Instance().Save();
 
             //var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
             //YamlHelper.Serialize(BundleConfig.Instance().Groups, rootDir);

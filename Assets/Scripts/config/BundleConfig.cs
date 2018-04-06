@@ -179,6 +179,10 @@ public class BundleConfig : ScriptableObject
         public string BuildTime { get { return mBuildTime; } set { mBuildTime = value; } }
 
         [SerializeField]
+        string mMd5;
+        public string Md5 { get { return mMd5; } set { mMd5 = value; } }
+
+        [SerializeField]
         string mVersion;
         public string Version { get { return mVersion; } set { mVersion = value; } }
     }
@@ -256,6 +260,20 @@ public class BundleConfig : ScriptableObject
         AssetDatabase.WriteImportSettingsIfDirty(BundleConfigAssetPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        
+        CopyBundleConfigAsset();
+    }
+
+    public static void CopyBundleConfigAsset()
+    {
+        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
+        var configDir = Path.GetDirectoryName(configRes);
+        if(!Directory.Exists(configDir))
+        {
+            Directory.CreateDirectory(configDir);
+        }
+        File.Copy(BundleConfig.BundleConfigAssetPath, configRes, true);
+        AssetDatabase.ImportAsset(configRes);
     }
 #endif
 
