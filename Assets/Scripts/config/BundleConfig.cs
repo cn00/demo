@@ -156,7 +156,7 @@ public class BundleConfig : ScriptableObject
     }
 
     [SerializeField]
-    public AppVersion Version;
+    public AppVersion Version = new AppVersion(PlayerSettings.bundleVersion);
 
     public bool UseBundle = false;
     public string LuaExtension = ".lua";

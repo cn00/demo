@@ -176,7 +176,7 @@ public class BuildScript
         {
             ab.assetNames = assetNames.ToArray();
             bundleInfo.BuildTime = DateTime.Now.ToFileTime().ToString();
-            bundleInfo.Version = BundleConfig.Instance().Version;
+            bundleInfo.Version = BundleConfig.Instance().Version.ToString();
             AppLog.d(assetDir + " > " + DateTime.FromFileTime(long.Parse(bundleInfo.BuildTime)));
             return ab;
         }
@@ -497,7 +497,7 @@ public class BuildScript
                     {
                         Name = subPath,
                         Md5 = md5,
-                        Version = version,
+                        Version = version.ToString(),
                     };
                 }
                 manifest.Add(bundleInfo);
