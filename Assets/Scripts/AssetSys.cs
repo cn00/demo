@@ -285,7 +285,6 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
-        yield return GetBundle("ui/boot" + BundleConfig.BundlePostfix);
         yield return base.Init();
     }
 
