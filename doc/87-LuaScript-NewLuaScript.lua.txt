@@ -1,0 +1,52 @@
+-- put this to path/to/unity3d/Editor/Data/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
+
+local util = require "lua.utility.xlua.util"
+
+local #SCRIPTNAME# = {
+	
+}
+local self = #SCRIPTNAME#
+
+-- local yield_return = util.async_to_sync(function (to_yield, callback)
+--     print("yield_return: ", to_yield, callback)
+--     mono:YieldAndCallback(to_yield, callback)
+-- end)
+
+-- #SCRIPTNAME#.coroutine_demo = coroutine.create(function()
+--     print('#SCRIPTNAME# coroutine start!')
+--     yield_return(CS.UnityEngine.WaitForSeconds(2))
+--     yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--         obj = asset
+--     end))
+-- end
+
+function #SCRIPTNAME#.OnEnable ()
+    print("#SCRIPTNAME#.OnEnable")
+
+end
+
+function #SCRIPTNAME#.Start ()
+    print("#SCRIPTNAME#.Start")
+
+    --assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo))
+
+end
+
+function #SCRIPTNAME#.FixedUpdate ()
+
+end
+
+function #SCRIPTNAME#.Update ()
+
+end
+
+function #SCRIPTNAME#.LateUpdate ()
+
+end
+
+function #SCRIPTNAME#.OnDestroy ()
+    print("#SCRIPTNAME#.OnDestroy")
+
+end
+    
+return #SCRIPTNAME#
