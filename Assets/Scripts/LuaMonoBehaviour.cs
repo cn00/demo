@@ -15,6 +15,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
+using System.IO;
+using System.Linq;
 using UnityEditor;
 #endif
 
@@ -68,7 +70,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     void Awake()
     {
         Inited = false;
-
+        Init();
         if(Inited && luaAwake != null)
         {
             luaAwake();
@@ -182,33 +184,45 @@ public class LuaMonoBehaviourEditor : Editor
         mObj = (LuaMonoBehaviour)target;
     }
 
-    static bool mFoldInjections = true;
-    public override void OnInspectorGUI()
+    static bool mShowInjections = true;
+    public override void OnInspectorGUI ()
     {
-        base.OnInspectorGUI();
-        mObj.luaScript.Asset = EditorGUILayout.ObjectField("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
+        base.OnInspectorGUI ();
+        mObj.luaScript.Asset = EditorGUILayout.ObjectField ("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
 
         var size = mObj.injections.Length;
-        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginHorizontal ();
         {
-            mFoldInjections = EditorGUILayout.Foldout(mFoldInjections, "Injections", true);
-            size = EditorGUILayout.IntField(size);
+            mShowInjections = EditorGUILayout.Foldout (mShowInjections, "Injections", true);
+            size = EditorGUILayout.IntField (size);
         }
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndHorizontal ();
 
-        if(size != mObj.injections.Length)
+        if (size != mObj.injections.Length)
         {
             var oldobjs = mObj.injections;
             mObj.injections = new GameObject[size];
             var isfx = mObj.injections.IsFixedSize;
-            for(int i = 0; i < Math.Min(size, oldobjs.Length); ++i)
+            for (int i = 0; i < Math.Min (size, oldobjs.Length); ++i)
             {
-                mObj.injections[i] = oldobjs[i];
+                mObj.injections [i] = oldobjs [i];
             }
         }
 
-        if(mFoldInjections)
+        if(mShowInjections)
         {
+            // gen lua code
+            string luaname = mObj.luaScript.path.Substring(mObj.luaScript.path.LastIndexOf('/')+1);
+            string luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
+            foreach (var i in mObj.injections.Where(o=>o!=null))
+            {
+                luaMemberValue += "\n    " + luaname + "." + i.name 
+                    + " = " + i.name 
+                    + ":GetComponent(\"" 
+                    + i.GetComponents<Component>().Last().GetType() + "\")";
+            }
+            luaMemberValue += "\nend\n--AutoGenInit End";
+
             for(var i = 0; i < mObj.injections.Length; ++i)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -221,7 +235,19 @@ public class LuaMonoBehaviourEditor : Editor
                 }
                 EditorGUILayout.EndHorizontal();
             }
+            EditorGUILayout.TextArea(luaMemberValue);
+            var rect = EditorGUILayout.GetControlRect();
+            if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
+            {
+                var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.Instance().LuaExtension;
+                var code = File.ReadAllText(luaPath);
+                var pattern = Regex.Match(code, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
+                code = code.Replace(pattern.ToString(), luaMemberValue);
+                File.WriteAllText(luaPath, code);
+            }
         }
+
+
         //if(GUI.changed)
         {
         }
