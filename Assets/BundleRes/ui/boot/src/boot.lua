@@ -32,7 +32,7 @@ boot.coroutine1 = coroutine.create(function()
     yield_return(CS.UpdateSys.Instance:Init())
     print("UpdateSys 1")
 
-    yield_return(CS.UnityEngine.WaitForSeconds(3))
+    yield_return(CS.UnityEngine.WaitForSeconds(1))
     print('wait interval:', os.time() - s)
 
     obj = nil

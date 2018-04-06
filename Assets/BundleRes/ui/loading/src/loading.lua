@@ -1,8 +1,14 @@
-﻿
+
 local loading = {
 	
 }
 local self = loading
+
+--AutoGenInit Begin
+function loading.AutoGenInit()
+    loading.Cube = Cube:GetComponent("UnityEngine.MeshRenderer")
+end
+--AutoGenInit End
 
 function loading.Start ()
     print("loading.Start")

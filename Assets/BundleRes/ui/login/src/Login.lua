@@ -17,27 +17,41 @@ function Login.CheckUpdate()
 		yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
 	        obj = asset;
 	    end))
+	    local loading = CS.UnityEngine.GameObject.Instantiate(obj)
+	    loading.name = "loading"
 	    local oldLoading = CS.UnityEngine.GameObject.Find("loading")
 	    CS.UnityEngine.GameObject.DestroyImmediate(oldLoading)
 	    
-	    local loading = CS.UnityEngine.GameObject.Instantiate(obj)
-	    loading.name = "loading"
+
+	    obj = nil
+	    yield_return(CS.AssetSys.Instance:GetAsset("ui/update/update.prefab", function(asset)
+	        obj = asset;
+	    end))
+	    local update = CS.UnityEngine.GameObject.Instantiate(obj)
+	    update.name = "update"
+
 	end)
  end
--- local self = Login
-function Login:init( ... )
-	print("Login.init" .. self.date1)
-	-- body
+
+--AutoGenInit Begin
+function Login.AutoGenInit()
+    Login.Button = Button:GetComponent("UnityEngine.UI.Button")
+    Login.InputField = InputField:GetComponent("UnityEngine.UI.InputField")
+    Login.InputField_2 = InputField_2:GetComponent("UnityEngine.UI.InputField")
+end
+--AutoGenInit End
+
+function update.Awake()
+	Login.AutoGenInit()
+	
+	Button:GetComponent("Button").onClick:AddListener(function()
+		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
+		assert(coroutine.resume(Login.CheckUpdate()))
+	end)
 end
 
 function Login.Start()
 	print("lua Login.start..."..mono.transform.position:ToString())
-	Login:init()
-	
-	Button:GetComponent("Button").onClick:AddListener(function()
-		print("clicked, you input is '" .. InputField:GetComponent("InputField").text .."'")
-		assert(coroutine.resume(Login.CheckUpdate()))
-	end)
 
 end
 

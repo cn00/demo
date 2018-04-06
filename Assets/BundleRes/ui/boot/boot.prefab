@@ -35,13 +35,13 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1551332117957392}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: ui/boot/src/boot.lua
+    path: ui/boot/src/boot
     textAsset: {fileID: 102900000, guid: 92c3f117a33159e438ae65e8dddf4b57, type: 3}
   injections: []
 --- !u!114 &114194058869400304

@@ -454,8 +454,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: ui/login/src/Login.lua
-    textAsset: {fileID: 102900000, guid: 8dc5659d491c54947bbbeacc7c09b82b, type: 3}
+    path: ui/login/src/NewLuaScript
+    textAsset: {fileID: 102900000, guid: 7dcb1a738212a43f99e3ced287207a73, type: 3}
   injections:
   - {fileID: 1823070728027652}
   - {fileID: 1965736942725956}
