@@ -2,49 +2,58 @@
 
 local util = require "lua.utility.xlua.util"
 
-local #SCRIPTNAME# = {
-	
-}
+local #SCRIPTNAME# = {}
 local self = #SCRIPTNAME#
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
---     print("yield_return: ", to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
 
--- #SCRIPTNAME#.coroutine_demo = coroutine.create(function()
---     print('#SCRIPTNAME# coroutine start!')
---     yield_return(CS.UnityEngine.WaitForSeconds(2))
---     yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---         obj = asset
---     end))
+-- function #SCRIPTNAME#.coroutine_demo()
+--     return coroutine.create(function()
+--         print('#SCRIPTNAME# coroutine start!')
+--         yield_return(CS.UnityEngine.WaitForSeconds(1))
+--         local obj = nil
+--         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--             obj = asset
+--         end))
+--         local gameObj = CS.UnityEngine.GameObject.Instantiate(obj)
+--     end
 -- end
 
-function #SCRIPTNAME#.OnEnable ()
+--AutoGenInit Begin
+function #SCRIPTNAME#.AutoGenInit() end
+--AutoGenInit End
+
+function #SCRIPTNAME#.Awake()
+	#SCRIPTNAME#.AutoGenInit()
+end
+
+function #SCRIPTNAME#.OnEnable()
     print("#SCRIPTNAME#.OnEnable")
 
 end
 
-function #SCRIPTNAME#.Start ()
+function #SCRIPTNAME#.Start()
     print("#SCRIPTNAME#.Start")
 
-    --assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo))
+    --assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo()))
 
 end
 
-function #SCRIPTNAME#.FixedUpdate ()
+function #SCRIPTNAME#.FixedUpdate()
 
 end
 
-function #SCRIPTNAME#.Update ()
+function #SCRIPTNAME#.Update()
 
 end
 
-function #SCRIPTNAME#.LateUpdate ()
+function #SCRIPTNAME#.LateUpdate()
 
 end
 
-function #SCRIPTNAME#.OnDestroy ()
+function #SCRIPTNAME#.OnDestroy()
     print("#SCRIPTNAME#.OnDestroy")
 
 end
