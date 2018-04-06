@@ -11,7 +11,7 @@ local self = boot
 -- local yield_return = util.async_to_sync(async_yield_return)
 -- local print = CS.AppLog.d
 local yield_return = util.async_to_sync(function (to_yield, callback)
-	print("yield_return: ", to_yield, callback)
+	-- print("yield_return: ", to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
@@ -47,19 +47,19 @@ boot.coroutine1 = coroutine.create(function()
     yield_return(CS.UnityEngine.WaitForSeconds(3))
     loading:SetActive(true)
 
-    local www = CS.UnityEngine.WWW('http://10.23.114.141:8008')
-    yield_return(www)
-	if not www.error then
-		local wwws = www.text
-		-- local s = CS.System.Text.Encoding.UTF8:GetString(www.bytes)
-  --       print("utf8 s: " .. s)
-  --       print("text count: " .. #wwws)
-  --       print("text: " .. wwws)
-        print("bytes count: " .. #www.bytes)
-        print("bytes: " .. www.bytes)
-	else
-	    print('error:', www.error)
-	end
+ --    local www = CS.UnityEngine.WWW('http://10.23.114.141:8008')
+ --    yield_return(www)
+	-- if not www.error then
+	-- 	local wwws = www.text
+	-- 	-- local s = CS.System.Text.Encoding.UTF8:GetString(www.bytes)
+ --  --       print("utf8 s: " .. s)
+ --  --       print("text count: " .. #wwws)
+ --  --       print("text: " .. wwws)
+ --        print("bytes count: " .. #www.bytes)
+ --        print("bytes: " .. www.bytes)
+	-- else
+	--     print('error:', www.error)
+	-- end
 end)
 
 function boot.Start ()

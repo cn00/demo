@@ -574,7 +574,7 @@ namespace XLua
                 {
                     return LuaAPI.luaL_error(L, "#2 param need a System.Type!");
                 }
-                //UnityEngine.Debug.Log("============================load type by __index:" + type);
+                //AppLog.d("============================load type by __index:" + type);
                 translator.TryDelayWrapLoader(L, type);
                 LuaAPI.lua_pushvalue(L, 2);
                 LuaAPI.lua_rawget(L, 1);
@@ -622,7 +622,7 @@ namespace XLua
 
                     LuaAPI.lua_pop(L, 1);  /* pop result */
                 }
-                UnityEngine.Debug.Log("LUA: " + s);
+                AppLog.d("LUA: " + s);
                 return 0;
             }
             catch (System.Exception e)
@@ -719,7 +719,7 @@ namespace XLua
                         }
                         else
                         {
-                            UnityEngine.Debug.LogWarning("load lua file from StreamingAssets is obsolete, filename:" + filename);
+                            AppLog.w("load lua file from StreamingAssets is obsolete, filename:" + filename);
                             if (LuaAPI.xluaL_loadbuffer(L, www.bytes, www.bytes.Length , "@" + filename) != 0)
                             {
                                 return LuaAPI.luaL_error(L, String.Format("error loading module {0} from streamingAssetsPath, {1}",
@@ -735,7 +735,7 @@ namespace XLua
                     // string text = File.ReadAllText(filepath);
                     var bytes = File.ReadAllBytes(filepath);
 
-                    UnityEngine.Debug.LogWarning("load lua file from StreamingAssets is obsolete, filename:" + filename);
+                    AppLog.w("load lua file from StreamingAssets is obsolete, filename:" + filename);
                     if (LuaAPI.xluaL_loadbuffer(L, bytes, bytes.Length, "@" + filename) != 0)
                     {
                         return LuaAPI.luaL_error(L, String.Format("error loading module {0} from streamingAssetsPath, {1}",

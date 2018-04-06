@@ -217,9 +217,7 @@ public class AssetSys : SingleMono<AssetSys>
             if(string.IsNullOrEmpty(mHttpRoot))
             {
 				mHttpRoot = BundleConfig.Instance ().ServerRoot;// "http://10.23.114.141:8008/";
-#if UNITY_EDITOR
-                mHttpRoot += PlatformName(RuntimePlatform.Android);
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
                 mHttpRoot += PlatformName(RuntimePlatform.Android);
 #elif UNITY_IPHONE
                 mHttpRoot += PlatformName(RuntimePlatform.IPhonePlayer);

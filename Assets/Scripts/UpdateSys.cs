@@ -41,9 +41,6 @@ public class UpdateSys : SingleMono<UpdateSys>
     public override IEnumerator Init()
     {
 
-        yield return GetLocalVersion();
-        yield return GetRemoteVersion();
-
         // TODO: 检查更新打开这一行
         yield return CheckUpdate();
 
@@ -225,6 +222,8 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var isOK = false;
         // 是否需要更新
+        yield return GetLocalVersion();
+        yield return GetRemoteVersion();
         //if(LocalVersion != RemoteVersion)// 允许回档到历史版本?
         {
             // download md5 list & uncompress & clean zip

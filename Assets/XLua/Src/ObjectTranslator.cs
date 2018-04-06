@@ -166,7 +166,7 @@ namespace XLua
 #endif
 #if NOT_GEN_WARNING
 #if !XLUA_GENERAL
-                UnityEngine.Debug.LogWarning(string.Format("{0} not gen, using reflection instead", type));
+                AppLog.w(string.Format("{0} not gen, using reflection instead", type));
 #else
                 System.Console.WriteLine(string.Format("Warning: {0} not gen, using reflection instead", type));
 #endif
@@ -480,7 +480,7 @@ namespace XLua
                     LuaAPI.lua_rawget(L, LuaIndexes.LUA_REGISTRYINDEX);
                     if (LuaAPI.lua_type(L, -1) == LuaTypes.LUA_TNUMBER && LuaAPI.xlua_tointeger(L, -1) == reference) //
                     {
-                        //UnityEngine.Debug.LogWarning("release delegate ref = " + luaReference);
+                        //AppLog.w("release delegate ref = " + luaReference);
                         LuaAPI.lua_pop(L, 1);// pop LUA_REGISTRYINDEX[func]
                         LuaAPI.lua_pushnil(L);
                         LuaAPI.lua_rawset(L, LuaIndexes.LUA_REGISTRYINDEX); // LUA_REGISTRYINDEX[func] = nil

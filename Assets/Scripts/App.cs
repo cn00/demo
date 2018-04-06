@@ -24,6 +24,7 @@ public class App : SingleMono<App>
 
     private void Awake()
     {
+        AppLog.isEditor  = Application.isEditor;
         AppLog.d("App.Awake 0");
         StartCoroutine(Init());
     }

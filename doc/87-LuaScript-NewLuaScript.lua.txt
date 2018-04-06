@@ -1,4 +1,4 @@
--- put this to path/to/unity3d/Editor/Data/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
+-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
 
 local util = require "lua.utility.xlua.util"
 

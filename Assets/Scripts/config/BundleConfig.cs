@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System;
 using System.Text.RegularExpressions;
+using System.Net;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -156,7 +157,7 @@ public class BundleConfig : ScriptableObject
     }
 
     [SerializeField]
-    public AppVersion Version = new AppVersion(PlayerSettings.bundleVersion);
+    public AppVersion Version;
 
     public bool UseBundle = false;
     public string LuaExtension = ".lua";
@@ -240,6 +241,58 @@ public class BundleConfig : ScriptableObject
     }
 
 #if UNITY_EDITOR
+    void RefreshGroups()
+    {
+        var newGroups = new List<GroupInfo>();
+        foreach(var group in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
+        {
+            var groupName = group.upath().Replace(BundleConfig.BundleResRoot, "");
+            GroupInfo groupInfo = Groups.Find(i => i.Name == groupName);
+            if(groupInfo == null)
+            {
+                groupInfo = new GroupInfo()
+                {
+                    Name = groupName,
+                    Bundles = new List<BundleInfo>(),
+                };
+            }
+
+            var newBundles = new List<BundleInfo>();
+            foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
+            {
+                var bundlePath = bundle.upath().Replace(BundleResRoot, "") + BundlePostfix;
+                //var bundleName = bundle.upath().Replace(group + "/", "");
+                var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundlePath);
+                if(bundleInfo == null)
+                {
+                    bundleInfo = new BundleInfo()
+                    {
+                        Name = bundlePath,
+                    };
+                }
+
+                long time = 0;
+                foreach(var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
+                {
+                    var finfo = new FileInfo(f);
+                    var tutc = finfo.LastWriteTime.ToFileTime();
+                    //AppLog.d("{0}:{1}", f, tutc);
+                    if(time < tutc)
+                        time = tutc;
+                }
+                bundleInfo.ModifyTime = time.ToString();
+
+                if(time > 0)
+                    newBundles.Add(bundleInfo);
+            }//for 2
+            groupInfo.Bundles = newBundles;
+
+            if(groupInfo.Bundles.Count > 0)
+                newGroups.Add(groupInfo);
+        }//for 1
+        Groups = newGroups;
+    }
+
     public static BundleConfig InstanceEditor()
     {
         if(mInstance == null)
@@ -249,6 +302,14 @@ public class BundleConfig : ScriptableObject
             {
                 mInstance = new BundleConfig();
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
+                mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
+
+                IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName() + ".local");  
+                IPAddress ipAddress = ipHost.AddressList[0];  
+                var strLocalIP = ipAddress.ToString(); 
+                mInstance.m_ServerRoot = "http://" + strLocalIP + ":8008/";
+
+                mInstance.RefreshGroups();
             }
         }
 
@@ -275,6 +336,7 @@ public class BundleConfig : ScriptableObject
         File.Copy(BundleConfig.BundleConfigAssetPath, configRes, true);
         AssetDatabase.ImportAsset(configRes);
     }
+
 #endif
 
     public static BundleConfig InstanceRuntime()
@@ -320,59 +382,7 @@ public class BundleConfig : ScriptableObject
         public void OnEnable()
         {
             mInstance = (BundleConfig)target;
-            RefreshGroups();
-        }
-
-        void RefreshGroups()
-        {
-            var newGroups = new List<GroupInfo>();
-            foreach(var group in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
-            {
-                var groupName = group.upath().Replace(BundleConfig.BundleResRoot, "");
-                GroupInfo groupInfo = mInstance.Groups.Find(i => i.Name == groupName);
-                if(groupInfo == null)
-                {
-                    groupInfo = new GroupInfo()
-                    {
-                        Name = groupName,
-                        Bundles = new List<BundleInfo>(),
-                    };
-                }
-
-                var newBundles = new List<BundleInfo>();
-                foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
-                {
-                    var bundlePath = bundle.upath().Replace(BundleResRoot, "") + BundlePostfix;
-                    //var bundleName = bundle.upath().Replace(group + "/", "");
-                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundlePath);
-                    if(bundleInfo == null)
-                    {
-                        bundleInfo = new BundleInfo()
-                        {
-                            Name = bundlePath,
-                        };
-                    }
-
-                    long time = 0;
-                    foreach(var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
-                    {
-                        var finfo = new FileInfo(f);
-                        var tutc = finfo.LastWriteTime.ToFileTime();
-                        //AppLog.d("{0}:{1}", f, tutc);
-                        if(time < tutc)
-                            time = tutc;
-                    }
-                    bundleInfo.ModifyTime = time.ToString();
-
-                    if(time > 0)
-                        newBundles.Add(bundleInfo);
-                }//for 2
-                groupInfo.Bundles = newBundles;
-
-                if(groupInfo.Bundles.Count > 0)
-                    newGroups.Add(groupInfo);
-            }//for 1
-            mInstance.Groups = newGroups;
+            mInstance.RefreshGroups();
         }
 
         void DrawBundles(GUILayoutOption[] guiOpts)
@@ -442,7 +452,7 @@ public class BundleConfig : ScriptableObject
             var rect = EditorGUILayout.GetControlRect();
             if(GUI.Button(rect.Split(0, 4), "Refresh"))
             {
-                RefreshGroups();
+                mInstance.RefreshGroups();
             }
             if(GUI.Button(rect.Split(1, 4), "BuildAnd"))
             {
@@ -476,8 +486,6 @@ public class BundleConfig : ScriptableObject
             {
                 PlayerSettings.bundleVersion = mInstance.Version.ToString();
                 EditorUtility.SetDirty(mInstance);
-                //AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
             }
         }
 

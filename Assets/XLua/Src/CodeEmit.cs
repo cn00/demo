@@ -710,7 +710,7 @@ namespace XLua
                 il.Emit(OpCodes.Ldc_I4, buffer[0]);
                 il.Emit(OpCodes.Ldc_I4, buffer[1]);
                 il.Emit(OpCodes.Ldc_I4, buffer[2]);
-                //UnityEngine.Debug.Log(string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
+                //AppLog.d(string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] & 0x80000000) == 0 ? 0 : 1);
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] >> 16) & 0xFF);
                 il.Emit(OpCodes.Newobj, decimalConstructor);
@@ -1459,7 +1459,7 @@ namespace XLua
         {
             if (type.IsValueType && !type.IsPrimitive && !type.IsEnum && type != typeof(decimal))
             {
-                //UnityEngine.Debug.LogWarning("-----------------emit update:" + type);
+                //AppLog.w("-----------------emit update:" + type);
                 il.Emit(OpCodes.Ldloc, translator);
                 il.Emit(OpCodes.Ldloc, L);
                 il.Emit(OpCodes.Ldc_I4, luaIndex);
@@ -1609,11 +1609,11 @@ namespace XLua
                     var argStore = il.DeclareLocal(paramRawType);
                     if (paramInfo.IsOptional)
                     {
-                        //UnityEngine.Debug.Log(paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
+                        //AppLog.d(paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
                         emitLiteralLoad(il, paramRawType, paramInfo.DefaultValue, argStore.LocalIndex);
                         il.Emit(OpCodes.Stloc, argStore);
                     }
-                    //UnityEngine.Debug.LogWarning(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name + " pos(d):" + argStore.LocalIndex + ", pt:" + paramRawType + ", j:" + j);
+                    //AppLog.w(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name + " pos(d):" + argStore.LocalIndex + ", pt:" + paramRawType + ", j:" + j);
                     if (argStoreStart == -1)
                     {
                         argStoreStart = argStore.LocalIndex;
@@ -1668,7 +1668,7 @@ namespace XLua
 
                 for (int j = 0; j < paramInfos.Length; j++)
                 {
-                    //UnityEngine.Debug.LogWarning(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name +" pos:" + (argStoreStart + j) + ", op:" + (paramInfos[j].ParameterType.IsByRef ? OpCodes.Ldloca : OpCodes.Ldloc) + ", j:" + j );
+                    //AppLog.w(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name +" pos:" + (argStoreStart + j) + ", op:" + (paramInfos[j].ParameterType.IsByRef ? OpCodes.Ldloca : OpCodes.Ldloc) + ", j:" + j );
                     il.Emit(paramInfos[j].ParameterType.IsByRef ? OpCodes.Ldloca : OpCodes.Ldloc, argStoreStart + j);
                 }
 
