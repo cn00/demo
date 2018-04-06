@@ -312,6 +312,8 @@ public class BuildScript
     [MenuItem("Build/iOS (iL2cpp proj)")]
     static void BuildIosIL2cppProj()
     {
+        CopyBundleConfigAsset();
+
         var version = BundleConfig.Instance().Version;
         //version.Minor += 1;
         version.Patch = 0;
@@ -338,6 +340,8 @@ public class BuildScript
     [MenuItem("Build/iOS (iL2cpp proj sim)")]
     static void BuildIosIL2cppProjSim()
     {
+        CopyBundleConfigAsset();
+        
         var version = BundleConfig.Instance().Version;
         PlayerSettings.bundleVersion = version.ToString();
         PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
@@ -349,7 +353,12 @@ public class BuildScript
         {
             target_dir = "ios.proj.sim";
         }
-        var option = BuildOptions.EnableHeadlessMode | BuildOptions.SymlinkLibraries | BuildOptions.Il2CPP;
+        
+        var option = BuildOptions.EnableHeadlessMode 
+            | BuildOptions.SymlinkLibraries 
+            | BuildOptions.Il2CPP
+            | BuildOptions.AcceptExternalModificationsToPlayer
+        ;
         version.Patch = 0;
         if(Environment.GetEnvironmentVariable("configuration") == "Release")
         {

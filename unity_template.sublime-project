@@ -5,10 +5,22 @@
 			"path": "doc"
 		},
 		{
-			"path": "Assets\\Scripts"
+			"path": "Assets/Scripts"
 		},
 		{
-			"path": "Assets\\BundleRes"
+			"path": "Assets/Resources"
+		},
+		{
+			"path": "Assets/BundleRes"
+		},
+		{
+			"path": "Assets/BuildTools"
+		},
+		{
+			"path": "Assets/Editor"
+		},
+		{
+			"path": "Assets/Plugins"
 		}
 	]
 }

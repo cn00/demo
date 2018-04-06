@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d12f3b43fa28a34db6ddec2b134938a, type: 3}
   m_Name: BundleConfig
   m_EditorClassIdentifier: 
-  m_ServerRoot: http://10.23.114.141:8008/
+  m_ServerRoot: http://192.168.2.16:8008/
   Version:
     Major: 0
     Minor: 1
@@ -25,15 +25,15 @@ MonoBehaviour:
     show: 0
     mBundles:
     - mName: common/config.bd
-      mModifyTime: 131673319865634113
-      mBuildTime: 131672190710603920
-      mVersion: 5F93F8FC4CF30A8FBEF42CB0AAB339D3
+      mModifyTime: 131674612490000000
+      mBuildTime: 131674606332571690
+      mVersion: 99080ED350CB39ACB1C41F45A4FDDC45
     - mName: common/template.bd
-      mModifyTime: 131671529965817244
-      mBuildTime: 131672190710779379
-      mVersion: 7148400284D1A1D8EE7C962FC8CC4651
+      mModifyTime: 131670479350000000
+      mBuildTime: 131674606333061530
+      mVersion: 0DBB9D95CF25889F44034E03DDBD37DA
     - mName: common/ui.bd
-      mModifyTime: 131655842863345583
+      mModifyTime: 131670479350000000
       mBuildTime: 131672190710819493
       mVersion: 1A0DE408408F527D6DBE3CCDC6949886
   - mName: lua
@@ -42,23 +42,23 @@ MonoBehaviour:
     show: 0
     mBundles:
     - mName: lua/utility.bd
-      mModifyTime: 131671474548200855
-      mBuildTime: 131672190778142517
-      mVersion: E80D1B530592B0A5031235D5127AC635
+      mModifyTime: 131670481770000000
+      mBuildTime: 131674606409288080
+      mVersion: 6C6ED264103105E537B7B0988FD6A1B8
   - mName: ui
     include: 1
     rebuild: 0
     show: 1
     mBundles:
     - mName: ui/boot.bd
-      mModifyTime: 131673308967232542
-      mBuildTime: 131673318333510753
-      mVersion: 1652DDBBDB05176CD51FA074BD3C2442
+      mModifyTime: 131674033350000000
+      mBuildTime: 131674606468047590
+      mVersion: 29D4D4A6D5C5953DC869B167DD4B7D47
     - mName: ui/loading.bd
-      mModifyTime: 131673319771284819
-      mBuildTime: 131673319816536523
-      mVersion: 98A56D66B2B29CA7EE8F4FFE175B7483
+      mModifyTime: 131674033350000000
+      mBuildTime: 131674606468326080
+      mVersion: 50F2CF1361AD0AD6AF6D2926B3200C0D
     - mName: ui/login.bd
-      mModifyTime: 131673312403859532
-      mBuildTime: 131673318333791195
-      mVersion: 4B638C10173F06D3D37B7CFAFD8D59EC
+      mModifyTime: 131674033350000000
+      mBuildTime: 131674606468387900
+      mVersion: B91890FCA0BA92699C8C02122A8DD232
