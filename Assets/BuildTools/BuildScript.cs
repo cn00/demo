@@ -307,7 +307,11 @@ public class BuildScript
         {
             target_dir = "ios.proj";
         }
-        var option = BuildOptions.EnableHeadlessMode | BuildOptions.SymlinkLibraries | BuildOptions.Il2CPP;
+        var option = BuildOptions.EnableHeadlessMode 
+            | BuildOptions.SymlinkLibraries 
+            | BuildOptions.Il2CPP
+            | BuildOptions.AcceptExternalModificationsToPlayer
+            ;
         version.Patch = 0;
         if(Environment.GetEnvironmentVariable("configuration") == "Release")
         {
