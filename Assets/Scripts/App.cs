@@ -4,19 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class App : SingleMono<App>
+public class App : MonoBehaviour
 {
     // Use this for initialization
-    public override IEnumerator Init()
+    public IEnumerator Init()
     {
         AppLog.d("App.Init 0");
         yield return LuaSys.Instance.Init();
 
         AppLog.d("App.Init 1");
         yield return AssetSys.Instance.Init();
-
-        AppLog.d("App.Init 2");
-        yield return base.Init();
 
         AppLog.d("App.Init 2");
         gameObject.GetComponent<LuaMonoBehaviour>().enabled = true;
