@@ -59,7 +59,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     public bool Inited { get; protected set; }
     bool Init()
     {
-        byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path);
+        byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
 
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
@@ -259,7 +259,7 @@ public class LuaMonoBehaviourEditor : Editor
             var rect = EditorGUILayout.GetControlRect();
             if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {
-                var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.Instance().LuaExtension;
+                var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.LuaExtension;
                 var code = File.ReadAllText(luaPath);
                 var pattern = Regex.Match(code, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
                 code = code.Replace(pattern.ToString(), luaMemberValue);
@@ -267,10 +267,6 @@ public class LuaMonoBehaviourEditor : Editor
             }
         }
 
-
-        //if(GUI.changed)
-        {
-        }
     }
 }
 #endif

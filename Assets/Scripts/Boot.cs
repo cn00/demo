@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class App : MonoBehaviour
+public class Boot : SingleMono<Boot>
 {
     // Use this for initialization
-    public IEnumerator Init()
+    public override IEnumerator Init()
     {
         AppLog.d("App.Init 0");
         yield return LuaSys.Instance.Init();
@@ -15,8 +15,14 @@ public class App : MonoBehaviour
         AppLog.d("App.Init 1");
         yield return AssetSys.Instance.Init();
 
-        AppLog.d("App.Init 2");
-        gameObject.GetComponent<LuaMonoBehaviour>().enabled = true;
+        GameObject root = null;
+        yield return AssetSys.Instance.GetAsset<GameObject>("ui/boot/boot.prefab", obj =>
+        {
+            root = obj;
+        });
+        var ui = GameObject.Instantiate(root);
+        var luamono = ui.GetComponent<LuaMonoBehaviour>();
+        luamono.enabled = true;
     }
 
     private void Awake()

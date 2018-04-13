@@ -19,7 +19,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224878561514665776}
-  - component: {fileID: 114194058869400304}
   - component: {fileID: 114091039070610808}
   - component: {fileID: 223884975335889830}
   m_Layer: 0
@@ -41,20 +40,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: ui/boot/src/boot
-    textAsset: {fileID: 102900000, guid: 92c3f117a33159e438ae65e8dddf4b57, type: 3}
+    path: ui/boot/boot
+    textAsset: {fileID: 102900000, guid: 6c23e2168559bfc40a994f4991c79336, type: 3}
   injections: []
---- !u!114 &114194058869400304
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1551332117957392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4663d90f21d58db419d82277de9788df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!223 &223884975335889830
 Canvas:
   m_ObjectHideFlags: 1

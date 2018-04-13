@@ -42,7 +42,7 @@ public class LuaSys : SingleMono<LuaSys>
     }
     public byte[] LuaLoader(ref string filename)
     {
-        var LuaExtension = BundleConfig.Instance().LuaExtension;
+        var LuaExtension = BundleConfig.LuaExtension;
 
         if(filename.EndsWith(LuaExtension))
         {

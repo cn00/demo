@@ -131,6 +131,7 @@ public class BundleConfig : ScriptableObject
 
     public const string BundlePostfix = ".bd";
     public const string CompressedExtension = ".lzma";
+    public const string LuaExtension = ".lua";
 
     #endregion const
 
@@ -160,7 +161,6 @@ public class BundleConfig : ScriptableObject
     public AppVersion Version;
 
     public bool UseBundle = false;
-    public string LuaExtension = ".lua";
 
     [Serializable]
     public class BundleInfo : object
@@ -170,7 +170,7 @@ public class BundleConfig : ScriptableObject
         public string Name { get { return mName; } set { mName = value; } }
 
         [SerializeField]
-        string mModifyTime;
+        string mModifyTime = "0";
         [YamlDotNet.Serialization.YamlIgnore]
         public string ModifyTime { get { return mModifyTime; } set { mModifyTime = value; } }
 
@@ -202,6 +202,8 @@ public class BundleConfig : ScriptableObject
         [SerializeField]
         List<BundleInfo> mBundles;
         public List<BundleInfo> Bundles { get { return mBundles; } set { mBundles = value; } }
+
+        public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
     }
 
     [HideInInspector, SerializeField]
@@ -258,6 +260,15 @@ public class BundleConfig : ScriptableObject
             }
 
             var newBundles = new List<BundleInfo>();
+            var manifestBundleInfo = groupInfo.Bundles.Find(i => i.Name == groupName + "/" + groupName);
+            if(manifestBundleInfo == null)
+            {
+                manifestBundleInfo = new BundleInfo()
+                {
+                    Name = groupName + "/" + groupName,
+                };
+            }
+            newBundles.Add(manifestBundleInfo);
             foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
             {
                 var bundlePath = bundle.upath().Replace(BundleResRoot, "") + BundlePostfix;
@@ -285,6 +296,7 @@ public class BundleConfig : ScriptableObject
                 if(time > 0)
                     newBundles.Add(bundleInfo);
             }//for 2
+
             groupInfo.Bundles = newBundles;
 
             if(groupInfo.Bundles.Count > 0)
@@ -387,7 +399,7 @@ public class BundleConfig : ScriptableObject
         bool showBundles = true;
         public void OnEnable()
         {
-            mInstance = Instance();// (BundleConfig)target;
+            mInstance = Instance();
             mInstance.RefreshGroups();
         }
 
@@ -499,9 +511,10 @@ public class BundleConfig : ScriptableObject
         {
             foreach(var i in mInstance.Groups.Where(ii => ii.include))
             {
-                BuildScript.BuildBundleGroup(BundleConfig.BundleResRoot + i.Name, target, i.rebuild);
+                BuildScript.BuildBundleGroup(i, target, i.rebuild);
             }
             BuildScript.GenBundleManifest(target);
+            BuildScript.GenVersionFile(target);
         }
 
         private void OnDestroy()

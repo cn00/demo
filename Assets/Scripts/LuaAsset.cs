@@ -29,7 +29,7 @@ public class LuaAsset
 #if UNITY_EDITOR
             path = AssetDatabase.GetAssetPath(textAsset)
                 .Replace(BundleConfig.BundleResRoot, "")
-                .Replace(BundleConfig.Instance().LuaExtension, "");
+                .Replace(BundleConfig.LuaExtension, "");
 #endif
         }
     }

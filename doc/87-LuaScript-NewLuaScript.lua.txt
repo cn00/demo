@@ -18,7 +18,7 @@ local self = #SCRIPTNAME#
 --             obj = asset
 --         end))
 --         local gameObj = CS.UnityEngine.GameObject.Instantiate(obj)
---     end
+--     end)
 -- end
 
 --AutoGenInit Begin

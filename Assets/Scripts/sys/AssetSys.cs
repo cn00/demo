@@ -285,6 +285,9 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
+#if !UNITY_EDITOR
+        yield return GetBundle("ui/boot/boot.bd");
+#endif
         yield return base.Init();
     }
 
@@ -479,14 +482,14 @@ public class AssetSys : SingleMono<AssetSys>
                 else
                 {
 #if UNITY_EDITOR
-                    AsyncSave(cachePath + BundleConfig.CompressedExtension, www.bytes, www.bytes.Length);
+                    AsyncSave(cachePath + BundleConfig.CompressedExtension, www.bytes);
 #endif
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
                     bundleGroup.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
-                    AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
+                    AsyncSave(cachePath, outStream.GetBuffer());
                     //UpdateSys.Instance.Updated(subPath);
                 }
             }
@@ -606,7 +609,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// <summary>
     /// 在新线程中异步保存文件
     /// </summary>
-    public static void AsyncSave(string fname, byte[] bytes, long Length)
+    public static void AsyncSave(string fname, byte[] bytes)
     {
         var dir = Path.GetDirectoryName(fname);
         if(!Directory.Exists(dir))
@@ -615,7 +618,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         FileStream writer = new FileStream(fname, FileMode.Create);
-        writer.BeginWrite(bytes, 0, (int)Length, (IAsyncResult result) =>
+        writer.BeginWrite(bytes, 0, bytes.Length, (IAsyncResult result) =>
         {
             FileStream stream = (FileStream)result.AsyncState;
             stream.EndWrite(result);

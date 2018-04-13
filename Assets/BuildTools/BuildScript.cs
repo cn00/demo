@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using SevenZip;
 
-using BundleManifest = System.Collections.Generic.List<BundleConfig.BundleInfo>;
-
 [ExecuteInEditMode]
 public class BuildScript
 {
@@ -88,8 +86,9 @@ public class BuildScript
     }
 
     #region AssetBundle
-    public static void BuildBundleGroup(string indir, BuildTarget targetPlatform, bool rebuild = false)
+    public static void BuildBundleGroup(BundleConfig.GroupInfo group, BuildTarget targetPlatform, bool rebuild = false)
     {
+        var indir = BundleConfig.BundleResRoot + group.Name;
         try
         {
             // lua
@@ -118,14 +117,12 @@ public class BuildScript
             if(buildMap.Count == 0)
                 return;
 
-            var outdir = BundleOutDir + TargetName(targetPlatform)
-                //+ "/" + BundleConfig.Instance().Version 
-                + "/" + indir.upath().Replace(BundleConfig.BundleResRoot, "");
+            var outdir = BundleOutDir + TargetName(targetPlatform) + "/" + group.Name;
             if(!Directory.Exists(outdir))
             {
                 Directory.CreateDirectory(outdir);
             }
-            BuildPipeline.BuildAssetBundles(
+            var manifest = BuildPipeline.BuildAssetBundles(
                 outdir,
                 buildMap.ToArray(),
                 (
@@ -136,7 +133,26 @@ public class BuildScript
                 targetPlatform
             );
 
-            Compress(outdir, targetPlatform);
+            var outRoot = BundleOutDir + TargetName(targetPlatform)
+                  + "/" + BundleConfig.Instance().Version + "/" + group.Name;
+            if(!Directory.Exists(outRoot))
+            {
+                Directory.CreateDirectory(outRoot);
+            }
+
+            var bundles = manifest.GetAllAssetBundles().ToList();
+            bundles.Add(group.Name);
+            foreach(var i in bundles)
+            {
+                var path = outdir + "/" + i;
+                var lzmaPath = path + BundleConfig.CompressedExtension;
+                BundleHelper.CompressFileLZMA(path, lzmaPath);
+
+                var outPath = outRoot + "/" + i + BundleConfig.CompressedExtension;
+                File.Copy(lzmaPath, outPath, true);
+            }
+
+            //Compress(outdir, targetPlatform);
         }
         finally
         {
@@ -162,7 +178,7 @@ public class BuildScript
         {
             if(excludes.Contains(Path.GetExtension(f)))
                 continue;
-            assetNames.Add(f);
+            assetNames.Add(f.upath());
 
             var finfo = new FileInfo(f);
             if(rebuild || finfo.LastWriteTime.ToFileTime() > lastBuildTime)
@@ -427,6 +443,10 @@ public class BuildScript
         {
             var outRoot = BundleOutDir + TargetName(targetPlatform)
                   + "/" + BundleConfig.Instance().Version;
+            if(!Directory.Exists(outRoot))
+            {
+                Directory.CreateDirectory(outRoot);
+            }
 
             // compress
             var files = (from f in Directory.GetFiles(indir, "*", SearchOption.AllDirectories)
@@ -474,6 +494,10 @@ public class BuildScript
             var version = BundleConfig.Instance().Version;
             var rootDir = BundleOutDir + TargetName(buildTarget) + "/";
             var sourceDir = rootDir + version.ToString() + "/";
+            if(!Directory.Exists(sourceDir))
+            {
+                Directory.CreateDirectory(sourceDir);
+            }
 
             var manifestbf = sourceDir + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
             if(File.Exists(manifestbf))
@@ -481,7 +505,6 @@ public class BuildScript
                 File.Delete(manifestbf);
             }
 
-            var manifest = new BundleManifest();//<string/*path*/, BundleInfo>
             var files = Directory.GetFiles(sourceDir, "*" + BundleConfig.CompressedExtension, SearchOption.AllDirectories);
             float i = 0;
             foreach(var f in files)
@@ -504,7 +527,6 @@ public class BuildScript
                         Version = version.ToString(),
                     };
                 }
-                manifest.Add(bundleInfo);
             }
             BundleConfig.Instance().Save();
 
@@ -514,11 +536,8 @@ public class BuildScript
             {
                 File.Copy(manifestPath, manifestPath + ".bak", true);
             }
-            YamlHelper.Serialize(manifest, manifestPath);
+            YamlHelper.Serialize(BundleConfig.Instance().Groups, manifestPath);
             BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
-
-            //var Groups = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
-            //YamlHelper.Serialize(BundleConfig.Instance().Groups, Groups);
         }
         finally
         {
@@ -535,14 +554,11 @@ public class BuildScript
             // version.Patch += 1;
             PlayerSettings.bundleVersion = version.ToString();
             //AndroidAssetBundleDelete();
-            foreach(var i in BundleConfig.Instance().ABResGroups)
+            foreach(var i in BundleConfig.Instance().Groups)
             {
-                BuildBundleGroup(BundleConfig.BundleResRoot + i, buildTarget);
+                BuildBundleGroup(i, buildTarget, true);
             }
             BundleConfig.Instance().Save();
-
-            //var rootDir = BundleOutDir + TargetName(buildTarget) + "/" + version.ToString() + "/" + "Groups.yaml";
-            //YamlHelper.Serialize(BundleConfig.Instance().Groups, rootDir);
         }
         finally
         {

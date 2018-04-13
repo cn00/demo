@@ -37,14 +37,14 @@ function Login.CheckUpdate()
 function Login.AutoGenInit()
     Login.Button = Button:GetComponent("UnityEngine.UI.Button")
     Login.InputField = InputField:GetComponent("UnityEngine.UI.InputField")
-    Login.InputField_2 = InputField_2:GetComponent("UnityEngine.UI.InputField")
+    Login.InputField_1 = InputField_1:GetComponent("UnityEngine.UI.InputField")
 end
 --AutoGenInit End
 
 function update.Awake()
 	Login.AutoGenInit()
 	
-	Button:GetComponent("Button").onClick:AddListener(function()
+	Login.Button.onClick:AddListener(function()
 		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
 		assert(coroutine.resume(Login.CheckUpdate()))
 	end)
