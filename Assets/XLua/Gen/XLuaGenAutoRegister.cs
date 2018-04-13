@@ -79,9 +79,9 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(UnityEngine.Debug), UnityEngineDebugWrap.__Register);
 				
-				translator.DelayWrapLoader(typeof(AssetSys), AssetSysWrap.__Register);
-				
 				translator.DelayWrapLoader(typeof(LuaMonoBehaviour), LuaMonoBehaviourWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(AssetSys), AssetSysWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(UpdateSys), UpdateSysWrap.__Register);
 				

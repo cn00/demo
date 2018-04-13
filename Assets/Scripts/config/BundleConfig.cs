@@ -300,6 +300,12 @@ public class BundleConfig : ScriptableObject
             mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>(BundleConfigAssetPath);
             if(mInstance == null)
             {
+                var dir = Path.GetDirectoryName(BundleConfigAssetPath);
+                if(!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
                 mInstance = new BundleConfig();
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
                 mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
@@ -381,7 +387,7 @@ public class BundleConfig : ScriptableObject
         bool showBundles = true;
         public void OnEnable()
         {
-            mInstance = (BundleConfig)target;
+            mInstance = Instance();// (BundleConfig)target;
             mInstance.RefreshGroups();
         }
 

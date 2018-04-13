@@ -31,7 +31,7 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 4, 2, 1);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 4, 4, 3);
 			Utils.RegisterFunc(L, Utils.CLS_IDX, "d", _m_d_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "w", _m_w_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "e", _m_e_xlua_st_);
@@ -40,8 +40,12 @@ namespace XLua.CSObjectWrap
             
 			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "DebugServer", _g_get_DebugServer);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "TAG", _g_get_TAG);
+            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "Port", _g_get_Port);
+            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "isEditor", _g_get_isEditor);
             
 			Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "TAG", _s_set_TAG);
+            Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "Port", _s_set_Port);
+            Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "isEditor", _s_set_isEditor);
             
 			
 			Utils.EndClassRegister(type, L, translator);
@@ -230,6 +234,30 @@ namespace XLua.CSObjectWrap
             return 1;
         }
         
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_Port(RealStatePtr L)
+        {
+		    try {
+            
+			    LuaAPI.xlua_pushinteger(L, AppLog.Port);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_isEditor(RealStatePtr L)
+        {
+		    try {
+            
+			    LuaAPI.lua_pushboolean(L, AppLog.isEditor);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
+        
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
@@ -238,6 +266,32 @@ namespace XLua.CSObjectWrap
 		    try {
                 
 			    AppLog.TAG = LuaAPI.lua_tostring(L, 1);
+            
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 0;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_Port(RealStatePtr L)
+        {
+		    try {
+                
+			    AppLog.Port = LuaAPI.xlua_tointeger(L, 1);
+            
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 0;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_isEditor(RealStatePtr L)
+        {
+		    try {
+                
+			    AppLog.isEditor = LuaAPI.lua_toboolean(L, 1);
             
             } catch(System.Exception __gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);

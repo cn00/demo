@@ -175,7 +175,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			
                 LuaMonoBehaviour __cl_gen_to_be_invoked = (LuaMonoBehaviour)translator.FastGetCSObj(L, 1);
-                __cl_gen_to_be_invoked.injections = (UnityEngine.GameObject[])translator.GetObject(L, 2, typeof(UnityEngine.GameObject[]));
+                __cl_gen_to_be_invoked.injections = (LuaMonoBehaviour.Injection[])translator.GetObject(L, 2, typeof(LuaMonoBehaviour.Injection[]));
             
             } catch(System.Exception __gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);

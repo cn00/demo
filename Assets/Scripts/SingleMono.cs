@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
 {
+    static GameObject mG = null;
     public static GameObject Global
     {
         get
         {
-            var g = GameObject.Find("Global");
-            if(g == null)
+            if(mG == null)
             {
-                g = new GameObject("Global");
+                mG = GameObject.Find("Global") ?? new GameObject("Global");
             }
-            return g;
+            return mG;
         }
     }
 

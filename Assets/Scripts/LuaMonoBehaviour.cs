@@ -31,8 +31,17 @@ public class LuaMonoBehaviour : MonoBehaviour
     [SerializeField,HideInInspector]
     public LuaAsset luaScript = new LuaAsset();
 
+    [Serializable]
+    public class Injection
+    {
+        public GameObject obj;
+#if UNITY_EDITOR
+        public int exportComIdx = -1;
+#endif
+    }
     [HideInInspector]
-    public GameObject[] injections = new GameObject[0];
+    public Injection[] injections = new Injection[0];
+
 
     internal static float lastGCTime = 0;
     internal const float GCInterval = 1;//1 second 
@@ -201,7 +210,7 @@ public class LuaMonoBehaviourEditor : Editor
         if (size != mObj.injections.Length)
         {
             var oldobjs = mObj.injections;
-            mObj.injections = new GameObject[size];
+            mObj.injections = new LuaMonoBehaviour.Injection[size];
             var isfx = mObj.injections.IsFixedSize;
             for (int i = 0; i < Math.Min (size, oldobjs.Length); ++i)
             {
@@ -211,31 +220,42 @@ public class LuaMonoBehaviourEditor : Editor
 
         if(mShowInjections)
         {
-            // gen lua code
-            string luaname = mObj.luaScript.path.Substring(mObj.luaScript.path.LastIndexOf('/')+1);
-            string luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
-            foreach (var i in mObj.injections.Where(o=>o!=null))
-            {
-                luaMemberValue += "\n    " + luaname + "." + i.name 
-                    + " = " + i.name 
-                    + ":GetComponent(\"" 
-                    + i.GetComponents<Component>().Last().GetType() + "\")";
-            }
-            luaMemberValue += "\nend\n--AutoGenInit End";
-
             for(var i = 0; i < mObj.injections.Length; ++i)
             {
+                var item = mObj.injections[i] ?? new LuaMonoBehaviour.Injection();
                 EditorGUILayout.BeginHorizontal();
                 {
-                    mObj.injections[i] = (GameObject)EditorGUILayout.ObjectField(mObj.injections[i], typeof(GameObject), true);
-                    if(mObj.injections[i])
+                    item.obj = (GameObject)EditorGUILayout.ObjectField(item.obj, typeof(GameObject), true);
+                    if(item.obj)
                     {
-                        mObj.injections[i].name = EditorGUILayout.TextField(mObj.injections[i].name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
+                        item.obj.name = EditorGUILayout.TextField(item.obj.name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
+                        var coms = item.obj.GetComponents<Component>();
+                        if(item.exportComIdx == -1)
+                            item.exportComIdx = coms.Length - 1;
+                        item.exportComIdx = EditorGUILayout.Popup(item.exportComIdx, coms.Select(e=> 
+                        {
+                            var name = e.GetType().ToString();
+                            name = name.Substring(name.LastIndexOf('.') + 1);
+                            return name; }
+                        ).ToArray());
                     }
                 }
                 EditorGUILayout.EndHorizontal();
             }
-            EditorGUILayout.TextArea(luaMemberValue);
+
+            // gen lua code
+            string luaname = mObj.luaScript.path.Substring(mObj.luaScript.path.LastIndexOf('/')+1);
+            string luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
+            foreach (var i in mObj.injections.Where(o=>o != null && o.obj != null))
+            {
+                luaMemberValue += "\n    " + luaname + "." + i.obj.name 
+                    + " = " + i.obj.name 
+                    + ":GetComponent(\"" 
+                    + i.obj.GetComponents<Component>()[i.exportComIdx].GetType() + "\")";
+            }
+            luaMemberValue += "\nend\n--AutoGenInit End";
+            GUILayout.TextArea(luaMemberValue);
+
             var rect = EditorGUILayout.GetControlRect();
             if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {

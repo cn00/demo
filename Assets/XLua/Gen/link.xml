@@ -44,8 +44,8 @@
 	</assembly>
 
 	<assembly fullname="Assembly-CSharp">
-	    <type fullname="AssetSys" preserve="all"/>
-		<type fullname="LuaMonoBehaviour" preserve="all"/>
+	    <type fullname="LuaMonoBehaviour" preserve="all"/>
+		<type fullname="AssetSys" preserve="all"/>
 		<type fullname="UpdateSys" preserve="all"/>
 		
 	</assembly>

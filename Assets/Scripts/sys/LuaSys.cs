@@ -30,7 +30,7 @@ public class LuaSys : SingleMono<LuaSys>
         luaTable.Set("mono", lb);
         foreach(var injection in lb.injections)
         {
-            luaTable.Set(injection.name, injection);
+            luaTable.Set(injection.obj.name, injection);
         }
 
         return luaTable;
