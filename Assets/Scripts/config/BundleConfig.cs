@@ -540,7 +540,7 @@ public class BundleConfig : ScriptableObject
 
         private void OnDestroy()
         {
-            AssetDatabase.SaveAssets();
+//            AssetDatabase.SaveAssets();
         }
     }
 #endif
