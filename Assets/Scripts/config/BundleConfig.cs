@@ -116,7 +116,8 @@ public class AppVersion
 public class BundleConfig : ScriptableObject
 {
     #region const
-    public const string BundleResRoot = "Assets/BundleRes/";
+    public const string BundleResDir = "BundleRes";
+    public const string BundleResRoot = "Assets/" + BundleResDir + "/";
     public const string BundleConfigAssetPath = BundleResRoot + BundleConfigAssetSubPath;
 
     public const string ManifestName = "manifest.yaml";
@@ -231,7 +232,13 @@ public class BundleConfig : ScriptableObject
     static BundleConfig mInstance = null;
 #if UNITY_EDITOR
     [MenuItem("Tools/Create BundleConfig.asset")]
+    public static BundleConfig CreateInstance()
+    {
+        mInstance = null;
+        return Instance();
+    }
 #endif
+
     public static BundleConfig Instance()
     {
 #if UNITY_EDITOR
@@ -322,7 +329,12 @@ public class BundleConfig : ScriptableObject
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
                 mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
 
-                IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName() + ".local");  
+                var hostname = Dns.GetHostName();
+                AppLog.d("hostname={0}", hostname);
+                if (!hostname.EndsWith(".local"))
+                    hostname = hostname + ".local";
+                
+                IPHostEntry ipHost = Dns.GetHostEntry(hostname);
                 IPAddress ipAddress = ipHost.AddressList[0];  
                 var strLocalIP = ipAddress.ToString(); 
                 mInstance.m_ServerRoot = "http://" + strLocalIP + ":8008/";
@@ -345,7 +357,7 @@ public class BundleConfig : ScriptableObject
 
     public static void CopyBundleConfigAsset()
     {
-        var configRes = BundleConfig.BundleConfigAssetPath.Replace("BundleRes", "Resources");
+        var configRes = BundleConfig.BundleConfigAssetPath.Replace(BundleResDir, "Resources");
         var configDir = Path.GetDirectoryName(configRes);
         if(!Directory.Exists(configDir))
         {
@@ -479,6 +491,15 @@ public class BundleConfig : ScriptableObject
             if(GUI.Button(rect.Split(2, 4), "BuildiOS"))
             {
                 Build(BuildTarget.iOS);
+            }
+            rect = EditorGUILayout.GetControlRect();
+            if(GUI.Button(rect.Split(1, 4), "CleanAnd"))
+            {
+                Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.Android), true);
+            }
+            if(GUI.Button(rect.Split(2, 4), "CleaniOS"))
+            {
+                Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
             }
         }
 

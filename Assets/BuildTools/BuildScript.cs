@@ -21,7 +21,7 @@ public class BuildScript
     static string DATETIME = DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss");
     static string TARGET_DIR = "bin/";
 
-    const string BundleOutDir = "AssetBundle/";
+    public const string BundleOutDir = "AssetBundle/";
 
     private static string[] FindEnabledEditorScenes()
     {
@@ -65,7 +65,7 @@ public class BuildScript
         ".meta",
     };
 
-    static string TargetName(BuildTarget target)
+    public static string TargetName(BuildTarget target)
     {
         switch(target)
         {
