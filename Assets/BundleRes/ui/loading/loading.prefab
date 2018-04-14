@@ -298,7 +298,8 @@ MonoBehaviour:
     path: ui/loading/src/loading
     textAsset: {fileID: 102900000, guid: e956273597f507c438c6e70bb0bafbcb, type: 3}
   injections:
-  - {fileID: 1320277300347884}
+  - obj: {fileID: 1320277300347884}
+    exportComIdx: 3
 --- !u!114 &114411643339608324
 MonoBehaviour:
   m_ObjectHideFlags: 1

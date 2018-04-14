@@ -1,15 +1,16 @@
+
+
 local util = require "lua.utility.xlua.util"
---local LoginHelper = require 'LoginHelper'
 
-local Login = {
-	date1=123456
-}
+local login = {}
+local self = login
 
-local yield_return = util.async_to_sync(function (to_yield, cb)
-	mono:YieldAndCallback(to_yield, cb)
+local yield_return = util.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
 end)
 
-function Login.CheckUpdate()
+
+function login.CheckUpdate()
 	return coroutine.create(function()
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
 
@@ -34,33 +35,45 @@ function Login.CheckUpdate()
  end
 
 --AutoGenInit Begin
-function Login.AutoGenInit()
-    Login.Button = Button:GetComponent("UnityEngine.UI.Button")
-    Login.InputField = InputField:GetComponent("UnityEngine.UI.InputField")
-    Login.InputField_1 = InputField_1:GetComponent("UnityEngine.UI.InputField")
+function login.AutoGenInit()
+    login.Button = Button:GetComponent("UnityEngine.UI.Button")
+    login.InputField = InputField:GetComponent("UnityEngine.UI.InputField")
+    login.InputField_1 = InputField_1:GetComponent("UnityEngine.UI.InputField")
 end
 --AutoGenInit End
 
-function update.Awake()
-	Login.AutoGenInit()
-	
-	Login.Button.onClick:AddListener(function()
+function login.Awake()
+	login.AutoGenInit()
+	login.Button.onClick:AddListener(function()
 		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
-		assert(coroutine.resume(Login.CheckUpdate()))
+		assert(coroutine.resume(login.CheckUpdate()))
 	end)
 end
 
-function Login.Start()
-	print("lua Login.start..."..mono.transform.position:ToString())
+function login.OnEnable()
+    print("login.OnEnable")
 
 end
 
-function Login.Update ()
-	-- print("Login.Update")
+function login.Start()
+    print("login.Start")
 end
 
-function Login.OnDestroy ()
+function login.FixedUpdate()
 
 end
 
-return Login
+function login.Update()
+
+end
+
+function login.LateUpdate()
+
+end
+
+function login.OnDestroy()
+    print("login.OnDestroy")
+
+end
+    
+return login

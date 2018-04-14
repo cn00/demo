@@ -14,10 +14,10 @@ function boot.coroutine_demo()
         print('boot coroutine start!')
         yield_return(CS.UnityEngine.WaitForSeconds(1))
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+        yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
             obj = asset
         end))
-        local gameObj = CS.UnityEngine.GameObject.Instantiate(obj)
+        local loading = CS.UnityEngine.GameObject.Instantiate(obj)
 
 		print("UpdateSys 0")
 		yield_return(CS.UpdateSys.Instance:Init())
@@ -31,6 +31,8 @@ function boot.coroutine_demo()
 	    print("lua login 1", obj);
 	    local login = CS.UnityEngine.GameObject.Instantiate(obj);
 
+        yield_return(CS.UnityEngine.WaitForSeconds(3))
+
 	    loading:SetActive(false)
 
     end)
@@ -43,6 +45,7 @@ end
 
 function boot.Awake()
 	boot.AutoGenInit()
+    assert(coroutine.resume(boot.coroutine_demo()))
 end
 
 function boot.OnEnable()
@@ -53,7 +56,6 @@ end
 function boot.Start()
     print("boot.Start")
 
-    assert(coroutine.resume(boot.coroutine_demo()))
 
 end
 
