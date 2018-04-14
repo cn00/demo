@@ -330,12 +330,18 @@ public class BundleConfig : ScriptableObject
                 mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
 
                 var hostname = Dns.GetHostName();
-                AppLog.d("hostname={0}", hostname);
                 if (!hostname.EndsWith(".local"))
                     hostname = hostname + ".local";
                 
                 IPHostEntry ipHost = Dns.GetHostEntry(hostname);
-                IPAddress ipAddress = ipHost.AddressList[0];  
+                string s = "";
+                foreach (var i in ipHost.AddressList)
+                {
+                    s +=  "=" + i.ToString();
+                }
+                AppLog.d("hostname={0}{1}", hostname, s);
+
+                IPAddress ipAddress = ipHost.AddressList[0];
                 var strLocalIP = ipAddress.ToString(); 
                 mInstance.m_ServerRoot = "http://" + strLocalIP + ":8008/";
 
