@@ -21,8 +21,8 @@ local self = update
 function update.AutoGenInit()
     update.VersionText = VersionText:GetComponent("UnityEngine.UI.Text")
     update.Button = Button:GetComponent("UnityEngine.UI.Button")
-    update.Slider = Slider:GetComponent("UnityEngine.UI.Slider")
     update.ButtonClean = ButtonClean:GetComponent("UnityEngine.UI.Button")
+    update.Slider = Slider:GetComponent("UnityEngine.UI.Slider")
 end
 --AutoGenInit End
 

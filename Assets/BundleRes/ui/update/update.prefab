@@ -306,10 +306,14 @@ MonoBehaviour:
     path: ui/update/update
     textAsset: {fileID: 102900000, guid: 0e6c73cdbbb4046328377fda41211851, type: 3}
   injections:
-  - {fileID: 1087025629562780}
-  - {fileID: 1969690395254192}
-  - {fileID: 1041045844390336}
-  - {fileID: 1878274875289612}
+  - obj: {fileID: 1087025629562780}
+    exportComIdx: 2
+  - obj: {fileID: 1969690395254192}
+    exportComIdx: 3
+  - obj: {fileID: 1878274875289612}
+    exportComIdx: 3
+  - obj: {fileID: 1041045844390336}
+    exportComIdx: 1
 --- !u!114 &114101561326387722
 MonoBehaviour:
   m_ObjectHideFlags: 1
