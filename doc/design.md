@@ -13,3 +13,6 @@ load asset bundle
 
 #### task chain
 > do some load task, then another some, finished all and call back
+
+
+Don't try to talk about your stupid story, I don't care. Don't be upset, I can find someone interested.
