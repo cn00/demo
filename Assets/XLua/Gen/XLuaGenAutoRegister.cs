@@ -21,6 +21,12 @@ namespace XLua.CSObjectWrap
         {
 		    XLua.LuaEnv.AddIniter((luaenv, translator) => {
 			    
+				translator.DelayWrapLoader(typeof(LuaMonoBehaviour), LuaMonoBehaviourWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(AssetSys), AssetSysWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(UpdateSys), UpdateSysWrap.__Register);
+				
 				translator.DelayWrapLoader(typeof(AppLog), AppLogWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(System.Text.Encoding), SystemTextEncodingWrap.__Register);
@@ -78,12 +84,6 @@ namespace XLua.CSObjectWrap
 				translator.DelayWrapLoader(typeof(System.Collections.Generic.List<int>), SystemCollectionsGenericList_1_SystemInt32_Wrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(UnityEngine.Debug), UnityEngineDebugWrap.__Register);
-				
-				translator.DelayWrapLoader(typeof(LuaMonoBehaviour), LuaMonoBehaviourWrap.__Register);
-				
-				translator.DelayWrapLoader(typeof(AssetSys), AssetSysWrap.__Register);
-				
-				translator.DelayWrapLoader(typeof(UpdateSys), UpdateSysWrap.__Register);
 				
 				
 				

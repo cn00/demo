@@ -43,8 +43,9 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, __CSIndexer, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 3, 0, 0);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "Linear", _m_Linear_xlua_st_);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 4, 0, 0);
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "Constant", _m_Constant_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Linear", _m_Linear_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "EaseInOut", _m_EaseInOut_xlua_st_);
             
 			
@@ -272,6 +273,35 @@ namespace XLua.CSObjectWrap
                     
                     
                     return 0;
+                }
+                
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Constant_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    float timeStart = (float)LuaAPI.lua_tonumber(L, 1);
+                    float timeEnd = (float)LuaAPI.lua_tonumber(L, 2);
+                    float value = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        UnityEngine.AnimationCurve __cl_gen_ret = UnityEngine.AnimationCurve.Constant( timeStart, timeEnd, value );
+                        translator.Push(L, __cl_gen_ret);
+                    
+                    
+                    
+                    return 1;
                 }
                 
             } catch(System.Exception __gen_e) {

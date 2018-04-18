@@ -478,7 +478,7 @@ namespace XLua.CSObjectWrap
                     string fname = LuaAPI.lua_tostring(L, 1);
                     byte[] bytes = LuaAPI.lua_tobytes(L, 2);
                     
-                    AssetSys.AsyncSave( fname, bytes);
+                    AssetSys.AsyncSave( fname, bytes );
                     
                     
                     
