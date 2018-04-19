@@ -300,6 +300,8 @@ MonoBehaviour:
   injections:
   - obj: {fileID: 1320277300347884}
     exportComIdx: 3
+  - obj: {fileID: 1053650535271212}
+    exportComIdx: 3
 --- !u!114 &114411643339608324
 MonoBehaviour:
   m_ObjectHideFlags: 1

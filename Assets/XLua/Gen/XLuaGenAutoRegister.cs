@@ -29,6 +29,9 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(AppLog), AppLogWrap.__Register);
 				
+				translator.DelayWrapLoader(typeof(SQLite.SQLite3), SQLiteSQLite3Wrap.__Register);
+				
+				
 				translator.DelayWrapLoader(typeof(System.Text.Encoding), SystemTextEncodingWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(object), SystemObjectWrap.__Register);

@@ -182,23 +182,17 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 var cacheDirName = "AssetBundle/";
 #if UNITY_EDITOR
-#if UNITY_ANDROID
-                cacheDirName += PlatformName(RuntimePlatform.Android) + "/";
+                cacheDirName += PlatformName(Application.platform) + "/";
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
-#elif UNITY_IPHONE
-                cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
-                mCacheRoot = Application.dataPath + "/../" + cacheDirName;
-#endif
 #else //!UNITY_EDITOR
 #if UNITY_ANDROID
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #elif UNITY_WINDOWS
-                mCacheRoot = Application.streamingAssetsPath + "/../" + cacheDirName;
+                mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
 #else
-                cacheDirName += PlatformName(RuntimePlatform.Android);
-                CacheRoot = Application.streamingAssetsPath + "/../" + cacheDirName;
+                mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
 #endif
 #endif
             }
@@ -244,6 +238,7 @@ public class AssetSys : SingleMono<AssetSys>
         case RuntimePlatform.WindowsEditor:
             return "Windows";
         case RuntimePlatform.OSXPlayer:
+        case RuntimePlatform.OSXEditor:
             return "OSX";
         default:
             return null;

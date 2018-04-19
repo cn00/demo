@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using XLua;
+using System.Runtime;
+using SQLite;
 
 //配置的详细介绍请看Doc下《XLua的配置.doc》
 public static class XLuaGenConfig
@@ -19,6 +21,8 @@ public static class XLuaGenConfig
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
         typeof(AppLog),
+        typeof(SQLite3),
+        typeof(ScreenCapture),
         typeof(System.Text.Encoding),
         typeof(System.Object),
         typeof(UnityEngine.Object),

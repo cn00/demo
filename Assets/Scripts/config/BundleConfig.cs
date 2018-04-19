@@ -484,11 +484,11 @@ public class BundleConfig : ScriptableObject
                     }
                 }
             }
-
+            // build
             var rect = EditorGUILayout.GetControlRect();
-            if(GUI.Button(rect.Split(0, 4), "Refresh"))
+            if(GUI.Button(rect.Split(0, 4), "BuildWin"))
             {
-                mInstance.RefreshGroups();
+                Build(BuildTarget.StandaloneWindows);
             }
             if(GUI.Button(rect.Split(1, 4), "BuildAnd"))
             {
@@ -498,12 +498,25 @@ public class BundleConfig : ScriptableObject
             {
                 Build(BuildTarget.iOS);
             }
+            if(GUI.Button(rect.Split(3, 4), "BuildMac"))
+            {
+                Build(BuildTarget.StandaloneOSX);
+            }
+            // clean
             rect = EditorGUILayout.GetControlRect();
+            if(GUI.Button(rect.Split(0, 4), "CleanWin"))
+            {
+                Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneWindows), true);
+            }
             if(GUI.Button(rect.Split(1, 4), "CleanAnd"))
             {
                 Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.Android), true);
             }
             if(GUI.Button(rect.Split(2, 4), "CleaniOS"))
+            {
+                Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
+            }
+            if(GUI.Button(rect.Split(3, 4), "CleanMac"))
             {
                 Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
             }

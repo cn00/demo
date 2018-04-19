@@ -1,5 +1,10 @@
 
 
+local CS = CS
+local UnityEngine = CS.UnityEngine
+local GameObject = UnityEngine.GameObject
+local AssetSys = CS.AssetSys
+
 local util = require "lua.utility.xlua.util"
 
 local login = {}
@@ -32,7 +37,38 @@ function login.CheckUpdate()
 	    update.name = "update"
 
 	end)
- end
+end
+
+function login.SqliteTest()
+	local sqlite = CS.SQLite.SQLite3
+	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
+	print(sqlpath)
+	local result, db = sqlite.Open(sqlpath)
+	print("sqlite.Open", result, db)
+	if result == sqlite.Result.OK then
+		local sql = "create table if not exists \"test_map\" (\n"
+		sql = sql .. "\"id\" integer primary key autoincrement not null,\n"
+		sql = sql .. "\"x\" integer not null,\n"
+		sql = sql .. "\"y\" integer not null\n"
+		sql = sql .. ")"
+		local stmt = sqlite.Prepare2(db, sql)
+		local result2 = sqlite.Step(stmt)
+		local result3 = sqlite.Finalize(stmt)
+		if result2 == sqlite.Result.Error then
+			local errmsg = sqlite.GetErrmsg(db)
+			print(errmsg)
+		elseif result2 == sqlite.Result.Done then
+			local rowsAffected = sqlite.Changes(db)
+			print("rowsAffected", rowsAffected)
+		end
+
+		sql = "insert id, x, y into test_mat "
+		sqlite.Close(db)
+	end
+
+	local screenshoot = CS.AssetSys.CacheRoot .. "Screenshot.lua.png"
+    CS.UnityEngine.ScreenCapture.CaptureScreenshot(screenshoot, 1);
+end
 
 --AutoGenInit Begin
 function login.AutoGenInit()
@@ -46,7 +82,8 @@ function login.Awake()
 	login.AutoGenInit()
 	login.Button.onClick:AddListener(function()
 		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
-		assert(coroutine.resume(login.CheckUpdate()))
+		-- assert(coroutine.resume(login.CheckUpdate()))
+		self.SqliteTest()
 	end)
 end
 

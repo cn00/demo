@@ -14,6 +14,16 @@
 		
 	</assembly>
 
+	<assembly fullname="Assembly-CSharp-firstpass">
+	    <type fullname="SQLite.SQLite3" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="UnityEngine.ScreenCaptureModule">
+	    <type fullname="UnityEngine.ScreenCapture" preserve="all"/>
+		
+	</assembly>
+
 	<assembly fullname="mscorlib">
 	    <type fullname="System.Text.Encoding" preserve="all"/>
 		<type fullname="System.Object" preserve="all"/>

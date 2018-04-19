@@ -38,10 +38,13 @@ public class BuildScript
     static void GenericBuild(string[] scenes, string target_dir, BuildTargetGroup targetGroup, BuildTarget build_target, BuildOptions build_options)
     {
         EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, build_target);
-        string res = BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
-        if(res.Length > 0)
+        try
         {
-            throw new Exception("BuildPlayer failure: " + res);
+            BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
+        }
+         catch(Exception e)
+        {
+            AppLog.e("BuildPlayer failure: " + e);
         }
 
         ProcessStartInfo pi = new ProcessStartInfo(
@@ -74,14 +77,13 @@ public class BuildScript
         case BuildTarget.iOS:
             return "iOS";
         case BuildTarget.StandaloneWindows:
-        case BuildTarget.StandaloneWindows64:
             return "Windows";
-        case BuildTarget.StandaloneOSXIntel:
-        case BuildTarget.StandaloneOSXIntel64:
-        case BuildTarget.StandaloneOSXUniversal:
+        case BuildTarget.StandaloneWindows64:
+            return "Windows64";
+        case BuildTarget.StandaloneOSX:
             return "OSX";
         default:
-            return null;
+            return "unknown";
         }
     }
 
@@ -325,9 +327,10 @@ public class BuildScript
         }
         var option = BuildOptions.EnableHeadlessMode 
             | BuildOptions.SymlinkLibraries 
-            | BuildOptions.Il2CPP
+            //| BuildOptions.Il2CPP
             | BuildOptions.AcceptExternalModificationsToPlayer
             ;
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
         version.Patch = 0;
         if(Environment.GetEnvironmentVariable("configuration") == "Release")
         {
@@ -357,9 +360,10 @@ public class BuildScript
 
         var option = BuildOptions.EnableHeadlessMode 
             | BuildOptions.SymlinkLibraries 
-            | BuildOptions.Il2CPP
+            //| BuildOptions.Il2CPP
             | BuildOptions.AcceptExternalModificationsToPlayer
         ;
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
         version.Patch = 0;
         if(Environment.GetEnvironmentVariable("configuration") == "Release")
         {
