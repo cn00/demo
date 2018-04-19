@@ -1,5 +1,8 @@
 -- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
 
+local CS = CS
+local UnityEngine = CS.UnityEngine
+local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
 local #SCRIPTNAME# = {}
@@ -12,12 +15,12 @@ local self = #SCRIPTNAME#
 -- function #SCRIPTNAME#.coroutine_demo()
 --     return coroutine.create(function()
 --         print('#SCRIPTNAME# coroutine start!')
---         yield_return(CS.UnityEngine.WaitForSeconds(1))
+--         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil
 --         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
 --             obj = asset
 --         end))
---         local gameObj = CS.UnityEngine.GameObject.Instantiate(obj)
+--         local gameObj = GameObject.Instantiate(obj)
 --     end)
 -- end
 
@@ -26,7 +29,7 @@ function #SCRIPTNAME#.AutoGenInit() end
 --AutoGenInit End
 
 function #SCRIPTNAME#.Awake()
-	#SCRIPTNAME#.AutoGenInit()
+	self.AutoGenInit()
 end
 
 function #SCRIPTNAME#.OnEnable()
