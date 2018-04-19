@@ -47,3 +47,4 @@ bin/
 ios.proj*
 log/
 bin/
+*.i64*
