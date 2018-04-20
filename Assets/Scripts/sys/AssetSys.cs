@@ -182,7 +182,13 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 var cacheDirName = "AssetBundle/";
 #if UNITY_EDITOR
+#if UNITY_IOS
+                cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
+#elif UNITY_ANDROID
+                cacheDirName += PlatformName(RuntimePlatform.Android) + "/";
+#else
                 cacheDirName += PlatformName(Application.platform) + "/";
+#endif
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #else //!UNITY_EDITOR
 #if UNITY_ANDROID
