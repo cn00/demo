@@ -34,3 +34,20 @@ Don't try to talk about your stupid story, Not everyone care about it. Don't be 
 关系网络/个人数据/存储
 本地存数据库
 服务端以用户标识为文件名存文件，结合同名元数据控制更新
+
+点对点交易
+
+数据还原
+Node:
+    ID
+    ParentID
+    Data:
+        Type
+
+Root←Nod［n］←...←Head
+
+
+GetObj()
+    return GetFromMemory() ??
+    GetFromSqlite() ??
+    GetFromOss()
