@@ -4,6 +4,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
+local sqlite = CS.SQLite.SQLite3
 
 local util = require "lua.utility.xlua.util"
 
@@ -39,31 +40,34 @@ function login.CheckUpdate()
 	end)
 end
 
-function login.SqliteTest()
-	local sqlite = CS.SQLite.SQLite3
-	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
-	print(sqlpath)
-	local result, db = sqlite.Open(sqlpath)
-	print("sqlite.Open", result, db)
-	if result == sqlite.Result.OK then
-		local sql = "create table if not exists \"test_map\" (\n"
-		sql = sql .. "\"id\" integer primary key autoincrement not null,\n"
-		sql = sql .. "\"x\" integer not null,\n"
-		sql = sql .. "\"y\" integer not null\n"
-		sql = sql .. ")"
-		local stmt = sqlite.Prepare2(db, sql)
-		local result2 = sqlite.Step(stmt)
-		local result3 = sqlite.Finalize(stmt)
-		if result2 == sqlite.Result.Error then
-			local errmsg = sqlite.GetErrmsg(db)
-			print(errmsg)
-		elseif result2 == sqlite.Result.Done then
-			local rowsAffected = sqlite.Changes(db)
-			print("rowsAffected", rowsAffected)
-		end
+function login.SqliteTest(x, y)
+	local db = self.db
+	local sql = "INSERT INTO `test_map` (x,y) VALUES "
+			.. "(".. x ..",".. y ..");"
+			.. "COMMIT;"
+	local stmt = sqlite.Prepare2(db, sql)
+	local result2 = sqlite.Step(stmt)
+	local result3 = sqlite.Finalize(stmt)
+	if result2 == sqlite.Result.Error then
+		local errmsg = sqlite.GetErrmsg(db)
+		print(errmsg)
+	elseif result2 == sqlite.Result.Done then
+		local rowsAffected = sqlite.Changes(db)
+		print("rowsAffected", rowsAffected)
+	end
+	print(sql, result2, result3)
 
-		sql = "insert id, x, y into test_mat "
-		sqlite.Close(db)
+	sql = "SELECT * FROM `test_map`;"
+	stmt = sqlite.Prepare2(db, sql)
+	local count = 0
+	result2 = sqlite.Step(stmt)
+	while result2 == sqlite.Result.Row do
+		count = count + 1
+		local c0 = sqlite.ColumnString(stmt, 0)
+		local c1 = sqlite.ColumnString(stmt, 1)
+		local c2 = sqlite.ColumnString(stmt, 2)
+		print(result2, c0, c1, c2)
+		result2 = sqlite.Step(stmt)
 	end
 
 	local screenshoot = CS.AssetSys.CacheRoot .. "Screenshot.lua.png"
@@ -81,10 +85,37 @@ end
 function login.Awake()
 	login.AutoGenInit()
 	login.Button.onClick:AddListener(function()
+		local input0 = self.InputField.text
+		local input1 = self.InputField_1.text
+
 		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
 		-- assert(coroutine.resume(login.CheckUpdate()))
-		self.SqliteTest()
+		self.SqliteTest(input0, input1)
 	end)
+
+	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
+	print(sqlpath)
+	local result, db = sqlite.Open(sqlpath)
+	print("login.Awake sqlite.Open", result, db)
+
+	if result == sqlite.Result.OK then
+		self.db = db
+		local sql = "create table if not exists `test_map` (\n"
+				 .. "`id` integer primary key autoincrement not null,\n"
+				 .. "`x` integer not null,\n"
+				 .. "`y` integer not null\n"
+				 .. ")"
+		local stmt = sqlite.Prepare2(db, sql)
+		local result2 = sqlite.Step(stmt)
+		local result3 = sqlite.Finalize(stmt)
+		if result2 == sqlite.Result.Error then
+			local errmsg = sqlite.GetErrmsg(db)
+			print(errmsg)
+		elseif result2 == sqlite.Result.Done then
+			local rowsAffected = sqlite.Changes(db)
+			print("rowsAffected", rowsAffected)
+		end
+	end
 end
 
 function login.OnEnable()
@@ -110,7 +141,7 @@ end
 
 function login.OnDestroy()
     print("login.OnDestroy")
-
+	sqlite.Close(self.db)
 end
     
 return login
