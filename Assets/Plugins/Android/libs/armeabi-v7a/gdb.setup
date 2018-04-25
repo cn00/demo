@@ -1,2 +1,3 @@
 set solib-search-path ./obj/local/armeabi-v7a
-directory C:/Android/sdk/ndk-bundle/sysroot C:/Android/sdk/ndk-bundle/sources/cxx-stl/gnu-libstdc++ jni/src C:/Android/sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi
+source /usr/local/Cellar/android-ndk/r10d/prebuilt/common/gdb/common.setup
+directory /usr/local/Cellar/android-ndk/r10d/platforms/android-14/arch-arm/usr/include /usr/local/Cellar/android-ndk/r10d/sources/cxx-stl/gnu-libstdc++ jni/src C:/Android/sdk/ndk-bundle/sysroot/usr/include/arm-linux-androideabi

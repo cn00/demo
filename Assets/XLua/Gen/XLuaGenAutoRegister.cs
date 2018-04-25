@@ -31,6 +31,7 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(SQLite.SQLite3), SQLiteSQLite3Wrap.__Register);
 				
+				translator.DelayWrapLoader(typeof(UnityEngine.ScreenCapture), UnityEngineScreenCaptureWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(System.Text.Encoding), SystemTextEncodingWrap.__Register);
 				

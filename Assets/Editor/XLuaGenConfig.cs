@@ -74,7 +74,7 @@ public static class XLuaGenConfig
     //黑名单
     [BlackList]
     public static List<List<string>> BlackList = new List<List<string>>()  {
-        new List<string>(){"UnityEngine.WWW", "movie"},
+        new List<string>(){"UnityEngine.WWW", "GetMovieTexture"},
     #if UNITY_WEBGL
         new List<string>(){"UnityEngine.WWW", "threadPriority"},
     #endif
@@ -94,7 +94,7 @@ public static class XLuaGenConfig
         new List<string>(){"System.IO.DirectoryInfo", "SetAccessControl", "System.Security.AccessControl.DirectorySecurity"},
         new List<string>(){"System.IO.DirectoryInfo", "CreateSubdirectory", "System.String", "System.Security.AccessControl.DirectorySecurity"},
         new List<string>(){"System.IO.DirectoryInfo", "Create", "System.Security.AccessControl.DirectorySecurity"},
-        new List<string>(){"System.Text.Encoding", "GetCharCount", "GetByteCount", "GetBytes", },
+        new List<string>(){"System.Text.Encoding", "GetCharCount", "GetByteCount", "GetBytes"},
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
     };
 }
