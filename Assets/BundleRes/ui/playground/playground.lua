@@ -15,7 +15,7 @@ local self = playground
 --     yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
 --         obj = asset
 --     end))
--- end
+-- end)
 
 --AutoGenInit Begin
 function playground.AutoGenInit()

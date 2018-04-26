@@ -55,7 +55,7 @@ public static class XLuaGenConfig
         typeof(Action<double>),
         typeof(Action<UnityEngine.Object>),
         typeof(Action<DataObject>),
-        typeof(UnityEngine.Debug)
+        typeof(UnityEngine.Debug),
     };
 
     //C#静态调用Lua的配置（包括事件的原型），仅可以配delegate，interface
@@ -68,7 +68,8 @@ public static class XLuaGenConfig
         typeof(Action<UnityEngine.Object>),
         typeof(Action<DataObject>),
         typeof(UnityEngine.Events.UnityAction),
-        typeof(System.Collections.IEnumerator)
+        typeof(System.Collections.IEnumerator),
+        typeof(UnityEngine.UI.InputField.OnValidateInput)
     };
 
     //黑名单

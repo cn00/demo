@@ -250,8 +250,10 @@ public class BundleConfig : ScriptableObject
     }
 
 #if UNITY_EDITOR
-    void RefreshGroups()
+    void Refresh()
     {
+        mInstance.m_ServerRoot = "http://" + LocalIpAddress() + ":8008/";
+
         var newGroups = new List<GroupInfo>();
         foreach(var group in Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly))
         {
@@ -312,6 +314,25 @@ public class BundleConfig : ScriptableObject
         Groups = newGroups;
     }
 
+    string LocalIpAddress()
+    {
+        var hostname = Dns.GetHostName();
+        if (!hostname.EndsWith(".local"))
+            hostname = hostname + ".local";
+        
+        IPHostEntry ipHost = Dns.GetHostEntry(hostname);
+        string s = "";
+        foreach (var i in ipHost.AddressList)
+        {
+            s +=  "=" + i.ToString();
+        }
+        AppLog.d("hostname={0}{1}", hostname, s);
+
+        IPAddress ipAddress = ipHost.AddressList[0];
+        var strLocalIP = ipAddress.ToString(); 
+        return strLocalIP;
+    }
+
     public static BundleConfig InstanceEditor()
     {
         if(mInstance == null)
@@ -329,23 +350,7 @@ public class BundleConfig : ScriptableObject
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
                 mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
 
-                var hostname = Dns.GetHostName();
-                if (!hostname.EndsWith(".local"))
-                    hostname = hostname + ".local";
-                
-                IPHostEntry ipHost = Dns.GetHostEntry(hostname);
-                string s = "";
-                foreach (var i in ipHost.AddressList)
-                {
-                    s +=  "=" + i.ToString();
-                }
-                AppLog.d("hostname={0}{1}", hostname, s);
-
-                IPAddress ipAddress = ipHost.AddressList[0];
-                var strLocalIP = ipAddress.ToString(); 
-                mInstance.m_ServerRoot = "http://" + strLocalIP + ":8008/";
-
-                mInstance.RefreshGroups();
+                mInstance.Refresh();
             }
         }
 
@@ -410,7 +415,7 @@ public class BundleConfig : ScriptableObject
 #if UNITY_EDITOR
 
     [CustomEditor(typeof(BundleConfig))]
-    public class BundleConfigExtension : Editor
+    public class Editor : UnityEditor.Editor
     {
         bool allInclude = false;
         bool allRebuild = false;
@@ -418,7 +423,7 @@ public class BundleConfig : ScriptableObject
         public void OnEnable()
         {
             mInstance = Instance();
-            mInstance.RefreshGroups();
+            mInstance.Refresh();
         }
 
         void DrawBundles(GUILayoutOption[] guiOpts)

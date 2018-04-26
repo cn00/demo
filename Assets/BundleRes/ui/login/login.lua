@@ -40,7 +40,7 @@ function login.CheckUpdate()
 	end)
 end
 
-function login.SqliteTest(x, y)
+function login.SqliteInsert(x, y)
 	local db = self.db
 	local sql = "INSERT INTO `test_map` (x,y) VALUES "
 			.. "(".. x ..",".. y ..");"
@@ -52,24 +52,35 @@ function login.SqliteTest(x, y)
 		local errmsg = sqlite.GetErrmsg(db)
 		print(errmsg)
 	elseif result2 == sqlite.Result.Done then
-		local rowsAffected = sqlite.Changes(db)
-		print("rowsAffected", rowsAffected)
+		-- local rowsAffected = sqlite.Changes(db)
+		-- print("rowsAffected", rowsAffected)
+	elseif result2== sqlite.Result.Busy then
+		print("db busy")
 	end
-	print(sql, result2, result3)
+	-- local lastid = sqlite.LastInsertRowid(db)
+	-- print(sql, result2, result3, lastid)
+end
 
-	sql = "SELECT * FROM `test_map`;"
-	stmt = sqlite.Prepare2(db, sql)
+function login.SqliteSelect()
+	local sql = "SELECT * FROM `test_map`;"
+	local stmt = sqlite.Prepare2(db, sql)
 	local count = 0
-	result2 = sqlite.Step(stmt)
+	local result2 = sqlite.Step(stmt)
+	local collect = {}
 	while result2 == sqlite.Result.Row do
 		count = count + 1
 		local c0 = sqlite.ColumnString(stmt, 0)
 		local c1 = sqlite.ColumnString(stmt, 1)
 		local c2 = sqlite.ColumnString(stmt, 2)
-		print(result2, c0, c1, c2)
+		collect[count] = table.concat({tostring(result2), c0, c1, c2}, ',')
+
 		result2 = sqlite.Step(stmt)
 	end
+	sqlite.Finalize(stmt)
+	print(table.concat(collect, "\n"))
+end
 
+function login.CaptureScreenshot()
 	local screenshoot = CS.AssetSys.CacheRoot .. "Screenshot.lua.png"
     CS.UnityEngine.ScreenCapture.CaptureScreenshot(screenshoot, 1);
 end
@@ -82,16 +93,72 @@ function login.AutoGenInit()
 end
 --AutoGenInit End
 
-function login.Awake()
-	login.AutoGenInit()
-	login.Button.onClick:AddListener(function()
-		local input0 = self.InputField.text
-		local input1 = self.InputField_1.text
+function login.ButtonOnClick()
+	local input0 = self.InputField.text
+	local input1 = self.InputField_1.text
 
-		print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
-		-- assert(coroutine.resume(login.CheckUpdate()))
-		self.SqliteTest(input0, input1)
+	print("clicked, you input is [" .. InputField:GetComponent("InputField").text .."]")
+	-- assert(coroutine.resume(login.CheckUpdate()))
+	self.SqliteInsert(input0, input1)
+end
+
+function login.coroutine_insert()
+	return coroutine.create(function()
+	    print('coroutine_insert coroutine start!')
+	    local t = os.time()
+		-- insert 10000 records coast 83 second
+		local values = {}
+		for i = 1, 10000 do
+			-- self.SqliteInsert(math.random(1,100000), math.random(20000,100000))
+			values[i] = "(" .. math.random(1,100000)..",".. math.random(20000,100000) .. ")"
+			-- print("idx:",i)
+			-- yield_return(CS.UnityEngine.WaitForSeconds(0))
+		end
+		local sql = "INSERT INTO `test_map` (x,y) VALUES "
+				.. table.concat(values, ",") .. ";"
+				.. "COMMIT;"
+		local db = self.db
+		local stmt = sqlite.Prepare2(db, sql)
+		local result2 = sqlite.Step(stmt)
+		local result3 = sqlite.Finalize(stmt)
+		if result2 == sqlite.Result.Error then
+			local errmsg = sqlite.GetErrmsg(db)
+			print(errmsg)
+		elseif result2 == sqlite.Result.Done then
+			-- local rowsAffected = sqlite.Changes(db)
+			-- print("rowsAffected", rowsAffected)
+		elseif result2== sqlite.Result.Busy then
+			print("db busy")
+		end
+		print("coast: ", os.time()-t)
+
+		self.Button.interactable = true
+		local lastid = sqlite.LastInsertRowid(db)
+		print(result2, result3, lastid, #sql)
 	end)
+end
+
+function login.Awake()
+	self.AutoGenInit()
+	self.Button.onClick:AddListener(function (  )
+		-- self.ButtonOnClick()
+		self.Button.interactable = false
+		assert(coroutine.resume(login.coroutine_insert()))
+	end)
+
+	self.InputField.onEndEdit:AddListener(function ( text )
+		self.InputField_1:Select()
+		print("InputField.onEndEdit:"..text)
+	end)
+	self.InputField_1.onEndEdit:AddListener(function ( text )
+		print("InputField_1.onEndEdit:"..text)
+		self.ButtonOnClick()
+	end)
+
+	-- self.InputField_1.onValidateInput=function ( text, charIndex, addedChar )
+	-- 	print("InputField_1.onValidateInput:", text, charIndex, addedChar)
+	-- 	-- self.ButtonOnClick()
+	-- end
 
 	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
 	print(sqlpath)

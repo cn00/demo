@@ -168,7 +168,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private IEnumerator CoroutineBody(object to_yield, Action callback)
     {
-        AppLog.d("CoroutineBody: {0}, {1}", to_yield, callback);
+//        AppLog.d("CoroutineBody: {0}, {1}", to_yield, callback);
         if(to_yield is IEnumerator)
         {
             yield return StartCoroutine((IEnumerator)to_yield);

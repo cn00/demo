@@ -562,7 +562,6 @@ public class BuildScript
             {
                 BuildBundleGroup(i, buildTarget, true);
             }
-            BundleConfig.Instance().Save();
         }
         finally
         {
