@@ -59,6 +59,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     public bool Inited { get; protected set; }
     bool Init()
     {
+        AppLog.d(luaScript.path);
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
 
         var luaInstance = LuaSys.Instance;
@@ -146,7 +147,8 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaOnDestroy();
         }
-        luaTable.Dispose();
+//        luaTable.Dispose();
+        luaTable = null;
         luaOnDestroy = null;
         luaUpdate = null;
         luaStart = null;
@@ -188,9 +190,13 @@ public class LuaMonoBehaviour : MonoBehaviour
 public class LuaMonoBehaviourEditor : Editor
 {
     LuaMonoBehaviour mObj = null;
+    string luaStr = "";
     public void OnEnable()
     {
         mObj = (LuaMonoBehaviour)target;
+        var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.LuaExtension;
+        if(File.Exists(luaPath))
+            luaStr = File.ReadAllText(luaPath);
     }
 
     static bool mShowInjections = true;
@@ -228,7 +234,7 @@ public class LuaMonoBehaviourEditor : Editor
                     item.obj = (GameObject)EditorGUILayout.ObjectField(item.obj, typeof(GameObject), true);
                     if(item.obj)
                     {
-                        item.obj.name = EditorGUILayout.TextField(item.obj.name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
+                        var nname = EditorGUILayout.TextField(item.obj.name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
                         var coms = item.obj.GetComponents<Component>();
                         if(item.exportComIdx == -1)
                             item.exportComIdx = coms.Length - 1;
@@ -238,6 +244,19 @@ public class LuaMonoBehaviourEditor : Editor
                             name = name.Substring(name.LastIndexOf('.') + 1);
                             return name; }
                         ).ToArray());
+
+                        if (item.obj.name != nname)
+                        {
+                            //rename in lua
+                            var comType = item.obj.GetComponents<Component>()[item.exportComIdx].GetType().ToString();
+                            var comName = comType.Substring(comType.LastIndexOf('.') + 1);
+                            var oldExp = item.obj.name + "_" + comName;
+                            string newExp = nname + "_" + comName;
+//                            var pattern = Regex.Match(luaStr, "\b" + oldExp + "\b", RegexOptions.Multiline).ToString();
+//                            luaStr = luaStr.Replace(pattern.ToString(), newExp);
+                            luaStr = luaStr.Replace("."+oldExp, "."+newExp);
+                            item.obj.name = nname;
+                        }
                     }
                 }
                 EditorGUILayout.EndHorizontal();
@@ -248,10 +267,11 @@ public class LuaMonoBehaviourEditor : Editor
             string luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
             foreach (var i in mObj.injections.Where(o=>o != null && o.obj != null))
             {
-                luaMemberValue += "\n    " + luaname + "." + i.obj.name 
+                var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
+                luaMemberValue += "\n    " + luaname + "." + i.obj.name + "_" + comType.Substring(comType.LastIndexOf('.')+1)
                     + " = " + i.obj.name 
                     + ":GetComponent(\"" 
-                    + i.obj.GetComponents<Component>()[i.exportComIdx].GetType() + "\")";
+                    + comType + "\")";
             }
             luaMemberValue += "\nend\n--AutoGenInit End";
             GUILayout.TextArea(luaMemberValue);
@@ -260,10 +280,10 @@ public class LuaMonoBehaviourEditor : Editor
             if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {
                 var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.LuaExtension;
-                var code = File.ReadAllText(luaPath);
-                var pattern = Regex.Match(code, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
-                code = code.Replace(pattern.ToString(), luaMemberValue);
-                File.WriteAllText(luaPath, code);
+//                var code = File.ReadAllText(luaPath);
+                var pattern = Regex.Match(luaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
+                luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);
+                File.WriteAllText(luaPath, luaStr);
             }
         }
 
