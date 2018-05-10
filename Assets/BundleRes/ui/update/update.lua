@@ -1,3 +1,9 @@
+
+local CS = CS
+local UnityEngine = CS.UnityEngine
+local GameObject = UnityEngine.GameObject
+local AssetSys = CS.AssetSys
+
 local util = require "lua.utility.xlua.util"
 
 local update = {
@@ -5,9 +11,9 @@ local update = {
 }
 local self = update
 
--- local yield_return = util.async_to_sync(function (to_yield, callback)
---     mono:YieldAndCallback(to_yield, callback)
--- end)
+local yield_return = util.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
 
 -- update.coroutine_demo = coroutine.create(function()
 --     print('update coroutine start!')
@@ -19,24 +25,28 @@ local self = update
 
 --AutoGenInit Begin
 function update.AutoGenInit()
-    update.VersionText = VersionText:GetComponent("UnityEngine.UI.Text")
-    update.Button = Button:GetComponent("UnityEngine.UI.Button")
-    update.ButtonClean = ButtonClean:GetComponent("UnityEngine.UI.Button")
-    update.Slider = Slider:GetComponent("UnityEngine.UI.Slider")
+    update.VersionText_Text = VersionText:GetComponent("UnityEngine.UI.Text")
+    update.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+    update.Clean_Button = Clean:GetComponent("UnityEngine.UI.Button")
+    update.Slider_Slider = Slider:GetComponent("UnityEngine.UI.Slider")
 end
 --AutoGenInit End
 
 function update.Awake()
-	update.AutoGenInit()
+	self.AutoGenInit()
 
-	update.Button.onClick:AddListener(function()
-		print("clicked, you input is '" .. InputField:GetComponent("InputField").text .."'")
-		assert(coroutine.resume(Login.CheckUpdate()))
+	self.CheckUpdate_Button.onClick:AddListener(function()
+		print("CheckUpdate")
+		assert(coroutine.resume(self.CheckUpdate()))
 	end)
 
-	update.VersionText.text = CS.BundleConfig.Instance().Version:ToString()
-	update.Slider = Slider:GetComponent("Slider")
-	update.Slider.value = 0
+	self.Clean_Button.onClick:AddListener(function()
+		print("Clean")
+		assert(coroutine.resume(self.CheckUpdate()))
+	end)
+
+	self.VersionText_Text.text = CS.BundleConfig.Instance().Version:ToString()
+	self.Slider_Slider.value = 0
 end
 
 function update.OnEnable ()
@@ -55,7 +65,7 @@ function update.FixedUpdate ()
 end
 
 function update.Update ()
-    update.Slider.value = update.Slider.value + 0.001
+    self.Slider_Slider.value = self.Slider_Slider.value + 0.001
 end
 
 function update.LateUpdate ()
@@ -65,6 +75,27 @@ end
 function update.OnDestroy ()
     print("update.OnDestroy")
 
+end
+
+----------------------------------
+
+function update.CheckUpdate()
+	return coroutine.create(function()
+
+	    local obj = nil
+		yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
+	        obj = asset;
+	    end))
+	    local loading = GameObject.Instantiate(obj)
+	    loading.name = "loading"
+	    local oldLoading = GameObject.Find("loading")
+	    GameObject.DestroyImmediate(oldLoading)
+	    
+		yield_return(CS.UpdateSys.Instance:CheckUpdate())
+	    GameObject.DestroyImmediate(loading)
+	    
+	    update.name = "update"
+	end)
 end
     
 return update

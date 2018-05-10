@@ -12,7 +12,7 @@ end)
 function boot.coroutine_demo()
     return coroutine.create(function()
         print('boot coroutine start!')
-        yield_return(CS.UnityEngine.WaitForSeconds(1))
+        -- yield_return(CS.UnityEngine.WaitForSeconds(1))
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
             obj = asset
@@ -31,7 +31,7 @@ function boot.coroutine_demo()
 	    print("lua login 1", obj);
 	    local login = CS.UnityEngine.GameObject.Instantiate(obj);
 
-        yield_return(CS.UnityEngine.WaitForSeconds(3))
+        -- yield_return(CS.UnityEngine.WaitForSeconds(3))
 
 	    loading:SetActive(false)
 
