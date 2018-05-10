@@ -19,6 +19,7 @@ public class TextInspector : Editor
         if(
             assetPath.EndsWith(".lua")
         ||  assetPath.EndsWith(".md")
+        ||  assetPath.EndsWith(".sql")
         )
         {
             string luaFile = File.ReadAllText(assetPath);
@@ -30,7 +31,7 @@ public class TextInspector : Editor
             else
             {
                 text = luaFile;
-                if(text.Length > 7000)
+                if(text.Length > 7006)
                 {
                     text = text.Substring(0, 7000) + "......";
                 }
