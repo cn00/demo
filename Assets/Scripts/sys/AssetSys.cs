@@ -287,7 +287,7 @@ public class AssetSys : SingleMono<AssetSys>
     public override IEnumerator Init()
     {
 #if !UNITY_EDITOR
-        yield return GetBundle("ui/boot/boot.bd");
+        yield return GetBundle("ui/boot.bd");
 #endif
         yield return base.Init();
     }
@@ -488,6 +488,7 @@ public class AssetSys : SingleMono<AssetSys>
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
+                    // TODO: decode buffer
                     bundleGroup.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
                     AsyncSave(cachePath, outStream.GetBuffer());
