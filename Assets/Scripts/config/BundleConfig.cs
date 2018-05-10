@@ -22,7 +22,7 @@ static class RectExtension
         return rect;
     }
 }
-#endif
+#endif //UNITY_EDITOR
 
 public static class PathExtension
 {
@@ -70,22 +70,19 @@ public static class PathExtension
 [Serializable]
 public class AppVersion
 {
-    [Range(0,9)]
-    public int Major = 0; // 主版本
-    [Range(0,9)]
-    public int Minor = 0; // 次版本
-    [Range(0,99)]
-    public int Patch = 0; // 补丁版本
+    public uint Major = 0; // 主版本
+    public uint Minor = 0; // 次版本
+    public uint Patch = 0; // 补丁版本
 
     public AppVersion(string v)
     {
         var vs = v.Split('.');
-        Major = int.Parse(vs[0]);
-        Minor = int.Parse(vs[1]);
+        Major = uint.Parse(vs[0]);
+        Minor = uint.Parse(vs[1]);
         if(vs.Length > 2)
-            Patch = int.Parse(vs[2]);
+            Patch = uint.Parse(vs[2]);
     }
-    public AppVersion(int major, int minor, int build)
+    public AppVersion(uint major, uint minor, uint build)
     {
         Major = major;
         Minor = minor;
@@ -99,12 +96,12 @@ public class AppVersion
 
     public Version V
     {
-        get { return new Version(Major, Minor, Patch); }
+        get { return new Version((int)Major, (int)Minor, (int)Patch); }
     }
 
     public static implicit operator AppVersion(Version v)
     {
-        return new AppVersion(v.Major, v.Minor, v.Build);
+        return new AppVersion((uint)v.Major, (uint)v.Minor, (uint)v.Build);
     }
 
 }
@@ -158,10 +155,10 @@ public class BundleConfig : ScriptableObject
         }
     }
 
+    public bool UseBundle = false;
+
     [SerializeField]
     public AppVersion Version;
-
-    public bool UseBundle = false;
 
     [Serializable]
     public class BundleInfo : object
@@ -378,7 +375,7 @@ public class BundleConfig : ScriptableObject
         AssetDatabase.ImportAsset(configRes);
     }
 
-#endif
+#endif //UNITY_EDITOR
 
     public static BundleConfig InstanceRuntime()
     {
@@ -536,6 +533,19 @@ public class BundleConfig : ScriptableObject
                 GUILayout.Width(50),
                 GUILayout.ExpandWidth(true),
             };
+            var rect = EditorGUILayout.GetControlRect();
+            if(GUI.Button(rect.Split(0, 3), "AddMajor"))
+            {
+                mInstance.Version.Major += 1;
+            }
+            if(GUI.Button(rect.Split(1, 3), "AddMinor"))
+            {
+                mInstance.Version.Minor += 1;
+            }
+            if(GUI.Button(rect.Split(2, 3), "AddPatch"))
+            {
+                mInstance.Version.Patch += 1;
+            }
 
             EditorGUILayout.Space();
 
@@ -554,6 +564,7 @@ public class BundleConfig : ScriptableObject
 
         void Build(BuildTarget target)
         {
+//            mInstance.Version.Patch += 1;
             foreach(var i in mInstance.Groups.Where(ii => ii.include))
             {
                 BuildScript.BuildBundleGroup(i, target, i.rebuild);
