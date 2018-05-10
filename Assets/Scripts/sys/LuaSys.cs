@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using UnityEngine;
 using XLua;
 
@@ -28,7 +29,7 @@ public class LuaSys : SingleMono<LuaSys>
         meta.Dispose();
 
         luaTable.Set("mono", lb);
-        foreach(var injection in lb.injections)
+        foreach(var injection in lb.injections.Where(i => i.obj != null))
         {
             luaTable.Set(injection.obj.name, injection.obj);
         }
