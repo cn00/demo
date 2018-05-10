@@ -97,7 +97,7 @@ public class BuildScript
             foreach(var f in Directory.GetFiles(indir, "*.lua", SearchOption.AllDirectories))
             {
                 var ftxt = f.Replace(".lua", ".lua.txt");
-                File.Copy(f, ftxt);
+                File.Copy(f, ftxt, true);
                 AssetDatabase.ImportAsset(ftxt);
             }
 
@@ -110,7 +110,7 @@ public class BuildScript
                 ++count;
                 var udir = dir.upath();
                 var assetBundleName = udir.Substring(udir.LastIndexOf('/')+1);
-                AppLog.d("pack: " + assetBundleName);
+//                AppLog.d("pack: " + assetBundleName);
                 var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions, rebuild);
                 if(ab != null)
                     buildMap.Add(ab.Value);
@@ -148,6 +148,7 @@ public class BuildScript
             {
                 var path = outdir + "/" + i;
                 var lzmaPath = path + BundleConfig.CompressedExtension;
+                // TODO: encode bundle
                 BundleHelper.CompressFileLZMA(path, lzmaPath);
 
                 var outPath = outRoot + "/" + i + BundleConfig.CompressedExtension;
@@ -195,7 +196,7 @@ public class BuildScript
             ab.assetNames = assetNames.ToArray();
             bundleInfo.BuildTime = DateTime.Now.ToFileTime().ToString();
             bundleInfo.Version = BundleConfig.Instance().Version.ToString();
-            AppLog.d(assetDir + " > " + DateTime.FromFileTime(long.Parse(bundleInfo.BuildTime)));
+//            AppLog.d(assetDir + " > " + DateTime.FromFileTime(long.Parse(bundleInfo.BuildTime)));
             return ab;
         }
         else
@@ -361,7 +362,9 @@ public class BuildScript
         var option = BuildOptions.EnableHeadlessMode 
             | BuildOptions.SymlinkLibraries 
             //| BuildOptions.Il2CPP
+//            | BuildOptions.Development
             | BuildOptions.AcceptExternalModificationsToPlayer
+            | BuildOptions.AllowDebugging
         ;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
         version.Patch = 0;
@@ -491,6 +494,7 @@ public class BuildScript
         EditorUtility.ClearProgressBar();
     }
 
+    // TODO: replace to Build BundleConfig
     public static void GenBundleManifest(BuildTarget buildTarget)
     {
         try
