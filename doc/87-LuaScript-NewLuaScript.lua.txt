@@ -60,5 +60,9 @@ function #SCRIPTNAME#.OnDestroy()
     print("#SCRIPTNAME#.OnDestroy")
 
 end
-    
+
+function #SCRIPTNAME#.Destroy()
+    GameObject.DestroyImmediate(mono.gameObject)
+end
+
 return #SCRIPTNAME#
