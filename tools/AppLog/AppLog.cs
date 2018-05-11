@@ -31,6 +31,10 @@ public static class AppLog
 {
     public static string TAG = "[game]";
 
+    public static int Port = 7788;
+
+    public static bool isEditor = false;
+
     static DebugSocket.Server mDebugServer = null;
     public static DebugSocket.Server DebugServer
     {
@@ -39,7 +43,7 @@ public static class AppLog
             if(mDebugServer == null)
             {
                 // Create a listen server on localhost with port 80
-                Server server = new Server(new IPEndPoint(IPAddress.Any, 7788));
+                Server server = new Server(new IPEndPoint(IPAddress.Any, Port));
                 mDebugServer = server;
                 server.OnClientConnected += (object sender, OnClientConnectedHandler e) =>
                 {
@@ -75,7 +79,8 @@ public static class AppLog
     public static void d(string log)
     {
         UnityEngine.Debug.Log("<color=yellow>" + TAG+ "</color> " + log);
-        DebugServer.BroadcastMessage(log.ToString());
+        if(!isEditor)
+            DebugServer.BroadcastMessage(log.ToString());
     }
 
     public static void d(string fmt, params object[] args)
@@ -95,7 +100,10 @@ public static class AppLog
     public static void w(string log)
     {
         UnityEngine.Debug.LogWarning(TAG + log);
-        DebugServer.BroadcastMessage(log);
+        if(!isEditor)
+        {
+            DebugServer.BroadcastMessage(log);
+        }
     }
 
     public static void w(string fmt, params object[] args)
@@ -106,7 +114,8 @@ public static class AppLog
     private static void e(string log)
     {
         UnityEngine.Debug.LogErrorFormat("<color=red>{0}</color> {1}", TAG, log);
-        DebugServer.BroadcastMessage("error: " + log);
+        if(!isEditor)
+            DebugServer.BroadcastMessage("error: " + log);
     }
 
     public static void e(string fmt, params object[] args)
