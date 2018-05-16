@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a2245519048cb7e478ccdcc3038f44a4
+guid: 34da03a1a97cc4cff935727d8e18c9d8
 folderAsset: yes
-timeCreated: 1521079908
+timeCreated: 1522116487
 licenseType: Pro
 DefaultImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: ui/login.bd
+  assetBundleName: chapter_02/level_01.bd
   assetBundleVariant: 

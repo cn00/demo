@@ -115,7 +115,7 @@ end
 
 function test.coroutine_insert_10000()
 	return coroutine.create(function()
-	    print('coroutine_insert coroutine start!')
+	    print('coroutine_insert_10000 coroutine start!')
 	    local t = os.time()
 		-- insert 10000 records coast 83 second
 		local values = {}
@@ -131,7 +131,7 @@ function test.coroutine_insert_10000()
 		local db = self.db
 		local stmt = sqlite.Prepare2(db, sql)
 		local result2 = sqlite.Step(stmt)
-		local result3 = sqlite.Finalize(stmt)
+		local result3 = sqlite.Finalize(stmt) -- 清理前一个任务
 		if result2 == sqlite.Result.Error then
 			local errmsg = sqlite.GetErrmsg(db)
 			print(errmsg)
@@ -141,11 +141,11 @@ function test.coroutine_insert_10000()
 		elseif result2== sqlite.Result.Busy then
 			print("db busy")
 		end
-		print("coast: ", os.time()-t)
+		print()
 
 		self.Insert_10000_Button.interactable = true
 		local lastid = sqlite.LastInsertRowid(db)
-		print(result2, result3, lastid, #sql)
+		print(result2, "lastid"..lastid, "coast:" .. os.time()-t)
 	end)
 end
 
