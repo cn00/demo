@@ -66,6 +66,7 @@ public class BuildScript
         ".bak",
         ".unity",
         ".meta",
+        ".DS_Store",
     };
 
     public static string TargetName(BuildTarget target)
@@ -81,6 +82,7 @@ public class BuildScript
         case BuildTarget.StandaloneWindows64:
             return "Windows64";
         case BuildTarget.StandaloneOSX:
+        case BuildTarget.StandaloneOSXIntel:
             return "OSX";
         default:
             return "unknown";
@@ -88,6 +90,107 @@ public class BuildScript
     }
 
     #region AssetBundle
+    public static void BuildAssetBundle(BuildTarget targetPlatform, bool rebuild = false)
+    {
+        var tmp = EditorUserBuildSettings.activeBuildTarget;
+        var t = DateTime.Now;
+        try
+        {
+            var outDir = BundleOutDir + TargetName(targetPlatform);
+            if(!Directory.Exists(outDir))
+            {
+                Directory.CreateDirectory(outDir);
+            }
+
+            // backup old manifest
+            var oldManifestPath = outDir + "/" + TargetName(targetPlatform);
+            if(File.Exists(oldManifestPath))
+                File.Copy(oldManifestPath, oldManifestPath + ".old", true);
+
+
+            // lua
+            var luas = Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua", SearchOption.AllDirectories);
+            var n = 0;
+            foreach(var f in luas)
+            {
+                EditorUtility.DisplayCancelableProgressBar("copy lua ...", f, (float)(++n) / luas.Length);
+
+                var ftxt = f.Replace(".lua", ".lua.txt");
+                File.Copy(f, ftxt, true);
+            }
+            AssetDatabase.Refresh();
+
+            var options = (
+                BuildAssetBundleOptions.None
+//              | BuildAssetBundleOptions.UncompressedAssetBundle
+              | BuildAssetBundleOptions.ChunkBasedCompression
+//              | BuildAssetBundleOptions.ForceRebuildAssetBundle
+            );
+
+            if (rebuild)
+                options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
+            
+            var manifest = BuildPipeline.BuildAssetBundles(
+                outDir,
+                options,
+                targetPlatform
+            );
+
+            // zip
+            var outRoot = BundleOutDir + TargetName(targetPlatform)
+                + "/" + BundleConfig.Instance().Version;
+            AssetBundleManifest oldManifest = null;
+            if(File.Exists(oldManifestPath + ".old"))
+                oldManifest = AssetBundle.LoadFromFile(oldManifestPath + ".old").LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            var allAssetBundles = manifest.GetAllAssetBundles().ToList();
+            allAssetBundles.Add(TargetName(targetPlatform));
+            n = 0;
+            foreach(var i in allAssetBundles)
+            {
+                var finfo = new FileInfo(outDir + "/" + i);
+                // size
+                var bundleInfo = BundleConfig.Instance().GetBundleInfo(i);
+                if(bundleInfo != null)
+                {
+                    bundleInfo.Size = (ulong)finfo.Length;
+                }
+
+                var hash = manifest.GetAssetBundleHash(i);
+                var oldhash = Hash128.Parse("0");
+                if(oldManifest != null)
+                    oldhash = oldManifest.GetAssetBundleHash(i);
+                var path = outDir + "/" + i;
+                var lzmaPath = path + BundleConfig.CompressedExtension;
+                if(hash != oldhash || !File.Exists(lzmaPath))
+                {
+                    EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
+                    AppLog.d("update: {0}:{1}:{2}", i, hash, oldhash);
+
+                    // TODO: encode bundle
+                    BundleHelper.CompressFileLZMA(path, lzmaPath);
+                }
+
+                // copy
+                var outPath = outRoot + "/" + i + BundleConfig.CompressedExtension;
+                var dir = Path.GetDirectoryName(outPath);
+                if(!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+                File.Copy(lzmaPath, outPath, true);
+            }
+        }
+        finally
+        {
+//            foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
+//            {
+//                File.Delete(f);
+//            }
+            AssetDatabase.Refresh();
+
+            EditorUtility.ClearProgressBar();
+            AppLog.d("BuildAssetBundle coast: {0}", DateTime.Now - t);
+        }
+    }
+
     public static void BuildBundleGroup(BundleConfig.GroupInfo group, BuildTarget targetPlatform, bool rebuild = false)
     {
         var indir = BundleConfig.BundleResRoot + group.Name;
@@ -110,7 +213,7 @@ public class BuildScript
                 ++count;
                 var udir = dir.upath();
                 var assetBundleName = udir.Substring(udir.LastIndexOf('/')+1);
-//                AppLog.d("pack: " + assetBundleName);
+                AppLog.d("pack: {0}=>{1}", dir, assetBundleName);
                 var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions, rebuild);
                 if(ab != null)
                     buildMap.Add(ab.Value);
@@ -124,14 +227,15 @@ public class BuildScript
             {
                 Directory.CreateDirectory(outdir);
             }
+            var options = (
+                    BuildAssetBundleOptions.None
+//                  | BuildAssetBundleOptions.UncompressedAssetBundle
+                  | BuildAssetBundleOptions.ChunkBasedCompression
+            );
             var manifest = BuildPipeline.BuildAssetBundles(
                 outdir,
                 buildMap.ToArray(),
-                (
-                BuildAssetBundleOptions.None
-                //| BuildAssetBundleOptions.UncompressedAssetBundle
-                | BuildAssetBundleOptions.ChunkBasedCompression
-                ),
+                options,
                 targetPlatform
             );
 
@@ -470,6 +574,10 @@ public class BuildScript
                 BundleHelper.CompressFileLZMA(f, f.Replace(BundleOutDir + TargetName(targetPlatform), outRoot) + BundleConfig.CompressedExtension);
                 //File.Delete(f);
             }
+        }
+        catch(Exception e)
+        {
+            AppLog.e(e);
         }
         finally
         {

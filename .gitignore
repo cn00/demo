@@ -48,3 +48,6 @@ ios.proj*
 log/
 bin/
 *.i64*
+
+*.lua.txt
+*.lua.txt.meta

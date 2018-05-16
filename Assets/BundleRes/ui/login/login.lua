@@ -33,19 +33,19 @@ end
 --AutoGenInit Begin
 function login.AutoGenInit()
     login.Login_Button = Login:GetComponent("UnityEngine.UI.Button")
-    login.x_InputField = x:GetComponent("UnityEngine.UI.InputField")
-    login.y_InputField = y:GetComponent("UnityEngine.UI.InputField")
+    login.id_InputField = id:GetComponent("UnityEngine.UI.InputField")
+    login.pwd_InputField = pwd:GetComponent("UnityEngine.UI.InputField")
 end
 --AutoGenInit End
 
 function login.Awake()
 	self.AutoGenInit()
 
-	self.x_InputField.onEndEdit:AddListener(function ( text )
-		self.y_InputField:Select()
+	self.id_InputField.onEndEdit:AddListener(function ( text )
+		self.pwd_InputField:Select()
 		print("x_InputField.onEndEdit:"..text)
 	end)
-	self.y_InputField.onEndEdit:AddListener(function ( text )
+	self.pwd_InputField.onEndEdit:AddListener(function ( text )
 		print("y_InputField.onEndEdit:"..text)
 	end)
 

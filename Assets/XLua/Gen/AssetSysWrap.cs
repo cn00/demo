@@ -29,8 +29,6 @@ namespace XLua.CSObjectWrap
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetAsset", _m_GetAsset);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetBundleSync", _m_GetBundleSync);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetBundle", _m_GetBundle);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UnloadGroup", _m_UnloadGroup);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UnloadBundle", _m_UnloadBundle);
 			
 			
 			
@@ -368,101 +366,6 @@ namespace XLua.CSObjectWrap
             }
             
             return LuaAPI.luaL_error(L, "invalid arguments to AssetSys.Www!");
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_UnloadGroup(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
-            
-            
-			    int __gen_param_count = LuaAPI.lua_gettop(L);
-            
-                if(__gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
-                {
-                    string group = LuaAPI.lua_tostring(L, 2);
-                    bool unloadAllLoadedObjects = LuaAPI.lua_toboolean(L, 3);
-                    
-                    __cl_gen_to_be_invoked.UnloadGroup( group, unloadAllLoadedObjects );
-                    
-                    
-                    
-                    return 0;
-                }
-                if(__gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
-                {
-                    string group = LuaAPI.lua_tostring(L, 2);
-                    
-                    __cl_gen_to_be_invoked.UnloadGroup( group );
-                    
-                    
-                    
-                    return 0;
-                }
-                if(__gen_param_count == 1) 
-                {
-                    
-                    __cl_gen_to_be_invoked.UnloadGroup(  );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception __gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
-            }
-            
-            return LuaAPI.luaL_error(L, "invalid arguments to AssetSys.UnloadGroup!");
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_UnloadBundle(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
-            
-            
-			    int __gen_param_count = LuaAPI.lua_gettop(L);
-            
-                if(__gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
-                {
-                    string path = LuaAPI.lua_tostring(L, 2);
-                    bool unloadAllLoadedObjects = LuaAPI.lua_toboolean(L, 3);
-                    
-                    __cl_gen_to_be_invoked.UnloadBundle( path, unloadAllLoadedObjects );
-                    
-                    
-                    
-                    return 0;
-                }
-                if(__gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
-                {
-                    string path = LuaAPI.lua_tostring(L, 2);
-                    
-                    __cl_gen_to_be_invoked.UnloadBundle( path );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception __gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
-            }
-            
-            return LuaAPI.luaL_error(L, "invalid arguments to AssetSys.UnloadBundle!");
             
         }
         

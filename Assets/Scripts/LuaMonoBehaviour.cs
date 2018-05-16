@@ -20,11 +20,6 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-public static class GameObjectExtension
-{
-
-}
-
 [LuaCallCSharp]
 public class LuaMonoBehaviour : MonoBehaviour
 {

@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 114901288981217354}
   - component: {fileID: 114113656567161866}
   m_Layer: 5
-  m_Name: x
+  m_Name: id
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 114777640655003554}
   - component: {fileID: 114262402300227832}
   m_Layer: 5
-  m_Name: y
+  m_Name: pwd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -282,7 +282,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224240204372176678}
   m_Layer: 5
-  m_Name: insert
+  m_Name: input
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -551,8 +551,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114777640655003554}
   m_TextComponent: {fileID: 114529106310462842}
   m_Placeholder: {fileID: 114305767461805658}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0

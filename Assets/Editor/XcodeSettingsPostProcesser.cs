@@ -64,13 +64,15 @@ public class XcodeSettingsPostProcesser
         // Apply settings
         File.WriteAllText (projectPath, pbxProject.WriteToString ());
 
-//        //editing Info.plist
-//        var plistPath = Path.Combine (pathToBuiltProject, "Info.plist");
-//        var plist = new PlistDocument ();
-//        plist.ReadFromFile (plistPath);
+        //editing Info.plist
+        var plistPath = Path.Combine (pathToBuiltProject, "Info.plist");
+        var plist = new PlistDocument ();
+        plist.ReadFromFile (plistPath);
 
         // Add string setting
         // plist.root.SetString ("hogehogeId", "dummyid");
+
+        plist.root.SetBoolean("NSAllowsArbitraryLoads", true);
 
         // // Add URL Scheme
         // var array = plist.root.CreateArray ("CFBundleURLTypes");
@@ -80,7 +82,7 @@ public class XcodeSettingsPostProcesser
         // urlInnerArray.AddString ("biligame");
 
         // Apply editing settings to Info.plist
-//        plist.WriteToFile (plistPath);
+        plist.WriteToFile (plistPath);
 
         ProcessStartInfo pi = new ProcessStartInfo(
             "open",

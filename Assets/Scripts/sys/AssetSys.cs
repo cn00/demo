@@ -251,29 +251,8 @@ public class AssetSys : SingleMono<AssetSys>
         }
     }
 
-    public class BundleGroup
-    {
-        public AssetBundleManifest Manifest = null;
-        public Dictionary<string, AssetBundle> Bundles = new Dictionary<string, AssetBundle>();
-        public void Unload(string name, bool unloadAllLoadedObjects = false)
-        {
-            AssetBundle outBundle = null;
-            if(Bundles.TryGetValue(name, out outBundle))
-            {
-                outBundle.Unload(unloadAllLoadedObjects);
-                Bundles.Remove(name);
-            }
-        }
-        public void Clear(bool unloadAllLoadedObjects = false)
-        {
-            foreach(var i in Bundles.Keys)
-            {
-                Unload(i, unloadAllLoadedObjects);
-            }
-        }
-    }
-
-    Dictionary<string/*group*/, BundleGroup> mLoadedBundles = new Dictionary<string,BundleGroup>();
+    public AssetBundleManifest mManifest = null;
+    Dictionary<string, AssetBundle> mLoadedBundles = new Dictionary<string,AssetBundle>();
 
     public bool SysEnter()
     {
@@ -340,11 +319,16 @@ public class AssetSys : SingleMono<AssetSys>
             //assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
             var dirs = assetSubPath.Split('/');
 
-            string manifestBundleName = dirs[0] + '/' + dirs[0];
+#if UNITY_EDITOR
+            string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
+                // "iOS";// dirs[0] + '/' + dirs[0];
+#else
+            string manifestBundleName = PlatformName(Application.platform);
+#endif
             yield return GetBundle(manifestBundleName, (bundle) =>
             {
                 var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                mLoadedBundles[dirs[0]].Manifest = manifext;
+                mManifest = manifext;
             });
             AppLog.d("load <Color=red>manifest</Color>: " + manifestBundleName);
 
@@ -395,25 +379,12 @@ public class AssetSys : SingleMono<AssetSys>
             return null;
         }
 
-        string rootName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
-        BundleGroup bundleGroup = null;
-        if(!mLoadedBundles.TryGetValue(rootName, out bundleGroup))
-        {
-            bundleGroup = mLoadedBundles[rootName] = new BundleGroup();
-        }
-
         AssetBundle bundle = null;
-        if(bundleGroup.Bundles.ContainsKey(bundlePath))
+        if(!mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
-            bundle = bundleGroup.Bundles[bundlePath];
-        }
-        else
-        {
-            var subPath = bundlePath;
-            var cachePath = CacheRoot + "/" + subPath;
-
+            var cachePath = CacheRoot + "/" + bundlePath;
             bundle = AssetBundle.LoadFromFile(cachePath);
-            bundleGroup.Bundles[bundlePath] = bundle;
+            mLoadedBundles[bundlePath] = bundle;
             AppLog.w("GetBundleSync: {0}", bundlePath);
         }
 
@@ -437,20 +408,8 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
-        string groupName = bundlePath.Substring(0, bundlePath.IndexOf('/'));
-        BundleGroup bundleGroup = null;
-        if(!mLoadedBundles.TryGetValue(groupName, out bundleGroup))
-        {
-            bundleGroup = mLoadedBundles[groupName] = new BundleGroup();
-        }
-
         AssetBundle bundle = null;
-        if(bundleGroup.Bundles.ContainsKey(bundlePath))
-        {
-            bundle = bundleGroup.Bundles[bundlePath];
-        }
-
-        if(bundle != null)
+        if(mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
             if(callBack != null)
                 callBack(bundle);
@@ -478,7 +437,7 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 if(isLocal)
                 {
-                    bundleGroup.Bundles[bundlePath] = www.assetBundle;
+                    mLoadedBundles[bundlePath] = www.assetBundle;
                 }
                 else
                 {
@@ -489,7 +448,7 @@ public class AssetSys : SingleMono<AssetSys>
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
                     // TODO: decode buffer
-                    bundleGroup.Bundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
+                    mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
                     AsyncSave(cachePath, outStream.GetBuffer());
                     //UpdateSys.Instance.Updated(subPath);
@@ -502,9 +461,9 @@ public class AssetSys : SingleMono<AssetSys>
         });
 
         // Dependencies
-        if(bundleGroup.Manifest != null)
+        if(mManifest != null)
         {
-            var deps = bundleGroup.Manifest.GetAllDependencies(bundlePath);
+            var deps = mManifest.GetAllDependencies(bundlePath);
             foreach(var i in deps)
             {
                 AppLog.d("Dependencies: " + i);
@@ -513,7 +472,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         if(callBack != null)
-            callBack(bundleGroup.Bundles[bundlePath]);
+            callBack(mLoadedBundles[bundlePath]);
 
         yield return null;
     }
@@ -564,34 +523,12 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
-    /// <summary>
-    /// clean LoadedBundles, null group to clean all
-    /// </summary>
-    /// <param name="group"></param>
-    public void UnloadGroup(string group = null, bool unloadAllLoadedObjects = false)
-    {
-        if(group == null)
-        {
-            foreach(var i in mLoadedBundles.Keys)
-            {
-                UnloadGroup(i, unloadAllLoadedObjects);
-            }
-        }
-        else
-        {
-            BundleGroup outGroup = null;
-            if(mLoadedBundles.TryGetValue(group, out outGroup))
-                outGroup.Clear(unloadAllLoadedObjects);
-        }
-    }
-
     public void UnloadBundle(string path, bool unloadAllLoadedObjects = false)
     {
-        var group = path.Substring(0, path.IndexOf('/'));
-        BundleGroup outGroup = null;
-        if(mLoadedBundles.TryGetValue(group, out outGroup) && outGroup != null)
+        AssetBundle outBundle = null;
+        if(mLoadedBundles.TryGetValue(path, out outBundle) && outBundle != null)
         {
-            outGroup.Unload(path, unloadAllLoadedObjects);
+            outBundle.Unload(unloadAllLoadedObjects);
             AppLog.d("UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
     }
@@ -608,6 +545,7 @@ public class AssetSys : SingleMono<AssetSys>
         www.Dispose();
         return (T)obj;
     }
+
     /// <summary>
     /// 在新线程中异步保存文件
     /// </summary>
