@@ -66,7 +66,7 @@ public class AppVersion
         var vs = v.Split('.');
         Major = uint.Parse(vs[0]);
         Minor = uint.Parse(vs[1]);
-        if(vs.Length > 2)
+        if (vs.Length > 2)
             Patch = uint.Parse(vs[2]);
     }
     public AppVersion(uint major, uint minor, uint build)
@@ -91,9 +91,9 @@ public class AppVersion
         return new AppVersion((uint)v.Major, (uint)v.Minor, (uint)v.Build);
     }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     public bool m_Foldout = true;
-    public void DrawInspector(string name, GUILayoutOption[] option = null )
+    public void DrawInspector(string name, GUILayoutOption[] option = null)
     {
         m_Foldout = EditorGUILayout.Foldout(m_Foldout, name, true);
         ++EditorGUI.indentLevel;
@@ -149,7 +149,7 @@ public class AppVersion
         }
         --EditorGUI.indentLevel;
     }
-    #endif
+#endif
 
 }
 
@@ -195,10 +195,13 @@ public class BundleConfig : ScriptableObject
     public bool UseBundle = false;
 
     [SerializeField, HideInInspector]
+    public long LastBuildTime = 0L;
+
+    [SerializeField, HideInInspector]
     public AppVersion Version;
 
     [HideInInspector, SerializeField]
-    string m_ServerRoot="http://10.23.114.141:8008/";
+    string m_ServerRoot = "http://10.23.114.141:8008/";
     /// <summary>
     /// http://ip:port/path/to/root/
     /// </summary>
@@ -221,16 +224,6 @@ public class BundleConfig : ScriptableObject
         public ulong Size { get { return mSize; } set { mSize = value; } }
 
         [SerializeField]
-        string mModifyTime = "0";
-        [YamlDotNet.Serialization.YamlIgnore]
-        public string ModifyTime { get { return mModifyTime; } set { mModifyTime = value; } }
-
-        [SerializeField]
-        string mBuildTime = "0";
-        [YamlDotNet.Serialization.YamlIgnore]
-        public string BuildTime { get { return mBuildTime; } set { mBuildTime = value; } }
-
-        [SerializeField]
         string mMd5;
         public string Md5 { get { return mMd5; } set { mMd5 = value; } }
 
@@ -246,15 +239,15 @@ public class BundleConfig : ScriptableObject
         public bool mRebuild = false;
 
         public ulong mSize = 0ul;
-        public ulong Size 
-        { 
-            get 
-            { 
+        public ulong Size
+        {
+            get
+            {
                 var sum = 0ul;
                 foreach (var i in Bundles)
                     sum += i.Size;
                 return sum;
-            } 
+            }
         }
 
         [SerializeField]
@@ -263,28 +256,28 @@ public class BundleConfig : ScriptableObject
 
         public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         public override void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
                 mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
-                if(Size < 1024)//K
+                if (Size < 1024)//K
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
-                else if(Size < 1024*1024)//K
-                    EditorGUILayout.LabelField((Size/1024).ToString()+"K", guiOpts);
+                else if (Size < 1024 * 1024)//K
+                    EditorGUILayout.LabelField((Size / 1024).ToString() + "K", guiOpts);
                 else
-                    EditorGUILayout.LabelField((Size/1024/1024).ToString()+"M", guiOpts);
+                    EditorGUILayout.LabelField((Size / 1024 / 1024).ToString() + "M", guiOpts);
                 EditorGUILayout.LabelField("", guiOpts);
-//                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
+                //                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
             }
             EditorGUILayout.EndHorizontal();
             if (mFoldOut)
             {
-//                ++EditorGUI.indentLevel;
+                //                ++EditorGUI.indentLevel;
                 DrawInspector(indent, guiOpts);
-//                --EditorGUI.indentLevel;
+                //                --EditorGUI.indentLevel;
             }
             EditorGUI.indentLevel -= indent;
         }
@@ -292,25 +285,25 @@ public class BundleConfig : ScriptableObject
         public override void DrawInspector(int indent, GUILayoutOption[] guiOpts)
         {
             Bundles.Sort((i, j) => j.Size.CompareTo(i.Size));
-            foreach(var f in Bundles)
+            foreach (var f in Bundles)
             {
                 EditorGUILayout.BeginHorizontal();
                 {
                     EditorGUILayout.LabelField(f.Name, guiOpts);
-                    if(f.Size < 1024)//K
+                    if (f.Size < 1024)//K
                         EditorGUILayout.LabelField((f.Size).ToString(), guiOpts);
-                    else if(f.Size < 1024*1024)//K
-                        EditorGUILayout.LabelField((f.Size/1024).ToString()+"K", guiOpts);
+                    else if (f.Size < 1024 * 1024)//K
+                        EditorGUILayout.LabelField((f.Size / 1024).ToString() + "K", guiOpts);
                     else
-                        EditorGUILayout.LabelField((f.Size/1024/1024).ToString()+"M", guiOpts);
-                    
-//                    EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.ModifyTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
-                    EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.BuildTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
+                        EditorGUILayout.LabelField((f.Size / 1024 / 1024).ToString() + "M", guiOpts);
+
+                    // EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.ModifyTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
+                    // EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.BuildTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
                 }
                 EditorGUILayout.EndHorizontal();
             }
         }
-        #endif
+#endif
     }
 
     [HideInInspector, SerializeField]
@@ -322,11 +315,11 @@ public class BundleConfig : ScriptableObject
     public BundleInfo GetBundleInfo(string path)
     {
         var dirs = path.Split('/');
-        var group = Groups.Find(i=>i.Name == dirs[0]);
-        if(group != null && dirs.Length > 1)
+        var group = Groups.Find(i => i.Name == dirs[0]);
+        if (group != null && dirs.Length > 1)
         {
             var bundleName = dirs[0] + "/" + dirs[1];
-            var bundle = group.Bundles.Find(i=>i.Name == bundleName);
+            var bundle = group.Bundles.Find(i => i.Name == bundleName);
             return bundle;
         }
         return null;
@@ -367,13 +360,13 @@ public class BundleConfig : ScriptableObject
         var newGroups = new List<GroupInfo>();
         var groups = Directory.GetDirectories(BundleConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly);
         int n = 0;
-        foreach(var group in groups)
+        foreach (var group in groups)
         {
             EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float)(++n) / groups.Length);
 
             var groupName = group.upath().Replace(BundleConfig.BundleResRoot, "");
             GroupInfo groupInfo = Groups.Find(i => i.Name == groupName);
-            if(groupInfo == null)
+            if (groupInfo == null)
             {
                 groupInfo = new GroupInfo()
                 {
@@ -383,11 +376,11 @@ public class BundleConfig : ScriptableObject
             }
 
             var newBundles = new List<BundleInfo>();
-            foreach(var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
+            foreach (var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
             {
                 var bundlePath = bundle.upath();
                 var bundleName = bundlePath.Replace(BundleResRoot, "") + BundlePostfix;
-                var assetBundle = AssetImporter.GetAtPath (bundlePath);
+                var assetBundle = AssetImporter.GetAtPath(bundlePath);
                 if (assetBundle != null)
                 {
                     assetBundle.assetBundleName = bundleName;
@@ -395,7 +388,7 @@ public class BundleConfig : ScriptableObject
 
                 //var bundleName = bundle.upath().Replace(group + "/", "");
                 var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
-                if(bundleInfo == null)
+                if (bundleInfo == null)
                 {
                     bundleInfo = new BundleInfo()
                     {
@@ -404,29 +397,28 @@ public class BundleConfig : ScriptableObject
                 }
 
                 ulong time = 0;
-                foreach(var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
+                foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
                 {
-                    var assetImporter = AssetImporter.GetAtPath (f);
+                    var assetImporter = AssetImporter.GetAtPath(f);
                     if (assetImporter != null)
                     {
                         assetImporter.assetBundleName = "";//bundleName;
                         var assetTimeStamp = assetImporter.assetTimeStamp;
-                        if(time < assetTimeStamp)
+                        if (time < assetTimeStamp)
                             time = assetTimeStamp;
                     }
                 }
-                bundleInfo.ModifyTime = time.ToString();
 
-                if(time > 0)
+                if (time > 0)
                     newBundles.Add(bundleInfo);
             }//for 2
 
-//            AssetDatabase.GetAllAssetBundleNames();
+            //            AssetDatabase.GetAllAssetBundleNames();
             AssetDatabase.RemoveUnusedAssetBundleNames();
 
             groupInfo.Bundles = newBundles;
 
-            if(groupInfo.Bundles.Count > 0)
+            if (groupInfo.Bundles.Count > 0)
                 newGroups.Add(groupInfo);
         }//for 1
         Groups = newGroups;
@@ -439,29 +431,29 @@ public class BundleConfig : ScriptableObject
         var hostname = Dns.GetHostName();
         if (!hostname.EndsWith(".local"))
             hostname = hostname + ".local";
-        
+
         IPHostEntry ipHost = Dns.GetHostEntry(hostname);
         string s = "";
         foreach (var i in ipHost.AddressList)
         {
-            s +=  "=" + i.ToString();
+            s += "=" + i.ToString();
         }
         AppLog.d("hostname={0}{1}", hostname, s);
 
         IPAddress ipAddress = ipHost.AddressList[0];
-        var strLocalIP = ipAddress.ToString(); 
+        var strLocalIP = ipAddress.ToString();
         return strLocalIP;
     }
 
     public static BundleConfig InstanceEditor()
     {
-        if(mInstance == null)
+        if (mInstance == null)
         {
             mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>(BundleConfigAssetPath);
-            if(mInstance == null)
+            if (mInstance == null)
             {
                 var dir = Path.GetDirectoryName(BundleConfigAssetPath);
-                if(!Directory.Exists(dir))
+                if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -482,7 +474,7 @@ public class BundleConfig : ScriptableObject
         AssetDatabase.WriteImportSettingsIfDirty(BundleConfigAssetPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        
+
         CopyBundleConfigAsset();
     }
 
@@ -490,7 +482,7 @@ public class BundleConfig : ScriptableObject
     {
         var configRes = BundleConfig.BundleConfigAssetPath.Replace(BundleResDir, "Resources");
         var configDir = Path.GetDirectoryName(configRes);
-        if(!Directory.Exists(configDir))
+        if (!Directory.Exists(configDir))
         {
             Directory.CreateDirectory(configDir);
         }
@@ -502,12 +494,12 @@ public class BundleConfig : ScriptableObject
 
     public static BundleConfig InstanceRuntime()
     {
-        if(mInstance == null)
+        if (mInstance == null)
         {
             var assetSubPath = BundleConfigAssetSubPath;
             AppLog.d("BundleConfig InstanceRuntime 0({0})", assetSubPath);
             var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
-            if(File.Exists(cachePath))
+            if (File.Exists(cachePath))
             {
                 // mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(assetSubPath); // 可能造成回环调用
                 AppLog.d("BundleConfig InstanceRuntime(1)");
@@ -521,7 +513,7 @@ public class BundleConfig : ScriptableObject
                 mInstance = Resources.Load<BundleConfig>(respath);
             }
 
-            if(mInstance == null)
+            if (mInstance == null)
             {
                 mInstance = CreateInstance<BundleConfig>();
                 mInstance.UseBundle = true;
@@ -543,12 +535,12 @@ public class BundleConfig : ScriptableObject
         public void OnEnable()
         {
             mInstance = Instance();
-//            mInstance.Refresh();
+            //            mInstance.Refresh();
         }
 
         void DrawBundles(GUILayoutOption[] guiOpts)
         {
-            foreach(var i in mInstance.Groups)
+            foreach (var i in mInstance.Groups)
             {
                 i.Draw(0, guiOpts);
             }
@@ -563,8 +555,10 @@ public class BundleConfig : ScriptableObject
                 GUILayout.Width(30),
                 GUILayout.ExpandWidth(true),
             };
-            
+
             mInstance.Version.DrawInspector("Version", guiOpts);
+
+            EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mInstance.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
 
             EditorGUILayout.Space();
 
@@ -640,7 +634,7 @@ public class BundleConfig : ScriptableObject
                     }
 
                     // Bundles
-                    using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
+                    // using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
                     {
                         DrawBundles(guiOpts);
                     }
@@ -648,7 +642,7 @@ public class BundleConfig : ScriptableObject
                 --EditorGUI.indentLevel;
             }
 
-            if(GUI.changed)
+            if (GUI.changed)
             {
                 PlayerSettings.bundleVersion = mInstance.Version.ToString();
                 EditorUtility.SetDirty(mInstance);
@@ -665,7 +659,7 @@ public class BundleConfig : ScriptableObject
 
         private void OnDestroy()
         {
-//            AssetDatabase.SaveAssets();
+            //            AssetDatabase.SaveAssets();
         }
     }
 #endif

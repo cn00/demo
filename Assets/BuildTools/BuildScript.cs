@@ -26,9 +26,9 @@ public class BuildScript
     private static string[] FindEnabledEditorScenes()
     {
         List<string> EditorScenes = new List<string>();
-        foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
+        foreach (EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
         {
-            if(!scene.enabled)
+            if (!scene.enabled)
                 continue;
             EditorScenes.Add(scene.path);
         }
@@ -42,7 +42,7 @@ public class BuildScript
         {
             BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
         }
-         catch(Exception e)
+        catch (Exception e)
         {
             AppLog.e("BuildPlayer failure: " + e);
         }
@@ -71,21 +71,20 @@ public class BuildScript
 
     public static string TargetName(BuildTarget target)
     {
-        switch(target)
+        switch (target)
         {
-        case BuildTarget.Android:
-            return "Android";
-        case BuildTarget.iOS:
-            return "iOS";
-        case BuildTarget.StandaloneWindows:
-            return "Windows";
-        case BuildTarget.StandaloneWindows64:
-            return "Windows64";
-        case BuildTarget.StandaloneOSX:
-        case BuildTarget.StandaloneOSXIntel:
-            return "OSX";
-        default:
-            return "unknown";
+            case BuildTarget.Android:
+                return "Android";
+            case BuildTarget.iOS:
+                return "iOS";
+            case BuildTarget.StandaloneWindows:
+                return "Windows";
+            case BuildTarget.StandaloneWindows64:
+                return "Windows64";
+            case BuildTarget.StandaloneOSX:
+                return "OSX";
+            default:
+                return "unknown";
         }
     }
 
@@ -97,39 +96,42 @@ public class BuildScript
         try
         {
             var outDir = BundleOutDir + TargetName(targetPlatform);
-            if(!Directory.Exists(outDir))
+            if (!Directory.Exists(outDir))
             {
                 Directory.CreateDirectory(outDir);
             }
 
             // backup old manifest
             var oldManifestPath = outDir + "/" + TargetName(targetPlatform);
-            if(File.Exists(oldManifestPath))
+            if (File.Exists(oldManifestPath))
                 File.Copy(oldManifestPath, oldManifestPath + ".old", true);
 
-
             // lua
-            var luas = Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua", SearchOption.AllDirectories);
             var n = 0;
-            foreach(var f in luas)
+            DirectoryInfo info = new DirectoryInfo(BundleConfig.BundleResRoot);
+            var luas = info.GetFiles("*.lua", SearchOption.AllDirectories)
+                .Where(p => p.LastWriteTimeUtc.ToFileTimeUtc() > BundleConfig.Instance().LastBuildTime);
+            foreach (var f in luas)
             {
-                EditorUtility.DisplayCancelableProgressBar("copy lua ...", f, (float)(++n) / luas.Length);
+                EditorUtility.DisplayCancelableProgressBar("copy lua ...", f.FullName, (float)(++n) / luas.Count());
 
-                var ftxt = f.Replace(".lua", ".lua.txt");
-                File.Copy(f, ftxt, true);
+                var ftxt = f.FullName.Replace(".lua", ".lua.txt");
+                File.Copy(f.FullName, ftxt, true);
             }
+            // this is the right time to update LastBuildTime if i continue edit lua while BuildAssetBundle
+            BundleConfig.Instance().LastBuildTime = DateTime.Now.ToFileTimeUtc();
             AssetDatabase.Refresh();
 
             var options = (
                 BuildAssetBundleOptions.None
-//              | BuildAssetBundleOptions.UncompressedAssetBundle
+              //              | BuildAssetBundleOptions.UncompressedAssetBundle
               | BuildAssetBundleOptions.ChunkBasedCompression
-//              | BuildAssetBundleOptions.ForceRebuildAssetBundle
+            //              | BuildAssetBundleOptions.ForceRebuildAssetBundle
             );
 
             if (rebuild)
                 options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
-            
+
             var manifest = BuildPipeline.BuildAssetBundles(
                 outDir,
                 options,
@@ -140,28 +142,29 @@ public class BuildScript
             var outRoot = BundleOutDir + TargetName(targetPlatform)
                 + "/" + BundleConfig.Instance().Version;
             AssetBundleManifest oldManifest = null;
-            if(File.Exists(oldManifestPath + ".old"))
+            if (File.Exists(oldManifestPath + ".old"))
                 oldManifest = AssetBundle.LoadFromFile(oldManifestPath + ".old").LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             var allAssetBundles = manifest.GetAllAssetBundles().ToList();
             allAssetBundles.Add(TargetName(targetPlatform));
             n = 0;
-            foreach(var i in allAssetBundles)
+            foreach (var i in allAssetBundles)
             {
                 var finfo = new FileInfo(outDir + "/" + i);
                 // size
                 var bundleInfo = BundleConfig.Instance().GetBundleInfo(i);
-                if(bundleInfo != null)
+                if (bundleInfo != null)
                 {
                     bundleInfo.Size = (ulong)finfo.Length;
                 }
 
+                // compare hash
                 var hash = manifest.GetAssetBundleHash(i);
                 var oldhash = Hash128.Parse("0");
-                if(oldManifest != null)
+                if (oldManifest != null)
                     oldhash = oldManifest.GetAssetBundleHash(i);
                 var path = outDir + "/" + i;
                 var lzmaPath = path + BundleConfig.CompressedExtension;
-                if(hash != oldhash || !File.Exists(lzmaPath))
+                if (hash != oldhash || !File.Exists(lzmaPath))
                 {
                     EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
                     AppLog.d("update: {0}:{1}:{2}", i, hash, oldhash);
@@ -173,139 +176,21 @@ public class BuildScript
                 // copy
                 var outPath = outRoot + "/" + i + BundleConfig.CompressedExtension;
                 var dir = Path.GetDirectoryName(outPath);
-                if(!Directory.Exists(dir))
+                if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 File.Copy(lzmaPath, outPath, true);
             }
         }
         finally
         {
-//            foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
-//            {
-//                File.Delete(f);
-//            }
+            //            foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
+            //            {
+            //                File.Delete(f);
+            //            }
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
             AppLog.d("BuildAssetBundle coast: {0}", DateTime.Now - t);
-        }
-    }
-
-    public static void BuildBundleGroup(BundleConfig.GroupInfo group, BuildTarget targetPlatform, bool rebuild = false)
-    {
-        var indir = BundleConfig.BundleResRoot + group.Name;
-        try
-        {
-            // lua
-            foreach(var f in Directory.GetFiles(indir, "*.lua", SearchOption.AllDirectories))
-            {
-                var ftxt = f.Replace(".lua", ".lua.txt");
-                File.Copy(f, ftxt, true);
-                AssetDatabase.ImportAsset(ftxt);
-            }
-
-            // Create the array of bundle build details.
-            var buildMap = new List<AssetBundleBuild>();
-            float count = 0;
-            var dirs = Directory.GetDirectories(indir, "*", SearchOption.TopDirectoryOnly);
-            foreach(var dir in dirs)
-            {
-                ++count;
-                var udir = dir.upath();
-                var assetBundleName = udir.Substring(udir.LastIndexOf('/')+1);
-                AppLog.d("pack: {0}=>{1}", dir, assetBundleName);
-                var ab = CreateAssetBundleBuild(udir, assetBundleName, ExcludeExtensions, rebuild);
-                if(ab != null)
-                    buildMap.Add(ab.Value);
-                EditorUtility.DisplayCancelableProgressBar("BuildBundle ...", udir, count / dirs.Length);
-            }
-            if(buildMap.Count == 0)
-                return;
-
-            var outdir = BundleOutDir + TargetName(targetPlatform) + "/" + group.Name;
-            if(!Directory.Exists(outdir))
-            {
-                Directory.CreateDirectory(outdir);
-            }
-            var options = (
-                    BuildAssetBundleOptions.None
-//                  | BuildAssetBundleOptions.UncompressedAssetBundle
-                  | BuildAssetBundleOptions.ChunkBasedCompression
-            );
-            var manifest = BuildPipeline.BuildAssetBundles(
-                outdir,
-                buildMap.ToArray(),
-                options,
-                targetPlatform
-            );
-
-            var outRoot = BundleOutDir + TargetName(targetPlatform)
-                  + "/" + BundleConfig.Instance().Version + "/" + group.Name;
-            if(!Directory.Exists(outRoot))
-            {
-                Directory.CreateDirectory(outRoot);
-            }
-
-            var bundles = manifest.GetAllAssetBundles().ToList();
-            bundles.Add(group.Name);
-            foreach(var i in bundles)
-            {
-                var path = outdir + "/" + i;
-                var lzmaPath = path + BundleConfig.CompressedExtension;
-                // TODO: encode bundle
-                BundleHelper.CompressFileLZMA(path, lzmaPath);
-
-                var outPath = outRoot + "/" + i + BundleConfig.CompressedExtension;
-                File.Copy(lzmaPath, outPath, true);
-            }
-
-            //Compress(outdir, targetPlatform);
-        }
-        finally
-        {
-            foreach(var f in Directory.GetFiles(indir, "*.lua.txt*", SearchOption.AllDirectories))
-            {
-                File.Delete(f);
-            }
-            EditorUtility.ClearProgressBar();
-        }
-    }
-
-    static AssetBundleBuild? CreateAssetBundleBuild(string assetDir, string assetBundleName, List<string> excludes, bool rebuild = false)
-    {
-        var ab = new AssetBundleBuild();
-        ab.assetBundleName = assetBundleName + BundleConfig.BundlePostfix;
-
-        var bundleInfo = BundleConfig.Instance().GetBundleInfo(assetDir.Replace(BundleConfig.BundleResRoot, "") + BundleConfig.BundlePostfix);
-        long lastBuildTime = long.Parse(bundleInfo.BuildTime);
-
-        var assetNames = new List<string>();
-        int nnew = 0;
-        foreach(var f in Directory.GetFiles(assetDir, "*.*", SearchOption.AllDirectories))
-        {
-            if(excludes.Contains(Path.GetExtension(f)))
-                continue;
-            assetNames.Add(f.upath());
-
-            var finfo = new FileInfo(f);
-            if(rebuild || finfo.LastWriteTime.ToFileTime() > lastBuildTime)
-            {
-                ++nnew;
-                 //AppLog.d(f.upath() + ": " + DateTime.FromFileTime(modifyTime));
-            }
-        }
-
-        if(nnew > 0 && assetNames.Count() > 0)
-        {
-            ab.assetNames = assetNames.ToArray();
-            bundleInfo.BuildTime = DateTime.Now.ToFileTime().ToString();
-            bundleInfo.Version = BundleConfig.Instance().Version.ToString();
-//            AppLog.d(assetDir + " > " + DateTime.FromFileTime(long.Parse(bundleInfo.BuildTime)));
-            return ab;
-        }
-        else
-        {
-            return null;
         }
     }
 
@@ -320,7 +205,7 @@ public class BuildScript
         string SceneOutPath = BundleOutDir + TargetName(targetPlatform) + "/" + BundleConfig.Instance().Version + "/Level/" + outName + ".fg";
 
         var dir = Path.GetDirectoryName(SceneOutPath);
-        if(!Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
             Directory.CreateDirectory(dir);
         }
@@ -430,14 +315,14 @@ public class BuildScript
         {
             target_dir = "ios.proj";
         }
-        var option = BuildOptions.EnableHeadlessMode 
-            | BuildOptions.SymlinkLibraries 
+        var option = BuildOptions.EnableHeadlessMode
+            | BuildOptions.SymlinkLibraries
             //| BuildOptions.Il2CPP
             | BuildOptions.AcceptExternalModificationsToPlayer
             ;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
         version.Patch = 0;
-        if(Environment.GetEnvironmentVariable("configuration") == "Release")
+        if (Environment.GetEnvironmentVariable("configuration") == "Release")
         {
             PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.None);
         }
@@ -454,25 +339,25 @@ public class BuildScript
         var version = BundleConfig.Instance().Version;
         PlayerSettings.bundleVersion = version.ToString();
         PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-//        PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
+        //        PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
         var versionCode = int.Parse(PlayerSettings.iOS.buildNumber);
 
         string target_dir = Environment.GetEnvironmentVariable("IosProjDir");
-        if(string.IsNullOrEmpty(target_dir))
+        if (string.IsNullOrEmpty(target_dir))
         {
             target_dir = "ios.proj.sim";
         }
 
-        var option = BuildOptions.EnableHeadlessMode 
-            | BuildOptions.SymlinkLibraries 
+        var option = BuildOptions.EnableHeadlessMode
+            | BuildOptions.SymlinkLibraries
             //| BuildOptions.Il2CPP
-//            | BuildOptions.Development
+            //            | BuildOptions.Development
             | BuildOptions.AcceptExternalModificationsToPlayer
             | BuildOptions.AllowDebugging
         ;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
         version.Patch = 0;
-        if(Environment.GetEnvironmentVariable("configuration") == "Release")
+        if (Environment.GetEnvironmentVariable("configuration") == "Release")
         {
             PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.None);
         }
@@ -488,7 +373,7 @@ public class BuildScript
     static void BuildMacOSX()
     {
         string target_dir = TARGET_DIR + "/" + APP_NAME + "-" + DATETIME + ".app";
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneOSXIntel, BuildOptions.None);
+        GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX, BuildOptions.None);
     }
 
 
@@ -554,7 +439,7 @@ public class BuildScript
         {
             var outRoot = BundleOutDir + TargetName(targetPlatform)
                   + "/" + BundleConfig.Instance().Version;
-            if(!Directory.Exists(outRoot))
+            if (!Directory.Exists(outRoot))
             {
                 Directory.CreateDirectory(outRoot);
             }
@@ -566,7 +451,7 @@ public class BuildScript
                          || Path.GetExtension(f) == ""
                          select f.upath()).ToArray();
             int i = 0;
-            foreach(var f in files)
+            foreach (var f in files)
             {
                 ++i;
                 EditorUtility.DisplayCancelableProgressBar("compressing ...", f, (float)(i) / files.Length);
@@ -575,7 +460,7 @@ public class BuildScript
                 //File.Delete(f);
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             AppLog.e(e);
         }
@@ -610,27 +495,27 @@ public class BuildScript
             var version = BundleConfig.Instance().Version;
             var rootDir = BundleOutDir + TargetName(buildTarget) + "/";
             var sourceDir = rootDir + version.ToString() + "/";
-            if(!Directory.Exists(sourceDir))
+            if (!Directory.Exists(sourceDir))
             {
                 Directory.CreateDirectory(sourceDir);
             }
 
             var manifestbf = sourceDir + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
-            if(File.Exists(manifestbf))
+            if (File.Exists(manifestbf))
             {
                 File.Delete(manifestbf);
             }
 
             var files = Directory.GetFiles(sourceDir, "*" + BundleConfig.CompressedExtension, SearchOption.AllDirectories);
             float i = 0;
-            foreach(var f in files)
+            foreach (var f in files)
             {
                 ++i;
                 var bf = f.upath().Replace(version.ToString() + "/", string.Empty).Replace(BundleConfig.CompressedExtension, string.Empty);
                 var md5 = BundleHelper.Md5(bf);
                 var subPath = bf.Replace(rootDir, string.Empty);
                 var bundleInfo = BundleConfig.Instance().GetBundleInfo(subPath);
-                if(bundleInfo != null)
+                if (bundleInfo != null)
                 {
                     bundleInfo.Md5 = md5;
                 }
@@ -648,7 +533,7 @@ public class BuildScript
 
             // generate md5 sheet
             var manifestPath = rootDir + BundleConfig.ManifestName;
-            if(File.Exists(manifestPath))
+            if (File.Exists(manifestPath))
             {
                 File.Copy(manifestPath, manifestPath + ".bak", true);
             }
@@ -670,10 +555,7 @@ public class BuildScript
             // version.Patch += 1;
             PlayerSettings.bundleVersion = version.ToString();
             //AndroidAssetBundleDelete();
-            foreach(var i in BundleConfig.Instance().Groups)
-            {
-                BuildBundleGroup(i, buildTarget, true);
-            }
+            BuildAssetBundle(buildTarget, true);
         }
         finally
         {
@@ -692,11 +574,11 @@ public class BuildScript
     {
         try
         {
-            foreach(var StreamSceneDir in new string[]{ "Scene" } )
+            foreach (var StreamSceneDir in new string[] { "Scene" })
             {
                 float count = 0;
                 var files = Directory.GetFiles(BundleConfig.BundleResRoot + StreamSceneDir, "*.unity", SearchOption.AllDirectories);
-                foreach(var i in files)
+                foreach (var i in files)
                 {
                     var f = i.upath();
                     AppLog.d(f);
