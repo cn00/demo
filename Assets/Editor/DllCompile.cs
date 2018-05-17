@@ -44,12 +44,15 @@ public class DllCompile  : ScriptableObject
         public string OutPath { get { return mOutPath; } set { mOutPath = value; } }
 
         [SerializeField]
-        public List<string> mSources = new List<string>();
-        public List<string> Sources { get { return mSources; } set { mSources = value; } }
+        public string mSourceDir = "";
+        public string SourceDir { get { return mSourceDir; } set { mSourceDir = value; } }
 
         [SerializeField]
         public List<string> mReferences = new List<string>();
         public List<string> References { get { return mReferences; } set { mReferences = value; } }
+
+        [SerializeField]
+        public UnityEngine.Object mSourceDirObj;
 
         public BundleInfo clone()
         {
@@ -76,35 +79,21 @@ public class DllCompile  : ScriptableObject
                 OutPath = EditorGUILayout.TextField("OutPath", OutPath);
                 Defineds = EditorGUILayout.TextField("Defineds", Defineds);
 
-                var size = Sources.Count;
-                EditorGUILayout.BeginHorizontal();
-                {
-                    mFoldOutSources = EditorGUILayout.Foldout(mFoldOutSources, "Sources", true);
-                    size = EditorGUILayout.IntField(size);
-                }
-                EditorGUILayout.EndHorizontal();
-                 
-                if (size < Sources.Count)
-                {
-                    Sources.RemoveRange(size, Sources.Count - size);
-                }
-                else if (size > Sources.Count)
-                {
-                    for (var i = Sources.Count; i < size; ++i)
-                        Sources.Add("");
-                }
-
-                if (mFoldOutSources)
-                {
+                EditorGUILayout.LabelField("SourceDir");
+                { 
                     ++EditorGUI.indentLevel;
-                    for(var i = 0; i<Sources.Count;++i)
+                    var tmpAsset = EditorGUILayout.ObjectField("", mSourceDirObj, typeof(UnityEngine.Object), true);
+                    var tmpDir = AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID());
+                    if (Directory.Exists(tmpDir))
                     {
-                        Sources[i] = EditorGUILayout.TextField(Sources[i]);
+                        mSourceDirObj = tmpAsset;
+                        SourceDir = tmpDir;
+                        EditorGUILayout.LabelField(SourceDir);
                     }
                     --EditorGUI.indentLevel;
                 }
 
-                size = References.Count;
+                var size = References.Count;
                 EditorGUILayout.BeginHorizontal();
                 {
                     mFoldOutReferences = EditorGUILayout.Foldout(mFoldOutReferences, "References", true);
@@ -157,17 +146,15 @@ public class DllCompile  : ScriptableObject
 
     static void Compile(BundleInfo info)
     {
-        AppLog.d("{1}/{0}",info.Name, info.OutPath);
-        var msgs = EditorUtility.CompileCSharp(info.Sources.ToArray(), info.References.ToArray(), info.Defineds.Split(';'), info.OutPath);
+        AppLog.d("{0}: {1}", info.Name, info.OutPath);
+        var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
+        var msgs = EditorUtility.CompileCSharp(sources, info.References.ToArray(), info.Defineds.Split(';'), info.OutPath);
         foreach (var msg in msgs)
         {
             AppLog.d(msg);
         }
-    }
-
-    public static string[] CompileCSharp(string[] sources, string[] references, string[] defines, string outputFile)
-    {
-        return EditorUtility.CompileCSharp(sources, references, defines, outputFile);
+        File.Delete(info.OutPath + ".mdb");
+        AssetDatabase.ImportAsset(info.OutPath);
     }
 
     static DllCompile mInstance = null;
