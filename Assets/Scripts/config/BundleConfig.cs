@@ -191,7 +191,7 @@ public class BundleConfig : SingletonAsset<BundleConfig>
     public long LastBuildTime = 0L;
 
     [SerializeField, HideInInspector]
-    public AppVersion Version = new AppVersion(PlayerSettings.bundleVersion) { Name = "Version" };
+    public AppVersion Version = new AppVersion("1.0.0") { Name = "Version" };
 
     [HideInInspector, SerializeField]
     string m_ServerRoot = "http://10.23.114.141:8008/";
@@ -458,12 +458,6 @@ public class BundleConfig : SingletonAsset<BundleConfig>
     }
 
 #endif //UNITY_EDITOR
-
-    public override bool Init()
-    {
-        UseBundle = true;
-        return base.Init();
-    }
 
     #region CustomEditor
 #if UNITY_EDITOR
