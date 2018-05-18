@@ -83,13 +83,13 @@ public class DllCompile  : ScriptableObject
                 { 
                     ++EditorGUI.indentLevel;
                     var tmpAsset = EditorGUILayout.ObjectField("", mSourceDirObj, typeof(UnityEngine.Object), true);
-                    var tmpDir = AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID());
-                    if (Directory.Exists(tmpDir))
+                    if (tmpAsset != null)
                     {
+                        var tmpDir = AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID());
                         mSourceDirObj = tmpAsset;
                         SourceDir = tmpDir;
-                        EditorGUILayout.LabelField(SourceDir);
                     }
+                    EditorGUILayout.LabelField(SourceDir);
                     --EditorGUI.indentLevel;
                 }
 
