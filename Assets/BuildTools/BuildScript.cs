@@ -124,9 +124,7 @@ public class BuildScript
 
             var options = (
                 BuildAssetBundleOptions.None
-              //              | BuildAssetBundleOptions.UncompressedAssetBundle
               | BuildAssetBundleOptions.ChunkBasedCompression
-            //              | BuildAssetBundleOptions.ForceRebuildAssetBundle
             );
 
             if (rebuild)
@@ -518,6 +516,7 @@ public class BuildScript
                 if (bundleInfo != null)
                 {
                     bundleInfo.Md5 = md5;
+                    bundleInfo.Version = version.ToString();
                 }
                 else
                 {
