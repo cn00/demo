@@ -194,24 +194,37 @@ public class BuildScript
 
     #endregion AssetBundle
 
-    public static void StreamingSceneBuild(string scene, string path, BuildTarget targetPlatform)
+    public static void BuildStreamingScene(string scene, BuildTarget targetPlatform)
     {
-        StreamingSceneBuild(new[] { scene }, path, targetPlatform);
+        var outDir = BundleOutDir + TargetName(targetPlatform);
+        string path = outDir +  "/" 
+            + scene.Replace(BundleConfig.BundleResRoot, "")
+            .Replace(".unity", BundleConfig.BundlePostfix);
+        BuildStreamingScene(new[] { scene }, path, targetPlatform);
     }
-    public static void StreamingSceneBuild(string[] scenes, string outName, BuildTarget targetPlatform)
+    public static void BuildStreamingScene(string[] scenes, string outPath, BuildTarget targetPlatform)
     {
-        string SceneOutPath = BundleOutDir + TargetName(targetPlatform) + "/" + BundleConfig.Instance().Version + "/Level/" + outName + ".fg";
-
-        var dir = Path.GetDirectoryName(SceneOutPath);
+        var dir = Path.GetDirectoryName(outPath);
         if (!Directory.Exists(dir))
         {
             Directory.CreateDirectory(dir);
         }
         BuildPipeline.BuildPlayer(
             scenes,
-            SceneOutPath,
+            outPath,
             targetPlatform,
             BuildOptions.BuildAdditionalStreamedScenes);
+
+        var lzmaPath = outPath + BundleConfig.CompressedExtension;
+        BundleHelper.CompressFileLZMA(outPath, lzmaPath);
+
+        // copy
+        var outLzmaPath = lzmaPath.Replace(TargetName(targetPlatform)
+            , TargetName(targetPlatform) + "/" + BundleConfig.Instance().Version);
+        dir = Path.GetDirectoryName(outLzmaPath);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        File.Copy(lzmaPath, outLzmaPath, true);
     }
 
     #endregion Common
@@ -431,43 +444,6 @@ public class BuildScript
         // TODO: upload to http server
     }
 
-    public static void Compress(string indir, BuildTarget targetPlatform)
-    {
-        try
-        {
-            var outRoot = BundleOutDir + TargetName(targetPlatform)
-                  + "/" + BundleConfig.Instance().Version;
-            if (!Directory.Exists(outRoot))
-            {
-                Directory.CreateDirectory(outRoot);
-            }
-
-            // compress
-            var files = (from f in Directory.GetFiles(indir, "*", SearchOption.AllDirectories)
-                         where Path.GetExtension(f) != ".manifest"
-                         && Path.GetExtension(f) != BundleConfig.CompressedExtension
-                         || Path.GetExtension(f) == ""
-                         select f.upath()).ToArray();
-            int i = 0;
-            foreach (var f in files)
-            {
-                ++i;
-                EditorUtility.DisplayCancelableProgressBar("compressing ...", f, (float)(i) / files.Length);
-
-                BundleHelper.CompressFileLZMA(f, f.Replace(BundleOutDir + TargetName(targetPlatform), outRoot) + BundleConfig.CompressedExtension);
-                //File.Delete(f);
-            }
-        }
-        catch (Exception e)
-        {
-            AppLog.e(e);
-        }
-        finally
-        {
-            EditorUtility.ClearProgressBar();
-        }
-    }
-
     public static void GenVersionFile(BuildTarget buildTarget)
     {
         var versionUrl = BundleOutDir + TargetName(buildTarget) + "/resversion.txt";
@@ -566,27 +542,21 @@ public class BuildScript
     [MenuItem("Build/Android/StreamingScene"), ExecuteInEditMode]
     public static void BuildAndroidStreamingScene()
     {
-        StreamingSceneBuild(BuildTarget.Android);
+        BuildStreamingScene(BuildTarget.Android);
     }
 
-    public static void StreamingSceneBuild(BuildTarget buildTarget)
+    public static void BuildStreamingScene(BuildTarget buildTarget)
     {
         try
         {
-            foreach (var StreamSceneDir in new string[] { "Scene" })
+            float count = 0;
+            var files = Directory.GetFiles(BundleConfig.BundleResRoot, "*.unity", SearchOption.AllDirectories);
+            foreach (var i in files)
             {
-                float count = 0;
-                var files = Directory.GetFiles(BundleConfig.BundleResRoot + StreamSceneDir, "*.unity", SearchOption.AllDirectories);
-                foreach (var i in files)
-                {
-                    var f = i.upath();
-                    AppLog.d(f);
-                    EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
-                    StreamingSceneBuild(
-                        new[] { f },
-                        Path.GetFileNameWithoutExtension(f),
-                        buildTarget);
-                }
+                var f = i.upath();
+                AppLog.d(f);
+                EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
+                BuildStreamingScene(f, buildTarget);
             }
         }
         finally
