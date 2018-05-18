@@ -2,6 +2,8 @@
  *  Log 过滤
  */
 
+#if UNITY_DLL
+
 using System;
 using System.Net;
 using UnityEngine;
@@ -40,6 +42,8 @@ public static class AppLog
     {
         get
         {
+            if (Application.isEditor)
+                Port = 8899;
             if(mDebugServer == null)
             {
                 // Create a listen server on localhost with port 80
@@ -59,7 +63,7 @@ public static class AppLog
                 server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
                 {
                     //Console.WriteLine("Received Message: '{1}' from client: {0}", e.GetClient().GetGuid(), e.GetMessage());
-                    server.BroadcastMessage(string.Format("{0}:\n\t{1}", e.GetClient().GetGuid(), e.GetMessage()).Utf8Bytes(), e.GetClient());
+                        server.BroadcastMessage(Encoding.UTF8.GetBytes(string.Format("{0}:\n\t{1}", e.GetClient().GetGuid(), e.GetMessage())), e.GetClient());
                 };
 
                 server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
@@ -71,6 +75,12 @@ public static class AppLog
         }
     }
 
+    static void BroadcastMessage(string msg)
+    {
+        if(!Application.isEditor)
+            DebugServer.BroadcastMessage(msg);
+    }
+
     //[Conditional("USE_LOG")]
     /// <summary>
     /// common log
@@ -78,9 +88,8 @@ public static class AppLog
     /// <param name="log"></param>
     public static void d(string log)
     {
-        UnityEngine.Debug.Log("<color=yellow>" + TAG+ "</color> " + log);
-        if(!isEditor)
-            DebugServer.BroadcastMessage(log.ToString());
+        UnityEngine.Debug.Log( TAG + log);
+        BroadcastMessage(log.ToString());
     }
 
     public static void d(string fmt, params object[] args)
@@ -100,10 +109,7 @@ public static class AppLog
     public static void w(string log)
     {
         UnityEngine.Debug.LogWarning(TAG + log);
-        if(!isEditor)
-        {
-            DebugServer.BroadcastMessage(log);
-        }
+        BroadcastMessage(log);
     }
 
     public static void w(string fmt, params object[] args)
@@ -113,9 +119,8 @@ public static class AppLog
 
     private static void e(string log)
     {
-        UnityEngine.Debug.LogErrorFormat("<color=red>{0}</color> {1}", TAG, log);
-        if(!isEditor)
-            DebugServer.BroadcastMessage("error: " + log);
+        UnityEngine.Debug.LogErrorFormat("{0} {1}", TAG, log);
+        BroadcastMessage("error: " + log);
     }
 
     public static void e(string fmt, params object[] args)
@@ -138,3 +143,5 @@ public static class AppLog
     }
 
 }
+
+#endif //UNITY_DLL
