@@ -78,6 +78,7 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
             {
                 mInstance = CreateInstance<T>();
             }
+            mInstance.Init();
         }
         return mInstance;
     }
@@ -91,7 +92,6 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
 #else
         tmp = InstanceRuntime();
 #endif
-        tmp.Init();
         return tmp;
     }
 
@@ -111,8 +111,8 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
 
                 mInstance = CreateInstance<T>();
                 AssetDatabase.CreateAsset(mInstance, AssetPath);
-
             }
+            mInstance.Init();
         }
         return mInstance;
     }

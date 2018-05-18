@@ -191,7 +191,7 @@ public class BundleConfig : SingletonAsset<BundleConfig>
     public long LastBuildTime = 0L;
 
     [SerializeField, HideInInspector]
-    public AppVersion Version;
+    public AppVersion Version = new AppVersion(PlayerSettings.bundleVersion) { Name = "Version" };
 
     [HideInInspector, SerializeField]
     string m_ServerRoot = "http://10.23.114.141:8008/";
@@ -330,7 +330,6 @@ public class BundleConfig : SingletonAsset<BundleConfig>
         get { return Groups.Select((i) => i.Name).ToList(); }
     }
 
-    static BundleConfig mInstance = null;
 #if UNITY_EDITOR
     [MenuItem("Tools/Create BundleConfig.asset")]
     public static BundleConfig Create()
@@ -338,9 +337,7 @@ public class BundleConfig : SingletonAsset<BundleConfig>
         mInstance = null;
         return Instance();
     }
-#endif
 
-#if UNITY_EDITOR
     [HideInInspector, SerializeField]
     public AssetBundleServer.Server mServer = new AssetBundleServer.Server() { Name = "BundleServer" };
     void Refresh()
@@ -435,29 +432,12 @@ public class BundleConfig : SingletonAsset<BundleConfig>
         return strLocalIP;
     }
 
-    public static BundleConfig InstanceEditor()
+    public override bool Init()
     {
-        if (mInstance == null)
-        {
-            mInstance = AssetDatabase.LoadAssetAtPath<BundleConfig>(BundleConfigAssetPath);
-            if (mInstance == null)
-            {
-                var dir = Path.GetDirectoryName(BundleConfigAssetPath);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                mInstance = new BundleConfig();
-                AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
-                mInstance.Version = new AppVersion(PlayerSettings.bundleVersion) { Name = "Version" };
-
-                mInstance.Refresh();
-            }
-        }
-
-        return mInstance;
+        mInstance.Refresh();
+        return base.Init();
     }
+
     public override void Save()
     {
         base.Save();
