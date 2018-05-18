@@ -198,7 +198,10 @@ public class LuaMonoBehaviourEditor : Editor
     public override void OnInspectorGUI ()
     {
         base.OnInspectorGUI ();
-        mObj.luaScript.Asset = EditorGUILayout.ObjectField ("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
+
+        var tmpAsset = EditorGUILayout.ObjectField("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
+        if(AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID()).EndsWith(".lua"))
+            mObj.luaScript.Asset = tmpAsset;
 
         var size = mObj.injections.Length;
         EditorGUILayout.BeginHorizontal ();
