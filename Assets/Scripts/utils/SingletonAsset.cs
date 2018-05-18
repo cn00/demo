@@ -117,5 +117,20 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
         return mInstance;
     }
 
+    public static void DrawListCount<T2>(List<T2> list)
+    {
+        var size = list.Count;
+        size = EditorGUILayout.DelayedIntField(size);
+        if (size < list.Count)
+        {
+            list.RemoveRange(size, list.Count - size);
+        }
+        else if (size > list.Count)
+        {
+            for (var i = list.Count; i < size; ++i)
+                list.Add(default(T2));
+        }
+    }
+
 #endif //UNITY_EDITOR
 }

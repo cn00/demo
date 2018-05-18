@@ -2,8 +2,10 @@
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Linq;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 public static class CellExtension
 {
@@ -42,4 +44,17 @@ public static class CellExtension
         }
         return svalue;
     }
+}
+
+public static class ListExtensions
+{
+    public static IList<T> Clone<T>(this IList<T> self) where T : ICloneable
+    {
+        return self.Select(item => (T)item.Clone()).ToList();
+    }
+
+    // public static List<T> Clone<T>(this List<T> self) where T : ICloneable
+    // {
+    //     return self.Select(item => (T)item.Clone()).ToList();
+    // }
 }

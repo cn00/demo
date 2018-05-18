@@ -164,7 +164,7 @@ public class BundleConfig : SingletonAsset<BundleConfig>
     public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
     public const string VideosRegex = "(.mov$|.mpg$|.mp4$|.avi$|.asf$|.mpeg$)";
     public const string ObjectRegex = "(.asset$|.prefab$)";
-    public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.bytes$)";
+    public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.sql$|.bytes$)";
     public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
 
     public const string BundlePostfix = ".bd";
@@ -617,6 +617,8 @@ public class BundleConfig : SingletonAsset<BundleConfig>
         void Build(BuildTarget target, bool rebuild)
         {
             BuildScript.BuildAssetBundle(target, rebuild);
+
+            BuildScript.BuildStreamingScene(target);
 
             BuildScript.GenBundleManifest(target);
             BuildScript.GenVersionFile(target);

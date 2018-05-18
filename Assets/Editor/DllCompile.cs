@@ -17,7 +17,7 @@ static class RectExtension
         int r = (int)rect.width % count; // Remainder used to compensate width and position.
         int width = (int)(rect.width / count);
         rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);
-        if(index > 0)
+        if (index > 0)
         { rect.x += width * index + (r - (count - 1 - index)); }
 
         return rect;
@@ -25,130 +25,85 @@ static class RectExtension
 }
 
 [ExecuteInEditMode]
-public class DllCompile  : ScriptableObject
+public class DllCompile : SingletonAsset<DllCompile>
 {
 
     [Serializable]
-    public class BundleInfo : object
+    public class Config : InspectorDraw
     {
-        [SerializeField]
-        public string mName = ".dll";
-        public string Name { get { return mName; } set { mName = value; } }
+        // [SerializeField]
+        // public string mName = ".dll";
+        // public string Name { get { return mName; } set { mName = value; } }
+
+        public string Defineds = "UNITY_DLL";
+
+        public string OutPath = ".";
+
+        public string SourceDir = "";
 
         [SerializeField]
-        public string mDefineds = "OUTOF_UNITY";
-        public string Defineds { get { return mDefineds; } set { mDefineds = value; } }
+        public List<string> References = new List<string>();
 
-        [SerializeField]
-        public string mOutPath = ".";
-        public string OutPath { get { return mOutPath; } set { mOutPath = value; } }
-
-        [SerializeField]
-        public string mSourceDir = "";
-        public string SourceDir { get { return mSourceDir; } set { mSourceDir = value; } }
-
-        [SerializeField]
-        public List<string> mReferences = new List<string>();
-        public List<string> References { get { return mReferences; } set { mReferences = value; } }
-
-        [SerializeField]
-        public UnityEngine.Object mSourceDirObj;
-
-        public BundleInfo clone()
+        public Config clone()
         {
-            return new BundleInfo()
+            return new Config()
             {
-                Name = this.Name,
+                Name = this.Name + "-copy",
                 Defineds = this.Defineds,
                 OutPath = this.OutPath,
+                SourceDir = this.SourceDir,
                 References = this.References,
             };
         }
 
-        public bool mFoldOut = false;
-        public bool mFoldOutSources = false;
-        public bool mFoldOutReferences = false;
         public void DrawInspector(int indent)
         {
-            EditorGUI.indentLevel += indent;
-            mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
+            base.DrawInspector(indent);
             if (mFoldOut)
             {
-                ++EditorGUI.indentLevel;
-                mName = EditorGUILayout.TextField("Name", mName);
-                OutPath = EditorGUILayout.TextField("OutPath", OutPath);
-                Defineds = EditorGUILayout.TextField("Defineds", Defineds);
-
-                EditorGUILayout.LabelField("SourceDir");
-                { 
-                    ++EditorGUI.indentLevel;
-                    var tmpAsset = EditorGUILayout.ObjectField("", mSourceDirObj, typeof(UnityEngine.Object), true);
-                    if (tmpAsset != null)
-                    {
-                        var tmpDir = AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID());
-                        mSourceDirObj = tmpAsset;
-                        SourceDir = tmpDir;
-                    }
-                    EditorGUILayout.LabelField(SourceDir);
-                    --EditorGUI.indentLevel;
-                }
-
-                var size = References.Count;
-                EditorGUILayout.BeginHorizontal();
-                {
-                    mFoldOutReferences = EditorGUILayout.Foldout(mFoldOutReferences, "References", true);
-                    size = EditorGUILayout.IntField(size);
-                }
-                EditorGUILayout.EndHorizontal();
-                if (size < References.Count)
-                {
-                    References.RemoveRange(size, References.Count - size);
-                }
-                else if (size > References.Count)
-                {
-                    for (var i = References.Count; i < size; ++i)
-                        References.Add("");
-                }
-                if (mFoldOutReferences)
-                {
-                    ++EditorGUI.indentLevel;
-                    for(var i = 0; i<References.Count;++i)
-                    {
-                        References[i] = EditorGUILayout.TextField(References[i]);
-                    }
-                    --EditorGUI.indentLevel;
-                }
-                --EditorGUI.indentLevel;
 
                 var rect = EditorGUILayout.GetControlRect();
-                var sn = 4;
+                var sn = 3;
                 var idx = -1;
-                if(GUI.Button(rect.Split(++idx, sn), "Build"))
+                if (GUI.Button(rect.Split(++idx, sn), "Build"))
                 {
-                    Compile(this);
+                    Build(this);
                 }
-                if(GUI.Button(rect.Split(++idx, sn), "Clone"))
+                if (GUI.Button(rect.Split(++idx, sn), "Clone"))
                 {
                     Instance().bundles.Insert(Instance().bundles.IndexOf(this) + 1, this.clone());
                 }
-                if(GUI.Button(rect.Split(++idx, sn), "Delete"))
+                if (GUI.Button(rect.Split(++idx, sn), "Delete"))
                 {
                     Instance().bundles.Remove(this);
                 }
-
+                // if (GUI.Button(rect.Split(++idx, sn), "Copy"))
+                // {
+                //     Instance().bundles.Insert(Instance().bundles.IndexOf(this), this.clone());
+                // }
             }//if(mFoldOut)
-            EditorGUI.indentLevel -= indent;
         }//DrawInspector
     }//class
 
     [HideInInspector]
-    public List<BundleInfo> bundles;
+    public List<Config> bundles = new List<Config>();
 
-    static void Compile(BundleInfo info)
+    [HideInInspector]
+    public UnityEngine.Object PathGetterObj;
+
+    static void Build(Config info)
     {
         AppLog.d("{0}: {1}", info.Name, info.OutPath);
         var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
-        var msgs = EditorUtility.CompileCSharp(sources, info.References.ToArray(), info.Defineds.Split(';'), info.OutPath);
+        var reference = info.References.Clone();
+#if UNITY_MACOSX
+        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/UnityEngine.dll");
+        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/UnityEditor.dll");
+#elif UNITY_WIN32
+        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/UnityEngine.dll");
+        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/UnityEditor.dll");
+#endif
+        var msgs = EditorUtility.CompileCSharp(sources, reference.ToArray(), info.Defineds.Split(';'), info.OutPath);
         foreach (var msg in msgs)
         {
             AppLog.d(msg);
@@ -157,7 +112,6 @@ public class DllCompile  : ScriptableObject
         AssetDatabase.ImportAsset(info.OutPath);
     }
 
-    static DllCompile mInstance = null;
     [MenuItem("Tools/Create DllCompile.asset")]
     public static void Create()
     {
@@ -165,61 +119,40 @@ public class DllCompile  : ScriptableObject
         Instance();
     }
 
-    static string BundleConfigAssetPath = "Assets/Editor/DllCompile.asset";
-    public static DllCompile Instance()
-    {
-        if(mInstance == null)
-        {
-            mInstance = AssetDatabase.LoadAssetAtPath<DllCompile>(BundleConfigAssetPath);
-            if(mInstance == null)
-            {
-                var dir = Path.GetDirectoryName(BundleConfigAssetPath);
-                if(!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                mInstance = new DllCompile();
-                AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
-            }
-        }
-
-        return mInstance;
-    }
-
     [CustomEditor(typeof(DllCompile))]
-	public class Editor : UnityEditor.Editor
-	{
-        
+    public class Editor : UnityEditor.Editor
+    {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
             EditorGUILayout.Space();
 
-            var size = Instance().bundles.Count;
-            EditorGUILayout.BeginHorizontal();
-            {
-//                mFoldOutSources = EditorGUILayout.Foldout(mFoldOutSources, "Sources", true);
-                size = EditorGUILayout.IntField(size);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            if (size < Instance().bundles.Count)
-            {
-                Instance().bundles.RemoveRange(size, Instance().bundles.Count - size);
-            }
-            else if (size > Instance().bundles.Count)
-            {
-                for (var i = Instance().bundles.Count; i < size; ++i)
-                    Instance().bundles.Add(new BundleInfo());
-            }
-
+            DrawListCount(Instance().bundles);
             for (var i = 0; i < Instance().bundles.Count; ++i)
             {
                 var item = Instance().bundles[i];
-                item.DrawInspector(0);
+                if(item != null)
+                    item.DrawInspector(0);
             }
+
+            Instance().PathGetterObj = EditorGUILayout.ObjectField("PathGetter", Instance().PathGetterObj, typeof(UnityEngine.Object), true);
+            if (Instance().PathGetterObj != null)
+            {
+                var tmpDir = AssetDatabase.GetAssetPath(Instance().PathGetterObj.GetInstanceID());
+                EditorGUILayout.SelectableLabel(tmpDir);
+            }
+
+            // //BaseDirectory: /Applications/Unity-2017.4.1f1
+            // EditorGUILayout.SelectableLabel("BaseDirectory: "+ AppDomain.CurrentDomain.BaseDirectory);
+            
+            // //Location: /Users/a3/.jenkins/workspace/unity_test/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+            // EditorGUILayout.SelectableLabel("Location: " + System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            // //CodeBase: file:///Users/a3/.jenkins/workspace/unity_test/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+            // EditorGUILayout.SelectableLabel("CodeBase: " + System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+
+            Instance().DrawSaveButton();
         }
-	}
+    }
 }

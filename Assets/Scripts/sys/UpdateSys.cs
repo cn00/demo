@@ -190,10 +190,15 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
             });
 
+            // TODO: fixed this task group
             if(count % 10 == 0)
+            {
                 yield return StartCoroutine(task);
+            }
             else
-                StartCoroutine(task);
+            {
+                 StartCoroutine(task);
+            }
         }
     }
 
@@ -226,7 +231,9 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public IEnumerator CheckUpdate()
     {
-        var isOK = false;
+        // TODO: update to new bundle system use Manifest hash128
+
+        // var isOK = false;
         // 是否需要更新
         yield return GetLocalVersion();
         yield return GetRemoteVersion();
