@@ -55,7 +55,7 @@ public static class PathExtension
 
 
 [Serializable]
-public class AppVersion
+public class AppVersion : InspectorDraw
 {
     public uint Major = 0; // 主版本
     public uint Minor = 0; // 次版本
@@ -92,62 +92,55 @@ public class AppVersion
     }
 
 #if UNITY_EDITOR
-    public bool m_Foldout = true;
-    public void DrawInspector(string name, GUILayoutOption[] option = null)
+    public override void DrawInspector(int name, GUILayoutOption[] option = null)
     {
-        m_Foldout = EditorGUILayout.Foldout(m_Foldout, name, true);
-        ++EditorGUI.indentLevel;
-        if (m_Foldout)
+        EditorGUILayout.BeginHorizontal();
         {
-            EditorGUILayout.BeginHorizontal();
+            Major = (uint)EditorGUILayout.IntField("Major", (int)Major);
+            var rect = EditorGUILayout.GetControlRect();
+            if (GUI.Button(rect.Split(0, 4), "+"))
             {
-                Major = (uint)EditorGUILayout.IntField("Major", (int)Major);
-                var rect = EditorGUILayout.GetControlRect();
-                if (GUI.Button(rect.Split(0, 4), "+"))
-                {
-                    Major += 1;
-                }
-                if (GUI.Button(rect.Split(1, 4), "-"))
-                {
-                    Major -= 1;
-                }
-                Major = (int)Major < 0 ? 0 : Major;
+                Major += 1;
             }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
+            if (GUI.Button(rect.Split(1, 4), "-"))
             {
-                Minor = (uint)EditorGUILayout.IntField("Minor", (int)Minor);
-                var rect2 = EditorGUILayout.GetControlRect();
-                if (GUI.Button(rect2.Split(0, 4), "+"))
-                {
-                    Minor += 1;
-                }
-                if (GUI.Button(rect2.Split(1, 4), "-"))
-                {
-                    Minor -= 1;
-                }
-                Minor = (int)Minor < 0 ? 0 : Minor;
+                Major -= 1;
             }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            {
-                Patch = (uint)EditorGUILayout.IntField("Patch", (int)Patch);
-                var rect3 = EditorGUILayout.GetControlRect();
-                if (GUI.Button(rect3.Split(0, 4), "+"))
-                {
-                    Patch += 1;
-                }
-                if (GUI.Button(rect3.Split(1, 4), "-"))
-                {
-                    Patch -= 1;
-                }
-                Patch = (int)Patch < 0 ? 0 : Patch;
-            }
-            EditorGUILayout.EndHorizontal();
+            Major = (int)Major < 0 ? 0 : Major;
         }
-        --EditorGUI.indentLevel;
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        {
+            Minor = (uint)EditorGUILayout.IntField("Minor", (int)Minor);
+            var rect2 = EditorGUILayout.GetControlRect();
+            if (GUI.Button(rect2.Split(0, 4), "+"))
+            {
+                Minor += 1;
+            }
+            if (GUI.Button(rect2.Split(1, 4), "-"))
+            {
+                Minor -= 1;
+            }
+            Minor = (int)Minor < 0 ? 0 : Minor;
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        {
+            Patch = (uint)EditorGUILayout.IntField("Patch", (int)Patch);
+            var rect3 = EditorGUILayout.GetControlRect();
+            if (GUI.Button(rect3.Split(0, 4), "+"))
+            {
+                Patch += 1;
+            }
+            if (GUI.Button(rect3.Split(1, 4), "-"))
+            {
+                Patch -= 1;
+            }
+            Patch = (int)Patch < 0 ? 0 : Patch;
+        }
+        EditorGUILayout.EndHorizontal();
     }
 #endif
 
@@ -157,7 +150,7 @@ public class AppVersion
 /// Assets/BundleRes 下需要打包的资源目录配置
 /// </summary>
 [ExecuteInEditMode]
-public class BundleConfig : ScriptableObject
+public class BundleConfig : SingletonAsset<BundleConfig>
 {
     #region const
     public const string BundleResDir = "BundleRes";
@@ -325,6 +318,13 @@ public class BundleConfig : ScriptableObject
         return null;
     }
 
+    public List<BundleInfo> AllBundles
+    {
+        // get {return (from l in Groups from i in l.Bundles select i).ToList(); }
+        get { return Groups.Select(i => i.Bundles).SelectMany(j => j).ToList(); }
+        // get {return Groups.Select(i => i.Bundles).SelectMany(j => j.Select(k => k.Name)).ToList(); }
+    }
+
     public List<string> ABResGroups
     {
         get { return Groups.Select((i) => i.Name).ToList(); }
@@ -340,19 +340,9 @@ public class BundleConfig : ScriptableObject
     }
 #endif
 
-    public static BundleConfig Instance()
-    {
-        AppLog.isEditor = Application.isEditor;
-
 #if UNITY_EDITOR
-        //return InstanceRuntime();
-        return InstanceEditor();
-#else
-        return InstanceRuntime();
-#endif
-    }
-
-#if UNITY_EDITOR
+    [HideInInspector, SerializeField]
+    public AssetBundleServer.Server mServer = new AssetBundleServer.Server() { Name = "BundleServer" };
     void Refresh()
     {
         mInstance.m_ServerRoot = "http://" + LocalIpAddress() + ":8008/";
@@ -460,7 +450,7 @@ public class BundleConfig : ScriptableObject
 
                 mInstance = new BundleConfig();
                 AssetDatabase.CreateAsset(mInstance, BundleConfigAssetPath);
-                mInstance.Version = new AppVersion(PlayerSettings.bundleVersion);
+                mInstance.Version = new AppVersion(PlayerSettings.bundleVersion) { Name = "Version" };
 
                 mInstance.Refresh();
             }
@@ -468,13 +458,9 @@ public class BundleConfig : ScriptableObject
 
         return mInstance;
     }
-    public void Save()
+    public override void Save()
     {
-        EditorUtility.SetDirty(this);
-        AssetDatabase.WriteImportSettingsIfDirty(BundleConfigAssetPath);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
+        base.Save();
         CopyBundleConfigAsset();
     }
 
@@ -486,41 +472,17 @@ public class BundleConfig : ScriptableObject
         {
             Directory.CreateDirectory(configDir);
         }
-        File.Copy(BundleConfig.BundleConfigAssetPath, configRes, true);
+        File.Copy(BundleConfig.AssetPath, BundleConfig.BundleConfigAssetPath, true);
+        File.Copy(BundleConfig.AssetPath, configRes, true);
         AssetDatabase.ImportAsset(configRes);
     }
 
 #endif //UNITY_EDITOR
 
-    public static BundleConfig InstanceRuntime()
+    public override bool Init()
     {
-        if (mInstance == null)
-        {
-            var assetSubPath = BundleConfigAssetSubPath;
-            AppLog.d("BundleConfig InstanceRuntime 0({0})", assetSubPath);
-            var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
-            if (File.Exists(cachePath))
-            {
-                // mInstance = AssetSys.Instance.GetAssetSync<BundleConfig>(assetSubPath); // 可能造成回环调用
-                AppLog.d("BundleConfig InstanceRuntime(1)");
-                var bundle = AssetBundle.LoadFromFile(cachePath);
-                mInstance = bundle.LoadAsset<BundleConfig>(BundleConfig.BundleResRoot + assetSubPath);
-                AppLog.d("BundleConfig GetAssetSync(2)");
-            }
-            else
-            {
-                var respath = (assetSubPath.Replace(".asset", ""));
-                mInstance = Resources.Load<BundleConfig>(respath);
-            }
-
-            if (mInstance == null)
-            {
-                mInstance = CreateInstance<BundleConfig>();
-                mInstance.UseBundle = true;
-            }
-        }
-
-        return mInstance;
+        UseBundle = true;
+        return base.Init();
     }
 
     #region CustomEditor
@@ -556,7 +518,7 @@ public class BundleConfig : ScriptableObject
                 GUILayout.ExpandWidth(true),
             };
 
-            mInstance.Version.DrawInspector("Version", guiOpts);
+            mInstance.Version.Draw(0, guiOpts);
 
             EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mInstance.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
 
@@ -641,6 +603,9 @@ public class BundleConfig : ScriptableObject
                 }
                 --EditorGUI.indentLevel;
             }
+
+            // server
+            mInstance.mServer.Draw();
 
             if (GUI.changed)
             {
