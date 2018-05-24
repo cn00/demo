@@ -9,12 +9,13 @@ public class Boot : SingleMono<Boot>
     // Use this for initialization
     public override IEnumerator Init()
     {
-        AppLog.d("App.Init 0");
-        yield return LuaSys.Instance.Init();
-
-        AppLog.d("App.Init 1");
+        AppLog.d("App.Init 0 AssetSys");
         yield return AssetSys.Instance.Init();
 
+        AppLog.d("App.Init 1 LuaSys");
+        yield return LuaSys.Instance.Init();
+
+        AppLog.d("App.Init 1 boot");
         GameObject root = null;
         yield return AssetSys.Instance.GetAsset<GameObject>("ui/boot/boot.prefab", obj =>
         {
