@@ -8,7 +8,7 @@ using System.Linq;
 using XLua;
 using System.Text;
 
-using BundleManifest = System.Collections.Generic.List<BundleConfig.GroupInfo>;
+using BundleManifest = System.Collections.Generic.List<BundleConfig.BundleInfo>;
 
 public static class BytesExtension
 {
@@ -150,8 +150,9 @@ public class UpdateSys : SingleMono<UpdateSys>
     public IEnumerator DownloadDiffFiles()
     {
         int count = 0;
-        foreach(var i in mDiffList)
+        for(var idx = 0; idx < mDiffList.Count; ++idx)
         {
+            var i = mDiffList[idx];
             var subPath = i.Name;
             var cachePath = AssetSys.CacheRoot + subPath;
             var cacheLzmaPath = AssetSys.CacheRoot + subPath + BundleConfig.CompressedExtension;
@@ -207,21 +208,16 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Diff()
     {
-        foreach(var group in mRemoteManifest)
+        var rbundles = mRemoteManifest;
+        var lbundles = mLocalManifest;
+        foreach(var r in rbundles)
         {
-            foreach(var i in group.Bundles)
+            foreach (var l in lbundles)
             {
-                var lgroup = mLocalManifest.Find(j => j.Name == group.Name);
-                var lversion = "";
-                if(lgroup != null)
-                {
-                    var lbundle = lgroup.Bundles.Find(l => l.Name == i.Name);
-                    if(lbundle.Md5 == i.Md5)
-                        continue;
-                    lversion = lbundle.Md5;
-                }
-                AppLog.d("diff: {0}:[{1}-{2}]", i.Name, i.Md5, lversion);
-                mDiffList.Add(i);
+                if(l.Md5 == r.Md5)
+                    continue;
+                AppLog.d("diff: {0}:[{1}]", r.Name, r.Md5);
+                mDiffList.Add(r);
             }
         }
     }
@@ -278,22 +274,13 @@ public class UpdateSys : SingleMono<UpdateSys>
         var dirs = subPath.Split('/');
         //lock(mDiffListLock)
         {
-            var localGroup = mLocalManifest.Find(i => i.Name == dirs[0]);
-            if(localGroup == null)
-            {
-                localGroup = new BundleConfig.GroupInfo()
-                {
-                    Name = dirs[0]
-                };
-                mLocalManifest.Add(localGroup);
-            }
 
             var newi = mDiffList.Find(i => i.Name == subPath);
             if(newi != null)
             {
-                var old = localGroup.Bundles.Find(i => i.Name == subPath);
-                localGroup.Bundles.Remove(old);
-                localGroup.Bundles.Add(newi);
+                var old = mLocalManifest.Find(i => i.Name == subPath);
+                mLocalManifest.Remove(old);
+                mLocalManifest.Add(newi);
                 SaveManifest(mLocalManifest, BundleConfig.LocalManifestPath);
 
                 mDiffList.Remove(newi);
