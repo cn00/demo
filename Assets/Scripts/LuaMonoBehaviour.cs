@@ -178,6 +178,11 @@ public class LuaMonoBehaviour : MonoBehaviour
             callback();
     }
 
+    public IEnumerator WaitForSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+    }
+
 }
 
 #if UNITY_EDITOR

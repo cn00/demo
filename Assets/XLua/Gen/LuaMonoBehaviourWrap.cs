@@ -21,9 +21,10 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(LuaMonoBehaviour);
-			Utils.BeginObjectRegister(type, L, translator, 0, 1, 3, 2);
+			Utils.BeginObjectRegister(type, L, translator, 0, 2, 3, 2);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "YieldAndCallback", _m_YieldAndCallback);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "WaitForSeconds", _m_WaitForSeconds);
 			
 			
 			Utils.RegisterFunc(L, Utils.GETTER_IDX, "Inited", _g_get_Inited);
@@ -98,6 +99,35 @@ namespace XLua.CSObjectWrap
                     
                     
                     return 0;
+                }
+                
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_WaitForSeconds(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                LuaMonoBehaviour __cl_gen_to_be_invoked = (LuaMonoBehaviour)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    float seconds = (float)LuaAPI.lua_tonumber(L, 2);
+                    
+                        System.Collections.IEnumerator __cl_gen_ret = __cl_gen_to_be_invoked.WaitForSeconds( seconds );
+                        translator.PushAny(L, __cl_gen_ret);
+                    
+                    
+                    
+                    return 1;
                 }
                 
             } catch(System.Exception __gen_e) {
