@@ -6,16 +6,19 @@
 	    <type fullname="LuaMonoBehaviour" preserve="all"/>
 		<type fullname="AssetSys" preserve="all"/>
 		<type fullname="UpdateSys" preserve="all"/>
+		<type fullname="QRCodeDecodeController" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="Assembly-CSharp-firstpass">
+	    <type fullname="QRCode" preserve="all"/>
+		<type fullname="JavaUtil" preserve="all"/>
+		<type fullname="SQLite.SQLite3" preserve="all"/>
 		
 	</assembly>
 
 	<assembly fullname="AppLog">
 	    <type fullname="AppLog" preserve="all"/>
-		
-	</assembly>
-
-	<assembly fullname="Assembly-CSharp-firstpass">
-	    <type fullname="SQLite.SQLite3" preserve="all"/>
 		
 	</assembly>
 

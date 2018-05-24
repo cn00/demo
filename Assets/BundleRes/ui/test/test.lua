@@ -50,6 +50,41 @@ function test.CheckUpdate()
 	)
 end
 
+
+function test.Qrcode()
+	return coroutine.create(
+		function()
+			local obj = nil
+			yield_return(
+				CS.AssetSys.Instance:GetAsset(
+					"ui/loading/loading.prefab",
+					function(asset)
+						obj = asset
+					end
+				)
+			)
+			local loading = GameObject.Instantiate(obj)
+			loading.name = "loading"
+			local oldLoading = GameObject.Find("loading")
+			GameObject.DestroyImmediate(oldLoading)
+
+			obj = nil
+			yield_return(
+				CS.AssetSys.Instance:GetAsset(
+					"ui/qrcode/qrcode.prefab",
+					function(asset)
+						obj = asset
+					end
+				)
+			)
+			local qrcode = GameObject.Instantiate(obj)
+			qrcode.name = "qrcode"
+
+			self.Destroy()
+		end
+	)
+end
+
 function test.Op(...)
 	return coroutine.create(
 		function()
@@ -166,17 +201,28 @@ end
 
 --AutoGenInit Begin
 function test.AutoGenInit()
-	test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
-	test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
-	test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
-	test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
-	test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
-	test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+    test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
+    test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
+    test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
+    test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
+    test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
+    test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+    test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 
 function test.Awake()
 	self.AutoGenInit()
+
+	self.QRCode_Button.onClick:AddListener(
+		function()
+			-- CS.QRCode.OpenQRScanner()
+			-- CS.JavaUtil.CallJavaApi("com.game.qrview.Interface", "OpenQRScanner");
+			-- CS.JavaUtil.CallJavaApi("com.unity3d.player.UnityPlayer", "OpenQRScanner");
+
+			assert(coroutine.resume(self.Qrcode()))
+		end
+	)
 
 	self.Insertxy_Button.onClick:AddListener(
 		function()

@@ -21,7 +21,7 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(AssetSys);
-			Utils.BeginObjectRegister(type, L, translator, 0, 8, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 7, 1, 1);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SysEnter", _m_SysEnter);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Init", _m_Init);
@@ -29,10 +29,13 @@ namespace XLua.CSObjectWrap
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetAsset", _m_GetAsset);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetBundleSync", _m_GetBundleSync);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetBundle", _m_GetBundle);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UnloadBundle", _m_UnloadBundle);
 			
 			
-			
-			
+			Utils.RegisterFunc(L, Utils.GETTER_IDX, "mManifest", _g_get_mManifest);
+            
+			Utils.RegisterFunc(L, Utils.SETTER_IDX, "mManifest", _s_set_mManifest);
+            
 			
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
@@ -370,6 +373,49 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_UnloadBundle(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
+            
+            
+			    int __gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(__gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
+                {
+                    string path = LuaAPI.lua_tostring(L, 2);
+                    bool unloadAllLoadedObjects = LuaAPI.lua_toboolean(L, 3);
+                    
+                    __cl_gen_to_be_invoked.UnloadBundle( path, unloadAllLoadedObjects );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(__gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string path = LuaAPI.lua_tostring(L, 2);
+                    
+                    __cl_gen_to_be_invoked.UnloadBundle( path );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to AssetSys.UnloadBundle!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_AsyncSave_xlua_st_(RealStatePtr L)
         {
 		    try {
@@ -421,7 +467,36 @@ namespace XLua.CSObjectWrap
             return 1;
         }
         
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_mManifest(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
+                translator.Push(L, __cl_gen_to_be_invoked.mManifest);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
         
+        
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_mManifest(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                AssetSys __cl_gen_to_be_invoked = (AssetSys)translator.FastGetCSObj(L, 1);
+                __cl_gen_to_be_invoked.mManifest = (UnityEngine.AssetBundleManifest)translator.GetObject(L, 2, typeof(UnityEngine.AssetBundleManifest));
+            
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 0;
+        }
         
 		
 		
