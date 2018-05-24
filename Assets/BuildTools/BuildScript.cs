@@ -106,18 +106,23 @@ public class BuildScript
             if (File.Exists(oldManifestPath))
                 File.Copy(oldManifestPath, oldManifestPath + ".old", true);
 
-            // lua
-            var n = 0;
-            DirectoryInfo info = new DirectoryInfo(BundleConfig.BundleResRoot);
-            var luas = info.GetFiles("*.lua", SearchOption.AllDirectories)
-                .Where(p => p.LastWriteTimeUtc.ToFileTimeUtc() > BundleConfig.Instance().LastBuildTime);
-            foreach (var f in luas)
+            // copy .lua|.sql to (.lua|.sql).txt
+            var userTextPatterns = ".lua|.sql";
+            foreach (var pt in userTextPatterns.Split('|'))
             {
-                EditorUtility.DisplayCancelableProgressBar("copy lua ...", f.FullName, (float)(++n) / luas.Count());
+                var nn = 0;
+                var info = new DirectoryInfo(BundleConfig.BundleResRoot);
+                var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
+                    .Where(p => p.LastWriteTimeUtc.ToFileTimeUtc() > BundleConfig.Instance().LastBuildTime);
+                foreach (var f in res)
+                {
+                    EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());
 
-                var ftxt = f.FullName.Replace(".lua", ".lua.txt");
-                File.Copy(f.FullName, ftxt, true);
+                    var ftxt = f.FullName.Replace(pt, pt + ".txt");
+                    File.Copy(f.FullName, ftxt, true);
+                }
             }
+
             // this is the right time to update LastBuildTime if i continue edit lua while BuildAssetBundle
             BundleConfig.Instance().LastBuildTime = DateTime.Now.ToFileTimeUtc();
             AssetDatabase.Refresh();
@@ -130,11 +135,7 @@ public class BuildScript
             if (rebuild)
                 options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
 
-            var manifest = BuildPipeline.BuildAssetBundles(
-                outDir,
-                options,
-                targetPlatform
-            );
+            var manifest = BuildPipeline.BuildAssetBundles( outDir, options, targetPlatform );
 
             // zip
             var outRoot = BundleOutDir + TargetName(targetPlatform)
@@ -144,7 +145,7 @@ public class BuildScript
                 oldManifest = AssetBundle.LoadFromFile(oldManifestPath + ".old").LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             var allAssetBundles = manifest.GetAllAssetBundles().ToList();
             allAssetBundles.Add(TargetName(targetPlatform));
-            n = 0;
+            var n = 0;
             foreach (var i in allAssetBundles)
             {
                 var finfo = new FileInfo(outDir + "/" + i);
@@ -181,10 +182,10 @@ public class BuildScript
         }
         finally
         {
-            //            foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
-            //            {
-            //                File.Delete(f);
-            //            }
+            // foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
+            // {
+            //     File.Delete(f);
+            // }
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
@@ -197,7 +198,7 @@ public class BuildScript
     public static void BuildStreamingScene(string scene, BuildTarget targetPlatform)
     {
         var outDir = BundleOutDir + TargetName(targetPlatform);
-        string path = outDir +  "/" 
+        string path = outDir + "/"
             + scene.Replace(BundleConfig.BundleResRoot, "")
             .Replace(".unity", BundleConfig.BundlePostfix);
         BuildStreamingScene(new[] { scene }, path, targetPlatform);
@@ -295,7 +296,7 @@ public class BuildScript
 
     #region 安卓安装包
     [MenuItem("Build/AndroidApk")]
-    static void BuildAndroidApk()
+    public static void BuildAndroidApk()
     {
         var version = BundleConfig.Instance().Version;
         // TODO: open this when release
@@ -314,7 +315,7 @@ public class BuildScript
     #region 🍎安装包
 
     [MenuItem("Build/iOS (iL2cpp proj)")]
-    static void BuildIosIL2cppProj()
+    public static void BuildIosIL2cppProj()
     {
         var version = BundleConfig.Instance().Version;
         //version.Minor += 1;
@@ -381,7 +382,7 @@ public class BuildScript
     }
 
     [MenuItem("Build/Mac OS X")]
-    static void BuildMacOSX()
+    public static void BuildMacOSX()
     {
         string target_dir = TARGET_DIR + "/" + APP_NAME + "-" + DATETIME + ".app";
         GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX, BuildOptions.None);
@@ -417,7 +418,7 @@ public class BuildScript
     #region Windows
 
     [MenuItem("Build/Windows")]
-    static void BuildWindows()
+    public static void BuildWindows()
     {
         string target_dir = TARGET_DIR + "/" + DATETIME + "/" + APP_NAME + ".exe";
         GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows, BuildOptions.None);
@@ -512,7 +513,7 @@ public class BuildScript
             {
                 File.Copy(manifestPath, manifestPath + ".bak", true);
             }
-            YamlHelper.Serialize(BundleConfig.Instance().Groups, manifestPath);
+            YamlHelper.Serialize(BundleConfig.Instance().AllBundles, manifestPath);
             BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
         }
         finally
