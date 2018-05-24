@@ -22,20 +22,26 @@ static class RectExtension
 }
 #endif //UNITY_EDITOR
 
-[Serializable]
+[Serializable, HideInInspector]
 public class InspectorDraw : object
 {
     [SerializeField]
-    public string Name = "Name";
+    protected string mName = null;
+    public string Name 
+    {
+        get{return mName == null ? (mName = this.GetType().ToString()) : mName;}
+        set{mName = value;}
+    }
 
 #if UNITY_EDITOR
 
     protected bool mFoldOut = false;
     public virtual void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
-        mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
         if (mFoldOut)
         {
+            Name = EditorGUILayout.TextField("Name", Name);
+
             var type = this.GetType();
             var fields = type.GetFields(
                       BindingFlags.Default
@@ -147,12 +153,15 @@ public class InspectorDraw : object
     {
         EditorGUI.indentLevel += indent;
         mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
-        if (mFoldOut) using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
+        if (mFoldOut) 
+        {
+            using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
             {
                 // ++EditorGUI.indentLevel;
                 DrawInspector(indent, guiOpts);
                 // --EditorGUI.indentLevel;
             }
+        }
         EditorGUI.indentLevel -= indent;
     }
 

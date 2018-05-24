@@ -42,7 +42,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
         for (int i = 0; i < columnCount; ++i)
         {
-            string head = headerRow.GetCell(i).StringCellValue.RReplace(BundleConfig.PunctuationRegex + "+", "_");
+            string head = headerRow.GetCell(i).StringCellValue.RReplace(PathUtils.PunctuationRegex + "+", "_");
             columnIdxs += "\n\t" + head + "=" + (i + 1) + ",";
         }
         columnIdxs += "\n}\n";

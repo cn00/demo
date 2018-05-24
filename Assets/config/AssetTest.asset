@@ -11,4 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d02cccad8534f7ab4bdbbf8eb68541, type: 3}
   m_Name: AssetTest
   m_EditorClassIdentifier: 
-  i: 0
+  mConfig:
+    mName: Config
+    i: 229

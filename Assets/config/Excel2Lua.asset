@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mConfig:
     mName: Config
-    InPath: Assets/Excel
-    OutPath: Assets/BundleRes/lua/table
-    LastBuildTime: 131711093156295510
-    Rebuild: 1
+    InPath: test
+    OutPath: out
+    LastBuildTime: 0
+    Rebuild: 0

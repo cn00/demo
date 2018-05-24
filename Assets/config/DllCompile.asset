@@ -12,15 +12,9 @@ MonoBehaviour:
   m_Name: DllCompile
   m_EditorClassIdentifier: 
   bundles:
-  - Name: AppLog.dll
+  - mName: AppLog.dll
     Defineds: UNITY_DLL
-    OutPath: .
+    OutPath: Assets/Plugins/AppLog.dll
     SourceDir: Assets/EditorTools/AppLog
     References: []
-    SourceDirObj: {fileID: 102900000, guid: 7ea2164b726e04028ab0792784a81e13, type: 3}
-  - Name: Socket.dll
-    Defineds: UNITY_DLL
-    OutPath: .
-    SourceDir: Assets/EditorTools/AppLog
-    References: []
-    SourceDirObj: {fileID: 0}
+  PathGetterObj: {fileID: 102900000, guid: 7ea2164b726e04028ab0792784a81e13, type: 3}

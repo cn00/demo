@@ -56,11 +56,11 @@ public class DllCompile : SingletonAsset<DllCompile>
             };
         }
 
-        public void DrawInspector(int indent)
+        public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
-            base.DrawInspector(indent);
             if (mFoldOut)
             {
+                base.DrawInspector(indent);
 
                 var rect = EditorGUILayout.GetControlRect();
                 var sn = 3;
@@ -133,8 +133,9 @@ public class DllCompile : SingletonAsset<DllCompile>
             {
                 var item = Instance().bundles[i];
                 if(item != null)
-                    item.DrawInspector(0);
+                    item.Draw();
             }
+            Instance().DrawSaveButton();
 
             Instance().PathGetterObj = EditorGUILayout.ObjectField("PathGetter", Instance().PathGetterObj, typeof(UnityEngine.Object), true);
             if (Instance().PathGetterObj != null)
@@ -152,7 +153,6 @@ public class DllCompile : SingletonAsset<DllCompile>
             // //CodeBase: file:///Users/a3/.jenkins/workspace/unity_test/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
             // EditorGUILayout.SelectableLabel("CodeBase: " + System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
 
-            Instance().DrawSaveButton();
         }
     }
 }
