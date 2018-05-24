@@ -200,7 +200,7 @@ public class LuaMonoBehaviourEditor : Editor
         base.OnInspectorGUI ();
 
         var tmpAsset = EditorGUILayout.ObjectField("Lua", mObj.luaScript.Asset, typeof(UnityEngine.Object), true);
-        if(AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID()).EndsWith(".lua"))
+        if(tmpAsset != null && AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID()).EndsWith(".lua"))
             mObj.luaScript.Asset = tmpAsset;
 
         var size = mObj.injections.Length;
@@ -232,7 +232,7 @@ public class LuaMonoBehaviourEditor : Editor
                     item.obj = (GameObject)EditorGUILayout.ObjectField(item.obj, typeof(GameObject), true);
                     if(item.obj)
                     {
-                        var nname = EditorGUILayout.TextField(item.obj.name.RReplace(BundleConfig.PunctuationRegex + "+", "_"));
+                        var nname = EditorGUILayout.TextField(item.obj.name.RReplace(PathUtils.PunctuationRegex + "+", "_"));
                         var coms = item.obj.GetComponents<Component>();
                         if(item.exportComIdx == -1)
                             item.exportComIdx = coms.Length - 1;
