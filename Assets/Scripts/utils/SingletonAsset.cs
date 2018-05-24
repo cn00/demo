@@ -11,14 +11,8 @@ public class SingletonAssetBase<T> : ScriptableObject
 {
     protected static string AssetPath
     {
-        // set { mAssetPath = value; }
         get
         {
-            // switch(typeof(T).ToString())
-            // {
-            // default:
-            //     break;
-            // }
             return "Assets/config/" + typeof(T) + ".asset";
         }
     }
@@ -28,17 +22,15 @@ public class SingletonAssetBase<T> : ScriptableObject
         return true;
     }
 
+#if UNITY_EDITOR
     public virtual void Save()
     {
-#if UNITY_EDITOR
         EditorUtility.SetDirty(this);
         AssetDatabase.WriteImportSettingsIfDirty(AssetPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-#endif
     }
 
-#if UNITY_EDITOR
     public void DrawSaveButton()
     {
         var rect = EditorGUILayout.GetControlRect();
@@ -58,24 +50,29 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
     {
         if (mInstance == null)
         {
-            var assetSubPath = AssetPath;
-            AppLog.d("BundleConfig InstanceRuntime 0({0})", assetSubPath);
+            // from bundle
+            var assetSubPath = AssetPath.Replace("Assets/", "config/");
+            AppLog.d("InstanceRuntime 0 {0}", assetSubPath);
             var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
+            AppLog.d("InstanceRuntime 0.1 {0}", cachePath);
             if (File.Exists(cachePath))
             {
-                AppLog.d("BundleConfig InstanceRuntime(1)");
+                AppLog.d("InstanceRuntime 1");
                 var bundle = AssetBundle.LoadFromFile(cachePath);
                 mInstance = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
-                AppLog.d("BundleConfig GetAssetSync(2)");
+                AppLog.d("InstanceRuntime 2");
             }
+            // from resources
             else
             {
-                var respath = (assetSubPath.Replace(".asset", ""));
+                var respath = AssetPath.Replace("Assets/", "").Replace(".asset", "");
                 mInstance = Resources.Load<T>(respath);
+                AppLog.d("InstanceRuntime 3 Resources.Load {0}", respath);
             }
 
             if (mInstance == null)
             {
+                AppLog.e("InstanceRuntime 4 CreateInstance {0}", typeof(T));
                 mInstance = CreateInstance<T>();
             }
             mInstance.Init();
