@@ -1,4 +1,0 @@
-[submodule "YamlDotNet"]
-	path = tools/YamlDotNet
-	url = git@github.com:cn00/YamlDotNet.git
-	branch = v431
