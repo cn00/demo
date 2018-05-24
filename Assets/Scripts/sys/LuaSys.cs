@@ -43,7 +43,7 @@ public class LuaSys : SingleMono<LuaSys>
     }
     public byte[] LuaLoader(ref string filename)
     {
-        var LuaExtension = BundleConfig.LuaExtension;
+        var LuaExtension = BuildConfig.LuaExtension;
 
         if(filename.EndsWith(LuaExtension))
         {
@@ -52,7 +52,7 @@ public class LuaSys : SingleMono<LuaSys>
 
         byte[] bytes = null;
 #if UNITY_EDITOR
-        if(BundleConfig.Instance().UseBundle)
+        if(BuildConfig.Instance().UseBundle)
 #endif
         {
             var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
@@ -61,7 +61,7 @@ public class LuaSys : SingleMono<LuaSys>
 #if UNITY_EDITOR
         else
         {
-            var assetName = BundleConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
+            var assetName = BuildConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
             bytes = File.ReadAllBytes(assetName);
         }
 #endif

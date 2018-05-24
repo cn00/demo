@@ -14,7 +14,7 @@ public static class AssetExtern
 {
     public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
     {
-        var asset = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + subPath);
+        var asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + subPath);
         AppLog.d(subPath);
         return asset;
     }
@@ -126,7 +126,7 @@ public static class BundleHelper
     }
 
 
-    public static void DecompressFileLZMA(Stream input, Stream output)
+    public static void DecompressFileLZMA(Stream input,  Stream output)
     {
         SevenZip.Compression.Lzma.Decoder coder = new SevenZip.Compression.Lzma.Decoder();
         input.Seek(0, SeekOrigin.Begin);
@@ -191,13 +191,9 @@ public class AssetSys : SingleMono<AssetSys>
 #endif
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #else //!UNITY_EDITOR
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
-#elif UNITY_IPHONE
-                mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
-#elif UNITY_WINDOWS
-                mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
-#else
+#else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
 #endif
 #endif
@@ -216,16 +212,16 @@ public class AssetSys : SingleMono<AssetSys>
         {
             if(string.IsNullOrEmpty(mHttpRoot))
             {
-				mHttpRoot = BundleConfig.Instance ().ServerRoot;// "http://10.23.114.141:8008/";
-#if UNITY_ANDROID
-                mHttpRoot += PlatformName(RuntimePlatform.Android);
-#elif UNITY_IPHONE
-                mHttpRoot += PlatformName(RuntimePlatform.IPhonePlayer);
-#elif UNITY_WINDOWS
-                mHttpRoot += PlatformName(RuntimePlatform.WindowsPlayer);
-#else
-                mHttpRoot += PlatformName(RuntimePlatform.Android);
-#endif
+				mHttpRoot = BuildConfig.Instance ().ServerRoot;// "http://10.23.114.141:8008/";
+// #if UNITY_ANDROID
+//                 mHttpRoot += PlatformName(RuntimePlatform.Android);
+// #elif UNITY_IPHONE
+//                 mHttpRoot += PlatformName(RuntimePlatform.IPhonePlayer);
+// #elif UNITY_WINDOWS
+//                 mHttpRoot += PlatformName(RuntimePlatform.WindowsPlayer);
+// #else
+                mHttpRoot += PlatformName(Application.platform);
+// #endif
                 mHttpRoot += "/";
             }
             return mHttpRoot;
@@ -265,9 +261,9 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
-#if !UNITY_EDITOR
+// #if !UNITY_EDITOR
         yield return GetBundle("ui/boot.bd");
-#endif
+// #endif
         yield return base.Init();
     }
 
@@ -279,16 +275,16 @@ public class AssetSys : SingleMono<AssetSys>
         var trim = new char[] { ' ', '.', '/' };
         assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
         var dirs = assetSubPath.Split('/');
-        string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
+        string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
         var bundle = GetBundleSync(bundleName);
         T asset = null;
         if(bundle != null)
         {
-            asset = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
+            asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
         if(asset == null)
         {
-            AppLog.w("[{0}({2}):{1}] not exist.", bundleName, BundleConfig.BundleResRoot + assetSubPath, bundle);
+            AppLog.w("[{0}({2}):{1}] not exist.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
         }
         return asset;
     }
@@ -296,7 +292,7 @@ public class AssetSys : SingleMono<AssetSys>
     public string GetBundlePath (string assetSubPath)
     {
         var dirs = assetSubPath.Split('/');
-        string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
+        string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
         return bundleName;
     }
 
@@ -312,7 +308,7 @@ public class AssetSys : SingleMono<AssetSys>
     {
         UnityEngine.Object resObj = null;
 #if UNITY_EDITOR
-        if(BundleConfig.Instance().UseBundle)
+        if(BuildConfig.Instance().UseBundle)
 #endif
         {
 //            var trim = new char[] { ' ', '.', '/' };
@@ -332,7 +328,7 @@ public class AssetSys : SingleMono<AssetSys>
             });
             AppLog.d("load <Color=red>manifest</Color>: " + manifestBundleName);
 
-            string bundleName = dirs[0] + '/' + dirs[1] + BundleConfig.BundlePostfix;
+            string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             yield return GetBundle(bundleName, (bundle) =>
             {
                 // text
@@ -341,12 +337,12 @@ public class AssetSys : SingleMono<AssetSys>
                 {
                     if(textPath.EndsWith(".lua"))
                         textPath += ".txt";
-                    var textAsset = bundle.LoadAsset<TextAsset>(BundleConfig.BundleResRoot + textPath);
+                    var textAsset = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath);
                     resObj = new DataObject(textAsset.bytes);
                 }
                 else
                 {
-                    resObj = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
+                    resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
                 }
             });
             AppLog.d("from <Color=green>bundle</Color> : " + assetSubPath);
@@ -358,11 +354,11 @@ public class AssetSys : SingleMono<AssetSys>
             // text
             if(assetSubPath.IsText())
             {
-                resObj = new DataObject(File.ReadAllBytes(BundleConfig.BundleResRoot + assetSubPath));
+                resObj = new DataObject(File.ReadAllBytes(BuildConfig.BundleResRoot + assetSubPath));
             }
             else
             {
-                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BundleConfig.BundleResRoot + assetSubPath);
+                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
             }
             AppLog.d("from <Color=green>file</Color>: " + assetSubPath);
         }
@@ -416,7 +412,7 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
-        var version = BundleConfig.Instance().Version.ToString();
+        var version = BuildConfig.Instance().Version.ToString();
         var subPath = bundlePath;
         var cachePath = CacheRoot + subPath;
         var fileUrl = "file://" + cachePath;
@@ -427,7 +423,7 @@ public class AssetSys : SingleMono<AssetSys>
         )
         {
             isLocal = false;
-            fileUrl = HttpRoot + version + "/" + subPath + BundleConfig.CompressedExtension;
+            fileUrl = HttpRoot + version + "/" + subPath + BuildConfig.CompressedExtension;
         }
 
         AppLog.d(fileUrl);
@@ -442,7 +438,7 @@ public class AssetSys : SingleMono<AssetSys>
                 else
                 {
 #if UNITY_EDITOR
-                    AsyncSave(cachePath + BundleConfig.CompressedExtension, www.bytes);
+                    AsyncSave(cachePath + BuildConfig.CompressedExtension, www.bytes);
 #endif
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);

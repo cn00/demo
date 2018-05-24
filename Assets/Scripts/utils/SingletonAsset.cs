@@ -59,7 +59,7 @@ public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetB
             {
                 AppLog.d("InstanceRuntime 1");
                 var bundle = AssetBundle.LoadFromFile(cachePath);
-                mInstance = bundle.LoadAsset<T>(BundleConfig.BundleResRoot + assetSubPath);
+                mInstance = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
                 AppLog.d("InstanceRuntime 2");
             }
             // from resources

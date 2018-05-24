@@ -12,7 +12,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: bilibili
-  productName: a3
+  productName: "A3! \u6EE1\u5F00\u5267\u56E2"
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -126,7 +126,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.1.0
+  bundleVersion: 1.0.0
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -158,11 +158,11 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.bilibili.a3.test
+    Android: com.bili.a3.test
     Standalone: com.bilibili.a3
     iOS: com.bilibili.a3
   buildNumber: {}
-  AndroidBundleVersionCode: 79
+  AndroidBundleVersionCode: 3
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -559,7 +559,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: THREAD_SAFE
     4: THREAD_SAFE
-    7: THREAD_SAFE
+    7: UNITY_LIBER;USE_LOCALIZE;SERVER_PRO;VERSION_1_10_0
   platformArchitecture: {}
   scriptingBackend:
     iOS: 1

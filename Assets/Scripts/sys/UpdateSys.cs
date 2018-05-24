@@ -8,7 +8,7 @@ using System.Linq;
 using XLua;
 using System.Text;
 
-using BundleManifest = System.Collections.Generic.List<BundleConfig.BundleInfo>;
+using BundleManifest = System.Collections.Generic.List<BuildConfig.BundleInfo>;
 
 public static class BytesExtension
 {
@@ -29,7 +29,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     BundleManifest mRemoteManifest = new BundleManifest();//<string/*path*/, Md5SchemeInfo>
 
     object mDiffListLock = new object();
-    List<BundleConfig.BundleInfo> mDiffList = new List<BundleConfig.BundleInfo>();// <string/*path*/, Md5SchemeInfo>
+    List<BuildConfig.BundleInfo> mDiffList = new List<BuildConfig.BundleInfo>();// <string/*path*/, Md5SchemeInfo>
 
     bool mAllDownloadOK = false;
 
@@ -56,7 +56,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 if(string.IsNullOrEmpty(www.error))
                 {
                     // 覆盖硬编码版本号
-                    BundleConfig.Instance().Version = new AppVersion(www.text.Trim());
+                    BuildConfig.Instance().Version = new AppVersion(www.text.Trim());
                 }
                 else
                 {
@@ -64,7 +64,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
             });
         }
-        mLocalVersion = BundleConfig.Instance().Version.V;
+        mLocalVersion = BuildConfig.Instance().Version.V;
         AppLog.d("LocalVersion {0}", mLocalVersion.ToString());
 
         yield return null;
@@ -92,7 +92,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetLocalManifest()
     {
-        var cachePath = BundleConfig.LocalManifestPath;
+        var cachePath = BuildConfig.LocalManifestPath;
 
         if(!File.Exists(cachePath))
         {
@@ -120,7 +120,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetRemoteManifest()
     {
-        var remoteManifestUrl = AssetSys.HttpRoot + mRemoteVersion + "/" + BundleConfig.ManifestName + BundleConfig.CompressedExtension;
+        var remoteManifestUrl = AssetSys.HttpRoot + mRemoteVersion + "/" + BuildConfig.ManifestName + BuildConfig.CompressedExtension;
 
         byte[] bytes = null;
         yield return AssetSys.Www(remoteManifestUrl, (WWW www) =>
@@ -155,8 +155,8 @@ public class UpdateSys : SingleMono<UpdateSys>
             var i = mDiffList[idx];
             var subPath = i.Name;
             var cachePath = AssetSys.CacheRoot + subPath;
-            var cacheLzmaPath = AssetSys.CacheRoot + subPath + BundleConfig.CompressedExtension;
-            var diffFileUrl = AssetSys.HttpRoot +  mRemoteVersion + "/" + subPath + BundleConfig.CompressedExtension;
+            var cacheLzmaPath = AssetSys.CacheRoot + subPath + BuildConfig.CompressedExtension;
+            var diffFileUrl = AssetSys.HttpRoot +  mRemoteVersion + "/" + subPath + BuildConfig.CompressedExtension;
             AppLog.d(diffFileUrl);
 
             //yield return AssetSys.Www(fileUrl, (WWW www) =>
@@ -243,7 +243,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
             yield return DownloadDiffFiles();
 
-            BundleConfig.Instance().Version = mRemoteVersion;
+            BuildConfig.Instance().Version = mRemoteVersion;
 
             // 更新完成后保存
             var cacheUrl = AssetSys.CacheRoot + "resversion.txt";
@@ -261,7 +261,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public bool NeedUpdate(string subPath)
     {
-        BundleConfig.BundleInfo info = mDiffList.Find(i=>i.Name == subPath);
+        BuildConfig.BundleInfo info = mDiffList.Find(i=>i.Name == subPath);
         return info != null;
     }
 
@@ -281,7 +281,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 var old = mLocalManifest.Find(i => i.Name == subPath);
                 mLocalManifest.Remove(old);
                 mLocalManifest.Add(newi);
-                SaveManifest(mLocalManifest, BundleConfig.LocalManifestPath);
+                SaveManifest(mLocalManifest, BuildConfig.LocalManifestPath);
 
                 mDiffList.Remove(newi);
                 AppLog.d("Updated: {0}={1}", newi.Name, newi.Md5);

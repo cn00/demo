@@ -58,6 +58,19 @@ public class InspectorDraw : object
                     var tmp = EditorGUILayout.Toggle(i.Name, (bool)v);
                     i.SetValue(this, tmp);
                 }
+                else if(v is Enum)
+                {
+                    if(i.Name.ToLower().Contains("flag"))
+                    {
+                        var tmp = EditorGUILayout.EnumFlagsField(i.Name, (Enum)v);
+                        i.SetValue(this, tmp);
+                    }
+                    else
+                    {
+                        var tmp = EditorGUILayout.EnumPopup(i.Name, (Enum)v);
+                        i.SetValue(this, tmp);
+                    }
+                }
                 else if (v is int || v is uint || v is long)
                 {
                     if (i.Name.ToLower().Contains("time"))

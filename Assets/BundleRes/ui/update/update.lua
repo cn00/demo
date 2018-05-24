@@ -42,7 +42,7 @@ function update.Awake()
 
 	self.Clean_Button.onClick:AddListener(function()
 		print("Clean")
-		assert(coroutine.resume(self.CheckUpdate()))
+		assert(coroutine.resume(self.Clean()))
 	end)
 
 	self.VersionText_Text.text = CS.BundleConfig.Instance().Version:ToString()
@@ -96,6 +96,15 @@ function update.CheckUpdate()
 	    
 	    update.name = "update"
 	end)
+end
+
+function update.Clean()
+	return coroutine.create(
+		function()
+			print("Delete: " .. CS.AssetSys.CacheRoot)
+			CS.Directory.Delete(CS.AssetSys.CacheRoot, true);
+		end
+	)
 end
     
 return update

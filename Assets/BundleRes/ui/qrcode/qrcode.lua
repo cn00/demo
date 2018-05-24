@@ -84,7 +84,7 @@ end
 
 function qrcode.Back()
     return coroutine.create(function()
-        yield_return(UnityEngine.WaitForSeconds(1))
+        yield_return(mono:WaitForSeconds(0.3))
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
             obj = asset

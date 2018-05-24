@@ -1,4 +1,9 @@
 
-### 更新
+### update
 * [x] bundle pack
 * [ ] version controll
+
+
+### qr
+* Android
+* iOS

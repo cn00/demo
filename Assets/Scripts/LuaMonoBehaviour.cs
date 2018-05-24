@@ -194,7 +194,7 @@ public class LuaMonoBehaviourEditor : Editor
     public void OnEnable()
     {
         mObj = (LuaMonoBehaviour)target;
-        var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.LuaExtension;
+        var luaPath = BuildConfig.BundleResRoot + mObj.luaScript.path + BuildConfig.LuaExtension;
         if(File.Exists(luaPath))
             luaStr = File.ReadAllText(luaPath);
     }
@@ -282,7 +282,7 @@ public class LuaMonoBehaviourEditor : Editor
             var rect = EditorGUILayout.GetControlRect();
             if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {
-                var luaPath = BundleConfig.BundleResRoot + mObj.luaScript.path + BundleConfig.LuaExtension;
+                var luaPath = BuildConfig.BundleResRoot + mObj.luaScript.path + BuildConfig.LuaExtension;
 //                var code = File.ReadAllText(luaPath);
                 var pattern = Regex.Match(luaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
                 luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);

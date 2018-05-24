@@ -82,11 +82,11 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                    QRCode.OpenQRScanner(  );
+                        
                     
                     
                     
-                    return 0;
+                    return 1;
                 }
                 
             } catch(System.Exception __gen_e) {

@@ -14,6 +14,13 @@ load asset bundle
 #### task chain
 > do some load task, then another some, finished all and call back
 
+### update 
+* manually check
+* show a tip to select update from server or another user
+* go on story, run update in background
+* if user try to open a system which need to be update, show a notice to wait update
+* 
+
 
 Don't try to talk about your stupid story, Not everyone care about it. Don't be upset, just wait, maybe someday someone interested
 

@@ -402,7 +402,7 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    System.Collections.Generic.List<BundleConfig.BundleInfo> manifest = (System.Collections.Generic.List<BundleConfig.BundleInfo>)translator.GetObject(L, 1, typeof(System.Collections.Generic.List<BundleConfig.BundleInfo>));
+                    System.Collections.Generic.List<BuildConfig.BundleInfo> manifest = (System.Collections.Generic.List<BuildConfig.BundleInfo>)translator.GetObject(L, 1, typeof(System.Collections.Generic.List<BuildConfig.BundleInfo>));
                     string path = LuaAPI.lua_tostring(L, 2);
                     
                     UpdateSys.SaveManifest( manifest, path );
