@@ -41,8 +41,6 @@ sysinfo.txt
 *.bak
 *.bak.*
 .*
-.lastWriteTime
-BundleConfig.asset*
 
 bin/
 ios.proj*

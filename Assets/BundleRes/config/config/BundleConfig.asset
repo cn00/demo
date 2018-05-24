@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d12f3b43fa28a34db6ddec2b134938a, type: 3}
+  m_Name: BundleConfig
+  m_EditorClassIdentifier: 
+  UseBundle: 0
+  LastBuildTime: 131715525488806240
+  Version:
+    mName: 
+    Major: 0
+    Minor: 1
+    Patch: 0
+  m_ServerRoot: http://10.23.114.137:8008/
+  ForceRebuild: 0
+  BuildScene: 0
+  mGroups:
+  - mName: chapter_01
+    mInclude: 0
+    mRebuild: 0
+    mSize: 1734
+    mBundles:
+    - mName: chapter_01/level_01.bd
+      mSize: 1734
+      mMd5: 287E47C8336AF62998F48980EAABEDE6
+      mVersion: 0.1.0
+  - mName: chapter_02
+    mInclude: 0
+    mRebuild: 0
+    mSize: 1734
+    mBundles:
+    - mName: chapter_02/level_01.bd
+      mSize: 1734
+      mMd5: 778B68F7C818D6BE0435445A58555EB0
+      mVersion: 0.1.0
+  - mName: common
+    mInclude: 0
+    mRebuild: 0
+    mSize: 12207
+    mBundles:
+    - mName: common/manager.bd
+      mSize: 3772
+      mMd5: E566913FBE403A57C0ACA81E9EF30ACB
+      mVersion: 0.1.0
+    - mName: common/ui.bd
+      mSize: 8435
+      mMd5: FB1196BEF52E884FBC5D1F7C3557441A
+      mVersion: 0.1.0
+  - mName: config
+    mInclude: 0
+    mRebuild: 0
+    mSize: 3346
+    mBundles:
+    - mName: config/config.bd
+      mSize: 3346
+      mMd5: 4ACC4CF8DD566F95DD1897A4843DF404
+      mVersion: 0.1.0
+  - mName: lua
+    mInclude: 0
+    mRebuild: 0
+    mSize: 8632
+    mBundles:
+    - mName: lua/table.bd
+      mSize: 1675
+      mMd5: 142B6DFF5F8820B077BE5ADC5E2C7689
+      mVersion: 0.1.0
+    - mName: lua/utility.bd
+      mSize: 6957
+      mMd5: FCC7CB12FD61F33A92FCAFF7CB734710
+      mVersion: 0.1.0
+  - mName: module
+    mInclude: 0
+    mRebuild: 0
+    mSize: 2869194
+    mBundles:
+    - mName: module/Materials.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module/clothe.bd
+      mSize: 1936104
+      mMd5: F9A6201D643E9D1F27A3ABBCA1278AE8
+      mVersion: 0.1.0
+    - mName: module/grid.bd
+      mSize: 27998
+      mMd5: A120C3ABBFE73336F37CFD5CF143BC62
+      mVersion: 0.1.0
+    - mName: module/tree02.bd
+      mSize: 903391
+      mMd5: 7F492E12D3AE450C2B53BCE91787AB03
+      mVersion: 0.1.0
+    - mName: module/water.bd
+      mSize: 1701
+      mMd5: E01F51E841CE670A7570B207234A8B96
+      mVersion: 0.1.0
+  - mName: ui
+    mInclude: 0
+    mRebuild: 0
+    mSize: 193710
+    mBundles:
+    - mName: ui/boot.bd
+      mSize: 3781
+      mMd5: 343C70CD113619CE9DBB0754DF1C3E9D
+      mVersion: 0.1.0
+    - mName: ui/loading.bd
+      mSize: 101208
+      mMd5: 582F5C1909CE1009230F5504A8DA9F32
+      mVersion: 0.1.0
+    - mName: ui/login.bd
+      mSize: 20945
+      mMd5: EBE2A6FFD7F2365D7D3172008BE8FAA3
+      mVersion: 0.1.0
+    - mName: ui/playground.bd
+      mSize: 4766
+      mMd5: 7838080A4DF77327CB428A3632FCF10F
+      mVersion: 0.1.0
+    - mName: ui/qrcode.bd
+      mSize: 25363
+      mMd5: 9A79122194EC26160AE43781C03FCC0F
+      mVersion: 0.1.0
+    - mName: ui/test.bd
+      mSize: 22635
+      mMd5: 997FC9DA02A8D1020E8BB19438EA04D6
+      mVersion: 0.1.0
+    - mName: ui/update.bd
+      mSize: 15047
+      mMd5: E215620CEB6574D1266CDCBC9D57A827
+      mVersion: 0.1.0
+  - mName: video
+    mInclude: 0
+    mRebuild: 0
+    mSize: 12102
+    mBundles:
+    - mName: video/op.bd
+      mSize: 12102
+      mMd5: 743D9E4B509452A7F0B99BD95CCC7964
+      mVersion: 0.1.0
+  mServer:
+    mName: BundleServer
+    Port: 8008
+    Runing: 0
