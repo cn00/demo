@@ -1,9 +1,10 @@
 fileFormatVersion: 2
-guid: 8de3c93b9bad0fb4f8103f484fb70f45
-timeCreated: 1523599750
+guid: 93a7dd9c814d04549b1f1582e484b40b
+folderAsset: yes
+timeCreated: 1526636135
 licenseType: Pro
 DefaultImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
+  assetBundleName: lua/table.bd
   assetBundleVariant: 
