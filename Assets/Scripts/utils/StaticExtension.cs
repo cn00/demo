@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class NpoiExtension
 {
@@ -57,4 +58,18 @@ public static class CollectionExtensions
     // {
     //     return self.Select(item => (T)item.Clone()).ToList();
     // }
+}
+
+public static class RectExtension
+{
+    public static Rect Split(this Rect rect, int index, int count)
+    {
+        int r = (int)rect.width % count; // Remainder used to compensate width and position.
+        int width = (int)(rect.width / count);
+        rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);
+        if (index > 0)
+        { rect.x += width * index + (r - (count - 1 - index)); }
+
+        return rect;
+    }
 }
