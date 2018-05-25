@@ -44,7 +44,7 @@ public class DllCompile : SingletonAsset<DllCompile>
 
         public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
-            if (mFoldOut)
+            if (FoldOut)
             {
                 base.DrawInspector(indent);
 

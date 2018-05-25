@@ -383,10 +383,10 @@ namespace XLua
         public override void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
-            mFoldOut = ContainsKey("FoldOut")?Get<bool>("FoldOut"):false;
-            mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
-            Set("FoldOut", mFoldOut);
-            if (mFoldOut)
+            FoldOut = ContainsKey("FoldOut")?Get<bool>("FoldOut"):false;
+            FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
+            Set("FoldOut", FoldOut);
+            if (FoldOut)
             {
                 using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
                 {

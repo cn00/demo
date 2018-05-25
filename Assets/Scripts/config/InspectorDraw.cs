@@ -159,10 +159,10 @@ public class InspectorDraw : object
         }
     }
 
-    protected bool mFoldOut = false;
+    protected bool FoldOut = false;
     public virtual void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
-        if (mFoldOut)
+        if (FoldOut)
         {
             Name = EditorGUILayout.TextField("Name", Name);
             DrawObj(this);
@@ -172,8 +172,8 @@ public class InspectorDraw : object
     public virtual void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         EditorGUI.indentLevel += indent;
-        mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
-        if (mFoldOut) 
+        FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
+        if (FoldOut) 
         {
             using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
             {

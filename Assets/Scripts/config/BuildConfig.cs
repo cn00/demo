@@ -213,7 +213,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
-                mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
+                FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
                 if (Size < 1024)//K
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
                 else if (Size < 1024 * 1024)//K
@@ -224,7 +224,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 //                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
             }
             EditorGUILayout.EndHorizontal();
-            if (mFoldOut)
+            if (FoldOut)
             {
                 //                ++EditorGUI.indentLevel;
                 DrawInspector(indent, guiOpts);
