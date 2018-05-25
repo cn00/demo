@@ -1,0 +1,180 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
+  m_Name: BuildConfig
+  m_EditorClassIdentifier: 
+  UseBundle: 0
+  LastBuildTime: 131716339726609850
+  Version:
+    mName: Version
+    Major: 1
+    Minor: 0
+    Patch: 0
+  m_Ip: 10.23.114.137
+  m_Port: 8008
+  ForceRebuild: 0
+  BuildScene: 0
+  mGroups:
+  - mName: chapter_01
+    mInclude: 0
+    mRebuild: 0
+    mSize: 1731
+    mBundles:
+    - mName: chapter_01/level_01.bd
+      mSize: 1731
+      mMd5: 0ABC395E036CF1C16579659312953803
+      mVersion: 1.0.0
+  - mName: chapter_02
+    mInclude: 0
+    mRebuild: 0
+    mSize: 1732
+    mBundles:
+    - mName: chapter_02/level_01.bd
+      mSize: 1732
+      mMd5: 38A711A101BEBF200CB41B9C70190C21
+      mVersion: 1.0.0
+  - mName: common
+    mInclude: 0
+    mRebuild: 0
+    mSize: 12285
+    mBundles:
+    - mName: common/manager.bd
+      mSize: 3771
+      mMd5: CEE1DAA6B6B71116E16021131BEA1806
+      mVersion: 1.0.0
+    - mName: common/ui.bd
+      mSize: 8514
+      mMd5: AF0D25B71854E5E61B18014C388B321E
+      mVersion: 1.0.0
+  - mName: config
+    mInclude: 0
+    mRebuild: 0
+    mSize: 3425
+    mBundles:
+    - mName: config/config.bd
+      mSize: 3425
+      mMd5: D95F8B882EDB1692DE1BF2A07267F091
+      mVersion: 1.0.0
+  - mName: lua
+    mInclude: 0
+    mRebuild: 0
+    mSize: 8627
+    mBundles:
+    - mName: lua/table.bd
+      mSize: 1672
+      mMd5: DA62F23DC44C6123124E5C2A5D9A7AD5
+      mVersion: 1.0.0
+    - mName: lua/utility.bd
+      mSize: 6955
+      mMd5: 9A1C46C0B7612A2ABAE5519758709540
+      mVersion: 1.0.0
+  - mName: module.tmp
+    mInclude: 0
+    mRebuild: 0
+    mSize: 0
+    mBundles:
+    - mName: module.tmp/Materials.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module.tmp/clothe.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module.tmp/grid.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module.tmp/tree02.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module.tmp/unity_tree.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+    - mName: module.tmp/water.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+  - mName: ui
+    mInclude: 0
+    mRebuild: 0
+    mSize: 209515
+    mBundles:
+    - mName: ui/boot.bd
+      mSize: 3780
+      mMd5: BA972B1BB8FB680F2773A268D9FDA7A3
+      mVersion: 1.0.0
+    - mName: ui/loading.bd
+      mSize: 89520
+      mMd5: 8E5920FDA5EF2F7A21CD83566C8AA561
+      mVersion: 1.0.0
+    - mName: ui/login.bd
+      mSize: 21210
+      mMd5: 5FA6A1D0B887E9D97D05D3BDBBACF215
+      mVersion: 1.0.0
+    - mName: ui/playground.bd
+      mSize: 4765
+      mMd5: 1439C71948F1C8E8C99505D0965A507A
+      mVersion: 1.0.0
+    - mName: ui/qrcode.bd
+      mSize: 52302
+      mMd5: 03734798551B28BDE32CB77BCE29840E
+      mVersion: 1.0.0
+    - mName: ui/test.bd
+      mSize: 22719
+      mMd5: E7B1DC0145D602D2DF8CD846536FAD55
+      mVersion: 1.0.0
+    - mName: ui/update.bd
+      mSize: 15219
+      mMd5: 20ED195976AA0DD62264872D92501130
+      mVersion: 1.0.0
+  - mName: video
+    mInclude: 0
+    mRebuild: 0
+    mSize: 12179
+    mBundles:
+    - mName: video/op.bd
+      mSize: 12179
+      mMd5: 40DD4225BB19F7B90C488D4CFB70899E
+      mVersion: 1.0.0
+  mChannels:
+  - mName: iOS
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: 
+    AndroidBuildType: 0
+    AndroidBuildSystem: 0
+    OptionFlags: 1025
+    Channel: 5
+    iosSim: 0
+  - mName: Android
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3.test
+    PackageName: a3
+    BuildNum: 3
+    DefineSymbols: 
+    AndroidBuildType: 0
+    AndroidBuildSystem: 0
+    OptionFlags: 0
+    Channel: 2
+    iosSim: 0
+  mServer:
+    mName: BundleServer
+    Port: 8008
+    Runing: 0
