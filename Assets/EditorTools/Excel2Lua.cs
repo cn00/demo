@@ -31,7 +31,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
     }
 
     [SerializeField, HideInInspector]
-    Config mConfig = new Config(){Name = "Config"};
+    Config mConfig = new Config() { Name = "Config" };
 
     public static bool writeLua(string sheetname, ISheet sheet, string path)
     {
@@ -147,7 +147,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
             }
         } // for
 
-        if(errno > 0)
+        if (errno > 0)
         {
             AppLog.e("{0} errors", errno);
             AppLog.e(errmsg);
@@ -176,22 +176,36 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         mConfig.LastBuildTime = DateTime.Now.ToFileTimeUtc();
     }
 
+    public static void DrawBuildButton()
+    {
+        var rect = EditorGUILayout.GetControlRect();
+        if (GUI.Button(rect.Split(1, 3), "Excel2Lua"))
+        {
+            Instance().Build();
+        }
+    }
+
 
     [CustomEditor(typeof(Excel2Lua))]
     public class Editor : UnityEditor.Editor
     {
+        Excel2Lua mTarget = null;
+        /// <summary>
+        /// This function is called when the object becomes enabled and active.
+        /// </summary>
+        void OnEnable()
+        {
+            mTarget = target as Excel2Lua;
+        }
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            Instance().mConfig.Draw();
+            mTarget.mConfig.Draw();
 
-            var rect = EditorGUILayout.GetControlRect();
-            if (GUI.Button(rect.Split(1, 3), "Build"))
-            {
-                Instance().Build();
-            }
+            Excel2Lua.DrawBuildButton();
 
-            mInstance.DrawSaveButton();
+            mTarget.DrawSaveButton();
         }
     }
 }
