@@ -6,7 +6,21 @@ local sqlite = CS.SQLite.SQLite3
 
 local util = require "lua.utility.xlua.util"
 
-local login = {}
+local login = {
+	string0 = "sss",
+	number0 = 0,
+	testString = {
+		testkey = "test string ...",
+		number = 12321,
+		boolv = false,
+		table2 = {
+			boolv = true,
+			kk2 = "jlkjl",
+			num2 = 999
+		}
+	}
+}
+
 local self = login
 
 local yield_return =

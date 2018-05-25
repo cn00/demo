@@ -45,7 +45,7 @@ function update.Awake()
 		assert(coroutine.resume(self.Clean()))
 	end)
 
-	self.VersionText_Text.text = CS.BundleConfig.Instance().Version:ToString()
+	self.VersionText_Text.text = CS.BuildConfig.Instance().Version:ToString()
 	self.Slider_Slider.value = 0
 end
 
@@ -61,11 +61,12 @@ function update.Start ()
 end
 
 function update.FixedUpdate ()
-
+	self.process = self.process + 0.001
+    self.Slider_Slider.value = self.process
 end
 
 function update.Update ()
-    self.Slider_Slider.value = self.Slider_Slider.value + 0.001
+	self.process = self.Slider_Slider.value
 end
 
 function update.LateUpdate ()

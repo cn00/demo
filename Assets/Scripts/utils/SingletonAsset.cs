@@ -7,7 +7,7 @@ using System.IO;
 using UnityEditor;
 #endif
 
-public class SingletonAssetBase<T> : ScriptableObject
+public class AssetBase<T> : ScriptableObject
 {
     protected static string AssetPath
     {
@@ -42,7 +42,7 @@ public class SingletonAssetBase<T> : ScriptableObject
 #endif
 }
 
-public class SingletonAsset<T> : SingletonAssetBase<T> where T : SingletonAssetBase<T>
+public class SingletonAsset<T> : AssetBase<T> where T : AssetBase<T>
 {
     protected static T mInstance = null;
 

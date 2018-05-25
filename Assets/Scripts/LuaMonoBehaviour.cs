@@ -49,7 +49,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaLateUpdate;
     private Action luaOnDestroy;
 
-    private LuaTable luaTable = null;
+    public LuaTable luaTable = null;
 
     public bool Inited { get; protected set; }
     bool Init()
@@ -287,6 +287,11 @@ public class LuaMonoBehaviourEditor : Editor
                 var pattern = Regex.Match(luaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
                 luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);
                 File.WriteAllText(luaPath, luaStr);
+            }
+
+            if(mObj.luaTable != null)
+            {
+                mObj.luaTable.Draw();
             }
         }
 

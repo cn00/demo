@@ -21,6 +21,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEngine;
+#endif
+
 namespace XLua
 {
     public partial class LuaTable : LuaBase
@@ -374,5 +379,88 @@ namespace XLua
         {
             return "table :" + luaReference;
         }
+#if UNITY_EDITOR
+        public override void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
+        {
+            EditorGUI.indentLevel += indent;
+            mFoldOut = ContainsKey("FoldOut")?Get<bool>("FoldOut"):false;
+            mFoldOut = EditorGUILayout.Foldout(mFoldOut, Name, true);
+            Set("FoldOut", mFoldOut);
+            if (mFoldOut)
+            {
+                using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
+                {
+                    // ++EditorGUI.indentLevel;
+                    DrawInspector(indent, guiOpts);
+                    // --EditorGUI.indentLevel;
+                }
+            }
+            EditorGUI.indentLevel -= indent;
+        }
+        public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+        {
+            ForEach<string, object>((k, v) =>
+            {
+                ++EditorGUI.indentLevel;
+                if (v is LuaTable)
+                {
+                    (v as LuaTable).Draw();
+                }
+                else
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField(k + ": " + (v != null ? v.GetType().ToString() : "null"));
+                    if (v is bool)
+                    {
+                        var tmp = EditorGUILayout.Toggle((bool)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is Enum)
+                    {
+                        if (k.ToLower().Contains("flag"))
+                        {
+                            var tmp = EditorGUILayout.EnumFlagsField((Enum)v);
+                            Set(k, tmp);
+                        }
+                        else
+                        {
+                            var tmp = EditorGUILayout.EnumPopup((Enum)v);
+                            Set(k, tmp);
+                        }
+                    }
+                    else if (v is long)
+                    {
+                        if (k.ToLower().Contains("time"))
+                        {
+                            EditorGUILayout.LabelField(DateTime.FromFileTime((long)v).ToString());
+                        }
+                        else
+                        {
+                            var tmp = EditorGUILayout.LongField((long)v);
+                            Set(k, tmp);
+                        }
+                    }
+                    else if (v is double)
+                    {
+                        var tmp = EditorGUILayout.DoubleField((double)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is string)
+                    {
+                        var tmp = EditorGUILayout.TextField((string)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is Component)
+                    {
+                        EditorGUILayout.ObjectField((v as Component).gameObject, typeof(UnityEngine.Object), true);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+                --EditorGUI.indentLevel;
+            });
+        }
+#endif
+
     }
+
 }

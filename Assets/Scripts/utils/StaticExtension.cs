@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-public static class CellExtension
+public static class NpoiExtension
 {
     public static string SValue(this ICell cell, CellType? FormulaResultType = null)
     {
@@ -46,7 +46,7 @@ public static class CellExtension
     }
 }
 
-public static class ListExtensions
+public static class CollectionExtensions
 {
     public static IList<T> Clone<T>(this IList<T> self) where T : ICloneable
     {

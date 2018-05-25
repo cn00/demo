@@ -32,43 +32,45 @@ public class InspectorDraw : object
         get{return mName == null ? (mName = this.GetType().ToString()) : mName;}
         set{mName = value;}
     }
+    public void Dispose()
+    {
+        // Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
 #if UNITY_EDITOR
 
-    protected bool mFoldOut = false;
-    public virtual void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    public static void DrawObj(object obj)
     {
-        if (mFoldOut)
+        if(obj != null)
         {
-            Name = EditorGUILayout.TextField("Name", Name);
-
-            var type = this.GetType();
+            var type = obj.GetType();
             var fields = type.GetFields(
                       BindingFlags.Default
                     // | BindingFlags.DeclaredOnly // no inherited 
                     | BindingFlags.Instance
                     | BindingFlags.Public
                 ).ToList();
-            fields.Sort(delegate(FieldInfo i, FieldInfo j){ return i.Name.CompareTo(j.Name);});
+            fields.Sort(delegate (FieldInfo i, FieldInfo j) { return i.Name.CompareTo(j.Name); });
             foreach (var i in fields)
             {
-                var v = i.GetValue(this);
+                var v = i.GetValue(obj);
                 if (v is bool)
                 {
                     var tmp = EditorGUILayout.Toggle(i.Name, (bool)v);
-                    i.SetValue(this, tmp);
+                    i.SetValue(obj, tmp);
                 }
-                else if(v is Enum)
+                else if (v is Enum)
                 {
-                    if(i.Name.ToLower().Contains("flag"))
+                    if (i.Name.ToLower().Contains("flag"))
                     {
                         var tmp = EditorGUILayout.EnumFlagsField(i.Name, (Enum)v);
-                        i.SetValue(this, tmp);
+                        i.SetValue(obj, tmp);
                     }
                     else
                     {
                         var tmp = EditorGUILayout.EnumPopup(i.Name, (Enum)v);
-                        i.SetValue(this, tmp);
+                        i.SetValue(obj, tmp);
                     }
                 }
                 else if (v is int || v is uint || v is long)
@@ -80,18 +82,18 @@ public class InspectorDraw : object
                     else
                     {
                         var tmp = EditorGUILayout.IntField(i.Name, (int)v);
-                        i.SetValue(this, tmp);
+                        i.SetValue(obj, tmp);
                     }
                 }
                 else if (v is double || v is float)
                 {
                     var tmp = EditorGUILayout.FloatField(i.Name, (float)v);
-                    i.SetValue(this, tmp);
+                    i.SetValue(obj, tmp);
                 }
                 else if (v is string)
                 {
                     var tmp = EditorGUILayout.TextField(i.Name, (string)v);
-                    i.SetValue(this, tmp);
+                    i.SetValue(obj, tmp);
                 }
                 else if (v is List<int> || v is List<uint> || v is List<long>)
                 {
@@ -158,7 +160,25 @@ public class InspectorDraw : object
                     }
                     --EditorGUI.indentLevel;
                 }
+                else if (v is InspectorDraw)
+                {
+                    (v as InspectorDraw).Draw();
+                }
+                else if (v is object)
+                {
+                    DrawObj(v);
+                }
             }
+        }
+    }
+
+    protected bool mFoldOut = false;
+    public virtual void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    {
+        if (mFoldOut)
+        {
+            Name = EditorGUILayout.TextField("Name", Name);
+            DrawObj(this);
         }
     }
 

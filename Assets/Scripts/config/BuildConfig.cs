@@ -59,7 +59,7 @@ public class AppVersion : InspectorDraw
     }
 
 #if UNITY_EDITOR
-    public override void DrawInspector(int name, GUILayoutOption[] option = null)
+    public override void DrawInspector(int indent, GUILayoutOption[] option = null)
     {
         // Name = EditorGUILayout.TextField("Major", Name);
         EditorGUILayout.BeginHorizontal();
@@ -533,8 +533,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
-
-            
 
             // Bundles
             showBundles = EditorGUILayout.Foldout(showBundles, "AssetBundle", true);
