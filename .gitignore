@@ -54,3 +54,5 @@ bin/
 
 *.sql.txt
 *.sql.txt.meta
+
+BuildConfig.asset*
