@@ -142,7 +142,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaOnDestroy();
         }
-//        luaTable.Dispose();
+    //    luaTable.Dispose();
         luaTable = null;
         luaOnDestroy = null;
         luaUpdate = null;
@@ -165,7 +165,6 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private IEnumerator CoroutineBody(object to_yield, Action callback)
     {
-//        AppLog.d("CoroutineBody: {0}, {1}", to_yield, callback);
         if(to_yield is IEnumerator)
         {
             yield return StartCoroutine((IEnumerator)to_yield);
@@ -245,8 +244,8 @@ public class LuaMonoBehaviourEditor : Editor
                         {
                             var name = e.GetType().ToString();
                             name = name.Substring(name.LastIndexOf('.') + 1);
-                            return name; }
-                        ).ToArray());
+                            return name; 
+                        }).ToArray());
 
                         if (item.obj.name != nname)
                         {
@@ -255,8 +254,6 @@ public class LuaMonoBehaviourEditor : Editor
                             var comName = comType.Substring(comType.LastIndexOf('.') + 1);
                             var oldExp = item.obj.name + "_" + comName;
                             string newExp = nname + "_" + comName;
-//                            var pattern = Regex.Match(luaStr, "\b" + oldExp + "\b", RegexOptions.Multiline).ToString();
-//                            luaStr = luaStr.Replace(pattern.ToString(), newExp);
                             luaStr = luaStr.Replace("."+oldExp, "."+newExp);
                             item.obj.name = nname;
                         }
@@ -283,7 +280,6 @@ public class LuaMonoBehaviourEditor : Editor
             if(GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {
                 var luaPath = BuildConfig.BundleResRoot + mObj.luaScript.path + BuildConfig.LuaExtension;
-//                var code = File.ReadAllText(luaPath);
                 var pattern = Regex.Match(luaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
                 luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);
                 File.WriteAllText(luaPath, luaStr);
