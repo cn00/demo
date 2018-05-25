@@ -55,4 +55,5 @@ bin/
 *.sql.txt
 *.sql.txt.meta
 
-BuildConfig.asset*
+Assets/BundleRes/config*
+Assets/Resources/config*
