@@ -51,3 +51,6 @@ bin/
 
 *.lua.txt
 *.lua.txt.meta
+
+*.sql.txt
+*.sql.txt.meta
