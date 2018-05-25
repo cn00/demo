@@ -21,7 +21,6 @@ public static class XLuaGenConfig
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
         typeof(QRCodeDecodeController),
-        typeof(QRCode),
         typeof(JavaUtil),
         typeof(AppLog),
         typeof(SQLite3),
