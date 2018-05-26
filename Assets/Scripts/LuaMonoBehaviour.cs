@@ -49,7 +49,11 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaLateUpdate;
     private Action luaOnDestroy;
 
-    public LuaTable luaTable = null;
+    public LuaTable luaTable
+    {
+        get;
+        protected set;
+    }
 
     public bool Inited { get; protected set; }
     bool Init()
