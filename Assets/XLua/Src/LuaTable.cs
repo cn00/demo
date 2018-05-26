@@ -390,7 +390,6 @@ namespace XLua
             {
                 using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
                 {
-                    // ++EditorGUI.indentLevel;
                     DrawInspector(indent, guiOpts);
                     // --EditorGUI.indentLevel;
                 }
@@ -401,10 +400,13 @@ namespace XLua
         {
             ForEach<string, object>((k, v) =>
             {
-                ++EditorGUI.indentLevel;
                 if (v is LuaTable)
                 {
-                    (v as LuaTable).Draw();
+                    var t = (v as LuaTable);
+                    t.Name = k;
+                    ++EditorGUI.indentLevel;
+                    t.Draw();
+                    --EditorGUI.indentLevel;
                 }
                 else
                 {
@@ -456,7 +458,6 @@ namespace XLua
                     }
                     EditorGUILayout.EndHorizontal();
                 }
-                --EditorGUI.indentLevel;
             });
         }
 #endif

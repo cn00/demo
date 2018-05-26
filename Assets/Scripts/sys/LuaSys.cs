@@ -29,11 +29,13 @@ public class LuaSys : SingleMono<LuaSys>
         meta.Dispose();
 
         luaTable.Set("mono", lb);
-        foreach(var injection in lb.injections.Where(i => i.obj != null))
+        if(lb.injections != null && lb.injections.Length > 0)
         {
-            luaTable.Set(injection.obj.name, injection.obj);
+            foreach(var injection in lb.injections.Where(i => i.obj != null))
+            {
+                luaTable.Set(injection.obj.name, injection.obj);
+            }
         }
-
         return luaTable;
     }
 
@@ -49,6 +51,7 @@ public class LuaSys : SingleMono<LuaSys>
         {
             filename = filename.Remove(filename.LastIndexOf(LuaExtension));
         }
+        AppLog.d("require: " + filename);
 
         byte[] bytes = null;
 #if UNITY_EDITOR
@@ -62,10 +65,16 @@ public class LuaSys : SingleMono<LuaSys>
         else
         {
             var assetName = BuildConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
-            bytes = File.ReadAllBytes(assetName);
+            if(File.Exists(assetName))
+            {
+                bytes = File.ReadAllBytes(assetName);
+            }
+            else
+            {
+                AppLog.w(assetName + "not found.");
+            }
         }
 #endif
-        AppLog.d("<Color=green>require: " + filename + "</Color>");
         return bytes;
     }
 
@@ -86,11 +95,6 @@ public class LuaSys : SingleMono<LuaSys>
         GetLuaTable(textBytes);
 
         yield return base.Init();
-    }
-
-    private void Update()
-    {
-
     }
 
     public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")

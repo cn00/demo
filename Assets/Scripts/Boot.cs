@@ -15,6 +15,9 @@ public class Boot : SingleMono<Boot>
         AppLog.d("App.Init 1 LuaSys");
         yield return LuaSys.Instance.Init();
 
+        var luamono = Global.GetComponent<LuaMonoBehaviour>() ?? Global.AddComponent<LuaMonoBehaviour>();
+        luamono.SetLua("common/manager-tmp/message_sys");
+
         AppLog.d("App.Init 1 boot");
         GameObject root = null;
         yield return AssetSys.Instance.GetAsset<GameObject>("ui/boot/boot.prefab", obj =>
@@ -22,7 +25,7 @@ public class Boot : SingleMono<Boot>
             root = obj;
         });
         var ui = GameObject.Instantiate(root);
-        var luamono = ui.GetComponent<LuaMonoBehaviour>();
+        luamono = ui.GetComponent<LuaMonoBehaviour>();
         luamono.enabled = true;
     }
 
@@ -33,15 +36,4 @@ public class Boot : SingleMono<Boot>
         StartCoroutine(Init());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        try
-        {
-        }
-        catch(Exception e)
-        {
-            AppLog.e(e);
-        }
-    }
 }

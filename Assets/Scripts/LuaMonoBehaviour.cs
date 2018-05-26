@@ -60,6 +60,8 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         AppLog.d(luaScript.path);
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
+        if(textBytes == null)
+            return false;
 
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
@@ -154,7 +156,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         injections = null;
     }
 
-    void SetLua(string path)
+    public void SetLua(string path)
     {
         CleanLua();
 
@@ -211,6 +213,10 @@ public class LuaMonoBehaviourEditor : Editor
         if(tmpAsset != null && AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID()).EndsWith(".lua"))
             mObj.luaScript.Asset = tmpAsset;
 
+        if(mObj.injections == null)
+        {
+            mObj.injections = new LuaMonoBehaviour.Injection[0];
+        }
         var size = mObj.injections.Length;
         EditorGUILayout.BeginHorizontal ();
         {
@@ -288,11 +294,12 @@ public class LuaMonoBehaviourEditor : Editor
                 luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);
                 File.WriteAllText(luaPath, luaStr);
             }
+        }
 
-            if(mObj.luaTable != null)
-            {
-                mObj.luaTable.Draw();
-            }
+        // lua debug
+        if(mObj.luaTable != null)
+        {
+            mObj.luaTable.Draw();
         }
 
     }
