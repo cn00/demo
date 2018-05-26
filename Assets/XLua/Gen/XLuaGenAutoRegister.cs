@@ -27,6 +27,8 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(UpdateSys), UpdateSysWrap.__Register);
 				
+				translator.DelayWrapLoader(typeof(QRCodeEncodeController), QRCodeEncodeControllerWrap.__Register);
+				
 				translator.DelayWrapLoader(typeof(QRCodeDecodeController), QRCodeDecodeControllerWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(JavaUtil), JavaUtilWrap.__Register);

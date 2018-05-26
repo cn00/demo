@@ -151,7 +151,7 @@ namespace XLua
 #endif
 		}
         
-		public void __Gen_Delegate_Imp5(DataObject p0)
+		public void __Gen_Delegate_Imp5(UnityEngine.Texture2D p0)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -178,7 +178,34 @@ namespace XLua
 #endif
 		}
         
-		public char __Gen_Delegate_Imp6(string p0, int p1, char p2)
+		public void __Gen_Delegate_Imp6(DataObject p0)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.rawL;
+                int err_func =LuaAPI.load_error_func(L, errorFuncRef);
+                ObjectTranslator translator = luaEnv.translator;
+                
+                LuaAPI.lua_getref(L, luaReference);
+                
+                translator.Push(L, p0);
+                
+                int __gen_error = LuaAPI.lua_pcall(L, 1, 0, err_func);
+                if (__gen_error != 0)
+                    luaEnv.ThrowExceptionFromError(err_func - 1);
+                
+                
+                
+                LuaAPI.lua_settop(L, err_func - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public char __Gen_Delegate_Imp7(string p0, int p1, char p2)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -246,14 +273,19 @@ namespace XLua
 			    return new System.Action<UnityEngine.Object>(__Gen_Delegate_Imp4);
 			}
 		
+		    if (type == typeof(System.Action<UnityEngine.Texture2D>))
+			{
+			    return new System.Action<UnityEngine.Texture2D>(__Gen_Delegate_Imp5);
+			}
+		
 		    if (type == typeof(System.Action<DataObject>))
 			{
-			    return new System.Action<DataObject>(__Gen_Delegate_Imp5);
+			    return new System.Action<DataObject>(__Gen_Delegate_Imp6);
 			}
 		
 		    if (type == typeof(UnityEngine.UI.InputField.OnValidateInput))
 			{
-			    return new UnityEngine.UI.InputField.OnValidateInput(__Gen_Delegate_Imp6);
+			    return new UnityEngine.UI.InputField.OnValidateInput(__Gen_Delegate_Imp7);
 			}
 		
 		    return null;

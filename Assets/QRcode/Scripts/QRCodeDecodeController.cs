@@ -57,9 +57,9 @@ public class QRCodeDecodeController : MonoBehaviour
 	void Update()
 	{
 		#if UNITY_EDITOR
-		if (framerate++ % 10== 0) {
+		if (++framerate % 10== 0) {
 		#else
-		if (framerate++ % 8== 0) {
+		if (++framerate % 8== 0) {
 		#endif
 			if (e_DeviceController.isPlaying && !decoding)
 			{

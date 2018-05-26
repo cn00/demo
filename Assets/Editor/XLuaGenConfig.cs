@@ -20,6 +20,7 @@ public static class XLuaGenConfig
     [LuaCallCSharp]
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
+        typeof(QRCodeEncodeController),
         typeof(QRCodeDecodeController),
         typeof(JavaUtil),
         typeof(AppLog),
@@ -68,6 +69,7 @@ public static class XLuaGenConfig
         typeof(Action<string>),
         typeof(Action<double>),
         typeof(Action<UnityEngine.Object>),
+        typeof(Action<UnityEngine.Texture2D>),
         typeof(Action<DataObject>),
         typeof(UnityEngine.Events.UnityAction),
         typeof(System.Collections.IEnumerator),

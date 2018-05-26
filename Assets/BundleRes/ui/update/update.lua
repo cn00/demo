@@ -95,7 +95,9 @@ function update.CheckUpdate()
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
 	    GameObject.DestroyImmediate(loading)
 	    
-	    update.name = "update"
+		update.name = "update"
+		
+		self.Back()
 	end)
 end
 
@@ -107,5 +109,19 @@ function update.Clean()
 		end
 	)
 end
-    
+
+
+function update.Back()
+    asset(coroutine.resume(coroutine.create(function()
+        yield_return(mono:WaitForSeconds(0.3))
+        local obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+            obj = asset
+        end))
+        local gameObj = GameObject.Instantiate(obj)
+
+	    GameObject.DestroyImmediate(mono.gameObject)
+    end)))
+end
+
 return update

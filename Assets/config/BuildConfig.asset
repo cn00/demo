@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   UseBundle: 0
-  LastBuildTime: 131716339726609850
+  LastBuildTime: 131718040184747310
   Version:
     mName: Version
     Major: 1
@@ -26,126 +26,122 @@ MonoBehaviour:
   - mName: chapter_01
     mInclude: 0
     mRebuild: 0
-    mSize: 1731
+    mSize: 1734
     mBundles:
     - mName: chapter_01/level_01.bd
-      mSize: 1731
-      mMd5: 0ABC395E036CF1C16579659312953803
+      mSize: 1734
+      mMd5: 287E47C8336AF62998F48980EAABEDE6
       mVersion: 1.0.0
   - mName: chapter_02
     mInclude: 0
     mRebuild: 0
-    mSize: 1732
+    mSize: 1734
     mBundles:
     - mName: chapter_02/level_01.bd
-      mSize: 1732
-      mMd5: 38A711A101BEBF200CB41B9C70190C21
+      mSize: 1734
+      mMd5: 778B68F7C818D6BE0435445A58555EB0
       mVersion: 1.0.0
   - mName: common
     mInclude: 0
     mRebuild: 0
-    mSize: 12285
+    mSize: 12375
     mBundles:
-    - mName: common/manager.bd
-      mSize: 3771
-      mMd5: CEE1DAA6B6B71116E16021131BEA1806
+    - mName: common/manager.tmp.bd
+      mSize: 3774
+      mMd5: ECE375AB8AA132E646A8DB9D47E4532C
       mVersion: 1.0.0
     - mName: common/ui.bd
-      mSize: 8514
-      mMd5: AF0D25B71854E5E61B18014C388B321E
+      mSize: 8601
+      mMd5: C4BC1470D5F2629D98C2DD969F29B3BB
       mVersion: 1.0.0
   - mName: config
     mInclude: 0
     mRebuild: 0
-    mSize: 3425
+    mSize: 3373
     mBundles:
     - mName: config/config.bd
-      mSize: 3425
-      mMd5: D95F8B882EDB1692DE1BF2A07267F091
+      mSize: 3373
+      mMd5: 9E4DA5D1A18506E39CDBEDDE739BDD5E
       mVersion: 1.0.0
   - mName: lua
     mInclude: 0
     mRebuild: 0
-    mSize: 8627
+    mSize: 8632
     mBundles:
     - mName: lua/table.bd
-      mSize: 1672
-      mMd5: DA62F23DC44C6123124E5C2A5D9A7AD5
+      mSize: 1675
+      mMd5: 142B6DFF5F8820B077BE5ADC5E2C7689
       mVersion: 1.0.0
     - mName: lua/utility.bd
-      mSize: 6955
-      mMd5: 9A1C46C0B7612A2ABAE5519758709540
+      mSize: 6957
+      mMd5: FCC7CB12FD61F33A92FCAFF7CB734710
       mVersion: 1.0.0
   - mName: module.tmp
     mInclude: 0
     mRebuild: 0
-    mSize: 0
+    mSize: 2969736
     mBundles:
     - mName: module.tmp/Materials.bd
       mSize: 0
       mMd5: 
       mVersion: 
     - mName: module.tmp/clothe.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 1936107
+      mMd5: F5BEE4A0047BF185C80B5C9A08EF4FEA
+      mVersion: 1.0.0
     - mName: module.tmp/grid.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 28004
+      mMd5: E7964CF6107B59857D0E99B7D4C73454
+      mVersion: 1.0.0
     - mName: module.tmp/tree02.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 903386
+      mMd5: DB49C83B1E1A52B1BD47A45C3E76169D
+      mVersion: 1.0.0
     - mName: module.tmp/unity_tree.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 100536
+      mMd5: 07A043DD5F52F7B3859D2517ADB76E0F
+      mVersion: 1.0.0
     - mName: module.tmp/water.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 1703
+      mMd5: 5869A05BB12C97F3FFA5593B786B1362
+      mVersion: 1.0.0
   - mName: ui
     mInclude: 0
     mRebuild: 0
-    mSize: 209515
+    mSize: 223954
     mBundles:
     - mName: ui/boot.bd
-      mSize: 3780
-      mMd5: BA972B1BB8FB680F2773A268D9FDA7A3
+      mSize: 3781
+      mMd5: 343C70CD113619CE9DBB0754DF1C3E9D
       mVersion: 1.0.0
     - mName: ui/loading.bd
-      mSize: 89520
-      mMd5: 8E5920FDA5EF2F7A21CD83566C8AA561
+      mSize: 101208
+      mMd5: 582F5C1909CE1009230F5504A8DA9F32
       mVersion: 1.0.0
     - mName: ui/login.bd
-      mSize: 21210
-      mMd5: 5FA6A1D0B887E9D97D05D3BDBBACF215
-      mVersion: 1.0.0
-    - mName: ui/playground.bd
-      mSize: 4765
-      mMd5: 1439C71948F1C8E8C99505D0965A507A
+      mSize: 19758
+      mMd5: 6AAC079DBFAA55039C1A5DD2C839E962
       mVersion: 1.0.0
     - mName: ui/qrcode.bd
-      mSize: 52302
-      mMd5: 03734798551B28BDE32CB77BCE29840E
+      mSize: 65705
+      mMd5: EA753CD93A6B550F67120F2D26322A51
       mVersion: 1.0.0
     - mName: ui/test.bd
-      mSize: 22719
-      mMd5: E7B1DC0145D602D2DF8CD846536FAD55
+      mSize: 18247
+      mMd5: C07E7D8794AD9969E8989D9A185239FA
       mVersion: 1.0.0
     - mName: ui/update.bd
-      mSize: 15219
-      mMd5: 20ED195976AA0DD62264872D92501130
+      mSize: 15258
+      mMd5: A21C919755858EB910AF81117CB51126
       mVersion: 1.0.0
   - mName: video
     mInclude: 0
     mRebuild: 0
-    mSize: 12179
+    mSize: 12102
     mBundles:
     - mName: video/op.bd
-      mSize: 12179
-      mMd5: 40DD4225BB19F7B90C488D4CFB70899E
+      mSize: 12102
+      mMd5: 743D9E4B509452A7F0B99BD95CCC7964
       mVersion: 1.0.0
   mChannels:
   - mName: iOS
@@ -167,11 +163,11 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 3
+    BuildNum: 10
     DefineSymbols: 
-    AndroidBuildType: 0
-    AndroidBuildSystem: 0
-    OptionFlags: 0
+    AndroidBuildType: 1
+    AndroidBuildSystem: 1
+    OptionFlags: 1
     Channel: 2
     iosSim: 0
   mServer:

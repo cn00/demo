@@ -27,15 +27,22 @@ end)
 --AutoGenInit Begin
 function qrcode.AutoGenInit()
     qrcode.DeviceCamera_DeviceCameraController = DeviceCamera:GetComponent("DeviceCameraController")
-    qrcode.QRController_QRCodeDecodeController = QRController:GetComponent("QRCodeDecodeController")
+    qrcode.Decode_QRCodeDecodeController = Decode:GetComponent("QRCodeDecodeController")
     qrcode.Back_Button = Back:GetComponent("UnityEngine.UI.Button")
+    qrcode.Encode_QRCodeEncodeController = Encode:GetComponent("QRCodeEncodeController")
+    qrcode.EncodeImage_RectTransform = EncodeImage:GetComponent("UnityEngine.RectTransform")
+    qrcode.EncodeImage_RawImage = EncodeImage:GetComponent("UnityEngine.UI.RawImage")
+    qrcode.DecodeResult_Text = DecodeResult:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
 
 function qrcode.Awake()
     self.AutoGenInit()
 
-    self.QRController_QRCodeDecodeController:onQRScanFinished('+', self.OnScanResult)
+    self.Decode_QRCodeDecodeController:onQRScanFinished('+', self.OnScanResult)
+    self.Encode_QRCodeEncodeController:onQREncodeFinished('+', function(tex)
+        self.EncodeImage_RawImage.texture = tex
+    end)
 
 	self.Back_Button.onClick:AddListener(
 		function()
@@ -51,9 +58,10 @@ end
 function qrcode.Start()
     print("qrcode.Start")
 
-    self.QRController_QRCodeDecodeController:StartWork()
+    self.Decode_QRCodeDecodeController:StartWork()
 
     --assert(coroutine.resume(qrcode.coroutine_demo()))
+    self.OnScanResult("http://cn.test.qrcode")
 
 end
 
@@ -76,9 +84,12 @@ end
 
 function qrcode.OnScanResult(strResult)
     print("ScanResult: " .. strResult)
+    self.DecodeResult_Text.text = strResult
     if #strResult > 7 then -- http://
-        assert(coroutine.resume(self.Back()))
+        -- assert(coroutine.resume(self.Back()))
+        self.Encode_QRCodeEncodeController:Encode(strResult)
     end
+    self.Decode_QRCodeDecodeController:StartWork()
 end
 
 
