@@ -37,6 +37,14 @@ sysinfo.txt
 *.ipa
 *.unitypackage
 
+*-tmp
+*-tmp.*
+*-bak
+*-bak.*
+*_tmp
+*_tmp.*
+*_bak
+*_bak.*
 *.tmp
 *.tmp.*
 *.bak
