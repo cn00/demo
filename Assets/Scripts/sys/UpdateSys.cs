@@ -108,6 +108,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             if(string.IsNullOrEmpty(www.error))
             {
                 mLocalManifest = YamlHelper.Deserialize<BundleManifest>(www.text);
+                AppLog.d("LocalManifest: \n" + www.text);
             }
             else
             {
@@ -139,6 +140,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         //AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
         var s = outStream.GetBuffer().Utf8String();
+        AppLog.d("RemoteManifest: \n" + s);
         mRemoteManifest = YamlHelper.Deserialize<BundleManifest>(s);
         outStream.Dispose();
         yield return null;
@@ -208,15 +210,12 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Diff()
     {
-        var rbundles = mRemoteManifest;
-        var lbundles = mLocalManifest;
-        foreach(var r in rbundles)
+         foreach(var r in mRemoteManifest)
         {
-            foreach (var l in lbundles)
+            var l = mLocalManifest.Find(i => i.Name == r.Name);
+            if(l == null || l.Md5 != r.Md5 )
             {
-                if(l.Md5 == r.Md5)
-                    continue;
-                AppLog.d("diff: {0}:[{1}]", r.Name, r.Md5);
+                AppLog.d("diff: {0}:[{1} {2}]", r.Name, r.Md5, (l != null ? l.Md5 : ""));
                 mDiffList.Add(r);
             }
         }
