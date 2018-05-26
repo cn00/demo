@@ -416,7 +416,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1227555777502032}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 13.4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0024139, y: 1, z: 0.61747277}
   m_Children: []
   m_Father: {fileID: 4483345027090898}
@@ -429,7 +429,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1176052651469410}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -354.5, y: -266, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4437970159027270}
@@ -1164,7 +1164,7 @@ MonoBehaviour:
   e_QRCodeWidth: 400
   e_QRCodeHeight: 400
   eCodeFormat: 0
-  e_QRLogoTex: {fileID: 2800000, guid: af254f3e659fd4b019256f0dc2bc0c06, type: 3}
+  e_QRLogoTex: {fileID: 2800000, guid: d23340002af996a42821749d057f67cd, type: 3}
   e_EmbedLogoRatio: 0.15
 --- !u!114 &114996528983261380
 MonoBehaviour:
