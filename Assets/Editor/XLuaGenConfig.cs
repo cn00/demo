@@ -27,6 +27,7 @@ public static class XLuaGenConfig
         typeof(SQLite3),
         typeof(ScreenCapture),
         typeof(System.Text.Encoding),
+        typeof(System.Convert),
         typeof(System.Object),
         typeof(UnityEngine.Object),
         typeof(Vector2),

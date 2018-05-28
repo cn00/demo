@@ -29,6 +29,7 @@
 
 	<assembly fullname="mscorlib">
 	    <type fullname="System.Text.Encoding" preserve="all"/>
+		<type fullname="System.Convert" preserve="all"/>
 		<type fullname="System.Object" preserve="all"/>
 		<type fullname="System.Collections.Generic.List`1[System.Int32]" preserve="all"/>
 		

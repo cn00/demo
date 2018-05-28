@@ -41,6 +41,8 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(System.Text.Encoding), SystemTextEncodingWrap.__Register);
 				
+				translator.DelayWrapLoader(typeof(System.Convert), SystemConvertWrap.__Register);
+				
 				translator.DelayWrapLoader(typeof(object), SystemObjectWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(UnityEngine.Object), UnityEngineObjectWrap.__Register);
