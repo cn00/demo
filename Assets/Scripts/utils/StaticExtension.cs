@@ -23,10 +23,7 @@ public static class NpoiExtension
                 svalue = cell.NumericCellValue.ToString();
                 break;
             case CellType.String:
-                svalue = "\"" + cell.StringCellValue
-                    .Replace("\n", "\\n")
-                    .Replace("\t", "\\t")
-                    .Replace("\"", "\\\"") + "\"";
+                svalue = cell.StringCellValue;
                 break;
             case CellType.Formula:
                 svalue = cell.SValue(cell.CachedFormulaResultType);
@@ -44,6 +41,14 @@ public static class NpoiExtension
                 break;
         }
         return svalue;
+    }
+    
+    public static string SafeSValue(this ICell self, CellType? FormulaResultType = null)
+    {
+        return self.SValue()
+                .Replace("\n", "\\n")
+                .Replace("\t", "\\t")
+                .Replace("\"", "\\\"");
     }
 }
 
