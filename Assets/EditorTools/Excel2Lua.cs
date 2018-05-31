@@ -4,7 +4,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
-using System.IO;
+using System.IO;//wfExcel
 using System.Text;
 using System.Collections.Generic;
 
@@ -23,7 +23,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         public bool Rebuild = false;
     }
 
-    [MenuItem("Tools/Create Excel2Lua.asset")]
+    [MenuItem("Tools/Create/Excel2Lua.asset")]
     public static void Create()
     {
         mInstance = null;
@@ -64,7 +64,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
                 for (int j = 0; j < row.LastCellNum; ++j)
                 {
                     var cell = row.GetCell(j) ?? row.CreateCell(j);
-                    body += cell.SValue() + ",\t";
+                    body += cell.SafeSValue() + ",\t";
                 }
                 body += "},";
             }

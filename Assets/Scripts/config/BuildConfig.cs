@@ -301,7 +301,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         get { return mChannels == null ? (mChannels = new List<ChannelConfig>()) : mChannels; }
     }
 
-    [MenuItem("Tools/Create BundleConfig.asset")]
+    [MenuItem("Tools/Create/BundleConfig.asset")]
     public static BuildConfig Create()
     {
         mInstance = null;

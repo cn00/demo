@@ -60,7 +60,12 @@ public class InspectorDraw : object
                         i.SetValue(obj, tmp);
                     }
                 }
-                else if (v is int || v is uint || v is long)
+                else if (v is int || v is uint )
+                {
+                    var tmp = EditorGUILayout.IntField(i.Name, (int)v);
+                    i.SetValue(obj, tmp);
+                }
+                else if ( v is long)
                 {
                     if (i.Name.ToLower().Contains("time"))
                     {
@@ -68,7 +73,7 @@ public class InspectorDraw : object
                     }
                     else
                     {
-                        var tmp = EditorGUILayout.IntField(i.Name, (int)v);
+                        var tmp = EditorGUILayout.LongField(i.Name, (long)v);
                         i.SetValue(obj, tmp);
                     }
                 }
@@ -136,6 +141,33 @@ public class InspectorDraw : object
                     }
                     --EditorGUI.indentLevel;
                 }
+                else if (v is List<object>)
+                {
+                    EditorGUILayout.LabelField(i.Name);
+                    ++EditorGUI.indentLevel;
+                    var l = v as List<object>;
+                    var size = l.Count;
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        EditorGUILayout.LabelField("Size");
+                        size = EditorGUILayout.DelayedIntField(size);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    if (size < l.Count)
+                    {
+                        l.RemoveRange(size, l.Count - size);
+                    }
+                    else if (size > l.Count)
+                    {
+                        for (var i2 = l.Count; i2 < size; ++i2)
+                            l.Add(new object());
+                    }
+                    for (var idx = 0; idx < l.Count; ++idx)
+                    {
+                        DrawObj(l[idx]); ;
+                    }
+                    --EditorGUI.indentLevel;
+                }
                 else if (v is string[])
                 {
                     EditorGUILayout.LabelField(i.Name);
@@ -159,7 +191,8 @@ public class InspectorDraw : object
         }
     }
 
-    protected bool FoldOut = false;
+    protected bool mFoldOut = false;
+    public bool FoldOut{get{return mFoldOut;} set{mFoldOut = value;}}
     public virtual void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         if (FoldOut)

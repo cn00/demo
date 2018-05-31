@@ -98,7 +98,7 @@ public class DllCompile : SingletonAsset<DllCompile>
         AssetDatabase.ImportAsset(info.OutPath);
     }
 
-    [MenuItem("Tools/Create DllCompile.asset")]
+    [MenuItem("Tools/Create/DllCompile.asset")]
     public static void Create()
     {
         mInstance = null;
