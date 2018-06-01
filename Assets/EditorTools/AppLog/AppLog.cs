@@ -6,79 +6,36 @@
 
 using System;
 using System.Net;
-using UnityEngine;
-using DebugSocket;
 using System.Text;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-public static class StringExternsion
-{
-    public static byte[] Utf8Bytes(this string self)
-    {
-        return Encoding.UTF8.GetBytes(self);
-    }
-    public static byte[] DefaultBytes(this string self)
-    {
-        return Encoding.Default.GetBytes(self);
-    }
-
-    public static string RReplace(this string self, string pattern, string replacement)
-    {
-        return Regex.Replace(self, pattern, replacement);
-    }
-}
+using UnityEngine;
 
 public static class AppLog
 {
+    public class OnMessageReceivedHandler : EventArgs
+    {
+        public string Message;
+
+        public OnMessageReceivedHandler(string msg)
+        {
+            Message = msg;
+        }
+    }
+
     public static string TAG = "[game]";
 
     public static int Port = 7788;
 
     public static bool isEditor = false;
 
-    static DebugSocket.Server mDebugServer = null;
-    public static DebugSocket.Server DebugServer
-    {
-        get
-        {
-            if (Application.isEditor)
-                Port = 8899;
-            if(mDebugServer == null)
-            {
-                // Create a listen server on localhost with port 80
-                Server server = new Server(new IPEndPoint(IPAddress.Any, Port));
-                mDebugServer = server;
-                server.OnClientConnected += (object sender, OnClientConnectedHandler e) =>
-                {
-                    //Console.WriteLine("Client with GUID: {0} Connected!", e.GetClient().GetGuid());
-                    server.SendCacheMessage(e.GetClient());
-                };
-
-                server.OnClientDisconnected += (object sender, OnClientDisconnectedHandler e) =>
-                {
-                    Console.WriteLine("Client {0} Disconnected", e.GetClient().GetGuid());
-                };
-
-                server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
-                {
-                    //Console.WriteLine("Received Message: '{1}' from client: {0}", e.GetClient().GetGuid(), e.GetMessage());
-                        server.BroadcastMessage(Encoding.UTF8.GetBytes(string.Format("{0}:\n\t{1}", e.GetClient().GetGuid(), e.GetMessage())), e.GetClient());
-                };
-
-                server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
-                {
-                    //Console.WriteLine("Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
-                };
-            }
-            return mDebugServer;
-        }
-    }
+    public static event EventHandler<OnMessageReceivedHandler> OnMessageReceived;
 
     static void BroadcastMessage(string msg)
     {
-        if(!Application.isEditor)
-            DebugServer.BroadcastMessage(msg);
+        if(OnMessageReceived != null)
+            OnMessageReceived(null, new OnMessageReceivedHandler(msg));
     }
 
     //[Conditional("USE_LOG")]
