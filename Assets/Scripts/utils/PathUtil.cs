@@ -14,6 +14,7 @@ public static class PathUtils
     public const string ObjectRegex = "(.asset$|.prefab$)";
     public const string UserTextRegex = "(.lua$|.sql$)";
     public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.sql$|.bytes$)";
+    public const string ExcelRegex = "(.xls$|.xlsx$)";
     public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
     #endregion const
 
@@ -84,6 +85,11 @@ public static class PathUtils
     public static bool IsText(this string self)
     {
         var matches = Regex.Matches(self, TextRegex);
+        return matches.Count > 0;
+    }
+    public static bool IsExcel(this string self)
+    {
+        var matches = Regex.Matches(self, ExcelRegex);
         return matches.Count > 0;
     }
 }

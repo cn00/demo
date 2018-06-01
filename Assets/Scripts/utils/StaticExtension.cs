@@ -8,6 +8,8 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Reflection;
+
 public static class NpoiExtension
 {
     public static string SValue(this ICell cell, CellType? FormulaResultType = null)
@@ -63,6 +65,11 @@ public static class CollectionExtensions
     // {
     //     return self.Select(item => (T)item.Clone()).ToList();
     // }
+
+    public static string Dump(this object self)
+    {
+        return JsonUtility.ToJson(self);
+    }
 }
 
 public static class RectExtension
