@@ -141,6 +141,10 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     public bool UseBundle = false;
 
+    //runInBackground
+    [HideInInspector, SerializeField]
+    public bool runInBackground = false;
+
     [SerializeField, HideInInspector]
     public long LastBuildTime = 0L;
 
@@ -508,6 +512,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 GUILayout.Width(30),
                 GUILayout.ExpandWidth(true),
             };
+
+            mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
 
             mTarget.Version.Draw(0, guiOpts);
 
