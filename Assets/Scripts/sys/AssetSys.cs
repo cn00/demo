@@ -114,6 +114,11 @@ public static class BundleHelper
         return md5str;
     }
 
+    public static string Base64(byte[] bytes)
+    {
+        return System.Convert.ToBase64String(bytes);
+    }
+
     public static void DecompressFileLZMA(string inFile, string outFile)
     {
         FileStream input = new FileStream(inFile, FileMode.Open);
@@ -182,20 +187,20 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 var cacheDirName = "AssetBundle/";
 #if UNITY_EDITOR
-#if UNITY_IOS
+#   if UNITY_IOS
                 cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
-#elif UNITY_ANDROID
+#   elif UNITY_ANDROID
                 cacheDirName += PlatformName(RuntimePlatform.Android) + "/";
-#else
+#   else
                 cacheDirName += PlatformName(Application.platform) + "/";
-#endif
+#   endif
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #else //!UNITY_EDITOR
-#if UNITY_ANDROID || UNITY_IPHONE
+#   if UNITY_ANDROID || UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
-#else // UNITY_WINDOWS
+#   else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
-#endif
+#   endif
 #endif
             }
             return mCacheRoot;
@@ -212,16 +217,12 @@ public class AssetSys : SingleMono<AssetSys>
         {
             if(string.IsNullOrEmpty(mHttpRoot))
             {
-				mHttpRoot = BuildConfig.Instance ().ServerRoot;// "http://10.23.114.141:8008/";
-// #if UNITY_ANDROID
-//                 mHttpRoot += PlatformName(RuntimePlatform.Android);
-// #elif UNITY_IPHONE
-//                 mHttpRoot += PlatformName(RuntimePlatform.IPhonePlayer);
-// #elif UNITY_WINDOWS
-//                 mHttpRoot += PlatformName(RuntimePlatform.WindowsPlayer);
-// #else
+				mHttpRoot = BuildConfig.Instance ().ServerRoot;
+#if UNITY_EDITOR
+                mHttpRoot += BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
+#else
                 mHttpRoot += PlatformName(Application.platform);
-// #endif
+#endif
                 mHttpRoot += "/";
             }
             return mHttpRoot;
@@ -317,18 +318,19 @@ public class AssetSys : SingleMono<AssetSys>
 
 #if UNITY_EDITOR
             string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
-                // "iOS";// dirs[0] + '/' + dirs[0];
+            // "iOS";// dirs[0] + '/' + dirs[0];
 #else
             string manifestBundleName = PlatformName(Application.platform);
 #endif
+            AppLog.d("load manifest: " + manifestBundleName);
             yield return GetBundle(manifestBundleName, (bundle) =>
             {
                 var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 mManifest = manifext;
             });
-            AppLog.d("load <Color=red>manifest</Color>: " + manifestBundleName);
 
             string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+            AppLog.d("from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) =>
             {
                 // text
@@ -345,13 +347,13 @@ public class AssetSys : SingleMono<AssetSys>
                     resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
                 }
             });
-            AppLog.d("from <Color=green>bundle</Color> : " + assetSubPath);
         }
 #if UNITY_EDITOR
         // 编辑器从原始文件加载资源
         else
         {
             // text
+            AppLog.d("from file: " + assetSubPath);
             if(assetSubPath.IsText())
             {
                 resObj = new DataObject(File.ReadAllBytes(BuildConfig.BundleResRoot + assetSubPath));
@@ -360,7 +362,6 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
             }
-            AppLog.d("from <Color=green>file</Color>: " + assetSubPath);
         }
 #endif
         if(callBack != null)
@@ -380,6 +381,10 @@ public class AssetSys : SingleMono<AssetSys>
         {
             var cachePath = CacheRoot + "/" + bundlePath;
             bundle = AssetBundle.LoadFromFile(cachePath);
+            if(bundle == null)
+            {
+                bundle = Resources.Load<AssetBundle>(bundlePath);
+            }
             mLoadedBundles[bundlePath] = bundle;
             AppLog.w("GetBundleSync: {0}", bundlePath);
         }
