@@ -38,7 +38,6 @@ namespace XLua.CSObjectWrap
             
 			
             
-			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "DebugServer", _g_get_DebugServer);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "TAG", _g_get_TAG);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "Port", _g_get_Port);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "isEditor", _g_get_isEditor);
@@ -209,18 +208,6 @@ namespace XLua.CSObjectWrap
         
         
         
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_DebugServer(RealStatePtr L)
-        {
-		    try {
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			    translator.Push(L, AppLog.DebugServer);
-            } catch(System.Exception __gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
-            }
-            return 1;
-        }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _g_get_TAG(RealStatePtr L)
