@@ -15,11 +15,11 @@ public class SheetStruct : InspectorDraw
 {
     public ISheet Sheet { get; set; }
 
-    [Range(0, 99999999)]
     public uint RowIdxA = 1;
+    public uint ColumnIdxA = 0;
 
-    [Range(0, 99999999)]
     public uint RowPerPage = 10;
+    public uint ColumnPerPage = 5;
     public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         base.DrawInspector();
@@ -33,14 +33,15 @@ public class SheetStruct : InspectorDraw
         if (GUI.Button(rect.Split(++idx, sn), "PageUp"))
         {
             RowIdxA -= RowPerPage;
+            RowIdxA = (int)RowIdxA < 0 ? 0 : RowIdxA;
         }
 
         var head = Sheet.Row(0);
-        head.Draw(guiOpts);
+        head.Draw((int)ColumnIdxA,  (int)(ColumnIdxA + ColumnPerPage), guiOpts);
         var Rows = Sheet.Rows((int)RowIdxA, (int)(RowIdxA + RowPerPage));
         foreach (var r in Rows)
         {
-            r.Draw(0, head.Count(), guiOpts);
+            r.Draw((int)ColumnIdxA, (int)(ColumnIdxA + ColumnPerPage), guiOpts);
         }
     }
 }
