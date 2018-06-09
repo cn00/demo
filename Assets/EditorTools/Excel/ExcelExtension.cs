@@ -6,8 +6,11 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using UnityEngine;
 
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 public static class ExcelUtils
 {
@@ -35,7 +38,7 @@ public static class ExcelUtils
 
     public static IWorkbook Open(string path)
     {
-        AppLog.d(path);
+        // AppLog.d(path);
         var stream = new FileStream(path, FileMode.Open);
         stream.Position = 0;
         IWorkbook inbook = null;
@@ -97,6 +100,30 @@ public static class ExcelUtils
         return -1;
     }
 
+    public static void Draw(this IRow self, GUILayoutOption[] guiOpts = null)
+    {
+        self.Draw(0, self.Count(), guiOpts);
+    }
+    public static void Draw(this IRow self, int begin = 0, int end = 0x7fffffff, GUILayoutOption[] guiOpts = null)
+    {
+        EditorGUILayout.BeginHorizontal();
+        {
+            var width = 25;
+            if(self.Cell(0).RowIndex > 999)
+                width = 30;
+            EditorGUILayout.LabelField((self.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
+            {
+                    GUILayout.Width(width),
+                    GUILayout.ExpandWidth(false),
+            });
+            for (var i = begin; i < end; ++i)
+            {
+                self.Cell(i).Draw(null, guiOpts);
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
     public static IRow Row(this ISheet self, int i)
     {
         var t = self.GetRow(i);
@@ -104,6 +131,17 @@ public static class ExcelUtils
             t = self.CreateRow(i);
         return t;
     }
+
+    public static List<IRow> Rows(this ISheet self, int begin, int end)
+    {
+        var t = new List<IRow>();
+        for(var i = begin; i < end; ++i)
+        {
+            t.Add(self.Row(i));
+        }
+        return t;
+    }
+
     public static ICell Cell(this IRow self, int i)
     {
         var t = self.GetCell(i);
@@ -114,6 +152,37 @@ public static class ExcelUtils
     public static ICell Cell(this ISheet sheet, int i, int j)
     {
         return sheet.Row(i).Cell(j);
+    }
+
+    public static void Draw(this ICell self, CellType? FormulaResultType = null, GUILayoutOption[] guiOpts = null)
+    {
+        var cellType = FormulaResultType ?? self.CellType;
+        switch (cellType)
+        {
+            case CellType.Unknown:
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SafeSValue(), guiOpts));
+                break;
+            case CellType.Numeric:
+                self.SetCellValue(EditorGUILayout.DelayedDoubleField(self.NumericCellValue, guiOpts));
+                break;
+            case CellType.String:
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.StringCellValue, guiOpts));
+                break;
+            case CellType.Formula:
+                EditorGUILayout.LabelField(self.SValue() + "=" + self.CellFormula, guiOpts);
+                break;
+            case CellType.Blank:
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.StringCellValue, guiOpts));
+                break;
+            case CellType.Boolean:
+                self.SetCellValue(EditorGUILayout.Toggle(self.BooleanCellValue, guiOpts));
+                break;
+            case CellType.Error:
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SafeSValue(), guiOpts));
+                break;
+            default:
+                break;
+        }
     }
 
 }

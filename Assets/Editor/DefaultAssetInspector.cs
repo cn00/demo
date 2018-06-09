@@ -13,41 +13,73 @@ using System.Text.RegularExpressions;
 
 public class SheetStruct : InspectorDraw
 {
-    public List<IRow> Rows = new List<IRow>();
+    public ISheet Sheet { get; set; }
+
+    [Range(0, 99999999)]
+    public uint RowIdxA = 1;
+
+    [Range(0, 99999999)]
+    public uint RowPerPage = 10;
     public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         base.DrawInspector();
+        var rect = EditorGUILayout.GetControlRect();
+        var sn = 5;
+        var idx = -1;
+        if (GUI.Button(rect.Split(++idx, sn), "PageDown"))
+        {
+            RowIdxA += RowPerPage;
+        }
+        if (GUI.Button(rect.Split(++idx, sn), "PageUp"))
+        {
+            RowIdxA -= RowPerPage;
+        }
 
-        var MaxSheetPreviewLength = DefaultAssetConfig.Instance().MConfig.MaxSheetPreviewLength;
+        var head = Sheet.Row(0);
+        head.Draw(guiOpts);
+        var Rows = Sheet.Rows((int)RowIdxA, (int)(RowIdxA + RowPerPage));
         foreach (var r in Rows)
         {
-            EditorGUILayout.BeginHorizontal();
-            {
-                for (var i = 0; i < r.LastCellNum; ++i)
-                {
-                    EditorGUILayout.LabelField(r.Cell(i).SafeSValue(), guiOpts);
-                }
-            }
-            EditorGUILayout.EndHorizontal();
+            r.Draw(0, head.Count(), guiOpts);
         }
     }
 }
 
 public class BookStruct : InspectorDraw
 {
+    public IWorkbook Book {get; set;}
     public List<SheetStruct> Sheets = new List<SheetStruct>();
     public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         base.DrawInspector();
+        var rect = EditorGUILayout.GetControlRect();
+        var sn = 5;
+        var idx = -1;
+        if (GUI.Button(rect.Split(++idx, sn), "Save"))
+        {
+            Book.Write(Name);
+        }
 
         guiOpts = new GUILayoutOption[]
         {
                 GUILayout.Width(30),
                 GUILayout.ExpandWidth(true),
         };
-        foreach (var r in Sheets)
+        foreach (var s in Sheets)
         {
-            r.Draw(0, guiOpts);
+            s.Draw(0, guiOpts);
+        }
+
+        if(GUI.changed)
+        {
+            if (Book is XSSFWorkbook)
+            {
+                XSSFFormulaEvaluator.EvaluateAllFormulaCells(Book);
+            }
+            else
+            {
+                HSSFFormulaEvaluator.EvaluateAllFormulaCells(Book);
+            }
         }
     }
 }
@@ -62,16 +94,16 @@ public partial class DefaultAssetInspector : Editor
         assetPath = AssetDatabase.GetAssetPath(target);
         if (assetPath.IsExcel())
         {
+            var book = ExcelUtils.Open(assetPath);
             var tmp = new BookStruct(){FoldOut = true};
             tmp.Name = assetPath;
-            var excel = ExcelUtils.Open(assetPath);
+            tmp.Book = book;
             var MaxSheetPreviewLength = DefaultAssetConfig.Instance().MConfig.MaxSheetPreviewLength;
-            foreach(var sheet in excel.AllSheets())
+            foreach(var sheet in book.AllSheets())
             {
                 var ss = new SheetStruct(){FoldOut = true };
                 ss.Name = sheet.SheetName;
-                for(var i = 0; i < sheet.LastRowNum && i < MaxSheetPreviewLength; ++i)
-                    ss.Rows.Add(sheet.Row(i));
+                ss.Sheet = sheet;
                 tmp.Sheets.Add(ss);
             }
             mTarget = tmp;

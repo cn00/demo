@@ -10,6 +10,10 @@ using UnityEngine;
 
 using System.Reflection;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
+
 public static class NpoiExtension
 {
     public static string SValue(this ICell cell, CellType? FormulaResultType = null)
@@ -19,7 +23,7 @@ public static class NpoiExtension
         switch (cellType)
         {
             case CellType.Unknown:
-                svalue = "nil";
+                svalue = "Unknown";
                 break;
             case CellType.Numeric:
                 svalue = cell.NumericCellValue.ToString();
@@ -31,20 +35,19 @@ public static class NpoiExtension
                 svalue = cell.SValue(cell.CachedFormulaResultType);
                 break;
             case CellType.Blank:
-                svalue = "nil";
+                svalue = "";
                 break;
             case CellType.Boolean:
                 svalue = cell.BooleanCellValue.ToString();
                 break;
             case CellType.Error:
-                svalue = "nil";
+                svalue = "Error";
                 break;
             default:
                 break;
         }
         return svalue;
     }
-    
     public static string SafeSValue(this ICell self, CellType? FormulaResultType = null)
     {
         return self.SValue()
