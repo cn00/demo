@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System;
+using System.Linq;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -74,6 +75,13 @@ public class NetSys : SingleMono<NetSys>
             m_debugServer.Stop();
     }
 
+    public void BroadcastAddressLoop()
+    {
+        var endpoint = new IPEndPoint(IPAddress.Broadcast, DebugListenPort);
+        var ips = LocalIpAddressStr().Aggregate((i, j) => i.ToString() + "=" + j.ToString());
+        SendGameMessage(null, endpoint);
+    }
+
     public void StartGameUdpServer(int port)
     {
         var endpoint = new IPEndPoint(IPAddress.Any, port);
@@ -124,6 +132,7 @@ public class NetSys : SingleMono<NetSys>
             // System.Threading.Thread.Sleep(1);
         }
     }
+
     public void SendDebugMessage(object sender, AppLog.OnMessageReceivedHandler e)
     {
         m_debugServer.BroadcastMessage(e.Message);
@@ -159,6 +168,32 @@ public class NetSys : SingleMono<NetSys>
 		};
 
         m_debugServer = server;
-        
+
     }
+
+    public static IPAddress[] LocalIpAddress()
+    {
+        var hostname = Dns.GetHostName();
+        if (!hostname.EndsWith(".local"))
+            hostname = hostname + ".local";
+
+        IPHostEntry ipHost = Dns.GetHostEntry(hostname);
+
+        var s = ipHost.AddressList
+            .Select(i => i.ToString())
+            .Aggregate((i,j) => i.ToString() + "=" + j.ToString());
+        AppLog.d("{0}: {1}", hostname, s);
+
+        return ipHost.AddressList;
+    }
+    public static string[] LocalIpAddressStr()
+    {
+        return LocalIpAddress().Select(i => i.ToString()).ToArray();
+    }
+
+    public static List<string> LocalIpAddressStrList()
+    {
+        return LocalIpAddressStr().ToList();
+    }
+
 }

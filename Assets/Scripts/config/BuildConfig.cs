@@ -316,19 +316,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public AssetBundleServer.Server mServer = new AssetBundleServer.Server() { Name = "BundleServer" };
     static string LocalIpAddress()
     {
-        var hostname = Dns.GetHostName();
-        if (!hostname.EndsWith(".local"))
-            hostname = hostname + ".local";
-
-        IPHostEntry ipHost = Dns.GetHostEntry(hostname);
-        string s = "";
-        foreach (var i in ipHost.AddressList)
-        {
-            s += "=" + i.ToString();
-        }
-        AppLog.d("hostname={0}{1}", hostname, s);
-
-        IPAddress ipAddress = ipHost.AddressList[0];
+        IPAddress ipAddress = NetSys.LocalIpAddress()[0];
         var strLocalIP = ipAddress.ToString();
         return strLocalIP;
     }
