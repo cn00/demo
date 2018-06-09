@@ -60,10 +60,16 @@ public class InspectorDraw : object
                         i.SetValue(obj, tmp);
                     }
                 }
-                else if (v is int || v is uint )
+                else if (v is int)
                 {
                     var tmp = EditorGUILayout.IntField(i.Name, (int)v);
                     i.SetValue(obj, tmp);
+                }
+                else if(v is uint)
+                {
+                    int vv = Convert.ToInt32(v);
+                    var tmp = EditorGUILayout.IntField(i.Name, vv);
+                    i.SetValue(obj, (uint)(tmp < 0 ? 0 : tmp));
                 }
                 else if ( v is long)
                 {
