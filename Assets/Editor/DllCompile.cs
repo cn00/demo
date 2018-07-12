@@ -1,11 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Reflection;
@@ -21,14 +21,36 @@ public class DllCompile : SingletonAsset<DllCompile>
         // public string mName = ".dll";
         // public string Name { get { return mName; } set { mName = value; } }
 
-        public string Defineds = "UNITY_DLL";
+        [SerializeField]
+        public List<string> Defineds = new List<string>()
+        {
+            "UNITY_DLL",
+        };
 
         public string OutPath = ".";
 
         public string SourceDir = "";
 
+        public bool KeepMdb = false;
+
         [SerializeField]
-        public List<string> References = new List<string>();
+        public List<string> LibSearchingPath = new List<string>(){
+            "MonoBleedingEdge/lib/mono/4.5/",
+            "Managed/",
+#if UNITY_EDITOR_WIN32
+            AppDomain.CurrentDomain.BaseDirectory + "/Data/MonoBleedingEdge/lib/mono/4.5/",
+            AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/",
+#endif
+            // AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/",
+            // AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/",
+        };
+
+        [SerializeField]
+        public List<string> References = new List<string>()
+        {
+            "UnityEngine.dll",
+            "UnityEditor.dll"
+        };
 
         public Config clone()
         {
@@ -81,20 +103,35 @@ public class DllCompile : SingletonAsset<DllCompile>
     {
         AppLog.d("{0}: {1}", info.Name, info.OutPath);
         var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
-        var reference = info.References.Clone();
-#if UNITY_MACOSX
-        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/UnityEngine.dll");
-        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/UnityEditor.dll");
-#elif UNITY_WIN32
-        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/UnityEngine.dll");
-        reference.Add(AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/UnityEditor.dll");
+
+        var reference = new List<string>(); //info.References.Clone();
+#if UNITY_EDITOR_OSX
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/";
+#elif UNITY_EDITOR_WIN32
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/";
 #endif
-        var msgs = EditorUtility.CompileCSharp(sources, reference.ToArray(), info.Defineds.Split(';'), info.OutPath);
+        foreach (var i in info.LibSearchingPath)
+        {
+            foreach (var j in info.References)
+            {
+                var path = baseDir + i + j;
+                if(File.Exists(path))
+                {
+                    reference.Add(path);
+                    break;
+                }
+            }
+        } 
+
+        var monoversion = PlayerSettings.scriptingRuntimeVersion;
+        var apilevel = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup);
+        var msgs = EditorUtility.CompileCSharp(sources, reference.ToArray(), info.Defineds.ToArray(), info.OutPath);
         foreach (var msg in msgs)
         {
-            AppLog.d(msg);
+            AppLog.d("CompileCSharp: " + msg);
         }
-        File.Delete(info.OutPath + ".mdb");
+        if(!info.KeepMdb)
+            File.Delete(info.OutPath + ".mdb");
         AssetDatabase.ImportAsset(info.OutPath);
     }
 
@@ -129,10 +166,20 @@ public class DllCompile : SingletonAsset<DllCompile>
                 var tmpDir = AssetDatabase.GetAssetPath(Instance().PathGetterObj.GetInstanceID());
                 EditorGUILayout.SelectableLabel(tmpDir);
             }
+            var rect = EditorGUILayout.GetControlRect();
+            if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
+            {
+#if UNITY_EDITOR_OSX
+                var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
+#elif UNITY_EDITOR_WIN32
+                var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
+#endif
+                File.Copy("doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
+            }
 
             // //BaseDirectory: /Applications/Unity-2017.4.1f1
             // EditorGUILayout.SelectableLabel("BaseDirectory: "+ AppDomain.CurrentDomain.BaseDirectory);
-            
+
             // //Location: /Users/a3/.jenkins/workspace/unity_test/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
             // EditorGUILayout.SelectableLabel("Location: " + System.Reflection.Assembly.GetExecutingAssembly().Location);
 

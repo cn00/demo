@@ -13,8 +13,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bundles:
   - mName: AppLog.dll
-    Defineds: UNITY_DLL
+    Defineds:
+    - UNITY_DLL
     OutPath: Assets/Plugins/AppLog.dll
     SourceDir: Assets/EditorTools/AppLog
-    References: []
+    KeepMdb: 0
+    LibSearchingPath:
+    - MonoBleedingEdge/lib/mono/4.5/
+    - Managed/
+    References:
+    - UnityEngine.dll
+    - UnityEditor.dll
+    - mscorlib.dll
   PathGetterObj: {fileID: 102900000, guid: 7ea2164b726e04028ab0792784a81e13, type: 3}
