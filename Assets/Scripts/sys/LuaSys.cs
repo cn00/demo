@@ -85,6 +85,10 @@ public class LuaSys : SingleMono<LuaSys>
 
 #if UNITY_EDITOR
     [InitializeOnLoadMethod]
+    public static void InitEditor()
+    {
+
+    }
 #endif
     public override IEnumerator Init()
     {
