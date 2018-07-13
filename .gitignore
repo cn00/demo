@@ -65,3 +65,6 @@ bin/
 
 Assets/BundleRes/config*
 Assets/Resources/config*
+
+and.proj*
+ios.proj*

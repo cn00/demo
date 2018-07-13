@@ -106,6 +106,7 @@ public static class ExcelUtils
     }
     public static void Draw(this IRow self, int begin = 0, int end = 0x7fffffff, GUILayoutOption[] guiOpts = null)
     {
+        #if UNITY_EDITOR
         EditorGUILayout.BeginHorizontal();
         {
             var width = 25;
@@ -122,6 +123,7 @@ public static class ExcelUtils
             }
         }
         EditorGUILayout.EndHorizontal();
+        #endif
     }
 
     public static IRow Row(this ISheet self, int i)
@@ -156,6 +158,7 @@ public static class ExcelUtils
 
     public static void Draw(this ICell self, CellType? FormulaResultType = null, GUILayoutOption[] guiOpts = null)
     {
+        #if UNITY_EDITOR
         var cellType = FormulaResultType ?? self.CellType;
         switch (cellType)
         {
@@ -183,6 +186,7 @@ public static class ExcelUtils
             default:
                 break;
         }
+        #endif
     }
 
 }

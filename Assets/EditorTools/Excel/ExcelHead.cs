@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NPOI.HSSF.UserModel;
-using NPOI.XSSF.UserModel;
-using NPOI.SS.UserModel;
-using System.IO;
-using System.Text.RegularExpressions;
-using NPOI.OpenXmlFormats.Spreadsheet;
+﻿using NPOI.SS.UserModel;
 
 public enum HeadIdx
 {
