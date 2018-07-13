@@ -262,9 +262,9 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
-// #if !UNITY_EDITOR
+#if !UNITY_EDITOR
         yield return GetBundle("ui/boot.bd");
-// #endif
+#endif
         yield return base.Init();
     }
 

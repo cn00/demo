@@ -16,21 +16,22 @@ public class Boot : SingleMono<Boot>
         yield return LuaSys.Instance.Init();
 
         AppLog.d("App.Init 1 boot");
-        GameObject root = null;
-        yield return AssetSys.Instance.GetAsset<GameObject>("ui/boot/boot.prefab", obj =>
-        {
-            root = obj;
-        });
-        var ui = GameObject.Instantiate(root);
-        var uiluamono = ui.GetComponent<LuaMonoBehaviour>();
+        var uiluamono = gameObject.GetComponent<LuaMonoBehaviour>();
         uiluamono.enabled = true;
     }
 
     private void Awake()
     {
-        AppLog.isEditor  = Application.isEditor;
+        AppLog.isEditor = Application.isEditor;
         AppLog.d("App.Awake 0");
-        StartCoroutine(Init());
+        #if UNITY_EDITOR
+        if(BuildConfig.Instance().UseBundle)
+            BuildConfig.Instance().BundleServer.Start();
+        #endif
     }
 
+    private void Start()
+    {
+        StartCoroutine(Init());
+    }
 }

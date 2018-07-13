@@ -141,6 +141,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     public bool UseBundle = false;
 
+    public AppLog.Level LogLevel = AppLog.Level.Debug;
+
     //runInBackground
     [HideInInspector, SerializeField]
     public bool runInBackground = false;
@@ -244,7 +246,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             {
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(f.Name, guiOpts);
+                    EditorGUILayout.LabelField(f.Name.Replace(Name, ""), guiOpts);
                     if (f.Size < 1024)//K
                         EditorGUILayout.LabelField((f.Size).ToString(), guiOpts);
                     else if (f.Size < 1024 * 1024)//K
@@ -313,7 +315,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
     [HideInInspector, SerializeField]
-    public AssetBundleServer.Server mServer = new AssetBundleServer.Server() { Name = "BundleServer" };
+    public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server() { Name = "BundleServer" };
     static string LocalIpAddress()
     {
         IPAddress ipAddress = NetSys.LocalIpAddress()[0];
@@ -344,6 +346,87 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         bundlePath.Dir().CreateDir();
         File.Copy(BuildConfig.AssetPath, bundlePath, true);
         AssetDatabase.ImportAsset(bundlePath);
+    }
+
+    public static void Active(ChannelConfig config)
+    {
+        if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
+        {
+            Debug.LogError("workspace not in this config");
+            return;
+        }
+        if (config.Channel.isAndroid())
+        {
+            // CopyAar(config);
+
+            PlayerSettings.Android.bundleVersionCode = int.Parse(config.BuildNum);
+            EditorUserBuildSettings.androidBuildSystem = config.BuildSystem;
+            EditorUserBuildSettings.androidBuildType = (AndroidBuildType)config.BuildType;
+            
+            if(config.OptionFlags.HasFlag(AppBuildOptions.Development))
+                EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
+        }
+        else if (config.Channel.isIOS())
+        {
+            if (config.Emulator)
+            {
+                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+            }
+            else
+            {
+                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+            }
+            PlayerSettings.iOS.buildNumber = config.BuildNum;
+            EditorUserBuildSettings.iOSBuildConfigType = (iOSBuildType)config.BuildType;
+            EditorUserBuildSettings.symlinkLibraries = true;
+        }
+        else
+        {
+            Debug.LogError("Unknow ChannelConfig: " + config.Channel);
+        }
+        PlayerSettings.SetApplicationIdentifier(config.Channel.BuildTargetGroup(), config.BundleId);
+        PlayerSettings.productName = config.ProductName;
+        PlayerSettings.bundleVersion = config.Version;
+
+        if(config.OptionFlags.HasFlag(AppBuildOptions.Il2CPP))
+        {
+            PlayerSettings.SetScriptingBackend(config.Channel.BuildTargetGroup(), ScriptingImplementation.IL2CPP);
+        }
+        else
+        {
+            PlayerSettings.SetScriptingBackend(config.Channel.BuildTargetGroup(), ScriptingImplementation.Mono2x);
+        }
+
+        // var activeTarget = UnityEditor.EditorUserBuildSettings.SwitchActiveBuildTarget(config.Channel.BuildTargetGroup(), config.Channel.BuildTarget());
+
+        var DefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()
+            , "UNITY_LIBER;USE_LOCALIZE;SERVER_PRO;VERSION_1_10_0;"
+            + DefineSymbols + ";"
+            + config.DefineSymbols);
+
+        AssetDatabase.Refresh();
+
+        Debug.Log("DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
+
+
+    }
+
+    public static void Build(ChannelConfig config)
+    {
+        Active(config);
+
+        config.BuildNum = (int.Parse(config.BuildNum) + 1).ToString();
+
+        if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
+        {
+            Debug.LogError("workspace not in this config");
+            return;
+        }
+
+        string[] SCENES = BuildScript.FindEnabledEditorScenes();
+        var options = (UnityEditor.BuildOptions)config.OptionFlags;
+        BuildScript.GenericBuild(SCENES, config.OutputPath(), config.Channel.BuildTargetGroup(), config.Channel.BuildTarget(), options);
     }
 
     #region CustomEditor
@@ -569,7 +652,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             if(showBuilds)
             {
                 ++EditorGUI.indentLevel;
-                using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
+                var verticalScope = new EditorGUILayout.VerticalScope("box");
                 {
                     // build exe apk ipa app etc.
                     GUILayout.Space(1f);
@@ -609,16 +692,18 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     }
 
                 }
+                verticalScope.Dispose();
                 --EditorGUI.indentLevel;
             }
 
             // server
-            mTarget.mServer.Draw();
+            mTarget.BundleServer.Draw();
 
             mTarget.DrawSaveButton();
             
             if (GUI.changed)
             {
+                AppLog.LogLevel = mTarget.LogLevel;
                 PlayerSettings.bundleVersion = mTarget.Version.ToString();
                 EditorUtility.SetDirty(mTarget);
             }

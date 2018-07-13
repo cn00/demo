@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
@@ -37,9 +36,9 @@ namespace AssetBundleServer
         {
             bool detailedLogging = false;
 
-            UnityEngine.Debug.LogFormat("Starting up asset bundle server.", Port);
-            UnityEngine.Debug.LogFormat("Port: {0}", Port);
-            UnityEngine.Debug.LogFormat("Directory: {0}", BasePath);
+            AppLog.d("Starting up asset bundle server.", Port);
+            AppLog.d("Port: {0}", Port);
+            AppLog.d("Directory: {0}", BasePath);
 
             HttpListener listener = new HttpListener();
 
@@ -122,25 +121,39 @@ namespace AssetBundleServer
             }
         }
 
+        public void Start()
+        {
+            if (thread != null && thread.IsAlive && Runing)
+                thread.Abort();
+            thread = new Thread(Main);
+            thread.Start();
+            Runing = true;
+        }
+        public void Stop()
+        {
+            if (thread != null && thread.IsAlive && Runing)
+                thread.Abort();
+            thread = null;
+            Runing = false;
+        }
         public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             // using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
             {
-                EditorGUILayout.LabelField("Running", Runing.ToString());
+                Runing = (thread != null && thread.IsAlive);
+                var nodeStyle = new GUIStyle();
+                nodeStyle.normal.textColor = (Runing ? Color.green : Color.red);
+                nodeStyle.active.textColor = (Runing ? Color.green : Color.red);
+                EditorGUILayout.LabelField("Running", Runing.ToString(), nodeStyle);
                 Port = EditorGUILayout.IntField("port", Port);
                 var rect = EditorGUILayout.GetControlRect();
                 if (GUI.Button(rect.Split(0, 4), "Start") && !Runing)
                 {
-                    thread = new Thread(Main);
-                    thread.Start();
-                    Runing = true;
+                    Start();
                 }
                 if (GUI.Button(rect.Split(1, 4), "Stop"))
                 {
-                    if(thread != null && thread.IsAlive && Runing)
-                        thread.Abort();
-                    thread = null;
-                    Runing = false;
+                    Stop();
                 }
             }
         }

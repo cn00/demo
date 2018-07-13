@@ -45,9 +45,9 @@ public enum AppChannel
     #endregion Android
 
     #region iOS
-    iOS_begin,
-    iOS,
-    iOS_end
+    ios_begin,
+    ios,
+    ios_end
     #endregion iOS
 }
 
@@ -55,39 +55,106 @@ public static class AppChannelExtension
 {
     public static bool isIOS(this AppChannel self)
     {
-        return self > AppChannel.iOS_begin && self < AppChannel.iOS_end;
+        return self > AppChannel.ios_begin && self < AppChannel.ios_end;
     }
 
     public static bool isAndroid(this AppChannel self)
     {
         return self > AppChannel.Android_begin && self < AppChannel.Android_end;
     }
+
+#if UNITY_EDITOR
+    public static UnityEditor.BuildTarget BuildTarget(this AppChannel self)
+    {
+        var target = UnityEditor.BuildTarget.Android;
+        if (self > AppChannel.ios_begin
+            && self < AppChannel.ios_end)
+            target = UnityEditor.BuildTarget.iOS;
+        return target;
+    }
+
+    public static UnityEditor.BuildTargetGroup BuildTargetGroup(this AppChannel self)
+    {
+        var target = UnityEditor.BuildTargetGroup.Android;
+        if (self > AppChannel.ios_begin
+            && self < AppChannel.ios_end)
+            target = UnityEditor.BuildTargetGroup.iOS;
+        return target;
+    }
+
+#endif
+
 }
 
 #if UNITY_EDITOR
 [Serializable]
 public class ChannelConfig : InspectorDraw
 {
+    #region properties
     public bool BatchBuild = false;
     public bool AddTime = false;
     public string ProductName = "A3! 满开剧团";
     public string BundleId = "com.bili.a3";
     public string PackageName = "a3";
-    public string BuildNum = "0";
+    public string BuildNum = "0"; 
+    public string Version = "1.0.0";
     public string DefineSymbols = "";
 
-#if UNITY_ANDROID
-    public AndroidBuildType AndroidBuildType = AndroidBuildType.Debug;
-    public AndroidBuildSystem AndroidBuildSystem = AndroidBuildSystem.Internal;
-#else
-    public int AndroidBuildType = 0;
-    public int AndroidBuildSystem = 0;
-#endif
+    public int BuildType = (int)AndroidBuildType.Debug;
+    public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Internal;
 
     public AppBuildOptions OptionFlags = 0;
     public AppChannel Channel = AppChannel.Android;
 
-    public bool iosSim = false;
+    public bool Emulator = false;
+
+    #endregion properties
+
+    public void AddSymbol(string symbol)
+    {
+        if (!DefineSymbols.Contains(symbol))
+            DefineSymbols = DefineSymbols + ";" + symbol;
+    }
+    public void RmSymbol(string symbol)
+    {
+        if (DefineSymbols.Contains(symbol))
+            DefineSymbols = DefineSymbols.Replace(symbol, "");
+    }
+
+
+    public string OutputPath()
+    {
+        string target_path = PackageName;
+        if (Channel.isAndroid())
+        {
+            if (BuildSystem == AndroidBuildSystem.Gradle
+            && (OptionFlags.HasFlag(AppBuildOptions.AcceptExternalModificationsToPlayer)))
+            {
+                target_path = "./and.proj";
+                // PlayerSettings.Android.GradleProjName = "android." +  PackageName;
+            }
+            else
+            {
+                var name = PackageName;
+                if (AddTime)
+                    name += DateTime.Now.ToString("-yyyyMdHHmmss");
+                Directory.CreateDirectory("./bin");
+                target_path = "./bin/" + name + "-" + BuildNum;
+                if (Channel.BuildTarget() == UnityEditor.BuildTarget.Android)
+                    target_path += ".apk";
+            }
+        }
+        else if (Channel.isIOS())
+        {
+            target_path = "./ios.proj." + PackageName;
+            if (Emulator)
+            {
+                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+                target_path += ".sim";
+            }
+        }
+        return target_path;
+    }
 
     public ChannelConfig copy()
     {
@@ -99,8 +166,8 @@ public class ChannelConfig : InspectorDraw
             PackageName = o.PackageName,
             BuildNum = o.BuildNum,
             DefineSymbols = o.DefineSymbols,
-            AndroidBuildType = o.AndroidBuildType,
-            AndroidBuildSystem = o.AndroidBuildSystem,
+            BuildType = o.BuildType,
+            BuildSystem = o.BuildSystem,
             OptionFlags = o.OptionFlags,
             Channel = o.Channel,
         };
@@ -117,11 +184,11 @@ public class ChannelConfig : InspectorDraw
             int idx = -1;
             if (GUI.Button(rect.Split(++idx, sc), "Build"))
             {
-                Build(this);
+                BuildConfig.Build(this);
             }
             if (GUI.Button(rect.Split(++idx, sc), "Active"))
             {
-                
+                BuildConfig.Active(this);
             }
             if (GUI.Button(rect.Split(++idx, sc), "Copy"))
             {
@@ -139,68 +206,6 @@ public class ChannelConfig : InspectorDraw
     public void CopyAar()
     {
 
-    }
-
-    public void Build(ChannelConfig config)
-    {
-        config.BuildNum = (int.Parse(config.BuildNum) + 1).ToString();
-
-        var targetGroup = BuildTargetGroup.Android;
-        var buildTarget = BuildTarget.Android;
-        var PackageName = config.PackageName;
-        if (config.AddTime)
-            PackageName += DateTime.Now.ToString("-yyyyMdHHmmss");
-        string target_dir = "./bin/" + PackageName + "-" + config.BuildNum + ".apk";
-        if (config.Channel.isAndroid())
-        {
-
-            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
-            {
-                AppLog.e("workspace not in android env");
-                return;
-            }
-            CopyAar();
-#if UNITY_ANDROID
-            PlayerSettings.Android.bundleVersionCode = int.Parse(config.BuildNum);
-            EditorUserBuildSettings.androidBuildSystem = config.AndroidBuildSystem;
-            EditorUserBuildSettings.androidBuildType = config.AndroidBuildType;
-#endif
-        }
-        else if (config.Channel.isIOS())
-        {
-            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS)
-            {
-                AppLog.e("workspace not in iOS env");
-                return;
-            }
-            targetGroup = BuildTargetGroup.iOS;
-            buildTarget = BuildTarget.iOS;
-            target_dir = "./ios.proj." + PackageName;
-            if (config.iosSim)
-            {
-                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-                target_dir += ".sim";
-            }
-            else
-                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
-            PlayerSettings.iOS.buildNumber = config.BuildNum;
-        }
-        else
-        {
-            AppLog.e("Unknow ChannelConfig: " + config.Channel);
-        }
-        PlayerSettings.SetApplicationIdentifier(targetGroup, config.BundleId);
-        PlayerSettings.productName = config.ProductName;
-
-        var DefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup
-            , "UNITY_LIBER;USE_LOCALIZE;SERVER_PRO;VERSION_1_10_0;"
-            + DefineSymbols + ";"
-            + config.DefineSymbols);
-
-        string[] SCENES = BuildScript.FindEnabledEditorScenes();
-        var options = (UnityEditor.BuildOptions)config.OptionFlags;
-        BuildScript.GenericBuild(SCENES, target_dir, targetGroup, buildTarget, options);
     }
 }
 #endif

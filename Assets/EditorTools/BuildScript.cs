@@ -37,7 +37,7 @@ public class BuildScript
 
     public static void GenericBuild(string[] scenes, string target_dir, BuildTargetGroup targetGroup, BuildTarget build_target, BuildOptions build_options)
     {
-        EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, build_target);
+        // EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, build_target);
         try
         {
             BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
