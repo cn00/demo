@@ -14,6 +14,16 @@ using UnityEngine;
 
 public static class AppLog
 {
+    public enum Level
+    {
+        Error = 0,
+        Warning = 1,
+        Debug = 2,
+        Info = 3,
+
+        Net = 9,
+    }
+
     public class OnMessageReceivedHandler : EventArgs
     {
         public string Message;
@@ -30,6 +40,8 @@ public static class AppLog
 
     public static bool isEditor = false;
 
+    public static Level LogLevel = Level.Debug;
+
     public static event EventHandler<OnMessageReceivedHandler> OnMessageReceived;
 
     static void BroadcastMessage(string msg)
@@ -45,58 +57,74 @@ public static class AppLog
     /// <param name="log"></param>
     public static void d(string log)
     {
-        UnityEngine.Debug.Log( TAG + log);
-        BroadcastMessage(log.ToString());
+        if(LogLevel >= Level.Debug)
+            UnityEngine.Debug.Log( TAG + log);
+        if(LogLevel >= Level.Net)
+            BroadcastMessage(log.ToString());
     }
 
     public static void d(string fmt, params object[] args)
     {
-        d(string.Format(fmt, args));
+        if(LogLevel >= Level.Debug)
+            d(string.Format(fmt, args));
     }
     public static void d(params object[] args)
     {
-        var msg = "";
-        foreach(var i in args)
+        if(LogLevel >= Level.Debug)
         {
-            msg += string.Format("{0};", i);
+            var msg = "";
+            foreach(var i in args)
+            {
+                msg += string.Format("{0};", i);
+            }
+            d(msg);
         }
-        d(msg);
     }
 
     public static void w(string log)
     {
-        UnityEngine.Debug.LogWarning(TAG + log);
-        BroadcastMessage(log);
+        if(LogLevel >= Level.Warning)
+            UnityEngine.Debug.LogWarning(TAG + log);
+        if(LogLevel >= Level.Net)
+            BroadcastMessage(log);
     }
 
     public static void w(string fmt, params object[] args)
     {
-        w(string.Format(fmt, args));
+        if(LogLevel >= Level.Warning)
+            w(string.Format(fmt, args));
     }
 
     private static void e(string log)
     {
-        UnityEngine.Debug.LogErrorFormat("{0} {1}", TAG, log);
-        BroadcastMessage("error: " + log);
+        if(LogLevel >= Level.Error)
+            UnityEngine.Debug.LogErrorFormat("{0} {1}", TAG, log);
+        if(LogLevel >= Level.Net)
+            BroadcastMessage("error: " + log);
     }
 
     public static void e(string fmt, params object[] args)
     {
-        e(string.Format(fmt, args));
+        if(LogLevel >= Level.Error)
+            e(string.Format(fmt, args));
     }
     public static void e(params object[] args)
     {
-        var msg = "";
-        foreach(var i in args)
+        if(LogLevel >= Level.Net)
         {
-            msg += string.Format("{0};", i);
+            var msg = "";
+            foreach(var i in args)
+            {
+                msg += string.Format("{0};", i);
+            }
+            e(msg);
         }
-        e(msg);
     }
 
     public static void e(Exception ex)
     {
-        e(ex.ToString());
+        if(LogLevel >= Level.Error)
+            e(ex.ToString());
     }
 
 }
