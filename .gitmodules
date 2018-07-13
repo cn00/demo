@@ -1,0 +1,6 @@
+[submodule "Assets/Editor/VSCode"]
+	path = VSCode
+	url = git@github.com:cn00/VSCode.git
+[submodule "VSCode"]
+	path = Assets/Editor/VSCode
+	url = git@github.com:cn00/VSCode.git
