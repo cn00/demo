@@ -58,6 +58,8 @@ public class LuaMonoBehaviour : MonoBehaviour
     public bool Inited { get; protected set; }
     bool Init()
     {
+        if(string.IsNullOrEmpty(luaScript.path))
+            return false;
         AppLog.d(luaScript.path);
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
         if(textBytes == null)
@@ -75,6 +77,11 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
         Inited = true;
+        if(Inited && luaAwake != null)
+        {
+            luaAwake();
+        }
+        
         return true;
     }
 
@@ -82,10 +89,6 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         Inited = false;
         Init();
-        if(Inited && luaAwake != null)
-        {
-            luaAwake();
-        }
     }
 
     private void OnEnable()

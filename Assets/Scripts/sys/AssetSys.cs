@@ -262,9 +262,10 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
-#if !UNITY_EDITOR
-        yield return GetBundle("ui/boot.bd");
+#if UNITY_EDITOR
+        if (BuildConfig.Instance().UseBundle)
 #endif
+            yield return GetBundle("ui/boot.bd");
         yield return base.Init();
     }
 
@@ -379,7 +380,7 @@ public class AssetSys : SingleMono<AssetSys>
         AssetBundle bundle = null;
         if(!mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
-            var cachePath = CacheRoot + "/" + bundlePath;
+            var cachePath = CacheRoot + bundlePath;
             bundle = AssetBundle.LoadFromFile(cachePath);
             if(bundle == null)
             {

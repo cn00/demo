@@ -16,7 +16,8 @@ public class Boot : SingleMono<Boot>
         yield return LuaSys.Instance.Init();
 
         AppLog.d("App.Init 1 boot");
-        var uiluamono = gameObject.GetComponent<LuaMonoBehaviour>();
+        var uiluamono = gameObject.AddComponent<LuaMonoBehaviour>();
+        uiluamono.SetLua("ui/boot/boot");
         uiluamono.enabled = true;
     }
 
@@ -28,10 +29,10 @@ public class Boot : SingleMono<Boot>
         if(BuildConfig.Instance().UseBundle)
             BuildConfig.Instance().BundleServer.Start();
         #endif
+        StartCoroutine(Init());
     }
 
     private void Start()
     {
-        StartCoroutine(Init());
     }
 }
