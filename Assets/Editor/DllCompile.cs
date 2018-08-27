@@ -166,14 +166,15 @@ public class DllCompile : SingletonAsset<DllCompile>
                 var tmpDir = AssetDatabase.GetAssetPath(Instance().PathGetterObj.GetInstanceID());
                 EditorGUILayout.SelectableLabel(tmpDir);
             }
-            var rect = EditorGUILayout.GetControlRect();
-            if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
-            {
 #if UNITY_EDITOR_OSX
                 var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
 #elif UNITY_EDITOR_WIN32
                 var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
 #endif
+            EditorGUILayout.LabelField(distDir);
+            var rect = EditorGUILayout.GetControlRect();
+            if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
+            {
                 File.Copy("doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
             }
 
