@@ -1,12 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-using System;
-using System.Collections;
-
-public class DefaultAssetConfig : SingletonAsset<DefaultAssetConfig>
+public class EditorConfig : SingletonAsset<EditorConfig>
 {
     [Serializable]
     public class Config : InspectorDraw
@@ -19,20 +17,20 @@ public class DefaultAssetConfig : SingletonAsset<DefaultAssetConfig>
 	[HideInInspector]
     public Config MConfig = new Config(){ Name= "Config"};
 
-    [MenuItem("Tools/Create/DefaultAssetConfig.asset")]
-    public static DefaultAssetConfig Create()
+    [MenuItem("Tools/Create/EditorConfig.asset")]
+    public static EditorConfig Create()
     {
         mInstance = null;
         return Instance();
     }
 
-    [CanEditMultipleObjects, CustomEditor(typeof(DefaultAssetConfig))]
+    [CanEditMultipleObjects, CustomEditor(typeof(EditorConfig))]
     public partial class Editor : UnityEditor.Editor
     {
-        DefaultAssetConfig mTarget = null;
+        EditorConfig mTarget = null;
         public void OnEnable()
         {
-            mTarget = target as DefaultAssetConfig;
+            mTarget = target as EditorConfig;
         }
 
         public override void OnInspectorGUI()
