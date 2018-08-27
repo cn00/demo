@@ -13,6 +13,9 @@ using System.Text.RegularExpressions;
 
 public class SheetStruct : InspectorDraw
 {
+    public static string[] ColumnNames = new []{
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+        "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"};
     public ISheet Sheet { get; set; }
 
     public uint RowIdxA = 1;
@@ -20,9 +23,82 @@ public class SheetStruct : InspectorDraw
 
     public uint RowPerPage = 10;
     public uint ColumnPerPage = 5;
+    public string PinColumn = "";
+    int PinColumnIdx
+    {
+        get
+        {
+            int idx = 0;
+            for(int i = 0; i < ColumnNames.Length; ++i)
+            {
+                if(PinColumn == ColumnNames[i])
+                {
+                    idx = i;
+                    break;
+                }
+            }
+            PinColumn = ColumnNames[idx];
+            return idx;
+        }
+    }
+
     public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         base.DrawInspector();
+
+        var hasPinColumn = !string.IsNullOrEmpty(PinColumn);
+
+        // column name
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("\\", new GUILayoutOption[]
+        {
+            GUILayout.Width(30),
+            GUILayout.ExpandWidth(false),
+        });
+        if(hasPinColumn)
+        {
+            EditorGUILayout.LabelField(PinColumn, guiOpts);
+        }
+        for(int i = (int)ColumnIdxA; i < ColumnNames.Length && i < (int)(ColumnIdxA + ColumnPerPage - (hasPinColumn ? 1 : 0)); ++i)
+        {
+            EditorGUILayout.LabelField(ColumnNames[i], guiOpts);
+        }
+        EditorGUILayout.EndHorizontal();
+
+        // head
+        EditorGUILayout.BeginHorizontal();
+        var head = Sheet.Row(0);
+        EditorGUILayout.LabelField((head.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
+        {
+            GUILayout.Width(30),
+            GUILayout.ExpandWidth(false),
+        });
+        if (hasPinColumn)
+        {
+            head.Cell(PinColumnIdx).Draw(null, guiOpts);
+            // EditorGUILayout.LabelField(head.Cell(PinColumnIdx).SValue(), guiOpts);
+        }
+        head.Draw((int)ColumnIdxA, (int)(ColumnIdxA + ColumnPerPage - (hasPinColumn ? 1 : 0)), guiOpts, false);
+        EditorGUILayout.EndHorizontal();
+
+        // content
+        var Rows = Sheet.Rows((int)RowIdxA, (int)(RowIdxA + RowPerPage));
+        foreach (var r in Rows)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField((r.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
+            {
+                GUILayout.Width(30),
+                GUILayout.ExpandWidth(false),
+            });
+            if (hasPinColumn)
+            {
+                r.Cell(PinColumnIdx).Draw(null, guiOpts);
+            }
+            r.Draw((int)ColumnIdxA, (int)(ColumnIdxA + ColumnPerPage - (hasPinColumn ? 1 : 0)), guiOpts, false);
+            EditorGUILayout.EndHorizontal();
+        }
+
         var rect = EditorGUILayout.GetControlRect();
         var sn = 5;
         var idx = -1;
@@ -34,14 +110,6 @@ public class SheetStruct : InspectorDraw
         {
             RowIdxA -= RowPerPage;
             RowIdxA = (int)RowIdxA < 0 ? 0 : RowIdxA;
-        }
-
-        var head = Sheet.Row(0);
-        head.Draw((int)ColumnIdxA,  (int)(ColumnIdxA + ColumnPerPage), guiOpts);
-        var Rows = Sheet.Rows((int)RowIdxA, (int)(RowIdxA + RowPerPage));
-        foreach (var r in Rows)
-        {
-            r.Draw((int)ColumnIdxA, (int)(ColumnIdxA + ColumnPerPage), guiOpts);
         }
     }
 }
@@ -99,7 +167,7 @@ public partial class DefaultAssetInspector : Editor
             var tmp = new BookStruct(){FoldOut = true};
             tmp.Name = assetPath;
             tmp.Book = book;
-            var MaxSheetPreviewLength = DefaultAssetConfig.Instance().MConfig.MaxSheetPreviewLength;
+            var MaxSheetPreviewLength = EditorConfig.Instance().MConfig.MaxSheetPreviewLength;
             foreach(var sheet in book.AllSheets())
             {
                 var ss = new SheetStruct(){FoldOut = true };
@@ -121,7 +189,7 @@ public partial class DefaultAssetInspector : Editor
         }
         else
         {
-            var MaxTextPreviewLength = DefaultAssetConfig.Instance().MConfig.MaxTextPreviewLength;
+            var MaxTextPreviewLength = EditorConfig.Instance().MConfig.MaxTextPreviewLength;
             text = luaFile;
             if (text.Length > MaxTextPreviewLength + 3)
             {
@@ -139,7 +207,7 @@ public partial class DefaultAssetInspector : Editor
 
     public override void OnInspectorGUI()
     {
-        DefaultAssetConfig.Instance().MConfig.Draw();
+        EditorConfig.Instance().MConfig.Draw();
 
         bool enabled = GUI.enabled;
         GUI.enabled = true;
