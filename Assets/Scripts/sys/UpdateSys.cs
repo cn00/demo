@@ -18,7 +18,6 @@ public static class BytesExtension
     }
 }
 
-[LuaCallCSharp]
 public class UpdateSys : SingleMono<UpdateSys>
 {
 

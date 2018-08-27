@@ -20,7 +20,6 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-[LuaCallCSharp]
 public class LuaMonoBehaviour : MonoBehaviour
 {
     [SerializeField,HideInInspector]

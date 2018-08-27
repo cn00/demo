@@ -172,7 +172,6 @@ public class DataObject : UnityEngine.Object
     }
 }
 
-[LuaCallCSharp]
 public class AssetSys : SingleMono<AssetSys>
 {
     static string mCacheRoot = "";
