@@ -20,13 +20,22 @@ public static class XLuaGenConfig
     [LuaCallCSharp]
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
+        typeof(NPOI.SS.UserModel.ICell),
+        typeof(NPOI.SS.UserModel.IRow),
+        typeof(NPOI.SS.UserModel.ISheet),
+        typeof(NPOI.HSSF.UserModel.HSSFWorkbook),
+        typeof(NPOI.XSSF.UserModel.XSSFWorkbook),
+
+        typeof(LuaSys),
+        typeof(LuaMonoBehaviour),
         typeof(QRCodeEncodeController),
         typeof(QRCodeDecodeController),
         typeof(JavaUtil),
         typeof(AppLog),
         typeof(SQLite3),
+
         typeof(ScreenCapture),
-        typeof(System.Text.Encoding),
+        // typeof(System.Text.Encoding),
         typeof(System.Convert),
         typeof(System.Object),
         typeof(UnityEngine.Object),
@@ -60,6 +69,12 @@ public static class XLuaGenConfig
         typeof(Action<UnityEngine.Object>),
         typeof(Action<DataObject>),
         typeof(UnityEngine.Debug),
+    };
+
+    [Hotfix]
+    public static List<Type> HotfixList = new List<Type>()
+    {
+
     };
 
     //C#静态调用Lua的配置（包括事件的原型），仅可以配delegate，interface
