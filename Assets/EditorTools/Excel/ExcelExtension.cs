@@ -104,25 +104,23 @@ public static class ExcelUtils
     {
         self.Draw(0, self.Count(), guiOpts);
     }
-    public static void Draw(this IRow self, int begin = 0, int end = 0x7fffffff, GUILayoutOption[] guiOpts = null)
+    public static void Draw(this IRow self, int begin = 0, int end = 0x7fffffff, GUILayoutOption[] guiOpts = null, bool newRow = true)
     {
         #if UNITY_EDITOR
-        EditorGUILayout.BeginHorizontal();
+        if (newRow) EditorGUILayout.BeginHorizontal();
         {
-            var width = 25;
-            if(self.Cell(0).RowIndex > 999)
-                width = 30;
-            EditorGUILayout.LabelField((self.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
+            var width = 30;
+            if (newRow) EditorGUILayout.LabelField((self.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
             {
-                    GUILayout.Width(width),
-                    GUILayout.ExpandWidth(false),
+                GUILayout.Width(width),
+                GUILayout.ExpandWidth(false),
             });
             for (var i = begin; i < end; ++i)
             {
                 self.Cell(i).Draw(null, guiOpts);
             }
         }
-        EditorGUILayout.EndHorizontal();
+        if (newRow) EditorGUILayout.EndHorizontal();
         #endif
     }
 
