@@ -14,7 +14,7 @@ MonoBehaviour:
   UseBundle: 0
   LogLevel: 3
   runInBackground: 0
-  LastBuildTime: 131759273915528430
+  LastBuildTime: 131761995056434270
   Version:
     mName: Version
     Major: 1
@@ -46,28 +46,28 @@ MonoBehaviour:
   - mName: common
     mInclude: 0
     mRebuild: 0
-    mSize: 12938
+    mSize: 15478
     mBundles:
-    - mName: common/global.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
-    - mName: common/manager-tmp.bd
-      mSize: 3924
-      mMd5: 3751C23DE20D16233AFFE6BC49690965
-      mVersion: 1.0.0
     - mName: common/ui.bd
       mSize: 9014
       mMd5: 45386EF9CB93E7806F094590D1DF654B
       mVersion: 1.0.0
+    - mName: common/global.bd
+      mSize: 2485
+      mMd5: A9713DBBC22277B763AA2F9ADC2DE32A
+      mVersion: 1.0.0
+    - mName: common/manager.bd
+      mSize: 3979
+      mMd5: EFFB8854B1152142DEC26253B1F687F8
+      mVersion: 1.0.0
   - mName: config
     mInclude: 0
     mRebuild: 0
-    mSize: 3430
+    mSize: 3481
     mBundles:
     - mName: config/config.bd
-      mSize: 3430
-      mMd5: 63F506EDAFE34B1A779157149B1403BC
+      mSize: 3481
+      mMd5: F17E60ED360DB4F261F10DD5DBE395FC
       mVersion: 1.0.0
   - mName: lua
     mInclude: 0
@@ -76,61 +76,61 @@ MonoBehaviour:
     mBundles:
     - mName: lua/table.bd
       mSize: 1675
-      mMd5: 142B6DFF5F8820B077BE5ADC5E2C7689
+      mMd5: 9C7C43F96C2B8D44B77F6CB6D2BF02BF
       mVersion: 1.0.0
     - mName: lua/utility.bd
       mSize: 6957
-      mMd5: FCC7CB12FD61F33A92FCAFF7CB734710
+      mMd5: 4E83506A82A9A36D487348E9497658CF
       mVersion: 1.0.0
   - mName: module_tmp
     mInclude: 0
     mRebuild: 0
-    mSize: 0
+    mSize: 2928640
     mBundles:
     - mName: module_tmp/Materials.bd
       mSize: 0
       mMd5: 
       mVersion: 
     - mName: module_tmp/clothe.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 1894709
+      mMd5: 402EF95C64C53143825591038EFD833F
+      mVersion: 1.0.0
     - mName: module_tmp/grid.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 28383
+      mMd5: FC61257F1905BAD1C7D9B4474BEDDF5D
+      mVersion: 1.0.0
     - mName: module_tmp/tree02.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 901158
+      mMd5: 7FA3C2D5E407817F5DA4E8FDE6761750
+      mVersion: 1.0.0
     - mName: module_tmp/unity_tree.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 102687
+      mMd5: ADD54469E275424B368D7F1FE324DCB5
+      mVersion: 1.0.0
     - mName: module_tmp/water.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+      mSize: 1703
+      mMd5: C5152A89FF2265242107495B6C8F5EB2
+      mVersion: 1.0.0
   - mName: ui
     mInclude: 0
     mRebuild: 0
-    mSize: 219270
+    mSize: 218726
     mBundles:
     - mName: ui/boot.bd
-      mSize: 3778
-      mMd5: 343C70CD113619CE9DBB0754DF1C3E9D
+      mSize: 3177
+      mMd5: A5BABFE8C0D55E585A0AB617D6E59A54
       mVersion: 1.0.0
     - mName: ui/loading.bd
       mSize: 98628
-      mMd5: F7F1984624F643B841BA21BD13F4CA3B
+      mMd5: BFB363D37F1F61B21EDD057E71C0A3C8
       mVersion: 1.0.0
     - mName: ui/login.bd
       mSize: 20546
       mMd5: 85F4AC99C5E1621F04D62F3A06CA0CDD
       mVersion: 1.0.0
     - mName: ui/qrcode.bd
-      mSize: 61336
-      mMd5: D5354D4E013067BCA5205194EB8F3E8D
+      mSize: 61393
+      mMd5: A6438953573EE621EB51D3623C57AFC0
       mVersion: 1.0.0
     - mName: ui/test.bd
       mSize: 19167
@@ -158,12 +158,12 @@ MonoBehaviour:
     PackageName: a3
     BuildNum: 0
     Version: 1.0.0
-    DefineSymbols: 
+    DefineSymbols: "ENABLE_EMULATER\x03\x03\x03\x03\x03\x03"
     BuildType: 0
     BuildSystem: 0
     OptionFlags: 1025
     Channel: 5
-    Emulator: 0
+    Emulator: 1
   - mName: Android
     BatchBuild: 0
     AddTime: 0
@@ -181,4 +181,4 @@ MonoBehaviour:
   BundleServer:
     mName: BundleServer
     Port: 8008
-    Runing: 0
+    Runing: 1

@@ -90,8 +90,21 @@ public class InspectorDraw : object
                 }
                 else if (v is string)
                 {
-                    var tmp = EditorGUILayout.TextField(i.Name, (string)v);
-                    i.SetValue(obj, tmp);
+                    if (i.Name.ToLower().EndsWith("s"))
+                    {
+                        EditorGUILayout.LabelField(i.Name);
+                        var tmp = EditorGUILayout.TextArea((string)v)
+                            .Replace("\r", "")
+                            .Replace("\n\n", "\n")
+                            .TrimStart(' ', '\n', '\t')
+                            .TrimEnd(' ', '\n', '\t');
+                        i.SetValue(obj, tmp);
+                    }
+                    else
+                    {
+                        var tmp = EditorGUILayout.TextField(i.Name, (string)v);
+                        i.SetValue(obj, tmp);
+                    }
                 }
                 else if (v is List<int> || v is List<uint> || v is List<long>)
                 {

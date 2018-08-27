@@ -197,7 +197,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public ulong mSize = 0ul;
         public ulong Size
         {
-            protected set{mSize = value;}
+            protected set { mSize = value; }
             get
             {
                 mSize = 0ul;
@@ -362,8 +362,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             PlayerSettings.Android.bundleVersionCode = int.Parse(config.BuildNum);
             EditorUserBuildSettings.androidBuildSystem = config.BuildSystem;
             EditorUserBuildSettings.androidBuildType = (AndroidBuildType)config.BuildType;
-            
-            if(config.OptionFlags.HasFlag(AppBuildOptions.Development))
+
+            if (config.OptionFlags.HasFlag(AppBuildOptions.Development))
                 EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
         }
         else if (config.Channel.isIOS())
@@ -388,7 +388,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         PlayerSettings.productName = config.ProductName;
         PlayerSettings.bundleVersion = config.Version;
 
-        if(config.OptionFlags.HasFlag(AppBuildOptions.Il2CPP))
+        if (config.OptionFlags.HasFlag(AppBuildOptions.Il2CPP))
         {
             PlayerSettings.SetScriptingBackend(config.Channel.BuildTargetGroup(), ScriptingImplementation.IL2CPP);
         }
@@ -567,7 +567,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
                 }
             }
-            
+
             foreach (var i in mTarget.Groups)
             {
                 i.Draw(0, guiOpts);
@@ -590,31 +590,32 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
 
             EditorGUILayout.Space();
-
-            EditorGUILayout.BeginHorizontal();
-            {
-                EditorGUILayout.LabelField("HttpRoot");
-                var rect = EditorGUILayout.GetControlRect();
-                if (GUI.Button(rect.Split(0, 3), "Refresh"))
-                {
-                    Refresh();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            {
-                mTarget.m_Ip = EditorGUILayout.TextField(mTarget.m_Ip);
-                mTarget.m_Port = EditorGUILayout.TextField(mTarget.m_Port);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space();
-
+            
             // Bundles
             showBundles = EditorGUILayout.Foldout(showBundles, "AssetBundle", true);
             if (showBundles)
             {
+
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField("HttpRoot");
+                    var rect = EditorGUILayout.GetControlRect();
+                    if (GUI.Button(rect.Split(0, 3), "Refresh"))
+                    {
+                        Refresh();
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                {
+                    mTarget.m_Ip = EditorGUILayout.TextField(mTarget.m_Ip);
+                    mTarget.m_Port = EditorGUILayout.TextField(mTarget.m_Port);
+                }
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.Space();
+
                 ++EditorGUI.indentLevel;
                 using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
                 {
@@ -639,7 +640,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 size = EditorGUILayout.DelayedIntField(size);
             }
             EditorGUILayout.EndHorizontal();
-            
+
             if (size < mTarget.Channels.Count)
             {
                 mTarget.Channels.RemoveRange(size, mTarget.Channels.Count - size);
@@ -649,7 +650,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 for (var i2 = mTarget.Channels.Count; i2 < size; ++i2)
                     mTarget.Channels.Add(new ChannelConfig());
             }
-            if(showBuilds)
+            if (showBuilds)
             {
                 ++EditorGUI.indentLevel;
                 var verticalScope = new EditorGUILayout.VerticalScope("box");
@@ -687,7 +688,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     for (var i = 0; i < mTarget.Channels.Count; ++i)
                     {
                         var j = mTarget.Channels[i];
-                        if(j != null)
+                        if (j != null)
                             j.Draw(0, guiOpts);
                     }
 
@@ -700,7 +701,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             mTarget.BundleServer.Draw();
 
             mTarget.DrawSaveButton();
-            
+
             if (GUI.changed)
             {
                 AppLog.LogLevel = mTarget.LogLevel;
@@ -713,7 +714,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         {
             BuildScript.BuildAssetBundle(target, rebuild);
 
-            if(mTarget.BuildScene)
+            if (mTarget.BuildScene)
                 BuildScript.BuildStreamingScene(target);
 
             BuildScript.GenBundleManifest(target);

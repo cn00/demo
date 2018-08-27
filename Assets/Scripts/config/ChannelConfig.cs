@@ -110,17 +110,19 @@ public class ChannelConfig : InspectorDraw
 
     #endregion properties
 
-    public void AddSymbol(string symbol)
+    public bool ToggleSymbol(string symbol, bool toggle)
     {
-        if (!DefineSymbols.Contains(symbol))
-            DefineSymbols = DefineSymbols + ";" + symbol;
-    }
-    public void RmSymbol(string symbol)
-    {
-        if (DefineSymbols.Contains(symbol))
+        if (toggle && !DefineSymbols.Contains(symbol))
+        {
+            if (!DefineSymbols.EndsWith("\n"))
+                DefineSymbols += "\n";
+            DefineSymbols += symbol;
+        }
+        else
+        if (!toggle && DefineSymbols.Contains(symbol))
             DefineSymbols = DefineSymbols.Replace(symbol, "");
+        return toggle;
     }
-
 
     public string OutputPath()
     {
@@ -199,6 +201,8 @@ public class ChannelConfig : InspectorDraw
             {
                 BuildConfig.Instance().Channels.Remove(this);
             }
+
+            ToggleSymbol("ENABLE_EMULATER", Emulator);
         }
         EditorGUILayout.EndHorizontal();
     }
