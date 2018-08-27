@@ -51,6 +51,22 @@ function qrcode.Awake()
 	)
 end
 
+function qrcode.AddDecodeCallback(fun)
+    self.Decode_QRCodeDecodeController:onQRScanFinished('+', fun)
+end
+
+function qrcode.RmDecodeCallback(fun)
+    self.Decode_QRCodeDecodeController:onQRScanFinished('-', fun)
+end
+
+function qrcode.AddEncodeCallback(fun)
+    self.Encode_QRCodeEncodeController:onQREncodeFinished('+', fun)
+end
+
+function qrcode.RmEncodeCallback(fun)
+    self.Encode_QRCodeEncodeController:onQREncodeFinished('-', fun)
+end
+
 function qrcode.OnEnable()
     print("qrcode.OnEnable")
 end
@@ -88,6 +104,7 @@ function qrcode.OnScanResult(strResult)
     if #strResult > 7 then -- http://
         -- assert(coroutine.resume(self.Back()))
         self.Encode_QRCodeEncodeController:Encode(strResult)
+
     end
     self.Decode_QRCodeDecodeController:StartWork()
 end
