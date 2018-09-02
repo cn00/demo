@@ -11,10 +11,10 @@ local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
-local printbak = _G.print
-_G.print = function(...)
-    printbak(table.unpack({...}), debug.traceback())
-end
+-- local printbak = _G.print
+-- _G.print = function(...)
+--     printbak(table.unpack({...}), debug.traceback())
+-- end
 
 function boot.coroutine_boot()
     return coroutine.create(function()
