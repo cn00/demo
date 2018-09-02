@@ -264,7 +264,7 @@ function test.Awake()
 		local sql = [[create table if not exists `test_map` (
             `id` integer primary key autoincrement not null,
             `x` integer not null,
-            `y` integer not
+            `y` integer not null
             )]]
 		-- local sql = "create table if not exists `test_map` (\n"
 		-- .. "`id` integer primary key autoincrement not null,\n"
