@@ -80,6 +80,11 @@ function login.Awake()
 			assert(coroutine.resume(self.OpenTest()))
 		end
 	)
+
+	-- -- test message center
+	-- local global = GameObject.Find("Global")
+	-- gmono = global:GetComponent("LuaMonoBehaviour")
+	-- gmono.luaTable.login = self
 end
 
 function login.OnEnable()

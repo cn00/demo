@@ -31,6 +31,7 @@ public static class XLuaGenConfig
         typeof(UpdateSys),
         typeof(LuaSys),
         typeof(LuaMonoBehaviour),
+        typeof(NetSys),
         typeof(QRCodeEncodeController),
         typeof(QRCodeDecodeController),
         typeof(JavaUtil),

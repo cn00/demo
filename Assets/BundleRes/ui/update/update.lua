@@ -61,8 +61,6 @@ function update.Start ()
 end
 
 function update.FixedUpdate ()
-	self.process = self.process + 0.001
-    self.Slider_Slider.value = self.process
 end
 
 function update.Update ()
@@ -70,7 +68,8 @@ function update.Update ()
 end
 
 function update.LateUpdate ()
-
+	self.process = self.process + 0.001
+    self.Slider_Slider.value = self.process
 end
 
 function update.OnDestroy ()
@@ -112,7 +111,7 @@ end
 
 
 function update.Back()
-    asset(coroutine.resume(coroutine.create(function()
+    assert(coroutine.resume(coroutine.create(function()
         yield_return(mono:WaitForSeconds(0.3))
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)

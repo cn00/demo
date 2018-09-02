@@ -10,7 +10,6 @@ public class EditorConfig : SingletonAsset<EditorConfig>
     public class Config : InspectorDraw
     {
         public int MaxTextPreviewLength = 7000;
-        public int MaxSheetPreviewLength = 10;
     }
 
     [SerializeField]

@@ -133,7 +133,21 @@ end
 
 function test.CaptureScreenshot()
 	local screenshoot = CS.AssetSys.CacheRoot .. "Screenshot.lua.png"
-	ScreenCapture.CaptureScreenshot(screenshoot, 1)
+	CS.UnityEngine.ScreenCapture.CaptureScreenshot(screenshoot, 1)
+end
+
+function test.GetIpAddresses()
+	-- string[]
+	local ips = CS.NetSys.LocalIpAddressStr()
+	for i = 0, ips.Length-1 do
+		print("arr", i, ips[i])
+	end
+
+	-- List<string>
+	local ipl = CS.NetSys.LocalIpAddressStrList()
+	for i = 0, ipl.Count-1 do
+		print("List", i, ipl[i])
+	end
 end
 
 function test.UpdateOnClick()
@@ -186,13 +200,14 @@ end
 
 --AutoGenInit Begin
 function test.AutoGenInit()
-	test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
-	test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
-	test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
-	test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
-	test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
-	test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
-	test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
+    test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
+    test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
+    test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
+    test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
+    test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
+    test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+    test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
+    test.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 function test.Awake()
@@ -233,6 +248,12 @@ function test.Awake()
 	self.ix_InputField.onEndEdit:AddListener(ixOnEdit)
 	self.iy_InputField.onEndEdit:AddListener(iyOnEdit)
 	
+	self.IpAddress_Button.onClick:AddListener(
+		function()
+			self.GetIpAddresses()
+		end
+	)
+
 	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
 	print(sqlpath)
 	local result, db = sqlite.Open(sqlpath)

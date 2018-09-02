@@ -167,7 +167,6 @@ public partial class DefaultAssetInspector : Editor
             var tmp = new BookStruct(){FoldOut = true};
             tmp.Name = assetPath;
             tmp.Book = book;
-            var MaxSheetPreviewLength = EditorConfig.Instance().MConfig.MaxSheetPreviewLength;
             foreach(var sheet in book.AllSheets())
             {
                 var ss = new SheetStruct(){FoldOut = true };

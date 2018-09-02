@@ -662,18 +662,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                         var rebuild = mTarget.ForceRebuild;
                         var sn = 5;
                         var idx = -1;
-                        // if (GUI.Button(rect.Split(++idx, sn), "And.Apk"))
-                        // {
-                        //     BuildScript.BuildAndroidApk();
-                        // }
-                        // if (GUI.Button(rect.Split(++idx, sn), "iOS.proj"))
-                        // {
-                        //     BuildScript.BuildIosIL2cppProj();
-                        // }
-                        // if (GUI.Button(rect.Split(++idx, sn), "iOS.proj.sim"))
-                        // {
-                        //     BuildScript.BuildIosIL2cppProjSim();
-                        // }
                         if (GUI.Button(rect.Split(++idx, sn), "Win.Exe"))
                         {
                             BuildScript.BuildWindows();

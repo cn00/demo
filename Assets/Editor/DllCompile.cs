@@ -26,23 +26,16 @@ public class DllCompile : SingletonAsset<DllCompile>
         {
             "UNITY_DLL",
         };
+        public bool KeepMdb = false;
 
         public string OutPath = ".";
 
         public string SourceDir = "";
 
-        public bool KeepMdb = false;
-
         [SerializeField]
         public List<string> LibSearchingPath = new List<string>(){
             "MonoBleedingEdge/lib/mono/4.5/",
             "Managed/",
-#if UNITY_EDITOR_WIN32
-            AppDomain.CurrentDomain.BaseDirectory + "/Data/MonoBleedingEdge/lib/mono/4.5/",
-            AppDomain.CurrentDomain.BaseDirectory + "/Data/Managed/",
-#endif
-            // AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/",
-            // AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Managed/",
         };
 
         [SerializeField]
@@ -107,7 +100,7 @@ public class DllCompile : SingletonAsset<DllCompile>
         var reference = new List<string>(); //info.References.Clone();
 #if UNITY_EDITOR_OSX
         var baseDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/";
-#elif UNITY_EDITOR_WIN32
+#elif UNITY_EDITOR_WIN
         var baseDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/";
 #endif
         foreach (var i in info.LibSearchingPath)
@@ -118,14 +111,16 @@ public class DllCompile : SingletonAsset<DllCompile>
                 if(File.Exists(path))
                 {
                     reference.Add(path);
+                    AppLog.d(path);
                     break;
                 }
             }
         } 
 
-        var monoversion = PlayerSettings.scriptingRuntimeVersion;
-        var apilevel = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup);
+        // var monoversion = PlayerSettings.scriptingRuntimeVersion;
+        // var apilevel = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup);
         var msgs = EditorUtility.CompileCSharp(sources, reference.ToArray(), info.Defineds.ToArray(), info.OutPath);
+
         foreach (var msg in msgs)
         {
             AppLog.d("CompileCSharp: " + msg);
@@ -168,10 +163,10 @@ public class DllCompile : SingletonAsset<DllCompile>
             }
 #if UNITY_EDITOR_OSX
                 var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
-#elif UNITY_EDITOR_WIN32
+#elif UNITY_EDITOR_WIN
                 var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
 #endif
-            EditorGUILayout.LabelField(distDir);
+            EditorGUILayout.SelectableLabel(distDir);
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
             {

@@ -15,7 +15,7 @@ public class Boot : SingleMono<Boot>
         AppLog.d("App.Init 1 LuaSys");
         yield return LuaSys.Instance.Init();
 
-        AppLog.d("App.Init 1 boot");
+        AppLog.d("App.Init 2 boot");
         var uiluamono = gameObject.AddComponent<LuaMonoBehaviour>();
         uiluamono.SetLua("ui/boot/boot");
         uiluamono.enabled = true;
