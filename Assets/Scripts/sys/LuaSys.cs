@@ -83,13 +83,6 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddLoader(LuaLoader);
     }
 
-#if UNITY_EDITOR
-    [InitializeOnLoadMethod]
-    public static void InitEditor()
-    {
-
-    }
-#endif
     public override IEnumerator Init()
     {
         byte[] textBytes = null;
