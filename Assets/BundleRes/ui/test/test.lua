@@ -19,8 +19,7 @@ function test.CheckUpdate()
 	function()
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
-		"ui/loading/loading.prefab",
-		function(asset)
+		"ui/loading/loading.prefab", function(asset)
 			obj = asset
 		end))
 		

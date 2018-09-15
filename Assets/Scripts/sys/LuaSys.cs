@@ -34,6 +34,7 @@ public class LuaSys : SingleMono<LuaSys>
             foreach(var injection in lb.injections.Where(i => i.obj != null))
             {
                 luaTable.Set(injection.obj.name, injection.obj);
+                // AppLog.d("injections:{0}:{1}", injection.obj.name, injection.obj);
             }
         }
         return luaTable;

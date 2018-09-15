@@ -113,6 +113,10 @@ public class AppVersion : InspectorDraw
 #endif
 
 }
+public class FoldAble
+{
+    public bool Foldout = false;
+}
 
 /// <summary>
 /// Assets/BundleRes 下需要打包的资源目录配置
@@ -130,6 +134,22 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public const string LuaExtension = ".lua";
 
     #endregion const
+
+    #region  test dictionary draw
+    [Serializable]
+    public class TestC1 : FoldAble
+    {
+        public int _int = 0;
+        public string _string = "sss";
+
+    }
+    public FoldAbleDictionary<string, TestC1> _testDic = new FoldAbleDictionary<string, TestC1>(){
+        {"test_key1", new TestC1(){_int = 1, _string = "string_1"}},
+        {"test_key2", new TestC1(){_int = 1, _string = "string_2"}},
+        {"test_key3", new TestC1(){_int = 1, _string = "string_3"}},
+        {"test_key4", new TestC1(){_int = 1, _string = "string_4"}},
+    };
+    #endregion test
 
     public static string LocalManifestPath
     {
@@ -401,7 +421,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         var DefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
         PlayerSettings.SetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()
-            , "UNITY_LIBER;USE_LOCALIZE;SERVER_PRO;VERSION_1_10_0;"
+            , ""
             + DefineSymbols + ";"
             + config.DefineSymbols);
 
@@ -578,13 +598,18 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         {
             base.OnInspectorGUI();
 
+            mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
+
+            if((mTarget._testDic.Foldout = EditorGUILayout.Foldout(mTarget._testDic.Foldout, "_testDic", true)))
+            {
+                mTarget._testDic.Draw<string, TestC1>();
+            }
+
             GUILayoutOption[] guiOpts = new GUILayoutOption[]
             {
                 GUILayout.Width(30),
                 GUILayout.ExpandWidth(true),
             };
-
-            mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
 
             mTarget.Version.Draw(0, guiOpts);
 

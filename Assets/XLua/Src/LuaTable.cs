@@ -384,7 +384,7 @@ namespace XLua
         {
             EditorGUI.indentLevel += indent;
             FoldOut = ContainsKey("FoldOut")?Get<bool>("FoldOut"):false;
-            FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
+            FoldOut = EditorGUILayout.Foldout(FoldOut, Name + ": " + GetType().ToString(), true);
             Set("FoldOut", FoldOut);
             if (FoldOut)
             {
@@ -459,6 +459,58 @@ namespace XLua
                     EditorGUILayout.EndHorizontal();
                 }
             });
+
+            ForEach<int, object>((k, v) =>
+            {
+                if (v is LuaTable)
+                {
+                    var t = (v as LuaTable);
+                    t.Name = "[" + k.ToString() + "]";
+                    ++EditorGUI.indentLevel;
+                    t.Draw();
+                    --EditorGUI.indentLevel;
+                }
+                else
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("[" + k + "]: " + (v != null ? v.GetType().ToString() : "null"));
+                    if (v is bool)
+                    {
+                        var tmp = EditorGUILayout.Toggle((bool)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is Enum)
+                    {
+                        {
+                            var tmp = EditorGUILayout.EnumPopup((Enum)v);
+                            Set(k, tmp);
+                        }
+                    }
+                    else if (v is long)
+                    {
+                        {
+                            var tmp = EditorGUILayout.LongField((long)v);
+                            Set(k, tmp);
+                        }
+                    }
+                    else if (v is double)
+                    {
+                        var tmp = EditorGUILayout.DoubleField((double)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is string)
+                    {
+                        var tmp = EditorGUILayout.TextField((string)v);
+                        Set(k, tmp);
+                    }
+                    else if (v is Component)
+                    {
+                        EditorGUILayout.ObjectField((v as Component).gameObject, typeof(UnityEngine.Object), true);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+            });
+
         }
 #endif
 

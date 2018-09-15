@@ -62,6 +62,10 @@ public static class AppChannelExtension
     {
         return self > AppChannel.Android_begin && self < AppChannel.Android_end;
     }
+}
+
+public static class AppChannelEditorExtension
+{
 
 #if UNITY_EDITOR
     public static UnityEditor.BuildTarget BuildTarget(this AppChannel self)

@@ -170,7 +170,7 @@ public class DllCompile : SingletonAsset<DllCompile>
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
             {
-                File.Copy("doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
+                File.Copy("Assets/doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
             }
 
             // //BaseDirectory: /Applications/Unity-2017.4.1f1

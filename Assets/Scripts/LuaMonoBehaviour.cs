@@ -52,7 +52,6 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         if(string.IsNullOrEmpty(luaScript.path))
             return false;
-        AppLog.d(luaScript.path);
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
         if(textBytes == null)
             return false;

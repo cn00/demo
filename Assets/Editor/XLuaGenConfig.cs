@@ -12,6 +12,7 @@ using UnityEngine;
 using XLua;
 using System.Runtime;
 using SQLite;
+using TableView;
 
 //配置的详细介绍请看Doc下《XLua的配置.doc》
 public static class XLuaGenConfig
@@ -21,6 +22,11 @@ public static class XLuaGenConfig
     [Hotfix]
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
+        typeof(TableView.TableView),
+        typeof(TableView.TableViewController),
+        typeof(TableView.TableViewCell),
+        typeof(TableView.TableViewCellController),
+               
         typeof(NPOI.SS.UserModel.ICell),
         typeof(NPOI.SS.UserModel.IRow),
         typeof(NPOI.SS.UserModel.ISheet),
@@ -84,6 +90,14 @@ public static class XLuaGenConfig
     //C#静态调用Lua的配置（包括事件的原型），仅可以配delegate，interface
     [CSharpCallLua]
     public static List<Type> CSharpCallLua = new List<Type>() {
+        typeof(TableView.TableViewController.CellRow),
+        typeof(TableView.TableViewController.CellSize),
+        typeof(TableView.TableViewController.Count),
+        typeof(TableView.TableViewController.OnHighlightRow),
+        typeof(TableView.TableViewController.OnSelectRow),
+        typeof(TableView.TableViewCellDidSelectEvent),
+        typeof(TableView.TableViewCellDidHighlightEvent),
+
         typeof(Action),
         typeof(Func<double, double, double>),
         typeof(Action<string>),
