@@ -37,7 +37,7 @@ function example_cell.AutoGenInit()
     example_cell.Text_4_Text = Text_4:GetComponent("UnityEngine.UI.Text")
     example_cell.Text_5_Text = Text_5:GetComponent("UnityEngine.UI.Text")
     example_cell.Text_6_Text = Text_6:GetComponent("UnityEngine.UI.Text")
-    -- example_cell.Text_7_Text = Text_7:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_7_Text = Text_7:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
 
@@ -73,9 +73,9 @@ function example_cell.SetExcelCellData(row, columnidx, num)
         return
     end
     self.data = row
-    print("example_cell.SetExcelCellData", row:GetCell(columnidx))
+    -- print("example_cell.SetExcelCellData", row:GetCell(columnidx))
     self.Text_Text.text = example_cell.TableViewCellController.RowNumber
-    for i = 1, 6 do 
+    for i = 1, 7 do 
         local key = "Text_"..i.. "_Text"
         -- print(key)
         local cell = row:GetCell(columnidx + i - 1)
