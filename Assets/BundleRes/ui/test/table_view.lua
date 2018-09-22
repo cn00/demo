@@ -5,231 +5,6 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local testData = {
-    {
-        id = 2,
-        name = "name_2",
-        text = "text",
-        "string",
-        23456,
-        "string2",
-        [80] = 888889999,
-        {
-            i = 9,
-            s = "9999"
-        },
-        [55] = {
-            i = 333,
-            s = "2222"
-        },
-        {
-            i = 444,
-            s = "222444"
-        },
-    },
-    {
-        id = 1,
-        name = "name_1",
-        text = "text",
-    },
-    {
-        id = 2,
-        name = "name_2",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 4,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 5,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 6,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 7,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 8,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 1,
-        name = "name_1",
-        text = "text",
-    },
-    {
-        id = 2,
-        name = "name_2",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 1,
-        name = "name_1",
-        text = "text",
-    },
-    {
-        id = 2,
-        name = "name_2",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 1,
-        name = "name_1",
-        text = "text",
-    },
-    {
-        id = 2,
-        name = "name_2",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-    {
-        id = 3,
-        name = "name_3",
-        text = "text",
-    },
-}
-
-
 local table_view = {
     RowIdxA = 1,
     RowPerPage = 10,
@@ -239,9 +14,9 @@ local table_view = {
 }
 local self = table_view
 
--- local yield_return = util.async_to_sync(function (to_yield, callback)
---     mono:YieldAndCallback(to_yield, callback)
--- end)
+local yield_return = util.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
 
 -- function table_view.coroutine_demo()
 --     return coroutine.create(function()
@@ -324,6 +99,9 @@ function table_view.Awake()
     -- local assetPath = CS.UnityEngine.Application.streamingAssetsPath .. "/Excel.tmp/EtudeLessonInfo.xlsx"
     local book = CS.ExcelUtils.Open(assetPath);
     table_view.Sheets = {}
+    table_view.SheetTabs = {}
+    local selcolor = {r=0, g = 123, b = 100, a = 255}
+    local restcolor = {r=255, g = 255, b = 255, a = 255}
     for i = 0, book.NumberOfSheets - 1 do
         print(i, book[i].SheetName)
         table_view.Sheets[i+1] = {
@@ -331,28 +109,26 @@ function table_view.Awake()
             sheet = book[i]
         }
         -- sheet tab
-        if i == 0 then
-            local lua_sheet_tab = table_view.sheet_tab_LuaMonoBehaviour.luaTable
-            local sheet = table_view.Sheets[1].sheet
-            lua_sheet_tab.Text_Text.text = sheet.SheetName
-            lua_sheet_tab.Button_Button.onClick:AddListener(function()
-                table_view.initSheetData(sheet)
-                table_view.tableview_TableViewController.tableView:ReloadData()
-            end)
-        else
-            local new_sheet_tab = GameObject.Instantiate(sheet_tab)
-            new_sheet_tab.name = "sheet_tab_" .. i
-            new_sheet_tab.transform:SetParent(SheetContent.transform)
-            local lua_sheet_tab = new_sheet_tab:GetComponent("LuaMonoBehaviour").luaTable
-            local sheet = table_view.Sheets[i+1].sheet
-            lua_sheet_tab.Text_Text.text = sheet.SheetName
-            lua_sheet_tab.Button_Button.onClick:AddListener(function()
-                table_view.initSheetData(sheet)
-                table_view.tableview_TableViewController.tableView:ReloadData()
-            end)
-        end
+        local new_sheet_tab = GameObject.Instantiate(sheet_tab)
+        new_sheet_tab.name = "sheet_tab_" .. i
+        new_sheet_tab.transform:SetParent(SheetContent.transform)
+        local lua_sheet_tab = new_sheet_tab:GetComponent("LuaMonoBehaviour").luaTable
+        local sheet = table_view.Sheets[i+1].sheet
+        lua_sheet_tab.Text_Text.text = sheet.SheetName
+        lua_sheet_tab.Button_Button.onClick:AddListener(function()
+            for k, v in pairs(table_view.SheetTabs) do
+                v.Button_Image.color = restcolor
+            end
+            lua_sheet_tab.Button_Image.color = selcolor
+            table_view.initSheetData(sheet)
+            table_view.tableview_TableViewController.tableView:ReloadData()
+        end)
+        table.insert(table_view.SheetTabs, lua_sheet_tab)
         SheetContent.transform.sizeDelta = {x = book.NumberOfSheets * 155, y = 50}
-    end
+    end -- for
+    GameObject.DestroyImmediate(sheet_tab)
+    table_view.SheetTabs[1].Button_Image.color = selcolor
+
     if #table_view.Sheets > 0 then
         local sheet = table_view.Sheets[1].sheet
         table_view.initSheetData(sheet)
@@ -394,12 +170,21 @@ function table_view.Awake()
     end)
 
     table_view.back_Button.onClick:AddListener(function()
-        -- table_view.initData()
-        -- table_view.ColumnIdxA = table_view.ColumnIdxA + 1
-        -- if table_view.ColumnIdxA > 10 then
-        --     table_view.ColumnIdxA = 10
-        -- end
+       table_view.Back()
     end)
+end
+
+function table_view.Back()
+    assert(coroutine.resume(coroutine.create(function()
+        yield_return(mono:WaitForSeconds(0.3))
+        local obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+            obj = asset
+        end))
+        local gameObj = GameObject.Instantiate(obj)
+
+	    GameObject.DestroyImmediate(mono.gameObject)
+    end)))
 end
 
 function table_view.OnEnable()
