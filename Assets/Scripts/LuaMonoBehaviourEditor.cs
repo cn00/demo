@@ -37,7 +37,7 @@ public class LuaMonoBehaviourEditor : Editor
         EditorGUILayout.BeginHorizontal();
         {
             mShowInjections = EditorGUILayout.Foldout(mShowInjections, "Injections", true);
-            size = EditorGUILayout.IntField(size);
+            size = EditorGUILayout.DelayedIntField(size);
         }
         EditorGUILayout.EndHorizontal();
 

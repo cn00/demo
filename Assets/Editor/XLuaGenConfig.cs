@@ -68,6 +68,8 @@ public static class XLuaGenConfig
         typeof(Component),
         typeof(Behaviour),
         typeof(Transform),
+        typeof(UnityEngine.Rect),
+        typeof(UnityEngine.RectTransform),
         typeof(Resources),
         typeof(TextAsset),
         typeof(Keyframe),

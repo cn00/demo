@@ -50,12 +50,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     public bool Inited { get; protected set; }
     bool Init()
     {
-        if(string.IsNullOrEmpty(luaScript.path))
-            return false;
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
-        if(textBytes == null)
-            return false;
-
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
 

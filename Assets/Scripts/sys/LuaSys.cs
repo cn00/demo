@@ -46,6 +46,9 @@ public class LuaSys : SingleMono<LuaSys>
     }
     public byte[] LuaLoader(ref string filename)
     {
+        if(string.IsNullOrEmpty(filename))
+            return null;
+            
         var LuaExtension = BuildConfig.LuaExtension;
 
         if(filename.EndsWith(LuaExtension))
