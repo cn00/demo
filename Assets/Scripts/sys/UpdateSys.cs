@@ -268,7 +268,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Updated(string subPath)
     {
-        AppLog.d("Updated: {0}", subPath);
+        // AppLog.d("Updated: {0}", subPath);
         var dirs = subPath.Split('/');
         //lock(mDiffListLock)
         {

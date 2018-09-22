@@ -227,13 +227,15 @@ public class InspectorDraw : object
         FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
         if (FoldOut) 
         {
-            var verticalScope = new EditorGUILayout.VerticalScope("box");
+            // var verticalScope = new EditorGUILayout.VerticalScope("box");
+            EditorGUILayout.BeginVertical();
             {
                 // ++EditorGUI.indentLevel;
                 DrawInspector(indent, guiOpts);
                 // --EditorGUI.indentLevel;
             }
-            verticalScope.Dispose();
+            EditorGUILayout.EndVertical();
+            // verticalScope.Dispose();
         }
         EditorGUI.indentLevel -= indent;
     }

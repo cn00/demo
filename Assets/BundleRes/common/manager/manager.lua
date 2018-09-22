@@ -1,4 +1,4 @@
-﻿-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
+-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
 
 local G = _G
 local CS = CS
@@ -29,7 +29,8 @@ _G.manager = manager
 -- end
 
 --AutoGenInit Begin
-function manager.AutoGenInit() end
+function manager.AutoGenInit()
+end
 --AutoGenInit End
 
 function manager.Awake()

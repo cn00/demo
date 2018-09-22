@@ -92,6 +92,38 @@ function test.Op(...)
 	)
 end
 
+function test.TableViewTest()
+	return coroutine.create(function()
+		print("open TableViewTest")
+
+		local subpath = "StreamingAssets/Excel.tmp/EtudeLessonInfo.xlsx"
+		local localPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
+		local endCallback = function(www)
+			print("download ok", www.bytes)
+			CS.AssetSys.AsyncSave(localPath, www.bytes)
+		end
+		local progressCallback = function(progress)
+			print("downloading " .. progress)
+		end
+		local url = CS.AssetSys.HttpRoot .. subpath
+		yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
+
+		local obj = nil
+		yield_return(
+		CS.AssetSys.Instance:GetAsset(
+		"ui/test/table_view.prefab",
+		function(asset)
+			obj = asset
+		end))
+		local table_view = GameObject.Instantiate(obj)
+		table_view.name = "table_view"
+		local oldLoading = GameObject.Find("loading")
+		GameObject.DestroyImmediate(oldLoading)
+		
+		self.Destroy()
+	end)
+end
+
 function test.SqliteInsert(x, y)
 	local db = self.db
 	local sql = "INSERT INTO `test_map` (x,y) VALUES " .. "(" .. x .. "," .. y .. ");" .. "COMMIT;"
@@ -162,8 +194,7 @@ function test.InsertOnClick()
 end
 
 function test.coroutine_insert_10000()
-	return coroutine.create(
-	function()
+	return coroutine.create(function()
 		print("coroutine_insert_10000 coroutine start!")
 		local t = os.time()
 		-- insert 10000 records coast 83 second
@@ -182,9 +213,9 @@ function test.coroutine_insert_10000()
 		if result2 == sqlite.Result.Error then
 			local errmsg = sqlite.GetErrmsg(db)
 			print(errmsg)
-			-- elseif result2 == sqlite.Result.Done then
--- 	-- local rowsAffected = sqlite.Changes(db)
--- 	print("rowsAffected", rowsAffected)
+		-- elseif result2 == sqlite.Result.Done then
+		-- 	-- local rowsAffected = sqlite.Changes(db)
+		-- 	print("rowsAffected", rowsAffected)
 		elseif result2 == sqlite.Result.Busy then
 			print("db busy")
 		end
@@ -193,8 +224,7 @@ function test.coroutine_insert_10000()
 		self.Insert_10000_Button.interactable = true
 		local lastid = sqlite.LastInsertRowid(db)
 		print(result2, "lastid" .. lastid, "coast:" .. os.time() - t)
-	end
-	)
+	end)
 end
 
 --AutoGenInit Begin
@@ -207,6 +237,7 @@ function test.AutoGenInit()
     test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
     test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
     test.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
+    test.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 function test.Awake()
@@ -235,7 +266,9 @@ function test.Awake()
 	self.Insert_10000_Button.onClick:AddListener(insert10000OnClick)
 	self.OpenOP_Button.onClick:AddListener(openOpOnclick)
 	self.CheckUpdate_Button.onClick:AddListener(checkUpdateOnClick)
-	
+	test.tableview_Button.onClick:AddListener(function()
+		assert(coroutine.resume(self.TableViewTest()))
+	end)
 	local ixOnEdit = function(text)
 		self.iy_InputField:Select()
 		print("x_InputField.onEndEdit:" .. text)

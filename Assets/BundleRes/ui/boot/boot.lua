@@ -21,21 +21,24 @@ function boot.coroutine_boot()
         print('boot coroutine start!')
         -- yield_return(CS.UnityEngine.WaitForSeconds(1))
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
-            obj = asset
-        end))
-        local manager = CS.UnityEngine.GameObject.Instantiate(obj)
-
-        obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
             obj = asset
         end))
         local loading = CS.UnityEngine.GameObject.Instantiate(obj)
 
 		yield_return(CS.UpdateSys.Instance:Init())
-		print("UpdateSys 1")
+		print("UpdateSys.Init 1")
+		yield_return(CS.UpdateSys.Instance:CheckUpdate())
+        print("UpdateSys.CheckUpdate 1")
+        
+        obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
+            obj = asset
+        end))
+        local manager = CS.UnityEngine.GameObject.Instantiate(obj)
+
 		yield_return(CS.NetSys.Instance:Init())
-		print("NetSys 1")
+        print("NetSys 1")
 
 	    obj = nil
 	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
@@ -61,32 +64,32 @@ function boot.Awake()
     assert(coroutine.resume(boot.coroutine_boot()))
 end
 
-function boot.OnEnable()
-    print("boot.OnEnable")
+-- function boot.OnEnable()
+--     print("boot.OnEnable")
 
-end
+-- end
 
-function boot.Start()
-    print("boot.Start")
+-- function boot.Start()
+--     print("boot.Start")
 
 
-end
+-- end
 
-function boot.FixedUpdate()
+-- function boot.FixedUpdate()
 
-end
+-- end
 
-function boot.Update()
+-- function boot.Update()
 
-end
+-- end
 
-function boot.LateUpdate()
+-- function boot.LateUpdate()
 
-end
+-- end
 
-function boot.OnDestroy()
-    print("boot.OnDestroy")
+-- function boot.OnDestroy()
+--     print("boot.OnDestroy")
 
-end
+-- end
     
 return boot

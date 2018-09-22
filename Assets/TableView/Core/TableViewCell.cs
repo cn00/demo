@@ -16,9 +16,9 @@ namespace TableView
 
         public string ReuseIdentifier;
 
-        public event TableViewCellDidSelectEvent DidSelectEvent;
-        public event TableViewCellDidSelectEvent DidPointClickEvent;
-        public event TableViewCellDidHighlightEvent DidHighlightEvent;
+        public event CellDidSelectEvent DidSelectEvent;
+        public event CellDidSelectEvent DidPointClickEvent;
+        public event CellDidHighlightEvent DidHighlightEvent;
 
 
         #endregion

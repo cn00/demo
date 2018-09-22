@@ -46,6 +46,9 @@ public class SheetStruct : InspectorDraw
     {
         base.DrawInspector();
 
+        Sheet.SheetName = Name;
+        PinColumn = PinColumn.ToUpper();
+
         var hasPinColumn = !string.IsNullOrEmpty(PinColumn);
 
         // column name
@@ -169,7 +172,7 @@ public partial class DefaultAssetInspector : Editor
             tmp.Book = book;
             foreach(var sheet in book.AllSheets())
             {
-                var ss = new SheetStruct(){FoldOut = true };
+                var ss = new SheetStruct(){FoldOut = false };
                 ss.Name = sheet.SheetName;
                 ss.Sheet = sheet;
                 tmp.Sheets.Add(ss);

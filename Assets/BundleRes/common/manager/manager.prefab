@@ -19,9 +19,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4359675727273526}
+  - component: {fileID: 114005761835099690}
+  - component: {fileID: 114261103019542812}
+  - component: {fileID: 114093868832396212}
   - component: {fileID: 114453235478954606}
-  - component: {fileID: 114876952304631534}
-  - component: {fileID: 114995964123604982}
   m_Layer: 0
   m_Name: manager
   m_TagString: Untagged
@@ -29,6 +30,93 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1166545898124404
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4134402296093960}
+  - component: {fileID: 114739290049429514}
+  m_Layer: 0
+  m_Name: manager_sys
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1360762031260614
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4128441584194778}
+  - component: {fileID: 114543841820642590}
+  m_Layer: 0
+  m_Name: scene_manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1412133623965120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4264924841105874}
+  - component: {fileID: 114739862896866072}
+  m_Layer: 0
+  m_Name: manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4128441584194778
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1360762031260614}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4359675727273526}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4134402296093960
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1166545898124404}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4359675727273526}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4264924841105874
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412133623965120}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4359675727273526}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4359675727273526
 Transform:
   m_ObjectHideFlags: 1
@@ -36,12 +124,49 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1013339268840872}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 604.01245, y: 420.12598, z: -1.9948907}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4264924841105874}
+  - {fileID: 4128441584194778}
+  - {fileID: 4134402296093960}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114005761835099690
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013339268840872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6074d4815f48514d8483191e94ff385, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mManifest: {fileID: 0}
+--- !u!114 &114093868832396212
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013339268840872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3837733d80e6c74780b4e06f0293707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114261103019542812
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013339268840872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d30609fa9c1c2469c99bfbc7c1f669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114453235478954606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -54,30 +179,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: common/manager/manager
-    textAsset: {fileID: 102900000, guid: 965b2b517f5434ada8aebd686ae28a14, type: 3}
-  injections: []
---- !u!114 &114876952304631534
+    path: common/global/global
+    textAsset: {fileID: 102900000, guid: 2cce223751a6e4c04b897fa415d53222, type: 3}
+  injections:
+  - obj: {fileID: 1412133623965120}
+    exportComIdx: 1
+  - obj: {fileID: 1360762031260614}
+    exportComIdx: 1
+  - obj: {fileID: 1166545898124404}
+    exportComIdx: 1
+--- !u!114 &114543841820642590
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1013339268840872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  luaScript:
-    path: common/manager/message_sys
-    textAsset: {fileID: 102900000, guid: f4321f7d4db644d77854725105a79839, type: 3}
-  injections: []
---- !u!114 &114995964123604982
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1013339268840872}
+  m_GameObject: {fileID: 1360762031260614}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
@@ -85,5 +201,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   luaScript:
     path: common/manager/scene_manager
-    textAsset: {fileID: 102900000, guid: 4099d6568d423494caefc0e6a1c35f8d, type: 3}
+    textAsset: {fileID: 102900000, guid: d70a523eca3254b12889a3d7f8ad66c3, type: 3}
+  injections: []
+--- !u!114 &114739290049429514
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1166545898124404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  luaScript:
+    path: common/manager/scene_manager
+    textAsset: {fileID: 102900000, guid: d70a523eca3254b12889a3d7f8ad66c3, type: 3}
+  injections: []
+--- !u!114 &114739862896866072
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412133623965120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  luaScript:
+    path: common/manager/manager
+    textAsset: {fileID: 102900000, guid: f0c1c701890bb4dde9decf2bf2b6ab23, type: 3}
   injections: []

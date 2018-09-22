@@ -4,5 +4,5 @@ using UnityEngine.Events;
 namespace TableView
 {
     [Serializable]
-    public delegate void TableViewCellDidSelectEvent(int row);
+    public delegate void CellDidSelectEvent(int row);
 }

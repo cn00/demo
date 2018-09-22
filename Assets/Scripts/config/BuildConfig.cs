@@ -678,7 +678,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             if (showBuilds)
             {
                 ++EditorGUI.indentLevel;
-                var verticalScope = new EditorGUILayout.VerticalScope("box");
+                // var verticalScope = new EditorGUILayout.VerticalScope("box");
+                EditorGUILayout.BeginVertical();
                 {
                     // build exe apk ipa app etc.
                     GUILayout.Space(1f);
@@ -706,7 +707,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     }
 
                 }
-                verticalScope.Dispose();
+                EditorGUILayout.EndVertical();
+                // verticalScope.Dispose();
                 --EditorGUI.indentLevel;
             }
 

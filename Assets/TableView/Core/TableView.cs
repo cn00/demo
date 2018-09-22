@@ -201,7 +201,12 @@ namespace TableView
         public void RegisterPrefabForCellReuseIdentifier(GameObject prefab)
         {
             var cellController = prefab.GetComponentInChildren<TableViewCellController>();
-            prefabCells.RegisterPrefabForCellReuseIdentifier(prefab, cellController.ReuseIdentifier);
+            if(cellController == null)
+            {
+                cellController = prefab.AddComponent<TableViewCellController>();
+            }
+            cellController.ReuseIdentifier = prefab.name;
+            prefabCells.RegisterPrefabForCellReuseIdentifier(prefab, prefab.name/*cellController.ReuseIdentifier*/);
         }
 
         public void SetPosition(float newPosition)
@@ -382,11 +387,14 @@ namespace TableView
             float cellSize = cellSizes.SizeForRow(row) - ((row > 0) ? tableViewLayout.Spacing : 0);
             CreateLayoutIfNeededForCellWithSize(cell, cellSize);
 
-            cell.DidHighlightEvent -= (CellDidHighlight);
-            cell.DidHighlightEvent += (CellDidHighlight);
+            // cell.DidHighlightEvent -= (CellDidHighlight);
+            // cell.DidHighlightEvent += (CellDidHighlight);
 
-            cell.DidSelectEvent -= (CellDidSelect);
-            cell.DidSelectEvent += (CellDidSelect);
+            // cell.DidSelectEvent -= (CellDidSelect);
+            // cell.DidSelectEvent += (CellDidSelect);
+
+            // cell.DidPointClickEvent -= (PointClick);
+            // cell.DidPointClickEvent += (PointClick);
 
             visibleCells.SetCellAtIndex(row, co);
 
@@ -485,6 +493,14 @@ namespace TableView
         }
 
         private void CellDidSelect(int row)
+        {
+            if (tableViewDelegate != null)
+            {
+                tableViewDelegate.OnSelectAt(this, row);
+            }
+        }
+
+        private void PointClick(int row)
         {
             if (tableViewDelegate != null)
             {

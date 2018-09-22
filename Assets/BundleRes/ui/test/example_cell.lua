@@ -5,7 +5,9 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local example_cell = {}
+local example_cell = {
+    ColumnPerPage = 5,
+}
 local self = example_cell
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
@@ -27,8 +29,15 @@ local self = example_cell
 --AutoGenInit Begin
 function example_cell.AutoGenInit()
     example_cell.table_view_cell_01_TableViewCellController = mono.gameObject:GetComponent("TableView.TableViewCellController")
-    example_cell.Text_Text = Text:GetComponent("UnityEngine.UI.Text")
     example_cell.Image_Image = Image:GetComponent("UnityEngine.UI.Image")
+    example_cell.Text_Text = Text:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_1_Text = Text_1:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_2_Text = Text_2:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_3_Text = Text_3:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_4_Text = Text_4:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_5_Text = Text_5:GetComponent("UnityEngine.UI.Text")
+    example_cell.Text_6_Text = Text_6:GetComponent("UnityEngine.UI.Text")
+    -- example_cell.Text_7_Text = Text_7:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
 
@@ -48,10 +57,10 @@ function example_cell.Awake()
     end)
 end
 
-function example_cell.OnEnable()
-    print("example_cell.OnEnable")
+-- function example_cell.OnEnable()
+--     print("example_cell.OnEnable")
 
-end
+-- end
 
 function example_cell.SetData(data)
     self.data = data
@@ -59,29 +68,48 @@ function example_cell.SetData(data)
     self.Text_Text.text = self.data.name .. ":" .. example_cell.TableViewCellController.RowNumber
 end
 
-function example_cell.Start()
-    print("example_cell.Start", self.data.name)
-
-    --assert(coroutine.resume(example_cell.coroutine_demo()))
-
+function example_cell.SetExcelCellData(row, columnidx, num)
+    if row == nil then
+        return
+    end
+    self.data = row
+    print("example_cell.SetExcelCellData", row:GetCell(columnidx))
+    self.Text_Text.text = example_cell.TableViewCellController.RowNumber
+    for i = 1, 6 do 
+        local key = "Text_"..i.. "_Text"
+        -- print(key)
+        local cell = row:GetCell(columnidx + i - 1)
+        if cell ~= nil then
+            self[key].text = cell:StrValue()
+        else
+            self[key].text = "~nil~"
+        end
+    end
 end
 
-function example_cell.FixedUpdate()
+-- function example_cell.Start()
+--     print("example_cell.Start", self.data.name)
 
-end
+--     --assert(coroutine.resume(example_cell.coroutine_demo()))
 
-function example_cell.Update()
+-- end
 
-end
+-- function example_cell.FixedUpdate()
 
-function example_cell.LateUpdate()
+-- end
 
-end
+-- function example_cell.Update()
 
-function example_cell.OnDestroy()
-    print("example_cell.OnDestroy")
+-- end
 
-end
+-- function example_cell.LateUpdate()
+
+-- end
+
+-- function example_cell.OnDestroy()
+--     print("example_cell.OnDestroy")
+
+-- end
 
 function example_cell.Destroy()
     GameObject.DestroyImmediate(mono.gameObject)

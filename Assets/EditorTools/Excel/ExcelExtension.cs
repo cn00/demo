@@ -14,6 +14,45 @@ using UnityEditor;
 
 public static class ExcelUtils
 {
+    public static string SValue(this ICell cell, CellType? FormulaResultType = null)
+    {
+        string svalue = "";
+        var cellType = FormulaResultType ?? cell.CellType;
+        switch (cellType)
+        {
+            case CellType.Unknown:
+                svalue = "Unknown";
+                break;
+            case CellType.Numeric:
+                svalue = cell.NumericCellValue.ToString();
+                break;
+            case CellType.String:
+                svalue = cell.StringCellValue;
+                break;
+            case CellType.Formula:
+                svalue = cell.SValue(cell.CachedFormulaResultType);
+                break;
+            case CellType.Blank:
+                svalue = "";
+                break;
+            case CellType.Boolean:
+                svalue = cell.BooleanCellValue.ToString();
+                break;
+            case CellType.Error:
+                svalue = "Error";
+                break;
+            default:
+                break;
+        }
+        return svalue;
+    }
+    public static string SafeSValue(this ICell self, CellType? FormulaResultType = null)
+    {
+        return self.SValue()
+                .Replace("\n", "\\n")
+                .Replace("\t", "\\t")
+                .Replace("\"", "\\\"");
+    }
     public static List<ISheet> AllSheets(this IWorkbook self)
     {
         List<ISheet> sheets = new List<ISheet>();
@@ -59,6 +98,7 @@ public static class ExcelUtils
         var stream = new FileStream(path, FileMode.Create);
         stream.Position = 0;
         self.Write(stream);
+        stream.Close();
     }
 
     public static ISheet Sheet(this IWorkbook self, string name)

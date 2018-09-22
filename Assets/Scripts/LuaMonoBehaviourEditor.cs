@@ -62,7 +62,7 @@ public class LuaMonoBehaviourEditor : Editor
                     item.obj = (GameObject)EditorGUILayout.ObjectField(item.obj, typeof(GameObject), true);
                     if (item.obj)
                     {
-                        var nname = EditorGUILayout.DelayedTextField(item.obj.name.RReplace(PathUtils.PunctuationRegex + "+", "_"));
+                        var nname = EditorGUILayout.DelayedTextField(item.obj.name.RReplace(PathUtils.PunctuationRegex + "+", "_").TrimEnd('_'));
                         var coms = item.obj.GetComponents<Component>().Select(e =>
                         {
                             var name = e.GetType().ToString();
