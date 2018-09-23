@@ -34,10 +34,6 @@ public static class AppLog
         }
     }
 
-    public static string TAG = "[game]";
-
-    public static int Port = 7788;
-
     public static bool isEditor = false;
 
     public static Level LogLevel = Level.Debug;
@@ -58,9 +54,12 @@ public static class AppLog
     public static void d(string log)
     {
         if(LogLevel >= Level.Debug)
-            UnityEngine.Debug.Log( TAG + log);
-        if(LogLevel >= Level.Net)
-            BroadcastMessage(log.ToString());
+        {
+            var s = "[debug] " + log;
+            UnityEngine.Debug.Log(s);
+            if(LogLevel >= Level.Net)
+                BroadcastMessage(log);
+        }
     }
 
     public static void d(string fmt, params object[] args)
@@ -84,9 +83,12 @@ public static class AppLog
     public static void w(string log)
     {
         if(LogLevel >= Level.Warning)
-            UnityEngine.Debug.LogWarning(TAG + log);
-        if(LogLevel >= Level.Net)
-            BroadcastMessage(log);
+        {
+            var s = "[warning] " + log;
+            UnityEngine.Debug.LogWarning(s);
+            if(LogLevel >= Level.Net)
+                BroadcastMessage(s);
+        }
     }
 
     public static void w(string fmt, params object[] args)
@@ -98,9 +100,12 @@ public static class AppLog
     private static void e(string log)
     {
         if(LogLevel >= Level.Error)
-            UnityEngine.Debug.LogErrorFormat("{0} {1}", TAG, log);
-        if(LogLevel >= Level.Net)
-            BroadcastMessage("error: " + log);
+        {
+            var s = "[error] " + log;
+            UnityEngine.Debug.LogError(s);
+            if(LogLevel >= Level.Net)
+                BroadcastMessage(log);
+        }
     }
 
     public static void e(string fmt, params object[] args)

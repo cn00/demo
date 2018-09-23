@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Globalization;
@@ -89,13 +90,21 @@ public class BuildScript
     }
 
     #region AssetBundle
-    public static void BuildAssetBundle(BuildTarget targetPlatform, bool rebuild = false)
+
+    public static IEnumerator BuildAssetBundle(BuildTarget targetPlatform, bool rebuild = false, Action callback = null)
     {
+        BuildConfig.ClearLogs();
+        yield return null;
+
         var tmp = EditorUserBuildSettings.activeBuildTarget;
         var t = DateTime.Now;
         try
         {
             var outDir = BundleOutDir + TargetName(targetPlatform);
+            if (rebuild)
+            {
+                Directory.Delete(outDir, true);
+            }
             if (!Directory.Exists(outDir))
             {
                 Directory.CreateDirectory(outDir);
@@ -122,20 +131,23 @@ public class BuildScript
                     File.Copy(f.FullName, ftxt, true);
                 }
             }
+            yield return null;
 
             // this is the right time to update LastBuildTime if i continue edit lua while BuildAssetBundle
             BuildConfig.Instance().LastBuildTime = DateTime.Now.ToFileTimeUtc();
             AssetDatabase.Refresh();
+            yield return null;
 
             var options = (
                 BuildAssetBundleOptions.None
               | BuildAssetBundleOptions.ChunkBasedCompression
+              | BuildAssetBundleOptions.AppendHashToAssetBundleName
             );
 
             if (rebuild)
                 options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
-
             var manifest = BuildPipeline.BuildAssetBundles( outDir, options, targetPlatform );
+            yield return null;
 
             // zip
             var outRoot = BundleOutDir + TargetName(targetPlatform)
@@ -158,7 +170,7 @@ public class BuildScript
 
                 // compare hash
                 var hash = manifest.GetAssetBundleHash(i);
-                var oldhash = Hash128.Parse("0");
+                var oldhash = default(Hash128);
                 if (oldManifest != null)
                     oldhash = oldManifest.GetAssetBundleHash(i);
                 var path = outDir + "/" + i;
@@ -166,7 +178,7 @@ public class BuildScript
                 if (hash != oldhash || !File.Exists(lzmaPath))
                 {
                     EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
-                    AppLog.d("update: {0}:{1}:{2}", i, hash, oldhash);
+                    AppLog.d("{0} {2} => {1}", i, hash, oldhash);
 
                     // TODO: encode bundle
                     BundleHelper.CompressFileLZMA(path, lzmaPath);
@@ -178,6 +190,7 @@ public class BuildScript
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 File.Copy(lzmaPath, outPath, true);
+                yield return null;
             }
         }
         finally
@@ -191,6 +204,10 @@ public class BuildScript
             EditorUtility.ClearProgressBar();
             AppLog.d("BuildAssetBundle coast: {0}", DateTime.Now - t);
         }
+        yield return null;
+        if(callback != null)
+            callback();
+        yield return null;
     }
 
     #endregion AssetBundle
@@ -532,7 +549,7 @@ public class BuildScript
             // version.Patch += 1;
             PlayerSettings.bundleVersion = version.ToString();
             //AndroidAssetBundleDelete();
-            BuildAssetBundle(buildTarget, true);
+            EditorCoroutineRunner.EditorStartCoroutine(BuildAssetBundle(buildTarget, true));
         }
         finally
         {

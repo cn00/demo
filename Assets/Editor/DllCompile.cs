@@ -94,7 +94,7 @@ public class DllCompile : SingletonAsset<DllCompile>
 
     static void Build(Config info)
     {
-        AppLog.d("{0}: {1}", info.Name, info.OutPath);
+        AppLog.d("{0} => {1}", info.Name, info.OutPath);
         var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
 
         var reference = new List<string>(); //info.References.Clone();

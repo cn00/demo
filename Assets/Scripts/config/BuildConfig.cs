@@ -320,6 +320,13 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
 #if UNITY_EDITOR
+    public static void ClearLogs()
+    {
+        var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+        var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        clearMethod.Invoke(null, null);
+    }
+
     [SerializeField, HideInInspector]
     List<ChannelConfig> mChannels = null;
     public List<ChannelConfig> Channels
@@ -428,12 +435,12 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         AssetDatabase.Refresh();
 
         Debug.Log("DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
-
-
     }
 
-    public static void Build(ChannelConfig config)
+    public static void BuildPkg(ChannelConfig config)
     {
+        ClearLogs();
+
         Active(config);
 
         config.BuildNum = (int.Parse(config.BuildNum) + 1).ToString();
@@ -544,24 +551,28 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             {
                 var rect = EditorGUILayout.GetControlRect();
                 var rebuild = mTarget.ForceRebuild;
-                var sn = 4;
+                var sn = 5;
                 var idx = -1;
                 if (GUI.Button(rect.Split(++idx, sn), "BuildWin"))
                 {
-                    Build(BuildTarget.StandaloneWindows, rebuild);
+                    BuildAB(BuildTarget.StandaloneWindows, rebuild);
                 }
                 if (GUI.Button(rect.Split(++idx, sn), "BuildAnd"))
                 {
-                    Build(BuildTarget.Android, rebuild);
+                    BuildAB(BuildTarget.Android, rebuild);
                 }
                 if (GUI.Button(rect.Split(++idx, sn), "BuildiOS"))
                 {
-                    Build(BuildTarget.iOS, rebuild);
+                    BuildAB(BuildTarget.iOS, rebuild);
                 }
                 if (GUI.Button(rect.Split(++idx, sn), "BuildMac"))
                 {
-                    Build(BuildTarget.StandaloneOSX, rebuild);
+                    BuildAB(BuildTarget.StandaloneOSX, rebuild);
                 }
+                if (GUI.Button(rect.Split(++idx, sn), "Clean"))
+                {
+                }
+
             }
 
             // clean
@@ -725,15 +736,16 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             }
         }
 
-        void Build(BuildTarget target, bool rebuild)
+        void BuildAB(BuildTarget target, bool rebuild)
         {
-            BuildScript.BuildAssetBundle(target, rebuild);
 
-            if (mTarget.BuildScene)
-                BuildScript.BuildStreamingScene(target);
+            EditorCoroutineRunner.EditorStartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, ()=>{
+                if (mTarget.BuildScene)
+                    BuildScript.BuildStreamingScene(target);
 
-            BuildScript.GenBundleManifest(target);
-            BuildScript.GenVersionFile(target);
+                BuildScript.GenBundleManifest(target);
+                BuildScript.GenVersionFile(target);
+            }));
         }
 
         private void OnDestroy()

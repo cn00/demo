@@ -155,7 +155,7 @@ PlayerSettings:
     Standalone: com.bilibili.a3
     iOS: com.bilibili.a3
   buildNumber: {}
-  AndroidBundleVersionCode: 32
+  AndroidBundleVersionCode: 42
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -246,7 +246,7 @@ PlayerSettings:
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
   AndroidKeyaliasName: 
-  AndroidBuildApkPerCpuArchitecture: 0
+  AndroidBuildApkPerCpuArchitecture: 1
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
   AndroidEnableTango: 0

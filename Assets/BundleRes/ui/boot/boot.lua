@@ -16,9 +16,11 @@ end)
 --     printbak(table.unpack({...}), debug.traceback())
 -- end
 
-function boot.coroutine_boot()
-    return coroutine.create(function()
-        print('boot coroutine start!')
+function boot.coroutine_boot(first, ...)
+    print('boot coroutine start!', package.path)
+    -- local args = {...}
+    util.coroutine_call(function(...)
+        -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
         -- yield_return(CS.UnityEngine.WaitForSeconds(1))
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
@@ -27,7 +29,8 @@ function boot.coroutine_boot()
         local loading = CS.UnityEngine.GameObject.Instantiate(obj)
 
 		yield_return(CS.UpdateSys.Instance:Init())
-		print("UpdateSys.Init 1")
+        print("UpdateSys.Init 1")
+        
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
         
@@ -51,7 +54,7 @@ function boot.coroutine_boot()
 
 	    loading:SetActive(false)
 
-    end)
+    end)(...)
 end
 
 --AutoGenInit Begin
@@ -61,7 +64,7 @@ end
 
 function boot.Awake()
 	boot.AutoGenInit()
-    assert(coroutine.resume(boot.coroutine_boot()))
+    boot.coroutine_boot(1,2,2,4)
 end
 
 -- function boot.OnEnable()

@@ -190,7 +190,7 @@ public class ChannelConfig : InspectorDraw
             int idx = -1;
             if (GUI.Button(rect.Split(++idx, sc), "Build"))
             {
-                BuildConfig.Build(this);
+                BuildConfig.BuildPkg(this);
             }
             if (GUI.Button(rect.Split(++idx, sc), "Active"))
             {

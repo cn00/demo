@@ -9,6 +9,8 @@
 
 * 可在 `Assets/Config/BundleConfig.asset` 的 `Inspector` 面板中对勾选目录进行单独打包, 而不是全部目录, 方便开发测试时快速打包测试, TODO: `Inspector` 面板中的 `PreDownload` 打包时暂未使用
 
+* BundlePath 使用前缀索引查询, 所以子目录不可互为前缀, 例如: 不可同时存在 `ui/test` 和 `ui/test2`
+
 
 #### 资源打包目录说明
 

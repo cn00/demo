@@ -83,7 +83,6 @@ public class UpdateSys : SingleMono<UpdateSys>
             else
             {
                 mRemoteVersion = mLocalVersion;
-                AppLog.e(remoteVersionUrl + ": " + www.error);
             }
         });
         yield return null;
@@ -123,6 +122,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         var remoteManifestUrl = AssetSys.HttpRoot + mRemoteVersion + "/" + BuildConfig.ManifestName + BuildConfig.CompressedExtension;
 
         byte[] bytes = null;
+        bool err = false;
         yield return AssetSys.Www(remoteManifestUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
@@ -131,9 +131,12 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             else
             {
-                AppLog.e(remoteManifestUrl+ ": " + www.error);
+                err = true;
             }
         });
+        if(err)
+            yield break;
+
         var outStream = new MemoryStream();
         BundleHelper.DecompressFileLZMA(new MemoryStream(bytes), outStream);
         //AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);

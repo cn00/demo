@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
@@ -293,7 +294,8 @@ public class AssetSys : SingleMono<AssetSys>
     public string GetBundlePath (string assetSubPath)
     {
         var dirs = assetSubPath.Split('/');
-        string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+        string bundleName = dirs[0] + '/' + dirs[1];
+        bundleName = mManifest.GetAllAssetBundles().First(i => i.StartsWith(bundleName));
         return bundleName;
     }
 
@@ -312,31 +314,30 @@ public class AssetSys : SingleMono<AssetSys>
         if(BuildConfig.Instance().UseBundle)
 #endif
         {
-//            var trim = new char[] { ' ', '.', '/' };
-            //assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
-            var dirs = assetSubPath.Split('/');
+            if(mManifest == null)
+            {
 
 #if UNITY_EDITOR
-            string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
-            // "iOS";// dirs[0] + '/' + dirs[0];
+                string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
 #else
-            string manifestBundleName = PlatformName(Application.platform);
+                string manifestBundleName = PlatformName(Application.platform);
 #endif
-            AppLog.d("load manifest: " + manifestBundleName);
-            yield return GetBundle(manifestBundleName, (bundle) =>
-            {
-                var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                mManifest = manifext;
-            });
+                AppLog.d("load manifest: " + manifestBundleName);
+                yield return GetBundle(manifestBundleName, (bundle) =>
+                {
+                    var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    mManifest = manifext;
+                });
+            }
 
-            string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+            string bundleName = GetBundlePath(assetSubPath);// dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             AppLog.d("from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) =>
             {
                 // text
-                var textPath = assetSubPath;
-                if(textPath.IsText())
+                if(assetSubPath.IsText())
                 {
+                    var textPath = assetSubPath;
                     if(textPath.EndsWith(".lua"))
                         textPath += ".txt";
                     var textAsset = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath);
@@ -424,7 +425,7 @@ public class AssetSys : SingleMono<AssetSys>
 
         var isLocal = true;
         if(!File.Exists(cachePath)
-        //|| UpdateSys.Instance.NeedUpdate(subPath)
+        || UpdateSys.Instance.NeedUpdate(subPath)
         )
         {
             isLocal = false;
@@ -432,6 +433,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         AppLog.d(fileUrl);
+        bool err = false;
         yield return Www(fileUrl, (WWW www) =>
         {
             if(string.IsNullOrEmpty(www.error))
@@ -452,14 +454,17 @@ public class AssetSys : SingleMono<AssetSys>
                     mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
 
                     AsyncSave(cachePath, outStream.GetBuffer());
-                    //UpdateSys.Instance.Updated(subPath);
+                    UpdateSys.Instance.Updated(subPath);
                 }
             }
             else
             {
+                err = true;
                 AppLog.e(fileUrl + ": " + www.error);
             }
         });
+        if(err)
+            yield break;
 
         // Dependencies
         if(mManifest != null)
@@ -478,10 +483,11 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
+    public static int TimeOutSeconds = 3600*0 + 60*0 + 5;
     public static IEnumerator Www(string url, UnityAction<WWW> endCallback = null, UnityAction<float> progressCallback = null)
     {
         WWW www = new WWW(url);
-        DateTime timeout = DateTime.Now + new TimeSpan(0, 0, 10);
+        DateTime timeout = DateTime.Now + new TimeSpan(TimeOutSeconds/3600, (TimeOutSeconds % 3600) / 60, TimeOutSeconds % 60);
         if(www != null)
         {
             while(!www.isDone && string.IsNullOrEmpty(www.error))
@@ -492,7 +498,7 @@ public class AssetSys : SingleMono<AssetSys>
                     progressCallback(www.progress);
                     if(DateTime.Now > timeout && www.progress < 0.1f)
                     {
-                        AppLog.d("<Colro=red>timeout: " + url + "</Color>");
+                        AppLog.d("timeout: " + url);
                         break;
                     }
                 }
@@ -500,23 +506,22 @@ public class AssetSys : SingleMono<AssetSys>
                 yield return null;
             }
 
-            if(string.IsNullOrEmpty(www.error))
+            if(www.progress >= 1 && string.IsNullOrEmpty(www.error))
+            {
+                AppLog.d("loaded {0} OK {1}", url, www.progress);
+            }
+            else
+            {
+                AppLog.e("{0}: {1}", www.error, url);
+            }
+            if(endCallback != null)
             {
                 // 留给调用者选择是否存盘
                 //if(url.Substring(0, 7) == "http://")
                 //{
                 //    AsyncSave(url.Replace(HttpRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
                 //}
-
-                AppLog.d("loaded <Color=green>{0}</Color> OK", url);
-                if(endCallback != null)
-                {
-                    endCallback(www);
-                }
-            }
-            else
-            {
-                AppLog.e(url + ": " + www.error);
+                endCallback(www);
             }
         }
         www.Dispose();

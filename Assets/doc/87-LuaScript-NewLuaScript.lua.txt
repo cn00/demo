@@ -1,19 +1,17 @@
 -- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt
-
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local #SCRIPTNAME# = {}
-local self = #SCRIPTNAME#
+local #SCRIPTNAME #= {}
+local self = #SCRIPTNAME #
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
-
 -- function #SCRIPTNAME#.coroutine_demo()
---     return coroutine.create(function()
+--     coroutine_call(function()
 --         print('#SCRIPTNAME# coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil
@@ -25,44 +23,32 @@ local self = #SCRIPTNAME#
 -- end
 
 --AutoGenInit Begin
-function #SCRIPTNAME#.AutoGenInit() end
+function #SCRIPTNAME #.AutoGenInit() end
 --AutoGenInit End
 
-function #SCRIPTNAME#.Awake()
+function #SCRIPTNAME #.Awake()
 	self.AutoGenInit()
 end
 
-function #SCRIPTNAME#.OnEnable()
-    print("#SCRIPTNAME#.OnEnable")
-
+function #SCRIPTNAME #.OnEnable()
+	print("#SCRIPTNAME#.OnEnable")
 end
 
-function #SCRIPTNAME#.Start()
-    print("#SCRIPTNAME#.Start")
-
-    --assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo()))
-
+function #SCRIPTNAME #.Start()
+	print("#SCRIPTNAME#.Start")
+	--assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo()))
 end
 
-function #SCRIPTNAME#.FixedUpdate()
+-- function #SCRIPTNAME#.FixedUpdate() end
 
+-- function #SCRIPTNAME#.Update() end
+
+-- function #SCRIPTNAME#.LateUpdate() end
+
+-- function #SCRIPTNAME#.OnDestroy() end
+
+function #SCRIPTNAME #.Destroy()
+	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-function #SCRIPTNAME#.Update()
-
-end
-
-function #SCRIPTNAME#.LateUpdate()
-
-end
-
-function #SCRIPTNAME#.OnDestroy()
-    print("#SCRIPTNAME#.OnDestroy")
-
-end
-
-function #SCRIPTNAME#.Destroy()
-    GameObject.DestroyImmediate(mono.gameObject)
-end
-
-return #SCRIPTNAME#
+return #SCRIPTNAME #

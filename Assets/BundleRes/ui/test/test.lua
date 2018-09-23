@@ -15,8 +15,7 @@ end
 local yield_return = util.async_to_sync(YieldAndCallback)
 
 function test.CheckUpdate()
-	return coroutine.create(
-	function()
+	coroutine_call(function()
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
 		"ui/loading/loading.prefab", function(asset)
@@ -37,14 +36,11 @@ function test.CheckUpdate()
 		update.name = "update"
 		
 		self.Destroy()
-	end
-	)
+	end)
 end
 
-
 function test.Qrcode()
-	return coroutine.create(
-	function()
+	coroutine_call(function()
 		local obj = nil
 		yield_return(
 		CS.AssetSys.Instance:GetAsset(
@@ -67,17 +63,14 @@ function test.Qrcode()
 		qrcode.name = "qrcode"
 		
 		self.Destroy()
-	end
-	)
+	end)
 end
 
-function test.Op(...)
-	return coroutine.create(
-	function()
+function test.Op()
+	coroutine_call(function()
 		print("open Op")
 		local obj = nil
-		yield_return(
-		CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.Instance:GetAsset(
 		"video/op/op.prefab",
 		function(asset)
 			obj = asset
@@ -88,29 +81,31 @@ function test.Op(...)
 		GameObject.DestroyImmediate(oldLoading)
 		
 		self.Destroy()
-	end
-	)
+	end)
 end
 
 function test.TableViewTest()
 	return coroutine.create(function()
 		print("open TableViewTest")
-
+		
 		local subpath = "StreamingAssets/Excel.tmp/EtudeLessonInfo.xlsx"
 		local localPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
 		local endCallback = function(www)
-			print("download ok", www.bytes)
-			CS.AssetSys.AsyncSave(localPath, www.bytes)
+			if www.progress >= 1 and (www.error == nil or www.error == "") then
+				print("download ok", subpath)
+				CS.AssetSys.AsyncSave(localPath, www.bytes)
+			else
+				-- print(www.error)
+			end
 		end
 		local progressCallback = function(progress)
 			print("downloading " .. progress)
 		end
 		local url = CS.AssetSys.HttpRoot .. subpath
 		yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
-
+		
 		local obj = nil
-		yield_return(
-		CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.Instance:GetAsset(
 		"ui/test/table_view.prefab",
 		function(asset)
 			obj = asset
@@ -134,8 +129,8 @@ function test.SqliteInsert(x, y)
 		local errmsg = sqlite.GetErrmsg(db)
 		print(errmsg)
 	elseif result2 == sqlite.Result.Done then
-		-- local rowsAffected = sqlite.Changes(db)
--- print("rowsAffected", rowsAffected)
+		local rowsAffected = sqlite.Changes(db)
+		-- print("rowsAffected", rowsAffected)
 	elseif result2 == sqlite.Result.Busy then
 		print("db busy")
 	end
@@ -170,13 +165,13 @@ end
 function test.GetIpAddresses()
 	-- string[]
 	local ips = CS.NetSys.LocalIpAddressStr()
-	for i = 0, ips.Length-1 do
+	for i = 0, ips.Length - 1 do
 		print("arr", i, ips[i])
 	end
-
+	
 	-- List<string>
 	local ipl = CS.NetSys.LocalIpAddressStrList()
-	for i = 0, ipl.Count-1 do
+	for i = 0, ipl.Count - 1 do
 		print("List", i, ipl[i])
 	end
 end
@@ -194,7 +189,8 @@ function test.InsertOnClick()
 end
 
 function test.coroutine_insert_10000()
-	return coroutine.create(function()
+	self.Insert_10000_Button.interactable = false
+	coroutine_call(function()
 		print("coroutine_insert_10000 coroutine start!")
 		local t = os.time()
 		-- insert 10000 records coast 83 second
@@ -213,9 +209,9 @@ function test.coroutine_insert_10000()
 		if result2 == sqlite.Result.Error then
 			local errmsg = sqlite.GetErrmsg(db)
 			print(errmsg)
-		-- elseif result2 == sqlite.Result.Done then
-		-- 	-- local rowsAffected = sqlite.Changes(db)
-		-- 	print("rowsAffected", rowsAffected)
+		elseif result2 == sqlite.Result.Done then
+			local rowsAffected = sqlite.Changes(db)
+			print("rowsAffected", rowsAffected)
 		elseif result2 == sqlite.Result.Busy then
 			print("db busy")
 		end
@@ -229,15 +225,15 @@ end
 
 --AutoGenInit Begin
 function test.AutoGenInit()
-    test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
-    test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
-    test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
-    test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
-    test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
-    test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
-    test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
-    test.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
-    test.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
+	test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
+	test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
+	test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
+	test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
+	test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
+	test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+	test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
+	test.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
+	test.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 function test.Awake()
@@ -246,26 +242,13 @@ function test.Awake()
 		-- CS.QRCode.OpenQRScanner()
 		-- CS.JavaUtil.CallJavaApi("com.game.qrview.Interface", "OpenQRScanner");
 		-- CS.JavaUtil.CallJavaApi("com.unity3d.player.UnityPlayer", "OpenQRScanner");
-		assert(coroutine.resume(test.Qrcode()))
+		assert(coroutine.resume(self.Qrcode()))
 	end
-	local insertOnClick = function()
-		self.InsertOnClick()
-	end
-	local insert10000OnClick = function()
-		self.Insert_10000_Button.interactable = false
-		assert(coroutine.resume(test.coroutine_insert_10000()))
-	end
-	local openOpOnclick = function()
-		assert(coroutine.resume(self.Op()))
-	end
-	local checkUpdateOnClick = function()
-		assert(coroutine.resume(self.CheckUpdate()))
-	end
-	self.QRCode_Button.onClick:AddListener(qrOnClick)
-	self.Insertxy_Button.onClick:AddListener(insertOnClick)
-	self.Insert_10000_Button.onClick:AddListener(insert10000OnClick)
-	self.OpenOP_Button.onClick:AddListener(openOpOnclick)
-	self.CheckUpdate_Button.onClick:AddListener(checkUpdateOnClick)
+	self.QRCode_Button.onClick:AddListener(self.Qrcode )
+	self.Insertxy_Button.onClick:AddListener(self.InsertOnClick )
+	self.Insert_10000_Button.onClick:AddListener(self.coroutine_insert_10000 )
+	self.OpenOP_Button.onClick:AddListener(self.Op)
+	self.CheckUpdate_Button.onClick:AddListener(self.CheckUpdate)
 	test.tableview_Button.onClick:AddListener(function()
 		assert(coroutine.resume(self.TableViewTest()))
 	end)
@@ -281,11 +264,11 @@ function test.Awake()
 	self.iy_InputField.onEndEdit:AddListener(iyOnEdit)
 	
 	self.IpAddress_Button.onClick:AddListener(
-		function()
-			self.GetIpAddresses()
-		end
+	function()
+		self.GetIpAddresses()
+	end
 	)
-
+	
 	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
 	print(sqlpath)
 	local result, db = sqlite.Open(sqlpath)
@@ -314,23 +297,6 @@ function test.Awake()
 			print("rowsAffected", rowsAffected)
 		end
 	end
-end
-
-function test.OnEnable()
-	print("test.OnEnable")
-end
-
-function test.Start()
-	print("test.Start")
-end
-
-function test.FixedUpdate()
-end
-
-function test.Update()
-end
-
-function test.LateUpdate()
 end
 
 function test.OnDestroy()

@@ -29,6 +29,7 @@ function update.AutoGenInit()
     update.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
     update.Clean_Button = Clean:GetComponent("UnityEngine.UI.Button")
     update.Slider_Slider = Slider:GetComponent("UnityEngine.UI.Slider")
+    update.Back_Button = Back:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 
@@ -43,6 +44,11 @@ function update.Awake()
 	self.Clean_Button.onClick:AddListener(function()
 		print("Clean")
 		assert(coroutine.resume(self.Clean()))
+	end)
+
+	self.Back_Button.onClick:AddListener(function()
+		print("Back_Button")
+		self.Back()
 	end)
 
 	self.VersionText_Text.text = CS.BuildConfig.Instance().Version:ToString()

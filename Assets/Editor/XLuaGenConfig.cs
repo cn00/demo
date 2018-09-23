@@ -18,10 +18,10 @@ using TableView;
 public static class XLuaGenConfig
 {
     //lua中要使用到C#库的配置，比如C#标准库，或者Unity API，第三方库等。
-    [LuaCallCSharp]
-    [Hotfix]
+    [LuaCallCSharp, Hotfix]
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
+        #region customer types
         typeof(TableView.TableView),
         typeof(TableView.TableViewController),
         typeof(TableView.TableViewCell),
@@ -48,38 +48,44 @@ public static class XLuaGenConfig
         typeof(JavaUtil),
         typeof(AppLog),
         typeof(SQLite3),
+        #endregion customer types
 
-        typeof(Application),
-        typeof(ScreenCapture),
-        // typeof(System.Text.Encoding),
-        typeof(System.Convert),
-        typeof(System.Object),
+        #region UnityEngine
+        typeof(UnityEngine.Application),
+        typeof(UnityEngine.ScreenCapture),
         typeof(UnityEngine.Object),
-        typeof(Vector2),
-        typeof(Vector3),
-        typeof(Vector4),
-        typeof(Quaternion),
-        typeof(Color),
-        typeof(Ray),
-        typeof(Bounds),
-        typeof(Ray2D),
-        typeof(Time),
-        typeof(GameObject),
-        typeof(Component),
-        typeof(Behaviour),
-        typeof(Transform),
+        typeof(UnityEngine.Vector2),
+        typeof(UnityEngine.Vector3),
+        typeof(UnityEngine.Vector4),
+        typeof(UnityEngine.Quaternion),
+        typeof(UnityEngine.Color),
+        typeof(UnityEngine.Ray),
+        typeof(UnityEngine.Bounds),
+        typeof(UnityEngine.Ray2D),
+        typeof(UnityEngine.Time),
+        typeof(UnityEngine.GameObject),
+        typeof(UnityEngine.Component),
+        typeof(UnityEngine.Behaviour),
+        typeof(UnityEngine.Transform),
         typeof(UnityEngine.Rect),
         typeof(UnityEngine.RectTransform),
-        typeof(Resources),
-        typeof(TextAsset),
-        typeof(Keyframe),
-        typeof(AnimationCurve),
-        typeof(AnimationClip),
-        typeof(MonoBehaviour),
-        typeof(ParticleSystem),
-        typeof(SkinnedMeshRenderer),
-        typeof(Renderer),
-        typeof(WWW),
+        typeof(UnityEngine.WaitForSeconds),
+        typeof(UnityEngine.Resources),
+        typeof(UnityEngine.TextAsset),
+        typeof(UnityEngine.Keyframe),
+        typeof(UnityEngine.AnimationCurve),
+        typeof(UnityEngine.AnimationClip),
+        typeof(UnityEngine.MonoBehaviour),
+        typeof(UnityEngine.ParticleSystem),
+        typeof(UnityEngine.SkinnedMeshRenderer),
+        typeof(UnityEngine.Renderer),
+        typeof(UnityEngine.WWW),
+        typeof(UnityEngine.Debug),
+        #endregion UnityEngine
+
+        #region system
+        typeof(System.Convert),
+        typeof(System.Object),
         typeof(System.Collections.Generic.List<int>),
         typeof(Action),
         typeof(Action<string>),
@@ -87,7 +93,7 @@ public static class XLuaGenConfig
         typeof(Action<double>),
         typeof(Action<UnityEngine.Object>),
         typeof(Action<DataObject>),
-        typeof(UnityEngine.Debug),
+        #endregion system
     };
 
     [Hotfix]
@@ -99,6 +105,7 @@ public static class XLuaGenConfig
     //C#静态调用Lua的配置（包括事件的原型），仅可以配delegate，interface
     [CSharpCallLua]
     public static List<Type> CSharpCallLua = new List<Type>() {
+        #region customer
         typeof(TableView.TableViewController.CellRow),
         typeof(TableView.TableViewController.CellSize),
         typeof(TableView.TableViewController.Count),
@@ -106,23 +113,32 @@ public static class XLuaGenConfig
         typeof(TableView.TableViewController.OnSelectRow),
         typeof(TableView.CellDidSelectEvent),
         typeof(TableView.CellDidHighlightEvent),
+        #endregion customer
 
+        #region System
         typeof(Action),
         typeof(System.Action),
+        typeof(System.Collections.IEnumerator),
         typeof(Func<double, double, double>),
         typeof(Action<string>),
         typeof(Action<double>),
         typeof(Action<UnityEngine.Object>),
         typeof(Action<UnityEngine.Texture2D>),
         typeof(Action<DataObject>),
+        #endregion System
+
+        #region UnityEngine
         typeof(UnityEngine.Events.UnityEvent),
         typeof(UnityEngine.Events.UnityEvent<string>),
         typeof(UnityEngine.Events.UnityEvent<float>),
+        typeof(UnityEngine.Events.UnityEvent<int>),
         typeof(UnityEngine.Events.UnityAction),
+        typeof(UnityEngine.Events.UnityAction<string>),
         typeof(UnityEngine.Events.UnityAction<float>),
+        typeof(UnityEngine.Events.UnityAction<int>),
         typeof(UnityEngine.Events.UnityAction<UnityEngine.WWW>),
-        typeof(System.Collections.IEnumerator),
         typeof(UnityEngine.UI.InputField.OnValidateInput)
+        #endregion UnityEngine
     };
 
     //黑名单
