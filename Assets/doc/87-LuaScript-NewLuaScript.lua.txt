@@ -5,7 +5,7 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
 local #SCRIPTNAME #= {}
-local self = #SCRIPTNAME #
+local this = #SCRIPTNAME #
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)

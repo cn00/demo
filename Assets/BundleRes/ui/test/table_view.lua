@@ -7,12 +7,14 @@ local util = require "lua.utility.xlua.util"
 
 local table_view = {
     RowIdxA = 1,
-    RowPerPage = 10,
+
     ColumnIdxA = 0,
+    ColumnPerPage = 5,
+    ColumnPerPageMax = 7,
 
     dataSource = {}
 }
-local self = table_view
+local this = table_view
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -43,6 +45,8 @@ function table_view.AutoGenInit()
     table_view.SliderVText_Text = SliderVText:GetComponent("UnityEngine.UI.Text")
     table_view.SheetContent_RectTransform = SheetContent:GetComponent("UnityEngine.RectTransform")
     table_view.sheet_tab_LuaMonoBehaviour = sheet_tab:GetComponent("LuaMonoBehaviour")
+    table_view.SliderColum_Slider = SliderColum:GetComponent("UnityEngine.UI.Slider")
+    table_view.SliderColumText_Text = SliderColumText:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
 
@@ -57,13 +61,13 @@ end
 
 
 function table_view.Awake()
-    self.AutoGenInit()
+    this.AutoGenInit()
 
     xlua.private_accessible(CS.TableView.TableView)
 
     table_view.tableview_TableViewController.GetDataCount = function(table)
-    --    return table_view.dataSource.LastRowNum - table_view.dataSource.FirstRowNum
-       return #table_view.dataSource
+        -- return table_view.dataSource.LastRowNum - table_view.dataSource.FirstRowNum
+        return #table_view.dataSource
     end
     table_view.tableview_TableViewController.GetCellSize = function(table, row)
         -- local cell = table:ReusableCellForRow("table-view-cell-01", row)
@@ -89,7 +93,7 @@ function table_view.Awake()
         cell.name = "lua-Cell-" .. (row+1)
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
         -- cellmono.luaTable.SetData(table_view.dataSource[row+1])
-        cellmono.luaTable.SetExcelCellData(table_view.dataSource[row+1], table_view.ColumnIdxA)
+        cellmono.luaTable.SetExcelCellData(table_view.dataSource[row+1], table_view.ColumnIdxA, table_view.ColumnPerPage)
         -- print("CellAtRow", row)
         return cell
     end
@@ -98,13 +102,14 @@ function table_view.Awake()
     local assetPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
     -- local assetPath = CS.UnityEngine.Application.streamingAssetsPath .. "/Excel.tmp/EtudeLessonInfo.xlsx"
     local book = CS.ExcelUtils.Open(assetPath);
-    table_view.Sheets = {}
-    table_view.SheetTabs = {}
+    print("open", book)
+    this.Sheets = {}
+    this.SheetTabs = {}
     local selcolor = {r=0, g = 123, b = 100, a = 255}
     local restcolor = {r=255, g = 255, b = 255, a = 255}
     for i = 0, book.NumberOfSheets - 1 do
         print(i, book[i].SheetName)
-        table_view.Sheets[i+1] = {
+        this.Sheets[i+1] = {
             name = book[i].SheetName, 
             sheet = book[i]
         }
@@ -120,18 +125,19 @@ function table_view.Awake()
                 v.Button_Image.color = restcolor
             end
             lua_sheet_tab.Button_Image.color = selcolor
-            table_view.initSheetData(sheet)
-            table_view.tableview_TableViewController.tableView:ReloadData()
+            this.initSheetData(sheet)
+            this.tableview_TableViewController.tableView:ReloadData()
         end)
-        table.insert(table_view.SheetTabs, lua_sheet_tab)
+        table.insert(this.SheetTabs, lua_sheet_tab)
         SheetContent.transform.sizeDelta = {x = book.NumberOfSheets * 155, y = 50}
     end -- for
     GameObject.DestroyImmediate(sheet_tab)
-    table_view.SheetTabs[1].Button_Image.color = selcolor
+    this.SheetTabs[1].Button_Image.color = selcolor
 
-    if #table_view.Sheets > 0 then
-        local sheet = table_view.Sheets[1].sheet
-        table_view.initSheetData(sheet)
+    if #this.Sheets > 0 then
+        local sheet = this.Sheets[1].sheet
+        this.initSheetData(sheet)
+        this.SliderColum_Slider.value = this.ColumnPerPage / this.ColumnPerPageMax
     end
 
     -- table_view.initData()
@@ -158,19 +164,24 @@ function table_view.Awake()
         table_view.Slider_Slider.value = table_view.ColumnIdxA / 10.0
         table_view.tableview_TableViewController.tableView:ReloadData()
     end)
-    table_view.Slider_Slider.onValueChanged:AddListener(function(fval)
-        table_view.ColumnIdxA = math.modf(table_view.Slider_Slider.value * 10)
+    this.SliderColum_Slider.onValueChanged:AddListener(function(fval)
+        this.ColumnPerPage = math.modf(fval * this.ColumnPerPageMax)
+        this.SliderColumText_Text.text = this.ColumnPerPageMax
+        this.tableview_TableViewController.tableView:ReloadData()
+    end) 
+    this.Slider_Slider.onValueChanged:AddListener(function(fval)
+        this.ColumnIdxA = math.modf(this.Slider_Slider.value * 10)
         -- print("onValueChanged", fval, table_view.Slider_Slider.value, table_view.ColumnIdxA)
-        table_view.tableview_TableViewController.tableView:ReloadData()
+        this.tableview_TableViewController.tableView:ReloadData()
     end)
-    table_view.SliderV_Slider.onValueChanged:AddListener(function(fval)
+    this.SliderV_Slider.onValueChanged:AddListener(function(fval)
         -- print("SliderV_Slider.onValueChanged", fval, table_view.SliderV_Slider.value)
-        table_view.SliderVText_Text.text = string.format("%.0f", fval * 100)
-        table_view.tableview_TableViewController.tableView:SetPosition(fval*table_view.tableview_TableViewController.tableView.ContentSize)
+        this.SliderVText_Text.text = string.format("%.0f", fval * 100)
+        this.tableview_TableViewController.tableView:SetPosition(fval*this.tableview_TableViewController.tableView.ContentSize)
     end)
 
-    table_view.back_Button.onClick:AddListener(function()
-       table_view.Back()
+    this.back_Button.onClick:AddListener(function()
+       this.Back()
     end)
 end
 

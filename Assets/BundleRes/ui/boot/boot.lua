@@ -17,9 +17,9 @@ end)
 -- end
 
 function boot.coroutine_boot(first, ...)
-    print('boot coroutine start!', package.path)
     -- local args = {...}
     util.coroutine_call(function(...)
+        print(debug.traceback("test traceback"))
         -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
         -- yield_return(CS.UnityEngine.WaitForSeconds(1))
         local obj = nil

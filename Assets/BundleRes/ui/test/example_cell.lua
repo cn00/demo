@@ -5,9 +5,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local example_cell = {
-    ColumnPerPage = 5,
-}
+local example_cell = {}
 local self = example_cell
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
@@ -57,32 +55,28 @@ function example_cell.Awake()
     end)
 end
 
--- function example_cell.OnEnable()
---     print("example_cell.OnEnable")
-
--- end
-
-function example_cell.SetData(data)
-    self.data = data
-    print("example_cell.SetData", data.name)
-    self.Text_Text.text = self.data.name .. ":" .. example_cell.TableViewCellController.RowNumber
-end
 
 function example_cell.SetExcelCellData(row, columnidx, num)
     if row == nil then
         return
     end
+    if num <= 0 then num = 1 end
     self.data = row
     -- print("example_cell.SetExcelCellData", row:GetCell(columnidx))
     self.Text_Text.text = example_cell.TableViewCellController.RowNumber
     for i = 1, 7 do 
         local key = "Text_"..i.. "_Text"
-        -- print(key)
-        local cell = row:GetCell(columnidx + i - 1)
-        if cell ~= nil then
-            self[key].text = cell:StrValue()
+        if i > num then
+            self[key].gameObject:SetActive(false)
         else
-            self[key].text = "~nil~"
+            self[key].gameObject:SetActive(true) 
+            self[key].transform.sizeDelta = {x = (mono.gameObject.transform.sizeDelta.x-100) / num, y = 80}
+            local cell = row:GetCell(columnidx + i - 1)
+            if cell ~= nil then
+                self[key].text = cell:StrValue()
+            else
+                self[key].text = "~nil~"
+            end
         end
     end
 end

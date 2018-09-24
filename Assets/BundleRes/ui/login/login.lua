@@ -31,6 +31,7 @@ local yield_return =
 )
 
 function login.OpenTest(...)
+	print(debug.traceback("test traceback OpenTest "))
 	return coroutine.create(
 		function()
 			local obj = nil

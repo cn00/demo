@@ -16,7 +16,7 @@ MonoBehaviour:
   runInBackground: 0
   LastBuildTime: 131821732501226900
   Version:
-    mName: AppVersion
+    mName: 
     Major: 1
     Minor: 1
     Patch: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 43
+    BuildNum: 44
     Version: 1.0.0
     DefineSymbols: 
     BuildType: 0
@@ -189,4 +189,4 @@ MonoBehaviour:
   BundleServer:
     mName: BundleServer
     Port: 8008
-    Runing: 1
+    Runing: 0
