@@ -4,3 +4,6 @@
 [submodule "VSCode"]
 	path = Assets/Editor/VSCode
 	url = git@github.com:cn00/VSCode.git
+[submodule "Assets/UberLogger"]
+	path = Assets/UberLogger
+	url = git@github.com:bbbscarter/UberLogger.git
