@@ -639,6 +639,12 @@ namespace XLua
         }
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        internal static int LoadSocketScript(RealStatePtr L)
+        {
+            return LuaAPI.luaopen_luasocket_scripts(L);
+        }
+
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         internal static int LoadBuiltinLib(RealStatePtr L)
         {
             try

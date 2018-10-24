@@ -7,14 +7,15 @@ using UnityEditor;
 public class EditorConfig : SingletonAsset<EditorConfig>
 {
     [Serializable]
-    public class Config : InspectorDraw
+    public class Config
     {
+
         public int MaxTextPreviewLength = 7000;
     }
 
     [SerializeField]
 	[HideInInspector]
-    public Config MConfig = new Config(){ Name= "Config"};
+    public Config MConfig = new Config();
 
     [MenuItem("Tools/Create/EditorConfig.asset")]
     public static EditorConfig Create()
@@ -35,7 +36,8 @@ public class EditorConfig : SingletonAsset<EditorConfig>
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            mTarget.MConfig.Draw();
+
+            Inspector.DrawComObj("Config", mTarget.MConfig);
 
 			if(GUI.changed)
 			{

@@ -35,9 +35,12 @@ public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
         }
     }
 
-    private void Awake()
+    public virtual void Awake()
     {
+        enabled = false;
         Inited = false;
+        StartCoroutine(Init());
+        AppLog.d("Awake: " + typeof(T));
     }
 
     public bool Inited
@@ -53,7 +56,8 @@ public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
     public virtual IEnumerator Init()
     {
         Inited = true;
-        AppLog.d("SingleMono [{0}] inited.", typeof(T).ToString());
+        enabled = true;
+        AppLog.d("[{0}] inited.", typeof(T));
         yield return null;
     }
 }

@@ -22,13 +22,14 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
     public string TranslatedDir = "Assets/Application/Resource/ExcelData_cn";
 
     [Serializable]
-    public class SubConfig : InspectorDraw
+    public class SubConfig
     {
+        public string Name;
         public long CountWordUniq = 0L;
         public long CountWord = 0L;
         public List<string> Pathes = new List<string>();
 
-        public void CollectJp(string outRoot = null)
+        public void CollectJpBtn(string outRoot = null)
         {
             if (string.IsNullOrWhiteSpace(outRoot))
             {
@@ -103,7 +104,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                                 //     }
                                 // }
 
-                                var v = row.Cell(ic).SafeSValue();
+                                var v = row.Cell(ic).SValueOneline();
                                 // AppLog.d("{0}: {1}", v, v.Length);
                                 var matches = Regex.Matches(v, JPRegular + "+.*");
                                 if (matches.Count > 0)
@@ -113,7 +114,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
 
                                     var c = outSheet.Cell(outSheetRowIdx, head[HeadIdx.jp]);
                                     // 去重引用
-                                    var iorow = outSheet.Contain(r => r.Cell(head[HeadIdx.jp]).SafeSValue() == v);
+                                    var iorow = outSheet.Contain(r => r.Cell(head[HeadIdx.jp]).SValueOneline() == v);
                                     if(iorow > 0)
                                     {
                                         c.SetCellValue(string.Format("${0}", iorow));
@@ -176,7 +177,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
             }
         }
 
-        public void Translate(string outRoot = null)
+        public void TranslateBtn(string outRoot = null)
         {
             if (string.IsNullOrWhiteSpace(outRoot))
             {
@@ -207,25 +208,25 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         , (float)(inFileIdx) / Pathes.Count());
 
                     var inbook = ExcelUtils.Open(path);
-                    var rows = transSheet.Select(r=>r.Cell(head[HeadIdx.FilePath]).SafeSValue() == path);
+                    var rows = transSheet.Select(r=>r.Cell(head[HeadIdx.FilePath]).SValueOneline() == path);
                     foreach(var trrow in rows)
                     {
-                        var trans = trrow.Cell(head[HeadIdx.trans]).SafeSValue();
-                        var jp = trrow.Cell(head[HeadIdx.jp]).SafeSValue();
+                        var trans = trrow.Cell(head[HeadIdx.trans]).SValueOneline();
+                        var jp = trrow.Cell(head[HeadIdx.jp]).SValueOneline();
                         if(jp[0] == '$')
                         {
                             AppLog.d("使用引用: " + jp);
                             var row = transSheet.Row(int.Parse(jp.Substring(1)));
-                            jp = row.Cell(head[HeadIdx.jp]).SafeSValue();
-                            trans = row.Cell(head[HeadIdx.trans]).SafeSValue();
+                            jp = row.Cell(head[HeadIdx.jp]).SValueOneline();
+                            trans = row.Cell(head[HeadIdx.trans]).SValueOneline();
                         }
 
-                        var sheetName = trrow.Cell(head[HeadIdx.SheetName]).SafeSValue();
+                        var sheetName = trrow.Cell(head[HeadIdx.SheetName]).SValueOneline();
                         var sheet = inbook.Sheet(sheetName);
                         var i = (int)trrow.Cell(head[HeadIdx.i]).NumericCellValue;
                         var j = (int)trrow.Cell(head[HeadIdx.j]).NumericCellValue;
                         var cell = sheet.Cell(i, j);
-                        var ojp = cell.SafeSValue();
+                        var ojp = cell.SValueOneline();
                         if(ojp == jp)
                         {
                             cell.SetCellValue(trans
@@ -249,26 +250,10 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
             }
         }
 
-        public override void DrawInspector(int indent, GUILayoutOption[] guiOpts)
-        {
-            var rect = EditorGUILayout.GetControlRect();
-            var sn = 5;
-            var idx = -1;
-            if (GUI.Button(rect.Split(++idx, sn), "CollectJp"))
-            {
-                CollectJp();
-            }
-            if (GUI.Button(rect.Split(++idx, sn), "Translate"))
-            {
-                Translate();
-            }
-            base.DrawInspector();
-        }
-
     } // class
 
     [Serializable]
-    public class RootConfig : InspectorDraw
+    public class RootConfig
     {
         public long CountWord = 0L;
 
@@ -276,13 +261,13 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
         public List<SubConfig> Groups = new List<SubConfig>();
 
 
-        public override void DrawInspector(int indent, GUILayoutOption[] guiOpts)
+        public void DrawInspector(int indent, GUILayoutOption[] guiOpts)
         {
-            base.DrawInspector();
             ++EditorGUI.indentLevel;
             foreach (var f in Groups)
             {
-                f.Draw();
+                var ff = f as object;
+                Inspector.DrawObj(f.Name, ref ff);
             }
             --EditorGUI.indentLevel;
         }
@@ -340,7 +325,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                 long sum = 0L;
                 foreach (var i in mTarget.mRootconfig.Groups)
                 {
-                    i.CollectJp();
+                    i.CollectJpBtn();
                     sum += i.CountWordUniq;
                 }
                 mTarget.mRootconfig.CountWord = sum;
@@ -349,14 +334,15 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
             {
                 foreach (var i in mTarget.mRootconfig.Groups)
                 {
-                    i.Translate();
+                    i.TranslateBtn();
                 }
             }
             // if (GUI.Button(rect.Split(++idx, sn), "iOS.proj.sim"))
             // {
             //     BuildScript.BuildIosIL2cppProjSim();
             // }
-            mTarget.mRootconfig.Draw();
+            var root = mTarget.mRootconfig as object;
+            Inspector.DrawObj("RootConfig", ref root);
         }
     }
 }

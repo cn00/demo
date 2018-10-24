@@ -368,8 +368,8 @@ public class BuildScript
         var version = BuildConfig.Instance().Version;
         PlayerSettings.bundleVersion = version.ToString();
         PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-        //        PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
-        var versionCode = int.Parse(PlayerSettings.iOS.buildNumber);
+        // PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
+        // var versionCode = int.Parse(PlayerSettings.iOS.buildNumber);
 
         string target_dir = Environment.GetEnvironmentVariable("IosProjDir");
         if (string.IsNullOrEmpty(target_dir))

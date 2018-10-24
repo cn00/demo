@@ -11,7 +11,7 @@ using UnityEditor;
 namespace AssetBundleServer
 {
     [Serializable]
-    public class Server : InspectorDraw
+    public class Server
     {
         public int Port = 8008;
         public bool Runing = false;
@@ -136,7 +136,7 @@ namespace AssetBundleServer
             thread = null;
             Runing = false;
         }
-        public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+        public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             // using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
             {

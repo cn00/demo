@@ -92,9 +92,10 @@ public static class AppChannelEditorExtension
 
 #if UNITY_EDITOR
 [Serializable]
-public class ChannelConfig : InspectorDraw
+public class ChannelConfig
 {
     #region properties
+    public string Name = "ChannelConfig";
     public bool BatchBuild = false;
     public bool AddTime = false;
     public string ProductName = "A3! 满开剧团";
@@ -111,6 +112,7 @@ public class ChannelConfig : InspectorDraw
     public AppChannel Channel = AppChannel.Android;
 
     public bool Emulator = false;
+    public bool Foldout = false;
 
     #endregion properties
 
@@ -179,10 +181,10 @@ public class ChannelConfig : InspectorDraw
         };
     }
 
-    public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
         Name = Channel.ToString();
-        base.DrawInspector(indent, guiOpts);
+        // base.DrawInspector(indent, guiOpts);
         EditorGUILayout.BeginHorizontal();
         {
             var rect = EditorGUILayout.GetControlRect();

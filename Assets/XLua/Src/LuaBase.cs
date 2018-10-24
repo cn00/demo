@@ -20,7 +20,7 @@ using System;
 
 namespace XLua
 {
-    public abstract class LuaBase : InspectorDraw
+    public abstract class LuaBase
     {
         protected bool disposed;
         protected int luaReference;

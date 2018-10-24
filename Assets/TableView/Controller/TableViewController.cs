@@ -8,11 +8,13 @@ namespace TableView
         public TableView tableView;
         public GameObject[] prefabCells;
 
-        void Start()
+        void Awake()
         {
             tableView.Delegate = this;
             tableView.DataSource = this;
-
+        // }
+        // void Start()
+        // {
             foreach(var prefabCell in prefabCells)
                 tableView.RegisterPrefabForCellReuseIdentifier(prefabCell);
         }
@@ -21,7 +23,7 @@ namespace TableView
         public Count GetDataCount;
         public int DataCount(TableView tableView)
         {
-            return GetDataCount != null ? GetDataCount(tableView) : 10;
+            return GetDataCount != null ? GetDataCount(tableView) : 1;
         }
 
 

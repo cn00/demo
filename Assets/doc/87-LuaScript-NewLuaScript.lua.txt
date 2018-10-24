@@ -4,13 +4,13 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local #SCRIPTNAME #= {}
-local this = #SCRIPTNAME #
+local #SCRIPTNAME# = {}
+local this = #SCRIPTNAME#
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
--- function #SCRIPTNAME#.coroutine_demo()
+-- function this.coroutine_demo()
 --     coroutine_call(function()
 --         print('#SCRIPTNAME# coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
@@ -23,32 +23,29 @@ local this = #SCRIPTNAME #
 -- end
 
 --AutoGenInit Begin
-function #SCRIPTNAME #.AutoGenInit() end
+function this.AutoGenInit() end
 --AutoGenInit End
 
-function #SCRIPTNAME #.Awake()
-	self.AutoGenInit()
+function this.Awake()
+	this.AutoGenInit()
 end
 
-function #SCRIPTNAME #.OnEnable()
-	print("#SCRIPTNAME#.OnEnable")
+-- function this.OnEnable() end
+
+function this.Start()
+	--assert(coroutine.resume(this.coroutine_demo()))
 end
 
-function #SCRIPTNAME #.Start()
-	print("#SCRIPTNAME#.Start")
-	--assert(coroutine.resume(#SCRIPTNAME#.coroutine_demo()))
-end
+-- function this.FixedUpdate() end
 
--- function #SCRIPTNAME#.FixedUpdate() end
+-- function this.Update() end
 
--- function #SCRIPTNAME#.Update() end
+-- function this.LateUpdate() end
 
--- function #SCRIPTNAME#.LateUpdate() end
+-- function this.OnDestroy() end
 
--- function #SCRIPTNAME#.OnDestroy() end
-
-function #SCRIPTNAME #.Destroy()
+function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return #SCRIPTNAME #
+return #SCRIPTNAME#

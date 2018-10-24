@@ -4,6 +4,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Linq;
 using System.IO;//wfExcel
 using System.Text;
 using System.Collections.Generic;
@@ -13,9 +14,15 @@ using UnityEngine;
 
 class Excel2Lua : SingletonAsset<Excel2Lua>
 {
+    [Serializable]
+    public class ExcelConfig
+    {
+        public string Path = "";
+        public long LastBuildTime = 0;
+    }
 
     [Serializable]
-    public class Config : InspectorDraw
+    public class Config
     {
         public string InPath = "test";
         public string OutPath = "out";
@@ -30,84 +37,128 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         Instance();
     }
 
-    [SerializeField, HideInInspector]
-    Config mConfig = new Config() { Name = "Config" };
-
-    public static bool writeLua(string sheetname, ISheet sheet, string path)
+    public static int BookConfig(string path)
     {
-        IRow headerRow = sheet.GetRow(1);
+        var book = ExcelUtils.Open(path); 
+        if(book == null)
+            return -1;
+        
+        var config = book.GetSheet("config");
+        if(config == null)
+        {
+            config = book.Sheet("config");
+            var head = config.Row(0);
+            int hidx = -1;
+            var snaidx = ++hidx;
+            var keyidx = ++hidx;
+            var validx = ++hidx;
+            head.Cell(snaidx).SetCellValue("sheet");
+            head.Cell(keyidx).SetCellValue("key");
+            head.Cell(validx).SetCellValue("value");
+            var idx = 0;
+            foreach(var sheet in book.AllSheets().Where(i => i.SheetName != "config"))
+            {
+                ++idx;
+                var row = config.Row(idx);
+                row.Cell(snaidx).SetCellValue(sheet.SheetName);
+                row.Cell(keyidx).SetCellValue("headerRowIdx");
+                row.Cell(validx).SetCellValue(0);
+            }
+            book.Write(path);
+        }
+
+        return 0;
+    }
+
+    [SerializeField, HideInInspector]
+    Config mConfig = new Config();
+
+
+    public static bool writeLua(ISheet sheet, string path, int headerRowIdx = 0)
+    {
+        string sheetname = sheet.SheetName.RReplace(PathUtils.PunctuationRegex + "+", "_").TrimEnd('_');
+        StringBuilder luabuild = new StringBuilder(2048000);
+        luabuild.Append("-- usage: \n--\t" + sheetname + "[id][ColumnName] \n--\t" + sheetname + "[id].ColumnName\n");
+        
+        //columnIdxs
+        IRow headerRow = sheet.GetRow(headerRowIdx);
         int columnCount = headerRow.LastCellNum;
         int rowCount = sheet.LastRowNum;
-        string columnIdxs = "\nlocal ColumnIdx={";
-
+        luabuild.Append("\nlocal ColumnIdx={");
         for (int i = 0; i < columnCount; ++i)
         {
-            string head = headerRow.GetCell(i).StringCellValue.RReplace(PathUtils.PunctuationRegex + "+", "_");
-            columnIdxs += "\n\t" + head + "=" + (i + 1) + ",";
+            var cell = headerRow.Cell(i);
+            var v = cell.SValue().RReplace(PathUtils.PunctuationRegex + "+", "_");
+            // if(cell.CellType == CellType.String || (cell.CellType == CellType.Formula && cell.CachedFormulaResultType ==  CellType.String))
+            v = "\"" + v + "\"";
+            luabuild.Append("\n\t[" + v + "]=" + (i + 1) + ",");
         }
-        columnIdxs += "\n}\n";
+        luabuild.Append("\n}\n");
 
-        string body = "";
+        // body
+        luabuild.Append("\nlocal " + sheetname + "={");
         try
         {
-            for (int i = 2; i < rowCount; ++i)
+            for (int i = headerRowIdx + 1; i < rowCount; ++i)
             {
                 IRow row = sheet.GetRow(i);
                 if (row == null)
                     continue;
-                var cell0 = row.GetCell(0);
+                var cell0 = row.Cell(0);
                 if (cell0.CellType == CellType.Blank
                     || (cell0.CellType == CellType.String && cell0.StringCellValue == ""))
                     continue;
 
-                body += "\n\t[" + cell0.ToString() + "]" + "={";
-                for (int j = 0; j < row.LastCellNum; ++j)
+                var v0 = cell0.SValue();
+                if(cell0.CellType == CellType.String 
+                    || (cell0.CellType == CellType.Formula && cell0.CachedFormulaResultType ==  CellType.String))
+                    v0 = "\"" + v0 + "\"";
+                luabuild.Append("\n\t[" + v0 + "]" + "={" + v0);
+                for (int j = 1; j < row.LastCellNum; ++j)
                 {
-                    var cell = row.GetCell(j) ?? row.CreateCell(j);
-                    body += cell.SafeSValue() + ",\t";
+                    var cell = row.Cell(j);
+                    var v = cell.SValueOneline();
+                    if(cell.CellType == CellType.Blank)
+                        v = "nil";
+                    else if(cell.CellType == CellType.String 
+                        || (cell.CellType == CellType.Formula && cell.CachedFormulaResultType ==  CellType.String))
+                        v = "\"" + v + "\"";
+                    luabuild.Append(",\t" + v);
                 }
-                body += "},";
+                luabuild.Append("},");
             }
         }
         catch (Exception e)
         {
-            AppLog.d(e);
+            AppLog.e(e);
         }
+        luabuild.Append("\n}\n");
 
-        string tail = "\nfor k,v in pairs(" + sheetname + ") do"
-            + "\n\tif type(v) == \"table\" then"
-            + "\n\t\tsetmetatable(v,{"
-            + "\n\t\t__newindex=function(t,kk) print(\"warning: attempte to change a readonly table\") end,"
-            + "\n\t\t__index=function(t,kk)"
-            + "\n\t\t\tif ColumnIdx[kk] ~= nil then"
-            + "\n\t\t\t\treturn t[ColumnIdx[kk]]"
-            + "\n\t\t\telse"
-            + "\n\t\t\t\tprint(\"err: \\\"" + sheetname + "\\\" have no field [\"..kk..\"]\")"
-            + "\n\t\t\t\treturn nil"
-            + "\n\t\t\tend"
-            + "\n\t\tend})"
-            + "\n\tend"
-            + "\nend";
+        //tail
+        luabuild.Append("\nfor k,v in pairs(" + sheetname + ") do")
+            .Append("\n\tif type(v) == \"table\" then")
+            .Append("\n\t\tsetmetatable(v,{")
+            .Append("\n\t\t__newindex=function(t,kk) print(\"warning: attempte to change a readonly table\") end,")
+            .Append("\n\t\t__index=function(t,kk)")
+            .Append("\n\t\t\tif ColumnIdx[kk] ~= nil then")
+            .Append("\n\t\t\t\treturn t[ColumnIdx[kk]]")
+            .Append("\n\t\t\telse")
+            .Append("\n\t\t\t\tprint(\"err: \\\"" + sheetname + "\\\" have no field [\"..kk..\"]\")")
+            .Append("\n\t\t\t\treturn nil")
+            .Append("\n\t\t\tend")
+            .Append("\n\t\tend})")
+            .Append("\n\tend")
+            .Append("\nend");
 
-        string strLua = "-- usage: \n--\t" + sheetname + "[id][ColumnName] \n--\t" + sheetname + "[id].ColumnName\n";
-
-        strLua += columnIdxs;
-
-        strLua += "\nlocal " + sheetname + "={";
-        strLua += body;
-        strLua += "\n}\n";
-
-        strLua += tail;
-        strLua += "\nreturn " + sheetname + "\n";
+        luabuild.Append("\nreturn " + sheetname + "\n");
 
         path += "/" + sheetname + ".lua";
-        UTF8Encoding utf8 = new UTF8Encoding(false);
-        StreamWriter sw;
-        using (sw = new StreamWriter(path, false, utf8))
-        {
-            sw.Write(strLua);
-        }
-        sw.Close();
+
+        var dir = path.upath().Substring(0, path.LastIndexOf('/'));
+        if(!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        File.WriteAllText(path, luabuild.ToString());
+        AppLog.d(path);
         return true;
     }
 
@@ -122,19 +173,31 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
             {
                 AppLog.d("building [" + file.Name + "] ...");
 
-                var fstream = new FileStream(file.FullName, FileMode.Open);
-                IWorkbook workbook = null;
-                if (file.Name.EndsWith(".xlsx"))
-                    workbook = new XSSFWorkbook(fstream);
-                else
-                    workbook = new HSSFWorkbook(fstream);
+                IWorkbook workbook = ExcelUtils.Open(file.FullName);
 
+                var config = workbook.GetSheet("config");
                 for (int i = 0; i < workbook.NumberOfSheets; ++i)
                 {
                     var sheet = workbook.GetSheetAt(i);
                     var sheetname = sheet.SheetName;
+                    if(sheetname == "config")
+                        continue;
 
-                    if (writeLua(sheetname.Replace("$", ""), sheet, mConfig.OutPath))
+                    var headerRowIdx = 0;
+                    if(config != null)
+                    {
+                        var cr = config.Select(r => r.Cell(0).SValue() == sheetname && r.Cell(1).SValue() == "headerRowIdx");
+                        if(cr.Count > 0)
+                            headerRowIdx = (int)cr.First().Cell(2).NumericCellValue;
+                    }
+
+                    var OutPath = mConfig.OutPath;
+                    if(workbook.NumberOfSheets > 1)
+                    {
+                        OutPath += "/" + file.Name.Substring(0, file.Name.LastIndexOf('.')).RReplace(PathUtils.PunctuationRegex + "+", "_");
+                    }
+
+                    if (writeLua(sheet, OutPath, headerRowIdx))
                     {
                         AppLog.d(file.Name + ": " + sheetname + " ok.");
                     }
@@ -163,15 +226,15 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         AppLog.d("上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
 
         DirectoryInfo dir = new DirectoryInfo(mConfig.InPath);
-        try
-        {
-            Build(dir.GetFiles("*.xls"));
-            Build(dir.GetFiles("*.xlsx"));
-        }
-        catch (Exception e)
-        {
-            Console.Error.Write("error：" + e.Message);
-        }
+        // try
+        // {
+            Build(dir.GetFiles("*.xls", SearchOption.AllDirectories));
+            Build(dir.GetFiles("*.xlsx", SearchOption.AllDirectories));
+        // }
+        // catch (Exception e)
+        // {
+        //     AppLog.e("error：" + e.Message);
+        // }
 
         mConfig.LastBuildTime = DateTime.Now.ToFileTimeUtc();
     }
@@ -182,6 +245,14 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         if (GUI.Button(rect.Split(1, 3), "Excel2Lua"))
         {
             Instance().Build();
+        }
+        if (GUI.Button(rect.Split(2, 3), "Config"))
+        {
+            foreach(var f in Directory.GetFiles(Instance().mConfig.InPath, "*.xlsx", SearchOption.AllDirectories))
+            {
+                AppLog.d(f);
+                Excel2Lua.BookConfig(f);
+            }
         }
     }
 
@@ -201,7 +272,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            mTarget.mConfig.Draw();
+            Inspector.DrawComObj("Config", mTarget.mConfig);
 
             Excel2Lua.DrawBuildButton();
 

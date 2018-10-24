@@ -47,9 +47,31 @@ public class LuaMonoBehaviour : MonoBehaviour
         protected set;
     }
 
-    public bool Inited { get; protected set; }
-    bool Init()
+    bool mInited = false;
+    public bool Inited { 
+        get
+        {
+            return mInited 
+            // && AssetSys.Instance.Inited
+            // && LuaSys.Instance.Inited
+            ;
+        } 
+        protected set
+        {
+            mInited = value;
+        }
+    }
+
+    IEnumerator AsyncInit()
     {
+        yield return null;
+    }
+
+    void Init()
+    {
+        // while(!LuaSys.Instance.Inited)
+        //     yield return null;
+
         byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
@@ -63,25 +85,26 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("OnDestroy", out luaOnDestroy);
 
         Inited = true;
+        enabled = true;
         if(Inited && luaAwake != null)
         {
             luaAwake();
         }
         
-        return true;
+        // yield return null;
     }
 
     void Awake()
     {
+        enabled = false;
         Inited = false;
+        // StartCoroutine(Init());
         Init();
     }
 
     private void OnEnable()
     {
-        if(!Inited)
-            Init();
-        if(Inited && luaOnEnable != null)
+        if(luaOnEnable != null)
         {
             luaOnEnable();
         }
@@ -90,7 +113,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if(Inited && luaStart != null)
+        if(luaStart != null)
         {
             luaStart();
         }
@@ -98,7 +121,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(Inited && luaFixedUpdate != null)
+        if(luaFixedUpdate != null)
         {
             luaFixedUpdate();
         }
@@ -107,7 +130,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Inited && luaUpdate != null)
+        if(luaUpdate != null)
         {
             luaUpdate();
         }
@@ -133,7 +156,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void CleanLua()
     {
-        if(Inited && luaOnDestroy != null)
+        if(luaOnDestroy != null)
         {
             luaOnDestroy();
         }
@@ -150,6 +173,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         CleanLua();
 
         luaScript.path = path;
+        // StartCoroutine(Init());
         Init();
     }
 
@@ -170,11 +194,6 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
         if(callback != null)
             callback();
-    }
-
-    public IEnumerator WaitForSeconds(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
     }
 
 }

@@ -22,8 +22,9 @@ public static class BundleManifestExtension
 }
 
 [Serializable]
-public class AppVersion : InspectorDraw
+public class AppVersion
 {
+    public string Name;
     public uint Major = 0; // 主版本
     public uint Minor = 0; // 次版本
     public uint Patch = 0; // 补丁版本
@@ -59,7 +60,7 @@ public class AppVersion : InspectorDraw
     }
 
 #if UNITY_EDITOR
-    public override void DrawInspector(int indent, GUILayoutOption[] option = null)
+    public void Draw(int indent, GUILayoutOption[] option = null)
     {
         // Name = EditorGUILayout.TextField("Major", Name);
         EditorGUILayout.BeginHorizontal();
@@ -113,10 +114,6 @@ public class AppVersion : InspectorDraw
 #endif
 
 }
-public class FoldAble
-{
-    public bool Foldout = false;
-}
 
 /// <summary>
 /// Assets/BundleRes 下需要打包的资源目录配置
@@ -137,13 +134,13 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     #region  test dictionary draw
     [Serializable]
-    public class TestC1 : FoldAble
+    public class TestC1
     {
         public int _int = 0;
         public string _string = "sss";
 
     }
-    public FoldAbleDictionary<string, TestC1> _testDic = new FoldAbleDictionary<string, TestC1>(){
+    public Dictionary<string, TestC1> _testDic = new Dictionary<string, TestC1>(){
         {"test_key1", new TestC1(){_int = 1, _string = "string_1"}},
         {"test_key2", new TestC1(){_int = 1, _string = "string_2"}},
         {"test_key3", new TestC1(){_int = 1, _string = "string_3"}},
@@ -209,8 +206,9 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
     [Serializable]
-    public class GroupInfo : InspectorDraw
+    public class GroupInfo
     {
+        public string Name;
         public bool mInclude = false;
         public bool mRebuild = false;
 
@@ -234,12 +232,12 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
 
 #if UNITY_EDITOR
-        public override void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
+        public void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
-                FoldOut = EditorGUILayout.Foldout(FoldOut, Name, true);
+                // Foldout = EditorGUILayout.Foldout(Foldout, Name, true);
                 if (Size < 1024)//K
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
                 else if (Size < 1024 * 1024)//K
@@ -250,16 +248,16 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 //                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
             }
             EditorGUILayout.EndHorizontal();
-            if (FoldOut)
-            {
-                //                ++EditorGUI.indentLevel;
-                DrawInspector(indent, guiOpts);
-                //                --EditorGUI.indentLevel;
-            }
+            // if (Foldout)
+            // {
+            //     //                ++EditorGUI.indentLevel;
+            //     DrawInspector(indent, guiOpts);
+            //     //                --EditorGUI.indentLevel;
+            // }
             EditorGUI.indentLevel -= indent;
         }
 
-        public override void DrawInspector(int indent, GUILayoutOption[] guiOpts)
+        public void DrawInspector(int indent, GUILayoutOption[] guiOpts)
         {
             Bundles.Sort((i, j) => j.Size.CompareTo(i.Size));
             foreach (var f in Bundles)
@@ -283,7 +281,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 #endif
     }
 
-    [HideInInspector, SerializeField]
+    [HideInInspector]
     public bool ForceRebuild = false;
 
     [HideInInspector, SerializeField]
@@ -342,7 +340,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
     [HideInInspector, SerializeField]
-    public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server() { Name = "BundleServer" };
+    public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server();
     static string LocalIpAddress()
     {
         IPAddress ipAddress = NetSys.LocalIpAddress()[0];
@@ -611,10 +609,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
             mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
 
-            if((mTarget._testDic.Foldout = EditorGUILayout.Foldout(mTarget._testDic.Foldout, "_testDic", true)))
-            {
-                mTarget._testDic.Draw<string, TestC1>();
-            }
+            var testDic = (mTarget._testDic as object);
+            Inspector.DrawObj("testDic", ref testDic);
 
             GUILayoutOption[] guiOpts = new GUILayoutOption[]
             {
@@ -668,6 +664,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             }
 
             //apk ios.proj exe app etc.
+            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds);
             var size = mTarget.Channels.Count;
             EditorGUILayout.BeginHorizontal();
             {
@@ -714,7 +711,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     {
                         var j = mTarget.Channels[i];
                         if (j != null)
-                            j.Draw(0, guiOpts);
+                            Inspector.DrawComObj(j.Name, j);
                     }
 
                 }
@@ -724,7 +721,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             }
 
             // server
-            mTarget.BundleServer.Draw();
+            Inspector.DrawComObj("BundleServer", mTarget.BundleServer);
 
             mTarget.DrawSaveButton();
 

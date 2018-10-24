@@ -4,7 +4,16 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
-local boot = {}
+local boot = {
+    1, 2, 3, 4,
+    s = "sssss",
+    {5, 6, 7, 8, 9,},
+    num = 9999,
+    hahahaah = {
+        dd = 999,
+        11,22,33,44
+    }
+}
 local self = boot
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
@@ -54,7 +63,7 @@ function boot.coroutine_boot(first, ...)
 
 	    loading:SetActive(false)
 
-    end)(...)
+    end)
 end
 
 --AutoGenInit Begin

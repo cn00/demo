@@ -32,16 +32,6 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     bool mAllDownloadOK = false;
 
-    public bool SysEnter()
-    {
-        return true;
-    }
-
-    public override IEnumerator Init()
-    {
-        yield return base.Init();
-    }
-
     public IEnumerator GetLocalVersion()
     {
         var cacheUrl = AssetSys.CacheRoot + "resversion.txt";

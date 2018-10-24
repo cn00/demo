@@ -46,7 +46,7 @@ public static class ExcelUtils
         }
         return svalue;
     }
-    public static string SafeSValue(this ICell self, CellType? FormulaResultType = null)
+    public static string SValueOneline(this ICell self, CellType? FormulaResultType = null)
     {
         return self.SValue()
                 .Replace("\n", "\\n")
@@ -201,7 +201,7 @@ public static class ExcelUtils
         switch (cellType)
         {
             case CellType.Unknown:
-                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SafeSValue(), guiOpts));
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SValueOneline(), guiOpts));
                 break;
             case CellType.Numeric:
                 self.SetCellValue(EditorGUILayout.DelayedDoubleField(self.NumericCellValue, guiOpts));
@@ -219,7 +219,7 @@ public static class ExcelUtils
                 self.SetCellValue(EditorGUILayout.Toggle(self.BooleanCellValue, guiOpts));
                 break;
             case CellType.Error:
-                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SafeSValue(), guiOpts));
+                self.SetCellValue(EditorGUILayout.DelayedTextField(self.SValueOneline(), guiOpts));
                 break;
             default:
                 break;

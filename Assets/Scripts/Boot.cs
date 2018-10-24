@@ -6,22 +6,7 @@ using UnityEngine;
 
 public class Boot : SingleMono<Boot>
 {
-    // Use this for initialization
-    public override IEnumerator Init()
-    {
-        AppLog.d("App.Init 0 AssetSys");
-        yield return AssetSys.Instance.Init();
-
-        AppLog.d("App.Init 1 LuaSys");
-        yield return LuaSys.Instance.Init();
-
-        AppLog.d("App.Init 2 boot");
-        var uiluamono = gameObject.AddComponent<LuaMonoBehaviour>();
-        uiluamono.SetLua("ui/boot/boot");
-        uiluamono.enabled = true;
-    }
-
-    private void Awake()
+    public override void Awake()
     {
         AppLog.isEditor = Application.isEditor;
         AppLog.d("App.Awake 0");
@@ -29,7 +14,7 @@ public class Boot : SingleMono<Boot>
         if(BuildConfig.Instance().UseBundle)
             BuildConfig.Instance().BundleServer.Start();
         #endif
-        StartCoroutine(Init());
+        base.Awake();
     }
 
     private void Start()

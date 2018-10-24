@@ -11,8 +11,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public class SheetStruct : InspectorDraw
+public class SheetStruct
 {
+    public string Name;
     public static string[] ColumnNames = new []{
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
         "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"};
@@ -42,9 +43,9 @@ public class SheetStruct : InspectorDraw
         }
     }
 
-    public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
-        base.DrawInspector();
+        // base.DrawInspector();
 
         Sheet.SheetName = Name;
         PinColumn = PinColumn.ToUpper();
@@ -117,13 +118,14 @@ public class SheetStruct : InspectorDraw
     }
 }
 
-public class BookStruct : InspectorDraw
+public class BookStruct
 {
+    public string Name;
     public IWorkbook Book {get; set;}
     public List<SheetStruct> Sheets = new List<SheetStruct>();
-    public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
-        base.DrawInspector();
+        // base.DrawInspector();
         var rect = EditorGUILayout.GetControlRect();
         var sn = 5;
         var idx = -1;
@@ -139,7 +141,7 @@ public class BookStruct : InspectorDraw
         };
         foreach (var s in Sheets)
         {
-            s.Draw(0, guiOpts);
+            Inspector.DrawComObj(s.Name, s);
         }
 
         if(GUI.changed)
@@ -167,12 +169,12 @@ public partial class DefaultAssetInspector : Editor
         if (assetPath.IsExcel())
         {
             var book = ExcelUtils.Open(assetPath);
-            var tmp = new BookStruct(){FoldOut = true};
+            var tmp = new BookStruct();
             tmp.Name = assetPath;
             tmp.Book = book;
             foreach(var sheet in book.AllSheets())
             {
-                var ss = new SheetStruct(){FoldOut = false };
+                var ss = new SheetStruct();
                 ss.Name = sheet.SheetName;
                 ss.Sheet = sheet;
                 tmp.Sheets.Add(ss);
@@ -209,7 +211,7 @@ public partial class DefaultAssetInspector : Editor
 
     public override void OnInspectorGUI()
     {
-        EditorConfig.Instance().MConfig.Draw();
+        Inspector.DrawComObj("EditorConfig", EditorConfig.Instance().MConfig);
 
         bool enabled = GUI.enabled;
         GUI.enabled = true;
@@ -218,7 +220,7 @@ public partial class DefaultAssetInspector : Editor
             
             if (mTarget != null)
             {
-                (mTarget as BookStruct).Draw();
+                (mTarget as BookStruct).DrawInspector();
             }
         }
         else if (assetPath.IsText())

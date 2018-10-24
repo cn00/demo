@@ -30,6 +30,7 @@ namespace XLua
 {
     public partial class LuaTable : LuaBase
     {
+        public string Name;
         public LuaTable(int reference, LuaEnv luaenv) : base(reference, luaenv)
         {
         }
@@ -375,145 +376,11 @@ namespace XLua
         {
             LuaAPI.lua_getref(L, luaReference);
         }
+
         public override string ToString()
         {
             return "table :" + luaReference;
         }
-#if UNITY_EDITOR
-        public override void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
-        {
-            EditorGUI.indentLevel += indent;
-            FoldOut = ContainsKey("FoldOut")?Get<bool>("FoldOut"):false;
-            FoldOut = EditorGUILayout.Foldout(FoldOut, Name + ": " + GetType().ToString(), true);
-            Set("FoldOut", FoldOut);
-            if (FoldOut)
-            {
-                using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
-                {
-                    DrawInspector(indent, guiOpts);
-                    // --EditorGUI.indentLevel;
-                }
-            }
-            EditorGUI.indentLevel -= indent;
-        }
-        public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
-        {
-            ForEach<string, object>((k, v) =>
-            {
-                if (v is LuaTable)
-                {
-                    var t = (v as LuaTable);
-                    t.Name = k;
-                    ++EditorGUI.indentLevel;
-                    t.Draw();
-                    --EditorGUI.indentLevel;
-                }
-                else
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(k + ": " + (v != null ? v.GetType().ToString() : "null"));
-                    if (v is bool)
-                    {
-                        var tmp = EditorGUILayout.Toggle((bool)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is Enum)
-                    {
-                        if (k.ToLower().Contains("flag"))
-                        {
-                            var tmp = EditorGUILayout.EnumFlagsField((Enum)v);
-                            Set(k, tmp);
-                        }
-                        else
-                        {
-                            var tmp = EditorGUILayout.EnumPopup((Enum)v);
-                            Set(k, tmp);
-                        }
-                    }
-                    else if (v is long)
-                    {
-                        if (k.ToLower().Contains("time"))
-                        {
-                            EditorGUILayout.LabelField(DateTime.FromFileTime((long)v).ToString());
-                        }
-                        else
-                        {
-                            var tmp = EditorGUILayout.LongField((long)v);
-                            Set(k, tmp);
-                        }
-                    }
-                    else if (v is double)
-                    {
-                        var tmp = EditorGUILayout.DoubleField((double)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is string)
-                    {
-                        var tmp = EditorGUILayout.TextField((string)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is Component)
-                    {
-                        EditorGUILayout.ObjectField((v as Component).gameObject, typeof(UnityEngine.Object), true);
-                    }
-                    EditorGUILayout.EndHorizontal();
-                }
-            });
-
-            ForEach<int, object>((k, v) =>
-            {
-                if (v is LuaTable)
-                {
-                    var t = (v as LuaTable);
-                    t.Name = "[" + k.ToString() + "]";
-                    ++EditorGUI.indentLevel;
-                    t.Draw();
-                    --EditorGUI.indentLevel;
-                }
-                else
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField("[" + k + "]: " + (v != null ? v.GetType().ToString() : "null"));
-                    if (v is bool)
-                    {
-                        var tmp = EditorGUILayout.Toggle((bool)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is Enum)
-                    {
-                        {
-                            var tmp = EditorGUILayout.EnumPopup((Enum)v);
-                            Set(k, tmp);
-                        }
-                    }
-                    else if (v is long)
-                    {
-                        {
-                            var tmp = EditorGUILayout.LongField((long)v);
-                            Set(k, tmp);
-                        }
-                    }
-                    else if (v is double)
-                    {
-                        var tmp = EditorGUILayout.DoubleField((double)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is string)
-                    {
-                        var tmp = EditorGUILayout.TextField((string)v);
-                        Set(k, tmp);
-                    }
-                    else if (v is Component)
-                    {
-                        EditorGUILayout.ObjectField((v as Component).gameObject, typeof(UnityEngine.Object), true);
-                    }
-                    EditorGUILayout.EndHorizontal();
-                }
-            });
-
-        }
-#endif
-
     }
 
 }

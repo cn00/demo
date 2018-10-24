@@ -19,7 +19,7 @@ public class LuaSys : SingleMono<LuaSys>
         get { return luaEnv; }
     }
 
-    public LuaTable NewEnv(LuaMonoBehaviour lb)
+    public LuaTable Inject(LuaMonoBehaviour lb)
     {
         LuaTable luaTable = luaEnv.NewTable();
 
@@ -63,27 +63,40 @@ public class LuaSys : SingleMono<LuaSys>
 #endif
         {
             var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
-            bytes = data.bytes;
+            if(data == null)
+            {
+                data = AssetSys.Instance.GetAssetSync<TextAsset>("lua/" + filename.Replace(".", "/") + LuaExtension + ".txt");
+            }
+            if(data!=null)
+                bytes = data.bytes;
+            else
+                AppLog.e(filename + " not found");
         }
 #if UNITY_EDITOR
         else
         {
             var assetName = BuildConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
+            var assetName2 = BuildConfig.BundleResRoot + "lua/" + filename.Replace(".", "/") + LuaExtension;
             if(File.Exists(assetName))
             {
                 bytes = File.ReadAllBytes(assetName);
             }
+            else if(File.Exists(assetName2))
+            {
+                bytes = File.ReadAllBytes(assetName2);
+            }
             else
             {
-                AppLog.w(assetName + "not found.");
+                AppLog.e(assetName + " not found.");
             }
         }
 #endif
         return bytes;
     }
 
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
         luaEnv.AddLoader(LuaLoader);
     }
 
@@ -102,7 +115,7 @@ public class LuaSys : SingleMono<LuaSys>
     {
         LuaTable env = null;
         if(self != null)
-            env = NewEnv(self);
+            env = Inject(self);
         return GetLuaTable(textBytes, env, name);
     }
 

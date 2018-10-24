@@ -30,11 +30,11 @@ local function async_to_sync(async_func, callback_pos)
     end
 end
 
-local function coroutine_call(func)
-    return function(...)
+local function coroutine_call(func, ...)
+    -- return function(...)
         local co = coroutine.create(func)
         assert(coroutine.resume(co, ...))
-    end
+    -- end
 end
 
 local move_end = {}
@@ -132,6 +132,13 @@ local function createdelegate(delegate_cls, obj, impl_cls, method_name, paramete
     local m = parameter_type_list and typeof(impl_cls):GetMethod(method_name, flag, nil, parameter_type_list, nil)
              or typeof(impl_cls):GetMethod(method_name, flag)
     return CS.System.Delegate.CreateDelegate(typeof(delegate_cls), obj, m)
+end
+
+local function dump(tb, indent)
+    if typeof(tb) ~= "table" then return typeof(tb) end
+    local sb = {}
+
+    return table.concat(sb, ",")
 end
 
 return {

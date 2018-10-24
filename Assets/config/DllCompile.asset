@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -15,9 +15,9 @@ MonoBehaviour:
   - mName: AppLog.dll
     Defineds:
     - UNITY_DLL
+    KeepMdb: 0
     OutPath: Assets/Plugins/AppLog.dll
     SourceDir: Assets/EditorTools/AppLog
-    KeepMdb: 0
     LibSearchingPath:
     - MonoBleedingEdge/lib/mono/4.5/
     - Managed/
@@ -25,4 +25,17 @@ MonoBehaviour:
     - UnityEngine.dll
     - UnityEditor.dll
     - mscorlib.dll
-  PathGetterObj: {fileID: 102900000, guid: 7ea2164b726e04028ab0792784a81e13, type: 3}
+  - mName: XUPorter
+    Defineds:
+    - UNITY_DLL
+    KeepMdb: 0
+    OutPath: Assets/Editor/XUPorter.dll
+    SourceDir: Assets/Editor/XUPorter
+    LibSearchingPath:
+    - MonoBleedingEdge/lib/mono/4.5/
+    - Managed/
+    References:
+    - UnityEngine.dll
+    - UnityEditor.dll
+    - mscorlib.dll
+  PathGetterObj: {fileID: 102900000, guid: 00c77a5f9ad39404d9c499ae8119f443, type: 3}

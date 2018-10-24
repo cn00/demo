@@ -249,6 +249,14 @@ public class AssetSys : SingleMono<AssetSys>
     }
 
     public AssetBundleManifest mManifest = null;
+    public AssetBundleManifest Manifest
+    {
+        get
+        {
+            return mManifest;
+        }
+    }
+
     Dictionary<string, AssetBundle> mLoadedBundles = new Dictionary<string,AssetBundle>();
 
     public bool SysEnter()
@@ -265,7 +273,24 @@ public class AssetSys : SingleMono<AssetSys>
 #if UNITY_EDITOR
         if (BuildConfig.Instance().UseBundle)
 #endif
+        {
+            if (mManifest == null)
+            {
+
+#if UNITY_EDITOR
+                string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
+#else
+                string manifestBundleName = PlatformName(Application.platform);
+#endif
+                AppLog.d("load manifest: " + manifestBundleName);
+                yield return GetBundle(manifestBundleName, (bundle) =>
+                {
+                    var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    mManifest = manifext;
+                });
+            }
             yield return GetBundle("ui/boot.bd");
+        }
         yield return base.Init();
     }
 
@@ -274,10 +299,9 @@ public class AssetSys : SingleMono<AssetSys>
     /// </summary>
     public T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
     {
-        var trim = new char[] { ' ', '.', '/' };
-        assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
-        var dirs = assetSubPath.Split('/');
-        string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+        // var trim = new char[] { ' ', '.', '/' };
+        // assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
+        string bundleName = GetBundlePath(assetSubPath);// dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
         var bundle = GetBundleSync(bundleName);
         T asset = null;
         if(bundle != null)
@@ -314,22 +338,6 @@ public class AssetSys : SingleMono<AssetSys>
         if(BuildConfig.Instance().UseBundle)
 #endif
         {
-            if(mManifest == null)
-            {
-
-#if UNITY_EDITOR
-                string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
-#else
-                string manifestBundleName = PlatformName(Application.platform);
-#endif
-                AppLog.d("load manifest: " + manifestBundleName);
-                yield return GetBundle(manifestBundleName, (bundle) =>
-                {
-                    var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                    mManifest = manifext;
-                });
-            }
-
             string bundleName = GetBundlePath(assetSubPath);// dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             AppLog.d("from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) =>

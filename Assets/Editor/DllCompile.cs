@@ -15,8 +15,9 @@ public class DllCompile : SingletonAsset<DllCompile>
 {
 
     [Serializable]
-    public class Config : InspectorDraw
+    public class Config
     {
+        public string Name;
         // [SerializeField]
         // public string mName = ".dll";
         // public string Name { get { return mName; } set { mName = value; } }
@@ -57,11 +58,11 @@ public class DllCompile : SingletonAsset<DllCompile>
             };
         }
 
-        public override void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+        public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
-            if (FoldOut)
+            // if (Foldout)
             {
-                base.DrawInspector(indent);
+                // base.DrawInspector(indent);
 
                 var rect = EditorGUILayout.GetControlRect();
                 var sn = 3;
@@ -82,7 +83,7 @@ public class DllCompile : SingletonAsset<DllCompile>
                 // {
                 //     Instance().bundles.Insert(Instance().bundles.IndexOf(this), this.clone());
                 // }
-            }//if(mFoldOut)
+            }//if(mFoldout)
         }//DrawInspector
     }//class
 
@@ -140,19 +141,16 @@ public class DllCompile : SingletonAsset<DllCompile>
     [CustomEditor(typeof(DllCompile))]
     public class Editor : UnityEditor.Editor
     {
+        bool Foldout = false;
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
             EditorGUILayout.Space();
 
-            DrawListCount(Instance().bundles);
-            for (var i = 0; i < Instance().bundles.Count; ++i)
-            {
-                var item = Instance().bundles[i];
-                if(item != null)
-                    item.Draw();
-            }
+            // var obj = (Instance().bundles as object);
+            Inspector.DrawList("DllConfigs", Instance().bundles, ref Foldout);
+
             Instance().DrawSaveButton();
 
             Instance().PathGetterObj = EditorGUILayout.ObjectField("PathGetter", Instance().PathGetterObj, typeof(UnityEngine.Object), true);
@@ -170,7 +168,10 @@ public class DllCompile : SingletonAsset<DllCompile>
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
             {
-                File.Copy("Assets/doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
+                // File.Copy("Assets/doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
+                var s = File.ReadAllText("Assets/doc/87-LuaScript-NewLuaScript.lua.txt");
+                s = s.Replace("-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt", "");
+                File.WriteAllText(distDir, s);
             }
 
             // //BaseDirectory: /Applications/Unity-2017.4.1f1

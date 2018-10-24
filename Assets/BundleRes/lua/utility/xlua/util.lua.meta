@@ -1,9 +1,10 @@
 fileFormatVersion: 2
 guid: c175c43dc83c4424ca1a2f0babbb0395
-timeCreated: 1521458029
-licenseType: Pro
-DefaultImporter:
+ScriptedImporter:
+  fileIDToRecycleName: {}
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+  script: {fileID: 11500000, guid: b860bff52791b405e81f1449154ffbf3, type: 3}
+  scale: 1

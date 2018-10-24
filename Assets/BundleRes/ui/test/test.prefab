@@ -1293,7 +1293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   luaScript:
     path: ui/test/test
-    textAsset: {fileID: 102900000, guid: 0ca91f50dbc214bd8b2e4052bf5af397, type: 3}
+    textAsset: {fileID: 5, guid: 0ca91f50dbc214bd8b2e4052bf5af397, type: 3}
   injections:
   - obj: {fileID: 1740525978082266}
     exportComIdx: 3
@@ -2227,7 +2227,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

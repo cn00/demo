@@ -84,6 +84,8 @@ public static class XLuaGenConfig
         #endregion UnityEngine
 
         #region system
+        typeof(System.Reflection.BindingFlags),
+        typeof(System.Delegate),
         typeof(System.Convert),
         typeof(System.Object),
         typeof(System.Collections.Generic.List<int>),

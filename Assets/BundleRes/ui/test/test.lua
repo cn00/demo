@@ -5,7 +5,7 @@ local AssetSys = CS.AssetSys
 local sqlite = CS.SQLite.SQLite3
 
 local util = require "lua.utility.xlua.util"
-
+local coroutine_call = util.coroutine_call
 local test = {}
 local self = test
 
@@ -14,7 +14,7 @@ function YieldAndCallback(to_yield, callback)
 end
 local yield_return = util.async_to_sync(YieldAndCallback)
 
-function test.CheckUpdate()
+function self.CheckUpdate()
 	coroutine_call(function()
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
@@ -39,7 +39,7 @@ function test.CheckUpdate()
 	end)
 end
 
-function test.Qrcode()
+function self.Qrcode()
 	coroutine_call(function()
 		local obj = nil
 		yield_return(
@@ -66,7 +66,7 @@ function test.Qrcode()
 	end)
 end
 
-function test.Op()
+function self.Op()
 	coroutine_call(function()
 		print("open Op")
 		local obj = nil
@@ -84,34 +84,34 @@ function test.Op()
 	end)
 end
 
-function test.TableViewTest()
-	return coroutine.create(function()
+function self.TableViewTest()
+	coroutine_call(function()
 		print("open TableViewTest")
 		
-		local subpath = "StreamingAssets/Excel.tmp/EtudeLessonInfo.xlsx"
-		local localPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
-		local endCallback = function(www)
-			if www.progress >= 1 and (www.error == nil or www.error == "") then
-				print("download ok", subpath)
-				CS.AssetSys.AsyncSave(localPath, www.bytes)
-			else
-				-- print(www.error)
-			end
-		end
-		local progressCallback = function(progress)
-			print("downloading " .. progress)
-		end
-		local url = CS.AssetSys.HttpRoot .. subpath
-		yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
+		-- local subpath = "../Streaming/Excel.tmp/EtudeLessonInfo.xlsx"
+		-- local localPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
+		-- local endCallback = function(www)
+		-- 	if www.progress >= 1 and (www.error == nil or www.error == "") then
+		-- 		print("download ok", subpath)
+		-- 		CS.AssetSys.AsyncSave(localPath, www.bytes)
+		-- 	else
+		-- 		-- print(www.error)
+		-- 	end
+		-- end
+		-- local progressCallback = function(progress)
+		-- 	print("downloading " .. progress)
+		-- end
+		-- local url = CS.AssetSys.HttpRoot .. subpath
+		-- yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
 		
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
-		"ui/test/table_view.prefab",
+		"ui/excel_viewer/excel_view.prefab",
 		function(asset)
 			obj = asset
 		end))
-		local table_view = GameObject.Instantiate(obj)
-		table_view.name = "table_view"
+		local go = GameObject.Instantiate(obj)
+		go.name = "table_view"
 		local oldLoading = GameObject.Find("loading")
 		GameObject.DestroyImmediate(oldLoading)
 		
@@ -119,7 +119,7 @@ function test.TableViewTest()
 	end)
 end
 
-function test.SqliteInsert(x, y)
+function self.SqliteInsert(x, y)
 	local db = self.db
 	local sql = "INSERT INTO `test_map` (x,y) VALUES " .. "(" .. x .. "," .. y .. ");" .. "COMMIT;"
 	local stmt = sqlite.Prepare2(db, sql)
@@ -138,7 +138,7 @@ function test.SqliteInsert(x, y)
 	-- print(sql, result2, result3, lastid)
 end
 
-function test.SqliteSelect()
+function self.SqliteSelect()
 	local sql = "SELECT * FROM `test_map`;"
 	local stmt = sqlite.Prepare2(db, sql)
 	local count = 0
@@ -157,12 +157,12 @@ function test.SqliteSelect()
 	print(table.concat(collect, "\n"))
 end
 
-function test.CaptureScreenshot()
+function self.CaptureScreenshot()
 	local screenshoot = CS.AssetSys.CacheRoot .. "Screenshot.lua.png"
 	CS.UnityEngine.ScreenCapture.CaptureScreenshot(screenshoot, 1)
 end
 
-function test.GetIpAddresses()
+function self.GetIpAddresses()
 	-- string[]
 	local ips = CS.NetSys.LocalIpAddressStr()
 	for i = 0, ips.Length - 1 do
@@ -176,11 +176,11 @@ function test.GetIpAddresses()
 	end
 end
 
-function test.UpdateOnClick()
-	test.Update()
+function self.UpdateOnClick()
+	self.Update()
 end
 
-function test.InsertOnClick()
+function self.InsertOnClick()
 	local input0 = self.ix_InputField.text
 	local input1 = self.iy_InputField.text
 	
@@ -188,7 +188,7 @@ function test.InsertOnClick()
 	self.SqliteInsert(input0, input1)
 end
 
-function test.coroutine_insert_10000()
+function self.coroutine_insert_10000()
 	self.Insert_10000_Button.interactable = false
 	coroutine_call(function()
 		print("coroutine_insert_10000 coroutine start!")
@@ -224,20 +224,23 @@ function test.coroutine_insert_10000()
 end
 
 --AutoGenInit Begin
-function test.AutoGenInit()
-	test.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
-	test.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
-	test.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
-	test.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
-	test.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
-	test.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
-	test.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
-	test.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
-	test.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
+function self.AutoGenInit()
+	self.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
+	self.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
+	self.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
+	self.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
+	self.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
+	self.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
+	self.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
+	self.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
+	self.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
-function test.Awake()
+function self.Awake()
 	self.AutoGenInit()
+end
+
+function self.Start()
 	local qrOnClick = function()
 		-- CS.QRCode.OpenQRScanner()
 		-- CS.JavaUtil.CallJavaApi("com.game.qrview.Interface", "OpenQRScanner");
@@ -249,30 +252,25 @@ function test.Awake()
 	self.Insert_10000_Button.onClick:AddListener(self.coroutine_insert_10000 )
 	self.OpenOP_Button.onClick:AddListener(self.Op)
 	self.CheckUpdate_Button.onClick:AddListener(self.CheckUpdate)
-	test.tableview_Button.onClick:AddListener(function()
-		assert(coroutine.resume(self.TableViewTest()))
-	end)
-	local ixOnEdit = function(text)
+	self.tableview_Button.onClick:AddListener(self.TableViewTest)
+
+	local ixonEndEdit = function(text)
 		self.iy_InputField:Select()
 		print("x_InputField.onEndEdit:" .. text)
 	end
-	local iyOnEdit = function(text)
+	local iyonEndEdit = function(text)
 		print("y_InputField.onEndEdit:" .. text)
 		self.InsertOnClick()
 	end
-	self.ix_InputField.onEndEdit:AddListener(ixOnEdit)
-	self.iy_InputField.onEndEdit:AddListener(iyOnEdit)
+	self.ix_InputField.onEndEdit:AddListener(ixonEndEdit)
+	self.iy_InputField.onEndEdit:AddListener(iyonEndEdit)
 	
-	self.IpAddress_Button.onClick:AddListener(
-	function()
-		self.GetIpAddresses()
-	end
-	)
+	self.IpAddress_Button.onClick:AddListener(self.GetIpAddresses)
 	
-	local sqlpath = CS.AssetSys.CacheRoot .. "test.sqlite3"
+	local sqlpath = CS.AssetSys.CacheRoot .. "self.sqlite3"
 	print(sqlpath)
 	local result, db = sqlite.Open(sqlpath)
-	print("test.Awake sqlite.Open", result, db)
+	print("self.Awake sqlite.Open", result, db)
 	
 	if result == sqlite.Result.OK then
 		self.db = db
@@ -299,12 +297,12 @@ function test.Awake()
 	end
 end
 
-function test.OnDestroy()
-	print("test.OnDestroy")
+function self.OnDestroy()
+	print("self.OnDestroy")
 	sqlite.Close(self.db)
 end
 
-function test.Destroy()
+function self.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 

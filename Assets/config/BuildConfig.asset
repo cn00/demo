@@ -14,9 +14,9 @@ MonoBehaviour:
   UseBundle: 0
   LogLevel: 3
   runInBackground: 0
-  LastBuildTime: 131821732501226900
+  LastBuildTime: 131823353560773270
   Version:
-    mName: 
+    Name: 
     Major: 1
     Minor: 1
     Patch: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   ForceRebuild: 1
   BuildScene: 0
   mGroups:
-  - mName: chapter_01
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 1734
@@ -34,7 +34,7 @@ MonoBehaviour:
       mSize: 1734
       mMd5: 8999C0EC5115C5242160AB94F8BAA03F
       mVersion: 1.1.0
-  - mName: chapter_02
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 1734
@@ -43,7 +43,7 @@ MonoBehaviour:
       mSize: 1734
       mMd5: 21EAF3BB5883CD8100589266BF46C352
       mVersion: 1.1.0
-  - mName: common
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 28092
@@ -64,7 +64,7 @@ MonoBehaviour:
       mSize: 8886
       mMd5: 6B7764835741F4965B2FD47E041B8517
       mVersion: 1.1.0
-  - mName: config
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 3552
@@ -73,7 +73,7 @@ MonoBehaviour:
       mSize: 3552
       mMd5: D83820B947D369CFDE9026DCEDCDF684
       mVersion: 1.1.0
-  - mName: lua
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 8810
@@ -86,7 +86,7 @@ MonoBehaviour:
       mSize: 7135
       mMd5: 824806F7974053C9F7C028227916287A
       mVersion: 1.1.0
-  - mName: module_tmp
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 2929120
@@ -115,26 +115,14 @@ MonoBehaviour:
       mSize: 1702
       mMd5: 921309E8839F846A147E1232D885BBD9
       mVersion: 1.1.0
-  - mName: ui
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 263275
     mBundles:
-    - mName: ui/boot.bd
-      mSize: 3254
-      mMd5: 9DF563098A5CA1B179C4F7C7E45A4882
-      mVersion: 1.1.0
-    - mName: ui/excel_test.bd
-      mSize: 18550
-      mMd5: 3C0317363DA975369678AA0F526101A8
-      mVersion: 1.1.0
     - mName: ui/loading.bd
       mSize: 100082
       mMd5: 975FFBFCB2BE92F60B1D90313AA3512C
-      mVersion: 1.1.0
-    - mName: ui/login.bd
-      mSize: 20775
-      mMd5: 21B0F3162C8F1833DC8DACB7D42B0E11
       mVersion: 1.1.0
     - mName: ui/qrcode.bd
       mSize: 60138
@@ -144,11 +132,27 @@ MonoBehaviour:
       mSize: 43878
       mMd5: 95C5B5E584791C8D8313F7596EF12B98
       mVersion: 1.1.0
+    - mName: ui/login.bd
+      mSize: 20775
+      mMd5: 21B0F3162C8F1833DC8DACB7D42B0E11
+      mVersion: 1.1.0
+    - mName: ui/excel_test.bd
+      mSize: 18550
+      mMd5: 3C0317363DA975369678AA0F526101A8
+      mVersion: 1.1.0
     - mName: ui/update.bd
       mSize: 16598
       mMd5: 9802514EDC2D9AFFAF44E38F661D415A
       mVersion: 1.1.0
-  - mName: video
+    - mName: ui/boot.bd
+      mSize: 3254
+      mMd5: 9DF563098A5CA1B179C4F7C7E45A4882
+      mVersion: 1.1.0
+    - mName: ui/taleview_test.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+  - Name: 
     mInclude: 0
     mRebuild: 0
     mSize: 5853458
@@ -158,7 +162,7 @@ MonoBehaviour:
       mMd5: C66EDA98DCBF9E3362B6264635AB0B94
       mVersion: 1.1.0
   mChannels:
-  - mName: ios
+  - Name: ios
     BatchBuild: 0
     AddTime: 0
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
@@ -172,7 +176,8 @@ MonoBehaviour:
     OptionFlags: 1025
     Channel: 5
     Emulator: 1
-  - mName: Android
+    Foldout: 1
+  - Name: android
     BatchBuild: 0
     AddTime: 0
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
@@ -186,7 +191,7 @@ MonoBehaviour:
     OptionFlags: 33
     Channel: 2
     Emulator: 0
+    Foldout: 0
   BundleServer:
-    mName: BundleServer
     Port: 8008
     Runing: 0
