@@ -7,3 +7,6 @@
 [submodule "Assets/UberLogger"]
 	path = Assets/UberLogger
 	url = git@github.com:bbbscarter/UberLogger.git
+[submodule "Assets/Editor/XUPorter"]
+	path = Assets/Editor/XUPorter
+	url = git@github.com:cn00/XUPorter.git
