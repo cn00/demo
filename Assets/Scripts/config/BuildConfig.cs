@@ -186,6 +186,75 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
     [Serializable]
+    public class BundleBuildConfig
+    {
+        [Flags]
+        public enum BuildAssetBundleOptions
+        {
+            //
+            // Summary:
+            //     Build assetBundle without any special option.
+            None = 0,
+            //
+            // Summary:
+            //     Don't compress the data when creating the asset bundle.
+            UncompressedAssetBundle = 1,
+            //
+            // Summary:
+            //     Includes all dependencies.
+            CollectDependencies = 2,
+            //
+            // Summary:
+            //     Forces inclusion of the entire asset.
+            CompleteAssets = 4,
+            //
+            // Summary:
+            //     Do not include type information within the AssetBundle.
+            DisableWriteTypeTree = 8,
+            //
+            // Summary:
+            //     Builds an asset bundle using a hash for the id of the object stored in the asset
+            //     bundle.
+            DeterministicAssetBundle = 16,
+            //
+            // Summary:
+            //     Force rebuild the assetBundles.
+            ForceRebuildAssetBundle = 32,
+            //
+            // Summary:
+            //     Ignore the type tree changes when doing the incremental build check.
+            IgnoreTypeTreeChanges = 64,
+            //
+            // Summary:
+            //     Append the hash to the assetBundle name.
+            AppendHashToAssetBundleName = 128,
+            //
+            // Summary:
+            //     Use chunk-based LZ4 compression when creating the AssetBundle.
+            ChunkBasedCompression = 256,
+            //
+            // Summary:
+            //     Do not allow the build to succeed if any errors are reporting during it.
+            StrictMode = 512,
+            //
+            // Summary:
+            //     Do a dry run build.
+            DryRunBuild = 1024,
+
+            PlaceHolder2048 = 2048,
+            //
+            // Summary:
+            //     Disables Asset Bundle LoadAsset by file name.
+            DisableLoadAssetByFileName = 4096,
+            //
+            // Summary:
+            //     Disables Asset Bundle LoadAsset by file name with extension.
+            DisableLoadAssetByFileNameWithExtension = 8192
+        }
+        public BuildAssetBundleOptions Options;
+    }
+
+    [Serializable]
     public class BundleInfo //: InspectorDraw
     {
         [SerializeField]
@@ -208,19 +277,21 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     [Serializable]
     public class GroupInfo
     {
+        public bool Foldout = false;
         public string Name;
         public bool mInclude = false;
         public bool mRebuild = false;
 
+        [NonSerialized]
         public ulong mSize = 0ul;
         public ulong Size
         {
             protected set { mSize = value; }
             get
             {
-                mSize = 0ul;
-                foreach (var i in Bundles)
-                    mSize += i.Size;
+                if(mSize == 0ul)
+                    foreach (var i in Bundles)
+                        mSize += i.Size;
                 return mSize;
             }
         }
@@ -237,7 +308,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
-                // Foldout = EditorGUILayout.Foldout(Foldout, Name, true);
+                Foldout = EditorGUILayout.Foldout(Foldout, Name, true);
                 if (Size < 1024)//K
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
                 else if (Size < 1024 * 1024)//K
@@ -248,12 +319,12 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 //                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
             }
             EditorGUILayout.EndHorizontal();
-            // if (Foldout)
-            // {
-            //     //                ++EditorGUI.indentLevel;
-            //     DrawInspector(indent, guiOpts);
-            //     //                --EditorGUI.indentLevel;
-            // }
+            if (Foldout)
+            {
+                //                ++EditorGUI.indentLevel;
+                DrawInspector(indent, guiOpts);
+                //                --EditorGUI.indentLevel;
+            }
             EditorGUI.indentLevel -= indent;
         }
 
@@ -609,9 +680,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
             mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
 
-            var testDic = (mTarget._testDic as object);
-            Inspector.DrawObj("testDic", ref testDic);
-
             GUILayoutOption[] guiOpts = new GUILayoutOption[]
             {
                 GUILayout.Width(30),
@@ -722,6 +790,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
             // server
             Inspector.DrawComObj("BundleServer", mTarget.BundleServer);
+            // if(mTarget.BundleServer.thread != null)
+            //     mTarget.BundleServer.Runing = mTarget.BundleServer.thread.IsAlive;
 
             mTarget.DrawSaveButton();
 

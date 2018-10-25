@@ -482,11 +482,6 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 223194914915965902, guid: db6fc9198328241eab930bdc8ae77f0f,
-        type: 2}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db6fc9198328241eab930bdc8ae77f0f, type: 2}
   m_IsPrefabAsset: 0
@@ -672,8 +667,7 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 0}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9233402257b6b348af3e7cc6c72c047, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1001 &1371950041
@@ -714,11 +708,6 @@ Prefab:
     - target: {fileID: 4223460275457360, guid: fc4e8af39086c46ea9e7b037404d56c9, type: 2}
       propertyPath: m_RootOrder
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 224269729489703466, guid: fc4e8af39086c46ea9e7b037404d56c9,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: -4.999939
       objectReference: {fileID: 0}
     - target: {fileID: 1636341453899542, guid: fc4e8af39086c46ea9e7b037404d56c9, type: 2}
       propertyPath: m_IsActive

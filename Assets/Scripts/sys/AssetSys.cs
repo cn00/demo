@@ -11,6 +11,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using XLua;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public static class AssetExtern
 {
     public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
@@ -258,6 +262,7 @@ public class AssetSys : SingleMono<AssetSys>
     }
 
     Dictionary<string, AssetBundle> mLoadedBundles = new Dictionary<string,AssetBundle>();
+    public Dictionary<string, AssetBundle> LoadedBundles {get{return mLoadedBundles;}}
 
     public bool SysEnter()
     {
@@ -310,7 +315,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         if(asset == null)
         {
-            AppLog.w("[{0}({2}):{1}] not exist.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+            AppLog.e("[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
         }
         return asset;
     }
@@ -318,8 +323,8 @@ public class AssetSys : SingleMono<AssetSys>
     public string GetBundlePath (string assetSubPath)
     {
         var dirs = assetSubPath.Split('/');
-        string bundleName = dirs[0] + '/' + dirs[1];
-        bundleName = mManifest.GetAllAssetBundles().First(i => i.StartsWith(bundleName));
+        string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+        // bundleName = mManifest.GetAllAssetBundles().First(i => i.StartsWith(bundleName));
         return bundleName;
     }
 
@@ -582,3 +587,24 @@ public class AssetSys : SingleMono<AssetSys>
         }, writer);
     }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(AssetSys))]
+public class AssetSysEditor : Editor
+{
+    AssetSys Target = null;
+    public void OnEnable()
+    {
+        Target = (AssetSys)target;
+    }
+
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        var foldout = Inspector.tmpFoldout["LoadedBundles"];
+        Inspector.DrwaDic("LoadedBundles", Target.LoadedBundles, ref foldout);
+        Inspector.tmpFoldout["LoadedBundles"] = foldout;
+    }
+}
+#endif

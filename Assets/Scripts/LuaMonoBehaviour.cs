@@ -104,6 +104,11 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
+        if(!Inited)
+        {
+            Init();
+        }
+        
         if(luaOnEnable != null)
         {
             luaOnEnable();

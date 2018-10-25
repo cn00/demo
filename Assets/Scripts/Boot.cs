@@ -12,12 +12,21 @@ public class Boot : SingleMono<Boot>
         AppLog.d("App.Awake 0");
         #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
-            BuildConfig.Instance().BundleServer.Start();
+            BuildConfig.Instance().BundleServer.StartBtn();
         #endif
         base.Awake();
     }
 
-    private void Start()
+    public override IEnumerator Init()
     {
+        yield return base.Init();
+
+        while(!AssetSys.Instance.Inited)
+            yield return null;
+        while(!LuaSys.Instance.Inited)
+            yield return null;
+
+        var lua = gameObject.GetComponent<LuaMonoBehaviour>();
+        lua.enabled = true;
     }
 }

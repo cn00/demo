@@ -100,16 +100,16 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddLoader(LuaLoader);
     }
 
-    public override IEnumerator Init()
-    {
-        byte[] textBytes = null;
-        yield return AssetSys.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
-            textBytes = asset.Data;
-        });
-        GetLuaTable(textBytes);
+    // public override IEnumerator Init()
+    // {
+    //     byte[] textBytes = null;
+    //     yield return AssetSys.Instance.GetAsset<DataObject>("lua/utility/init.lua", asset => {
+    //         textBytes = asset.Data;
+    //     });
+    //     GetLuaTable(textBytes);
 
-        yield return base.Init();
-    }
+    //     yield return base.Init();
+    // }
 
     public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")
     {

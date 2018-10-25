@@ -52,27 +52,21 @@ public class SingletonAsset<T> : AssetBase<T> where T : AssetBase<T>
         {
             // from bundle
             var assetSubPath = AssetPath.Replace("Assets/", "config/");
-            AppLog.d("InstanceRuntime 0 {0}", assetSubPath);
             var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
-            AppLog.d("InstanceRuntime 0.1 {0}", cachePath);
             if (File.Exists(cachePath))
             {
-                AppLog.d("InstanceRuntime 1");
                 var bundle = AssetBundle.LoadFromFile(cachePath);
                 mInstance = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
-                AppLog.d("InstanceRuntime 2");
             }
             // from resources
             else
             {
                 var respath = AssetPath.Replace("Assets/", "").Replace(".asset", "");
                 mInstance = Resources.Load<T>(respath);
-                AppLog.d("InstanceRuntime 3 Resources.Load {0}", respath);
             }
 
             if (mInstance == null)
             {
-                AppLog.e("InstanceRuntime 4 CreateInstance {0}", typeof(T));
                 mInstance = CreateInstance<T>();
             }
             mInstance.Init();

@@ -1,5 +1,14 @@
 {
+	"folders": [
+		{
+			"path": "."
+		}
+	],
 	"settings": {
+		"files.associations": {
+			"*.bjs": "javascript",
+			"*.javascript": "javascript"
+		},
 		"luaide.scriptRoots": [
 			"Assets/BundleRes/"
 		]

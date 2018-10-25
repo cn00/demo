@@ -3,6 +3,7 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -16,10 +17,10 @@ namespace AssetBundleServer
         public int Port = 8008;
         public bool Runing = false;
 
-        string BasePath = "./AssetBundle/";
+        public string BasePath = "./AssetBundle/";
 
-        Thread thread = null;
-        public static void WatchDog(object processID)
+        public Thread thread = null;
+        public void WatchDog(object processID)
         {
             UnityEngine.Debug.LogFormat("Watching parent processID: {0}!", processID);
             Process masterProcess = Process.GetProcessById((int)processID);
@@ -32,39 +33,48 @@ namespace AssetBundleServer
             Environment.Exit(0);
         }
 
+        private async Task Listen(HttpListener l)
+        {
+            try
+            {
+                bool detailedLogging = false;
+                var ctx = await l.GetContextAsync();
+                WriteFile(ctx, BasePath, detailedLogging);
+
+                // var text = "Hello World";
+                // var buffer = System.Text.Encoding.UTF8.GetBytes(text);
+
+                // using (var response = ctx.Response)
+                // {
+                //     ctx.Response.ContentLength64 = buffer.Length;
+                //     ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                // }
+            }
+            catch (HttpListenerException)
+            {
+                Console.WriteLine("screw you guys, I'm going home!");
+            }
+        }
         public void Main()
         {
             bool detailedLogging = false;
 
-            AppLog.d("Starting up asset bundle server.", Port);
-            AppLog.d("Port: {0}", Port);
-            AppLog.d("Directory: {0}", BasePath);
-
             HttpListener listener = new HttpListener();
-
-            /*
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName ());
-            foreach (IPAddress ip in host.AddressList)
-            {
-                //if (ip.AddressFamily.ToString() == "InterNetwork")
-                {
-                    UnityEngine.Debug.LogFormat(ip.AddressFamily.ToString() + " - " + ip.ToString());
-                }
-            }
-            */
-
-
             listener.Prefixes.Add(string.Format("http://*:{0}/", Port));
-            listener.Start();
-
-            while (true)
+            if (!listener.IsListening)
             {
-                UnityEngine.Debug.LogFormat("Waiting for request...");
+                listener.Start();
 
-                HttpListenerContext context = listener.GetContext();
+                Task.Factory.StartNew(async () =>
+                {
+                    while (Runing) await
+                        Listen(listener);
+                    listener.Stop();
+                }, TaskCreationOptions.LongRunning);
+                AppLog.d("Starting up asset bundle server.", Port);
+                AppLog.d("Port: {0}", Port);
+                AppLog.d("Directory: {0}", BasePath);
 
-                WriteFile(context, BasePath, detailedLogging);
-                // Thread.Sleep(1000);
             }
         }
 
@@ -72,10 +82,12 @@ namespace AssetBundleServer
         {
             HttpListenerRequest request = ctx.Request;
             string rawUrl = request.RawUrl;
+            if(string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
+                rawUrl = "index.html";
             string path = basePath + rawUrl;
 
             if (detailedLogging)
-                UnityEngine.Debug.LogFormat("Requesting file: '{0}'. Relative url: {1} Full url: '{2} AssetBundleDirectory: '{3}''"
+                UnityEngine.Debug.LogFormat("Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
             else
                 Console.Write("Requesting file: '{0}' ... ", request.RawUrl);
@@ -121,42 +133,22 @@ namespace AssetBundleServer
             }
         }
 
-        public void Start()
+        public void StartBtn()
         {
             if (thread != null && thread.IsAlive && Runing)
                 thread.Abort();
             thread = new Thread(Main);
-            thread.Start();
             Runing = true;
+            thread.Start();
         }
-        public void Stop()
+        public void StopBtn()
         {
             if (thread != null && thread.IsAlive && Runing)
                 thread.Abort();
             thread = null;
             Runing = false;
         }
-        public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
-        {
-            // using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
-            {
-                Runing = (thread != null && thread.IsAlive);
-                var nodeStyle = new GUIStyle();
-                nodeStyle.normal.textColor = (Runing ? Color.green : Color.red);
-                nodeStyle.active.textColor = (Runing ? Color.green : Color.red);
-                EditorGUILayout.LabelField("Running", Runing.ToString(), nodeStyle);
-                Port = EditorGUILayout.IntField("port", Port);
-                var rect = EditorGUILayout.GetControlRect();
-                if (GUI.Button(rect.Split(0, 4), "Start") && !Runing)
-                {
-                    Start();
-                }
-                if (GUI.Button(rect.Split(1, 4), "Stop"))
-                {
-                    Stop();
-                }
-            }
-        }
+
     }
 }
 #endif //UNITY_EDITOR

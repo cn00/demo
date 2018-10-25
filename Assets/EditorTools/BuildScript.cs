@@ -141,7 +141,7 @@ public class BuildScript
             var options = (
                 BuildAssetBundleOptions.None
               | BuildAssetBundleOptions.ChunkBasedCompression
-              | BuildAssetBundleOptions.AppendHashToAssetBundleName
+            //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
             );
 
             if (rebuild)
@@ -181,6 +181,7 @@ public class BuildScript
                     AppLog.d("{0} {2} => {1}", i, hash, oldhash);
 
                     // TODO: encode bundle
+                    
                     BundleHelper.CompressFileLZMA(path, lzmaPath);
                 }
 

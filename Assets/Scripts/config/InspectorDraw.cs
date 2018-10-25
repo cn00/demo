@@ -199,7 +199,7 @@ public class Inspector
         if(end!= null)end();
     }
 
-    static SafeDictionary<string, bool> tmpFoldout = new SafeDictionary<string, bool>();
+    public static SafeDictionary<string, bool> tmpFoldout = new SafeDictionary<string, bool>();
     public static void DrawComObj(string name, object obj, Action begin = null, Action end = null, Color color = default(Color))
     {
         if(obj != null)
