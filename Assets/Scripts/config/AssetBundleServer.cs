@@ -40,15 +40,6 @@ namespace AssetBundleServer
                 bool detailedLogging = false;
                 var ctx = await l.GetContextAsync();
                 WriteFile(ctx, BasePath, detailedLogging);
-
-                // var text = "Hello World";
-                // var buffer = System.Text.Encoding.UTF8.GetBytes(text);
-
-                // using (var response = ctx.Response)
-                // {
-                //     ctx.Response.ContentLength64 = buffer.Length;
-                //     ctx.Response.OutputStream.Write(buffer, 0, buffer.Length);
-                // }
             }
             catch (HttpListenerException)
             {
@@ -57,8 +48,6 @@ namespace AssetBundleServer
         }
         public void Main()
         {
-            bool detailedLogging = false;
-
             HttpListener listener = new HttpListener();
             listener.Prefixes.Add(string.Format("http://*:{0}/", Port));
             if (!listener.IsListening)
@@ -67,8 +56,8 @@ namespace AssetBundleServer
 
                 Task.Factory.StartNew(async () =>
                 {
-                    while (Runing) await
-                        Listen(listener);
+                    while (Runing)
+                        await Listen(listener);
                     listener.Stop();
                 }, TaskCreationOptions.LongRunning);
                 AppLog.d("Starting up asset bundle server.", Port);
