@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: DllCompile
   m_EditorClassIdentifier: 
   bundles:
-  - mName: AppLog.dll
+  - Name: AppLog.dll
     Defineds:
     - UNITY_DLL
     KeepMdb: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
     - UnityEngine.dll
     - UnityEditor.dll
     - mscorlib.dll
-  - mName: XUPorter
+  - Name: XUPorter.dll
     Defineds:
     - UNITY_DLL
     KeepMdb: 0

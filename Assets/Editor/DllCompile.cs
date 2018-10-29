@@ -13,6 +13,7 @@ using System.Reflection;
 [ExecuteInEditMode]
 public class DllCompile : SingletonAsset<DllCompile>
 {
+    const string Tag = "Dllcompile";
 
     [Serializable]
     public class Config
@@ -58,44 +59,31 @@ public class DllCompile : SingletonAsset<DllCompile>
             };
         }
 
-        public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+        public void BuildBtn()
         {
-            // if (Foldout)
-            {
-                // base.DrawInspector(indent);
+            Build(this);
+        }
 
-                var rect = EditorGUILayout.GetControlRect();
-                var sn = 3;
-                var idx = -1;
-                if (GUI.Button(rect.Split(++idx, sn), "Build"))
-                {
-                    Build(this);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "Clone"))
-                {
-                    Instance().bundles.Insert(Instance().bundles.IndexOf(this) + 1, this.clone());
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "Delete"))
-                {
-                    Instance().bundles.Remove(this);
-                }
-                // if (GUI.Button(rect.Split(++idx, sn), "Copy"))
-                // {
-                //     Instance().bundles.Insert(Instance().bundles.IndexOf(this), this.clone());
-                // }
-            }//if(mFoldout)
-        }//DrawInspector
+        public void CloneBtn()
+        {
+            Instance().bundles.Insert(Instance().bundles.IndexOf(this) + 1, this.clone());
+        }
+        public void DeleteBtn()
+        {
+            Instance().bundles.Remove(this);
+        }
+
     }//class
 
     [HideInInspector]
     public List<Config> bundles = new List<Config>();
 
-    [HideInInspector]
+    [NonSerialized, HideInInspector]
     public UnityEngine.Object PathGetterObj;
 
     static void Build(Config info)
     {
-        AppLog.d("{0} => {1}", info.Name, info.OutPath);
+        // AppLog.d("dll", "{0} => {1}", info.Name, info.OutPath);
         var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
 
         var reference = new List<string>(); //info.References.Clone();
@@ -112,7 +100,7 @@ public class DllCompile : SingletonAsset<DllCompile>
                 if(File.Exists(path))
                 {
                     reference.Add(path);
-                    AppLog.d(path);
+                    AppLog.d(Tag, path);
                     break;
                 }
             }
@@ -124,7 +112,7 @@ public class DllCompile : SingletonAsset<DllCompile>
 
         foreach (var msg in msgs)
         {
-            AppLog.d("CompileCSharp: " + msg);
+            AppLog.d(Tag, "CompileCSharp: " + msg);
         }
         if(!info.KeepMdb)
             File.Delete(info.OutPath + ".mdb");
@@ -148,10 +136,12 @@ public class DllCompile : SingletonAsset<DllCompile>
 
             EditorGUILayout.Space();
 
-            // var obj = (Instance().bundles as object);
-            Inspector.DrawList("DllConfigs", Instance().bundles, ref Foldout);
+            var obj = (Instance().bundles as object);
+            Inspector.DrawObj("DllConfigs", ref obj);
 
             Instance().DrawSaveButton();
+
+            EditorGUILayout.Space();
 
             Instance().PathGetterObj = EditorGUILayout.ObjectField("PathGetter", Instance().PathGetterObj, typeof(UnityEngine.Object), true);
             if (Instance().PathGetterObj != null)

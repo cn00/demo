@@ -51,23 +51,23 @@ public static class AppLog
     /// common log
     /// </summary>
     /// <param name="log"></param>
-    public static void d(string log)
+    public static void d(string tag, string log)
     {
         if(LogLevel >= Level.Debug)
         {
-            var s = "[debug] " + log;
+            var s = "["+tag+"] " + log;
             UnityEngine.Debug.Log(s);
             if(LogLevel >= Level.Net)
                 BroadcastMessage(log);
         }
     }
 
-    public static void d(string fmt, params object[] args)
+    public static void d(string tag, string fmt, params object[] args)
     {
         if(LogLevel >= Level.Debug)
-            d(string.Format(fmt, args));
+            d(tag, string.Format(fmt, args));
     }
-    public static void d(params object[] args)
+    public static void d(string tag, params object[] args)
     {
         if(LogLevel >= Level.Debug)
         {
@@ -76,7 +76,7 @@ public static class AppLog
             {
                 msg += string.Format("{0};", i);
             }
-            d(msg);
+            d(tag, msg);
         }
     }
 
@@ -84,7 +84,7 @@ public static class AppLog
     {
         if(LogLevel >= Level.Warning)
         {
-            var s = "[warning] " + log;
+            var s = log;
             UnityEngine.Debug.LogWarning(s);
             if(LogLevel >= Level.Net)
                 BroadcastMessage(s);

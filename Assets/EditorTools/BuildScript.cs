@@ -16,7 +16,7 @@ using SevenZip;
 public class BuildScript
 {
     #region Common
-
+    public const string Tag = "BuildScript";
     static string[] SCENES = FindEnabledEditorScenes();
     static string APP_NAME = "game";
     static string DATETIME = DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss");
@@ -178,7 +178,7 @@ public class BuildScript
                 if (hash != oldhash || !File.Exists(lzmaPath))
                 {
                     EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
-                    AppLog.d("{0} {2} => {1}", i, hash, oldhash);
+                    AppLog.d(Tag, "{0} {2} => {1}", i, hash, oldhash);
 
                     // TODO: encode bundle
                     
@@ -203,7 +203,7 @@ public class BuildScript
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
-            AppLog.d("BuildAssetBundle coast: {0}", DateTime.Now - t);
+            AppLog.d(Tag, "BuildAssetBundle coast: {0}", DateTime.Now - t);
         }
         yield return null;
         if(callback != null)
@@ -574,7 +574,7 @@ public class BuildScript
             foreach (var i in files)
             {
                 var f = i.upath();
-                AppLog.d(f);
+                AppLog.d(Tag, f);
                 EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
                 BuildStreamingScene(f, buildTarget);
             }

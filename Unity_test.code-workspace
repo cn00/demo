@@ -9,8 +9,6 @@
 			"*.bjs": "javascript",
 			"*.javascript": "javascript"
 		},
-		"luaide.scriptRoots": [
-			"Assets/BundleRes/"
-		]
+		"files.trimFinalNewlines": true
 	}
 }

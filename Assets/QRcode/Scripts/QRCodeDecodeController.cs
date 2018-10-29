@@ -151,7 +151,6 @@ public class QRCodeDecodeController : MonoBehaviour
     /// </summary>
     public void StartWork()
     {
-        AppLog.d("QRCodeDecodeController StartWork");
         if (e_DeviceController != null)
         {
             e_DeviceController.StartWork();

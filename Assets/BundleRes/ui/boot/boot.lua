@@ -37,9 +37,6 @@ function boot.coroutine_boot(first, ...)
         end))
         local loading = CS.UnityEngine.GameObject.Instantiate(obj)
 
-		yield_return(CS.UpdateSys.Instance:Init())
-        print("UpdateSys.Init 1")
-        
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
         

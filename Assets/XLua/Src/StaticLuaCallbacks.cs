@@ -574,7 +574,7 @@ namespace XLua
                 {
                     return LuaAPI.luaL_error(L, "#2 param need a System.Type!");
                 }
-                //AppLog.d("============================load type by __index:" + type);
+                //AppLog.d(Tag, "============================load type by __index:" + type);
                 translator.TryDelayWrapLoader(L, type);
                 LuaAPI.lua_pushvalue(L, 2);
                 LuaAPI.lua_rawget(L, 1);
@@ -622,7 +622,7 @@ namespace XLua
 
                     LuaAPI.lua_pop(L, 1);  /* pop result */
                 }
-                AppLog.d("LUA: " + s);
+                AppLog.d("LUA", s);
                 return 0;
             }
             catch (System.Exception e)

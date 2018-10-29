@@ -303,48 +303,42 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
 
 #if UNITY_EDITOR
-        public void Draw(int indent = 0, GUILayoutOption[] guiOpts = null)
+        public void DrawGroup(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
                 Foldout = EditorGUILayout.Foldout(Foldout, Name, true);
-                if (Size < 1024)//K
+                if (Size < 1024)//B
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
                 else if (Size < 1024 * 1024)//K
                     EditorGUILayout.LabelField((Size / 1024).ToString() + "K", guiOpts);
                 else
                     EditorGUILayout.LabelField((Size / 1024 / 1024).ToString() + "M", guiOpts);
                 EditorGUILayout.LabelField("", guiOpts);
-                //                mRebuild = EditorGUILayout.Toggle("", mRebuild, guiOpts);
             }
             EditorGUILayout.EndHorizontal();
             if (Foldout)
             {
-                //                ++EditorGUI.indentLevel;
-                DrawInspector(indent, guiOpts);
-                //                --EditorGUI.indentLevel;
+                DrawBundles(indent, guiOpts);
             }
             EditorGUI.indentLevel -= indent;
         }
 
-        public void DrawInspector(int indent, GUILayoutOption[] guiOpts)
+        public void DrawBundles(int indent, GUILayoutOption[] guiOpts)
         {
             Bundles.Sort((i, j) => j.Size.CompareTo(i.Size));
             foreach (var f in Bundles)
             {
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(f.Name.Replace(Name, ""), guiOpts);
-                    if (f.Size < 1024)//K
+                    EditorGUILayout.LabelField(f.Name.Replace(Name + "/", "- "), guiOpts);
+                    if (f.Size < 1024)//B
                         EditorGUILayout.LabelField((f.Size).ToString(), guiOpts);
                     else if (f.Size < 1024 * 1024)//K
                         EditorGUILayout.LabelField((f.Size / 1024).ToString() + "K", guiOpts);
                     else
                         EditorGUILayout.LabelField((f.Size / 1024 / 1024).ToString() + "M", guiOpts);
-
-                    // EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.ModifyTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
-                    // EditorGUILayout.LabelField(DateTime.FromFileTime(long.Parse(f.BuildTime)).ToString("MM.dd HH:mm:ss"), guiOpts);
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -552,15 +546,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float)(++n) / groups.Length);
 
                 var groupName = group.upath().Replace(BuildConfig.BundleResRoot, "");
-                GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
-                if (groupInfo == null)
-                {
-                    groupInfo = new GroupInfo()
+                // GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
+                // if (groupInfo == null)
+                // {
+                    GroupInfo groupInfo = new GroupInfo()
                     {
                         Name = groupName,
                         Bundles = new List<BundleInfo>(),
                     };
-                }
+                // }
 
                 var newBundles = new List<BundleInfo>();
                 foreach (var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
@@ -573,15 +567,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                         assetBundle.assetBundleName = bundleName;
                     }
 
-                    //var bundleName = bundle.upath().Replace(group + "/", "");
-                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
-                    if (bundleInfo == null)
-                    {
-                        bundleInfo = new BundleInfo()
+                    // //var bundleName = bundle.upath().Replace(group + "/", "");
+                    // var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
+                    // if (bundleInfo == null)
+                    // {
+                        var bundleInfo = new BundleInfo()
                         {
                             Name = bundleName,
                         };
-                    }
+                    // }
 
                     ulong time = 0;
                     foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
@@ -589,19 +583,19 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                         var assetImporter = AssetImporter.GetAtPath(f);
                         if (assetImporter != null)
                         {
-                            assetImporter.assetBundleName = "";//bundleName;
+                            assetImporter.assetBundleName = bundleName;//"";//
                             var assetTimeStamp = assetImporter.assetTimeStamp;
                             if (time < assetTimeStamp)
                                 time = assetTimeStamp;
                         }
                     }
 
-                    if (time > 0)
+                    // if (time > 0)
                         newBundles.Add(bundleInfo);
                 }//for 2
 
                 //            AssetDatabase.GetAllAssetBundleNames();
-                AssetDatabase.RemoveUnusedAssetBundleNames();
+                // AssetDatabase.RemoveUnusedAssetBundleNames();
 
                 groupInfo.Bundles = newBundles;
 
@@ -648,8 +642,12 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             GUILayout.Space(1f);
             {
                 var rect = EditorGUILayout.GetControlRect();
-                var sn = 4;
+                var sn = 5;
                 var idx = -1;
+                if (GUI.Button(rect.Split(++idx, sn), "Refresh"))
+                {
+                    Refresh();
+                }
                 if (GUI.Button(rect.Split(++idx, sn), "CleanWin"))
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneWindows), true);
@@ -668,10 +666,16 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 }
             }
 
+            EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
+            mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
+            mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
+
+            ++EditorGUI.indentLevel;
             foreach (var i in mTarget.Groups)
             {
-                i.Draw(0, guiOpts);
+                i.DrawGroup(0, guiOpts);
             }
+            --EditorGUI.indentLevel;
         }
 
         public override void OnInspectorGUI()
@@ -695,18 +699,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             showBundles = EditorGUILayout.Foldout(showBundles, "AssetBundle", true);
             if (showBundles)
             {
-
-                EditorGUILayout.BeginHorizontal();
-                {
-                    EditorGUILayout.LabelField("HttpRoot");
-                    var rect = EditorGUILayout.GetControlRect();
-                    if (GUI.Button(rect.Split(0, 3), "Refresh"))
-                    {
-                        Refresh();
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-
+                EditorGUILayout.LabelField("HttpRoot");
                 EditorGUILayout.BeginHorizontal();
                 {
                     mTarget.m_Ip = EditorGUILayout.TextField(mTarget.m_Ip);
@@ -716,77 +709,20 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
                 EditorGUILayout.Space();
 
-                ++EditorGUI.indentLevel;
-                using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
+                using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
                 {
-                    EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
-                    mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
-                    mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
-
-                    // using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
-                    {
-                        DrawBundleConfig(guiOpts);
-                    }
+                    DrawBundleConfig(guiOpts);
                 }
-                --EditorGUI.indentLevel;
             }
 
             //apk ios.proj exe app etc.
-            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds);
-            var size = mTarget.Channels.Count;
-            EditorGUILayout.BeginHorizontal();
-            {
-                showBuilds = EditorGUILayout.Foldout(showBuilds, "apk | ios.proj", true);
-                // EditorGUILayout.LabelField("Size");
-                size = EditorGUILayout.DelayedIntField(size);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            if (size < mTarget.Channels.Count)
-            {
-                mTarget.Channels.RemoveRange(size, mTarget.Channels.Count - size);
-            }
-            else if (size > mTarget.Channels.Count)
-            {
-                for (var i2 = mTarget.Channels.Count; i2 < size; ++i2)
-                    mTarget.Channels.Add(new ChannelConfig());
-            }
-            if (showBuilds)
-            {
-                ++EditorGUI.indentLevel;
-                // var verticalScope = new EditorGUILayout.VerticalScope("box");
-                EditorGUILayout.BeginVertical();
+            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds, false, item => {
+                var i = item as ChannelConfig;
+                if (string.IsNullOrEmpty(i.Name))
                 {
-                    // build exe apk ipa app etc.
-                    GUILayout.Space(1f);
-                    {
-                        var rect = EditorGUILayout.GetControlRect();
-                        var rebuild = mTarget.ForceRebuild;
-                        var sn = 5;
-                        var idx = -1;
-                        if (GUI.Button(rect.Split(++idx, sn), "Win.Exe"))
-                        {
-                            BuildScript.BuildWindows();
-                        }
-                        if (GUI.Button(rect.Split(++idx, sn), "Mac.App"))
-                        {
-                            BuildScript.BuildMacOSX();
-                        }
-                    }
-
-                    // using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
-                    for (var i = 0; i < mTarget.Channels.Count; ++i)
-                    {
-                        var j = mTarget.Channels[i];
-                        if (j != null)
-                            Inspector.DrawComObj(j.Name, j);
-                    }
-
+                    i.Name = i.Channel + ":" + (int)i.Channel;
                 }
-                EditorGUILayout.EndVertical();
-                // verticalScope.Dispose();
-                --EditorGUI.indentLevel;
-            }
+            });
 
             // server
             Inspector.DrawComObj("BundleServer", mTarget.BundleServer);
@@ -812,6 +748,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
                 BuildScript.GenBundleManifest(target);
                 BuildScript.GenVersionFile(target);
+                mTarget.Groups.Sort((a, b) => b.Size.CompareTo(a.Size));
             }));
         }
 

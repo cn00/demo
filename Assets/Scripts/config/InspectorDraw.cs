@@ -14,6 +14,7 @@ public class Inspector
 {
 
 #if UNITY_EDITOR
+    const string Tag = "Inspector";
     public class SafeDictionary<TK, TV>
     {
         Dictionary<TK, TV> mContainer = new Dictionary<TK, TV>();
@@ -34,7 +35,7 @@ public class Inspector
 
     }
 
-    public static void DrawList(string name, IList ls, ref bool foldout, bool showidx = false, GUILayoutOption[] options = null)
+    public static void DrawList(string name, IList ls, ref bool foldout, bool showidx = false,Action<object> foreach_item = null, GUILayoutOption[] options = null)
     {
         var size = ls.Count;
         EditorGUILayout.BeginHorizontal();
@@ -60,21 +61,29 @@ public class Inspector
         }
         if (foldout)
         {
-            ++EditorGUI.indentLevel;
-            for (var i = 0; i < ls.Count; ++i)
+            try//(ls)
             {
-                var iobj = ls[i];
-                if(showidx)
-                    DrawObj(i.ToString(), ref iobj);
-                else
+                ++EditorGUI.indentLevel;
+                for (var i = 0; i < ls.Count; ++i)
                 {
-                    DrawObj("", ref iobj);
-                }
-                ls[i] = iobj;
-            }// foreach
-            --EditorGUI.indentLevel;
+                    var iobj = ls[i];
+                    if(showidx)
+                        DrawObj(i.ToString(), ref iobj);
+                    else
+                    {
+                        DrawObj("", ref iobj);
+                    }
+                    ls[i] = iobj;
+                    if(foreach_item != null)
+                        foreach_item(iobj);
+                }// foreach
+                --EditorGUI.indentLevel;
+            }
+            catch(Exception e)
+            {
+                AppLog.d(Tag, e);
+            }
         }
-
     }
 
     public static void DrwaDic(string name, IDictionary dic, ref bool foldout, GUILayoutOption[] options = null)
@@ -181,6 +190,13 @@ public class Inspector
             {
                 obj = EditorGUILayout.TextField(name, (string)obj);
             }
+        }
+        else if (obj is IList)
+        {
+            var il = obj as IList;
+            var foldouti = tmpFoldout[name];
+            DrawList(name, il, ref foldouti);
+            tmpFoldout[name] = foldouti;
         }
         else if (obj is IDictionary)
         {
@@ -306,9 +322,11 @@ public class Inspector
                         foldout = (bool) ff.GetValue(obj);
                     else
                     {
-                        foldout = (tmpFoldout[gk] = false);
+                        foldout = tmpFoldout[gk];
                     }
+                    ++EditorGUI.indentLevel;
                     DrawList(i.Name, il, ref foldout);
+                    --EditorGUI.indentLevel;
                     if(ff!=null)
                         ff.SetValue(obj, foldout);
                     else

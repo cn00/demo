@@ -118,7 +118,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 1.1.0
+  bundleVersion: 1.0.0
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -155,7 +155,7 @@ PlayerSettings:
     Standalone: com.bilibili.a3
     iOS: com.bilibili.a3
   buildNumber: {}
-  AndroidBundleVersionCode: 43
+  AndroidBundleVersionCode: 47
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -651,7 +651,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: THREAD_SAFE
     4: THREAD_SAFE
-    7: ODIN_INSPECTOR
+    7: 
   platformArchitecture: {}
   scriptingBackend:
     Android: 0

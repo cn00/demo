@@ -14,6 +14,7 @@ using UnityEngine;
 
 class Excel2Lua : SingletonAsset<Excel2Lua>
 {
+    const string Tag = "Excel2Lua";
     [Serializable]
     public class ExcelConfig
     {
@@ -158,7 +159,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         if(!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
         File.WriteAllText(path, luabuild.ToString());
-        AppLog.d(path);
+        AppLog.d(Tag, path);
         return true;
     }
 
@@ -171,7 +172,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         {
             if (file.LastWriteTime.ToFileTimeUtc() > mConfig.LastBuildTime || mConfig.Rebuild)
             {
-                AppLog.d("building [" + file.Name + "] ...");
+                AppLog.d(Tag, "building [" + file.Name + "] ...");
 
                 IWorkbook workbook = ExcelUtils.Open(file.FullName);
 
@@ -199,7 +200,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
                     if (writeLua(sheet, OutPath, headerRowIdx))
                     {
-                        AppLog.d(file.Name + ": " + sheetname + " ok.");
+                        AppLog.d(Tag, file.Name + ": " + sheetname + " ok.");
                     }
                     else
                     {
@@ -220,10 +221,10 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
     private void Build()
     {
-        AppLog.d("{0} => {1}", mConfig.InPath, mConfig.OutPath);
+        AppLog.d(Tag, "{0} => {1}", mConfig.InPath, mConfig.OutPath);
 
         long lastWriteTime = mConfig.LastBuildTime;
-        AppLog.d("上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
+        AppLog.d(Tag, "上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
 
         DirectoryInfo dir = new DirectoryInfo(mConfig.InPath);
         // try
@@ -250,7 +251,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         {
             foreach(var f in Directory.GetFiles(Instance().mConfig.InPath, "*.xlsx", SearchOption.AllDirectories))
             {
-                AppLog.d(f);
+                AppLog.d(Tag, f);
                 Excel2Lua.BookConfig(f);
             }
         }

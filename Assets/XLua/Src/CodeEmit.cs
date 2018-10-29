@@ -710,7 +710,7 @@ namespace XLua
                 il.Emit(OpCodes.Ldc_I4, buffer[0]);
                 il.Emit(OpCodes.Ldc_I4, buffer[1]);
                 il.Emit(OpCodes.Ldc_I4, buffer[2]);
-                //AppLog.d(string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
+                //AppLog.d(Tag, string.Format("{0}.{1}.{2}.{3}--{4}", buffer[0], buffer[1], buffer[2], buffer[3], obj));
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] & 0x80000000) == 0 ? 0 : 1);
                 il.Emit(OpCodes.Ldc_I4, (buffer[3] >> 16) & 0xFF);
                 il.Emit(OpCodes.Newobj, decimalConstructor);
@@ -1609,7 +1609,7 @@ namespace XLua
                     var argStore = il.DeclareLocal(paramRawType);
                     if (paramInfo.IsOptional)
                     {
-                        //AppLog.d(paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
+                        //AppLog.d(Tag, paramInfo.Name + "," + paramRawType + "," + paramInfo.DefaultValue);
                         emitLiteralLoad(il, paramRawType, paramInfo.DefaultValue, argStore.LocalIndex);
                         il.Emit(OpCodes.Stloc, argStore);
                     }

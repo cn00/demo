@@ -14,22 +14,25 @@ namespace AssetBundleServer
     [Serializable]
     public class Server
     {
+        const string Tag = "AssetBundleServer";
         public int Port = 8008;
+        
+        [NonSerialized]
         public bool Runing = false;
 
-        public string BasePath = "./AssetBundle/";
+        public string BasePath = "AssetBundle";
 
         public Thread thread = null;
         public void WatchDog(object processID)
         {
-            UnityEngine.Debug.LogFormat("Watching parent processID: {0}!", processID);
+            Log("Watching parent processID: {0}!", processID);
             Process masterProcess = Process.GetProcessById((int)processID);
             while (masterProcess == null || !masterProcess.HasExited)
             {
                 Thread.Sleep(1000);
             }
 
-            UnityEngine.Debug.LogFormat("Exiting because parent process has exited!");
+            Log("Exiting because parent process has exited!");
             Environment.Exit(0);
         }
 
@@ -60,9 +63,9 @@ namespace AssetBundleServer
                         await Listen(listener);
                     listener.Stop();
                 }, TaskCreationOptions.LongRunning);
-                AppLog.d("Starting up asset bundle server.", Port);
-                AppLog.d("Port: {0}", Port);
-                AppLog.d("Directory: {0}", BasePath);
+                AppLog.d(Tag, "Starting up asset bundle server.", Port);
+                AppLog.d(Tag, "Port: {0}", Port);
+                AppLog.d(Tag, "Directory: {0}", BasePath);
 
             }
         }
@@ -71,12 +74,13 @@ namespace AssetBundleServer
         {
             HttpListenerRequest request = ctx.Request;
             string rawUrl = request.RawUrl;
-            if(string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
-                rawUrl = "index.html";
+            // if(string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
+            //     rawUrl = "index.html";
             string path = basePath + rawUrl;
 
+
             if (detailedLogging)
-                UnityEngine.Debug.LogFormat("Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
+                Log("Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
             else
                 Console.Write("Requesting file: '{0}' ... ", request.RawUrl);
@@ -84,13 +88,29 @@ namespace AssetBundleServer
             var response = ctx.Response;
             try
             {
-                using (FileStream fs = File.OpenRead(path))
+                Stream fs = null;
+                if(Directory.Exists(path))
+                {
+                    var index = string.Join("/\n", Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly));
+                    index += "/\n";
+                    index += string.Join("\n", Directory.GetFiles(path, "*", SearchOption.TopDirectoryOnly));
+                    index += "\n";
+                    index = index.Replace("//", "/").Replace(basePath, "");
+                    fs = new MemoryStream(System.Text.Encoding.Default.GetBytes(index));
+                }
+                else if(File.Exists(path))
+                {
+                    fs = File.OpenRead(path);
+                }
+                // using ()
                 {
                     string filename = Path.GetFileName(path);
                     //response is HttpListenerContext.Response...
                     response.ContentLength64 = fs.Length;
                     response.SendChunked = false;
-                    response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
+                    // response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
+                    response.ContentEncoding = System.Text.Encoding.UTF8;
+                    response.ContentType = System.Net.Mime.MediaTypeNames.Text.Html;
                     response.AddHeader("Content-disposition", "attachment; filename=" + filename);
 
                     byte[] buffer = new byte[64 * 1024];
@@ -99,25 +119,26 @@ namespace AssetBundleServer
                     {
                         while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
                         {
-                            bw.Write(buffer, 0, read);
-                            bw.Flush(); //seems to have no effect
+                            response.OutputStream.Write(buffer, 0, read);
+                            // bw.Flush(); //seems to have no effect
                         }
 
                         bw.Close();
                     }
 
-                    UnityEngine.Debug.LogFormat("completed: " + rawUrl);
-                    //				response.StatusCode = (int)HttpStatusCode.OK;
-                    //				response.StatusDescription = "OK";
+                    Log("completed: " + rawUrl);
+                    // response.StatusCode = (int)HttpStatusCode.OK;
+                    // response.StatusDescription = "OK";
+
+                    fs.Dispose();
                     response.OutputStream.Close();
                     response.Close();
                 }
             }
             catch (System.Exception exc)
             {
-                UnityEngine.Debug.LogFormat(" failed.");
-                UnityEngine.Debug.LogFormat("Requested file failed: '{0}'. Relative url: {1} Full url: '{2} AssetBundleDirectory: '{3}''", path, request.RawUrl, request.Url, basePath);
-                UnityEngine.Debug.LogFormat("Exception {0}: {1}'", exc.GetType(), exc.Message);
+                Error("Exception: {4}: {5}:\nRequested file failed: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}'"
+                    , path, request.RawUrl, request.Url, basePath, exc.GetType(), exc.Message);
                 response.Abort();
             }
         }
@@ -127,6 +148,7 @@ namespace AssetBundleServer
             if (thread != null && thread.IsAlive && Runing)
                 thread.Abort();
             thread = new Thread(Main);
+            Log("http thread: " + thread.ManagedThreadId);
             Runing = true;
             thread.Start();
         }
@@ -136,6 +158,16 @@ namespace AssetBundleServer
                 thread.Abort();
             thread = null;
             Runing = false;
+        }
+
+        static void Log(string fmt, params object[] args)
+        {
+            AppLog.d(Tag, fmt, args);
+        }
+
+        static void Error(string fmt, params object[] args)
+        {
+            AppLog.e(fmt, args);
         }
 
     }

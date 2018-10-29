@@ -20,7 +20,7 @@ public static class AssetExtern
     public static T LoadABAsset<T>(this AssetBundle bundle, string subPath) where T : UnityEngine.Object
     {
         var asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + subPath);
-        AppLog.d(subPath);
+        AppLog.d(AssetSys.Tag, subPath);
         return asset;
     }
 
@@ -179,6 +179,7 @@ public class DataObject : UnityEngine.Object
 
 public class AssetSys : SingleMono<AssetSys>
 {
+    public const string Tag = "AssetSys";
     static string mCacheRoot = "";
     /// <summary>
     /// Application.dataPath + "/AssetBundle/${PlatformName}/" 
@@ -287,7 +288,7 @@ public class AssetSys : SingleMono<AssetSys>
 #else
                 string manifestBundleName = PlatformName(Application.platform);
 #endif
-                AppLog.d("load manifest: " + manifestBundleName);
+                AppLog.d(Tag, "load manifest: " + manifestBundleName);
                 yield return GetBundle(manifestBundleName, (bundle) =>
                 {
                     var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -315,7 +316,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         if(asset == null)
         {
-            AppLog.e("[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+            AppLog.w("[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
         }
         return asset;
     }
@@ -344,7 +345,7 @@ public class AssetSys : SingleMono<AssetSys>
 #endif
         {
             string bundleName = GetBundlePath(assetSubPath);// dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
-            AppLog.d("from bundle: " + assetSubPath);
+            AppLog.d(Tag, "from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) =>
             {
                 // text
@@ -367,7 +368,7 @@ public class AssetSys : SingleMono<AssetSys>
         else
         {
             // text
-            AppLog.d("from file: " + assetSubPath);
+            AppLog.d(Tag, "from file: " + assetSubPath);
             if(assetSubPath.IsText())
             {
                 resObj = new DataObject(File.ReadAllBytes(BuildConfig.BundleResRoot + assetSubPath));
@@ -405,7 +406,7 @@ public class AssetSys : SingleMono<AssetSys>
 
         if(bundle == null)
         {
-            AppLog.e("[{0}] did not download yet.", bundlePath);
+            AppLog.w("[{0}] did not download yet.", bundlePath);
         }
         return bundle;
     }
@@ -445,7 +446,7 @@ public class AssetSys : SingleMono<AssetSys>
             fileUrl = HttpRoot + version + "/" + subPath + BuildConfig.CompressedExtension;
         }
 
-        AppLog.d(fileUrl);
+        AppLog.d(Tag, fileUrl);
         bool err = false;
         yield return Www(fileUrl, (WWW www) =>
         {
@@ -485,7 +486,7 @@ public class AssetSys : SingleMono<AssetSys>
             var deps = mManifest.GetAllDependencies(bundlePath);
             foreach(var i in deps)
             {
-                AppLog.d("Dependencies: " + i);
+                AppLog.d(Tag, "Dependencies: " + i);
                 yield return GetBundle(i);
             }
         }
@@ -511,7 +512,7 @@ public class AssetSys : SingleMono<AssetSys>
                     progressCallback(www.progress);
                     if(DateTime.Now > timeout && www.progress < 0.1f)
                     {
-                        AppLog.d("timeout: " + url);
+                        AppLog.d(Tag, "timeout: " + url);
                         break;
                     }
                 }
@@ -521,7 +522,7 @@ public class AssetSys : SingleMono<AssetSys>
 
             if(www.progress >= 1 && string.IsNullOrEmpty(www.error))
             {
-                AppLog.d("loaded {0} OK {1}", url, www.progress);
+                AppLog.d(Tag, "loaded {0} OK {1}", url, www.progress);
             }
             else
             {
@@ -548,7 +549,7 @@ public class AssetSys : SingleMono<AssetSys>
         if(mLoadedBundles.TryGetValue(path, out outBundle) && outBundle != null)
         {
             outBundle.Unload(unloadAllLoadedObjects);
-            AppLog.d("UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
+            AppLog.d(Tag, "UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
     }
 
@@ -576,14 +577,14 @@ public class AssetSys : SingleMono<AssetSys>
             Directory.CreateDirectory(dir);
         }
 
-        FileStream writer = new FileStream(fname, FileMode.Create);
+        FileStream writer = new FileStream(fname, FileMode.OpenOrCreate);
         writer.BeginWrite(bytes, 0, bytes.Length, (IAsyncResult result) =>
         {
             FileStream stream = (FileStream)result.AsyncState;
             stream.EndWrite(result);
             stream.Close();
             stream.Dispose();
-            AppLog.d("Saved:" + fname);
+            AppLog.d(Tag, "Saved:" + fname);
         }, writer);
     }
 }

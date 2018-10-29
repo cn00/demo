@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEditor;
 public static class EditorCoroutineRunner
 {
+    const string Tag = "EditorCoroutineRunner";
     private class EditorCoroutine : IEnumerator
     {
         private Stack<IEnumerator> executionStack;
@@ -68,7 +69,7 @@ public static class EditorCoroutineRunner
     {
         var www = new WWW("https://www.youtube.com/results?search_query=The+Magic+Flute%2C+Queen+of+the+Night");
         yield return www;
-        AppLog.d(www.text);
+        AppLog.d(Tag, www.text);
 
         yield return null;
     }

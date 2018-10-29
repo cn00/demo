@@ -12,6 +12,7 @@ using UnityEditor;
 
 public class LuaSys : SingleMono<LuaSys>
 {
+    const string Tag = "LuaSys";
     //all lua behaviour shared one luaenv only!
     internal LuaEnv luaEnv = new LuaEnv();
     public LuaEnv GlobalEnv
@@ -34,7 +35,7 @@ public class LuaSys : SingleMono<LuaSys>
             foreach(var injection in lb.injections.Where(i => i.obj != null))
             {
                 luaTable.Set(injection.obj.name, injection.obj);
-                // AppLog.d("injections:{0}:{1}", injection.obj.name, injection.obj);
+                // AppLog.d(Tag, "injections:{0}:{1}", injection.obj.name, injection.obj);
             }
         }
         return luaTable;
@@ -55,7 +56,7 @@ public class LuaSys : SingleMono<LuaSys>
         {
             filename = filename.Remove(filename.LastIndexOf(LuaExtension));
         }
-        AppLog.d("require: " + filename);
+        AppLog.d(Tag, "require: " + filename);
 
         byte[] bytes = null;
 #if UNITY_EDITOR
@@ -63,14 +64,14 @@ public class LuaSys : SingleMono<LuaSys>
 #endif
         {
             var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
-            if(data == null)
-            {
-                data = AssetSys.Instance.GetAssetSync<TextAsset>("lua/" + filename.Replace(".", "/") + LuaExtension + ".txt");
-            }
+            // if(data == null)
+            // {
+            //     data = AssetSys.Instance.GetAssetSync<TextAsset>("lua/" + filename.Replace(".", "/") + LuaExtension + ".txt");
+            // }
             if(data!=null)
                 bytes = data.bytes;
             else
-                AppLog.e(filename + " not found");
+                AppLog.e(filename + " lua not found");
         }
 #if UNITY_EDITOR
         else
@@ -87,17 +88,17 @@ public class LuaSys : SingleMono<LuaSys>
             }
             else
             {
-                AppLog.e(assetName + " not found.");
+                AppLog.e(assetName + " lua not found.");
             }
         }
 #endif
         return bytes;
     }
 
-    public override void Awake()
+    public override IEnumerator Init()
     {
-        base.Awake();
         luaEnv.AddLoader(LuaLoader);
+        yield return base.Init();
     }
 
     // public override IEnumerator Init()

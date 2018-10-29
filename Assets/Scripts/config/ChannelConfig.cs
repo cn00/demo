@@ -112,6 +112,7 @@ public class ChannelConfig
     public AppChannel Channel = AppChannel.Android;
 
     public bool Emulator = false;
+    [NonSerialized]
     public bool Foldout = false;
 
     #endregion properties
@@ -164,6 +165,23 @@ public class ChannelConfig
         return target_path;
     }
 
+    public void ActiveBtn()
+    {
+        BuildConfig.Active(this);
+    }
+    public void BuildBtn()
+    {
+        BuildConfig.BuildPkg(this);
+    }
+    public void CopyBtn()
+    {
+        var copy = this.copy();
+        BuildConfig.Instance().Channels.Insert(BuildConfig.Instance().Channels.IndexOf(this) + 1, copy);
+    }
+    public void DeleteBtn()
+    {
+        BuildConfig.Instance().Channels.Remove(this);
+    }
     public ChannelConfig copy()
     {
         var o = this;

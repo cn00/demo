@@ -16,6 +16,7 @@ using UnityEditor;
 
 public class ExcelTranslate : SingletonAsset<ExcelTranslate>
 {
+    const string Tag = "ExcelTranslate";
     const string JPRegular = "[\u3021-\u3126]";
     public string ExcelDataDir = "Assets/Application/Resource/ExcelData";
     public string OutJPDir = "Assets/Application/Resource/ExcelData_jp";
@@ -105,7 +106,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                                 // }
 
                                 var v = row.Cell(ic).SValueOneline();
-                                // AppLog.d("{0}: {1}", v, v.Length);
+                                // AppLog.d(Tag, "{0}: {1}", v, v.Length);
                                 var matches = Regex.Matches(v, JPRegular + "+.*");
                                 if (matches.Count > 0)
                                 {
@@ -166,7 +167,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
 
                 var outStream = new FileStream(outExcelPath, FileMode.Create);
                 outBook.Write(outStream);
-                AppLog.d("CollectJp: " + outExcelPath);
+                AppLog.d(Tag, "CollectJp: " + outExcelPath);
 
                 CountWordUniq = wordCount;
                 CountWord = totalWordCount;
@@ -215,7 +216,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         var jp = trrow.Cell(head[HeadIdx.jp]).SValueOneline();
                         if(jp[0] == '$')
                         {
-                            AppLog.d("使用引用: " + jp);
+                            AppLog.d(Tag, "使用引用: " + jp);
                             var row = transSheet.Row(int.Parse(jp.Substring(1)));
                             jp = row.Cell(head[HeadIdx.jp]).SValueOneline();
                             trans = row.Cell(head[HeadIdx.trans]).SValueOneline();
@@ -242,7 +243,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                     inbook.Write(path);
                 } // path
 
-                AppLog.d("Translate: " + transExcelPath);
+                AppLog.d(Tag, "Translate: " + transExcelPath);
             }
             finally
             {
@@ -315,7 +316,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                     subConfig.Pathes = xls.ToList();
                     if (subConfig.Pathes.Count() > 0)
                         mTarget.mRootconfig.Groups.Add(subConfig);
-                    AppLog.d(i + ": " + xls.Count());
+                    AppLog.d(Tag, i + ": " + xls.Count());
                 }
 
                 EditorUtility.SetDirty(mTarget);

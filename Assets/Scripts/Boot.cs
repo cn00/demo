@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class Boot : SingleMono<Boot>
 {
+    const string Tag = "Boot";
     public override void Awake()
     {
         AppLog.isEditor = Application.isEditor;
-        AppLog.d("App.Awake 0");
+        AppLog.d(Tag, "App.Awake 0");
         #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
             BuildConfig.Instance().BundleServer.StartBtn();
@@ -19,14 +20,16 @@ public class Boot : SingleMono<Boot>
 
     public override IEnumerator Init()
     {
-        yield return base.Init();
-
         while(!AssetSys.Instance.Inited)
             yield return null;
         while(!LuaSys.Instance.Inited)
             yield return null;
 
-        var lua = gameObject.GetComponent<LuaMonoBehaviour>();
+        yield return AssetSys.Instance.GetBundle("lua/utility.bd");
+
+        var lua = gameObject.AddComponent<LuaMonoBehaviour>();
+        lua.SetLua("ui/boot/boot.lua");
         lua.enabled = true;
+        yield return base.Init();
     }
 }

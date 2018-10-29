@@ -54,6 +54,7 @@ namespace Net
     /// </summary>
     public static class Helpers
     {
+        const string Tag = "Socket.Helpers";
         /// <summary>Gets data for a encoded websocket frame message</summary>
         /// <param name="Data">The data to get the info from</param>
         /// <returns>The frame data</returns>
@@ -120,7 +121,7 @@ namespace Net
             SFrameMaskData frameData = GetFrameData(Data);
             if(frameData != null)
             {
-                AppLog.d("" + frameData.Dump());
+                AppLog.d(Tag, "" + frameData.Dump());
                 // Get the decode frame key from the frame data
                 byte[] decodeKey = new byte[4];
                 for (int i = 0; i < 4; i++)

@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 [CustomEditor(typeof(LuaMonoBehaviour))]
 public class LuaMonoBehaviourEditor : Editor
 {
+    const string Tag = "LuaMonoBebaviourEdirot";
     LuaMonoBehaviour mLuaMono = null;
     string luaStr = "";
     public void OnEnable()
@@ -116,7 +117,7 @@ public class LuaMonoBehaviourEditor : Editor
                 var pattern = Regex.Match(luaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
                 luaStr = luaStr.Replace(pattern.ToString(), luaMemberValue);
                 File.WriteAllText(luaPath, luaStr);
-                AppLog.d(mLuaMono.luaScript.path + BuildConfig.LuaExtension + " write ok");
+                AppLog.d(Tag, mLuaMono.luaScript.path + BuildConfig.LuaExtension + " write ok");
             }
         }
 
