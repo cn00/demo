@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseBundle: 1
   LogLevel: 3
-  runInBackground: 0
-  LastBuildTime: 131852549719516630
+  runInBackground: 1
+  LastBuildTime: 131854580482767180
   Version:
     Name: 
     Major: 1
@@ -39,9 +39,17 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 0
     mBundles:
+    - mName: module_tmp/Materials.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
     - mName: module_tmp/clothe.bd
       mSize: 1895782
       mMd5: 6E95AAA73A5F86C1336726C1333B2B7E
+      mVersion: 1.1.0
+    - mName: module_tmp/grid.bd
+      mSize: 28372
+      mMd5: 7BED4A9F19B4F519C4C28BE980C75296
       mVersion: 1.1.0
     - mName: module_tmp/tree02.bd
       mSize: 901037
@@ -51,38 +59,34 @@ MonoBehaviour:
       mSize: 102227
       mMd5: BC9D01FB80D05C95409A4C61D8B12D86
       mVersion: 1.1.0
-    - mName: module_tmp/grid.bd
-      mSize: 28372
-      mMd5: 7BED4A9F19B4F519C4C28BE980C75296
-      mVersion: 1.1.0
     - mName: module_tmp/water.bd
       mSize: 1702
       mMd5: 921309E8839F846A147E1232D885BBD9
       mVersion: 1.1.0
-    - mName: module_tmp/Materials.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
   - Foldout: 0
     Name: ui
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: ui/loading.bd
-      mSize: 100082
-      mMd5: 975FFBFCB2BE92F60B1D90313AA3512C
-      mVersion: 1.1.0
-    - mName: ui/qrcode.bd
-      mSize: 60133
-      mMd5: 155D55672A1743D59528A8EB826E2E37
+    - mName: ui/boot.bd
+      mSize: 3684
+      mMd5: 3CF22DCAE2101676456212FA9D2FF1FB
       mVersion: 1.1.0
     - mName: ui/excel_viewer.bd
       mSize: 30486
       mMd5: 9766975E61F7E747F0A5F1F9E77C752B
       mVersion: 1.1.0
+    - mName: ui/loading.bd
+      mSize: 100082
+      mMd5: 975FFBFCB2BE92F60B1D90313AA3512C
+      mVersion: 1.1.0
     - mName: ui/login.bd
       mSize: 20808
       mMd5: D8897FDC6BF870DA11C4BDBF154E522D
+      mVersion: 1.1.0
+    - mName: ui/qrcode.bd
+      mSize: 60133
+      mMd5: 155D55672A1743D59528A8EB826E2E37
       mVersion: 1.1.0
     - mName: ui/test.bd
       mSize: 20421
@@ -91,10 +95,6 @@ MonoBehaviour:
     - mName: ui/update.bd
       mSize: 16597
       mMd5: 0B2E44AA3A8CBF8DC66B904DA05D421E
-      mVersion: 1.1.0
-    - mName: ui/boot.bd
-      mSize: 3695
-      mMd5: 5C1E20FE7B126A9B765A663DBE5D73B0
       mVersion: 1.1.0
   - Foldout: 0
     Name: common
@@ -105,43 +105,52 @@ MonoBehaviour:
       mSize: 12442
       mMd5: B715DE037B095A3C4D6AD21C16FAB898
       mVersion: 1.1.0
-    - mName: common/ui.bd
-      mSize: 8886
-      mMd5: 6B7764835741F4965B2FD47E041B8517
-      mVersion: 1.1.0
-    - mName: common/manager.bd
-      mSize: 4430
-      mMd5: 28C3F0891F388CD92CCC028836A3D19A
-      mVersion: 1.1.0
     - mName: common/global.bd
       mSize: 1974
       mMd5: A430EA6CDE9B5D11CB5336DFD3F27C57
+      mVersion: 1.1.0
+    - mName: common/manager.bd
+      mSize: 4548
+      mMd5: 246291E0554FA80118F524E8CAE1DFC8
+      mVersion: 1.1.0
+    - mName: common/ui.bd
+      mSize: 8886
+      mMd5: 6B7764835741F4965B2FD47E041B8517
       mVersion: 1.1.0
   - Foldout: 0
     Name: lua
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: lua/utility.bd
-      mSize: 7497
-      mMd5: 938BF914D03BCB3D3DA5D13B70F4678B
+    - mName: lua/socket_bak.bd
+      mSize: 17359
+      mMd5: A84C20B94DC30B82FC7BD6CC4598C4C8
       mVersion: 1.1.0
     - mName: lua/table.bd
       mSize: 1675
       mMd5: C93DEF9C30E1F69CB6653AFA6ACDE752
       mVersion: 1.1.0
-    - mName: lua/socket_bak.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
+    - mName: lua/utility.bd
+      mSize: 7497
+      mMd5: 938BF914D03BCB3D3DA5D13B70F4678B
+      mVersion: 1.1.0
   - Foldout: 0
     Name: config
     mInclude: 0
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3557
-      mMd5: 63CD0EC8BF63FC355BFCDD7E5D4A3956
+      mSize: 3667
+      mMd5: 33BA0A08B3B88345F51C80A45FB28302
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: truth
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: truth/index.bd
+      mSize: 3163
+      mMd5: FE01F21FDF3F2937C6749A808C971A7A
       mVersion: 1.1.0
   - Foldout: 0
     Name: chapter_01
@@ -182,7 +191,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 48
+    BuildNum: 55
     Version: 1.0.0
     DefineSymbols: 
     BuildType: 0

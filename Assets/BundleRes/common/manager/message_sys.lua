@@ -8,6 +8,15 @@ local util = require "lua.utility.xlua.util"
 local message_sys = {}
 local self = message_sys
 
+local msgs = {
+    ["key"] = {
+        callbacks = {
+
+        },
+        data = {}
+    },
+}
+
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
@@ -50,7 +59,12 @@ function message_sys.FixedUpdate()
 end
 
 function message_sys.Update()
-
+    for k, v in pairs(msgs) do
+        for k1, v1 in ipairs(v.callbacks) do
+            v1(v.data)
+        end
+        v.callbacks = {}
+    end
 end
 
 function message_sys.LateUpdate()

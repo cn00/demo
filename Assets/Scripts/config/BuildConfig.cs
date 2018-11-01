@@ -546,15 +546,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                 EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float)(++n) / groups.Length);
 
                 var groupName = group.upath().Replace(BuildConfig.BundleResRoot, "");
-                // GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
-                // if (groupInfo == null)
-                // {
-                    GroupInfo groupInfo = new GroupInfo()
+                GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
+                if (groupInfo == null)
+                {
+                    groupInfo = new GroupInfo()
                     {
                         Name = groupName,
                         Bundles = new List<BundleInfo>(),
                     };
-                // }
+                }
 
                 var newBundles = new List<BundleInfo>();
                 foreach (var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
@@ -567,15 +567,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                         assetBundle.assetBundleName = bundleName;
                     }
 
-                    // //var bundleName = bundle.upath().Replace(group + "/", "");
-                    // var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
-                    // if (bundleInfo == null)
-                    // {
-                        var bundleInfo = new BundleInfo()
+                    //var bundleName = bundle.upath().Replace(group + "/", "");
+                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
+                    if (bundleInfo == null)
+                    {
+                        bundleInfo = new BundleInfo()
                         {
                             Name = bundleName,
                         };
-                    // }
+                    }
 
                     ulong time = 0;
                     foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))

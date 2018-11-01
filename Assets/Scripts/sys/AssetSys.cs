@@ -201,7 +201,9 @@ public class AssetSys : SingleMono<AssetSys>
 #   endif
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #else //!UNITY_EDITOR
-#   if UNITY_ANDROID || UNITY_IPHONE
+#   if UNITY_ANDROID
+                mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
+#   elif UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #   else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
@@ -265,17 +267,17 @@ public class AssetSys : SingleMono<AssetSys>
     Dictionary<string, AssetBundle> mLoadedBundles = new Dictionary<string,AssetBundle>();
     public Dictionary<string, AssetBundle> LoadedBundles {get{return mLoadedBundles;}}
 
-    public bool SysEnter()
+    public bool IsLoaded(string bundleName)
+    {
+        return mLoadedBundles.Keys.Contains(bundleName) && mLoadedBundles[bundleName] != null;
+    }
+
+    public override IEnumerator Init()
     {
         if(!Directory.Exists(CacheRoot))
         {
             Directory.CreateDirectory(CacheRoot);
         }
-        return true;
-    }
-
-    public override IEnumerator Init()
-    {
 #if UNITY_EDITOR
         if (BuildConfig.Instance().UseBundle)
 #endif
@@ -339,7 +341,7 @@ public class AssetSys : SingleMono<AssetSys>
 
     public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
-        UnityEngine.Object resObj = null;
+        UnityEngine.Object resObj = default(UnityEngine.Object);
 #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
 #endif
@@ -401,7 +403,7 @@ public class AssetSys : SingleMono<AssetSys>
                 bundle = Resources.Load<AssetBundle>(bundlePath);
             }
             mLoadedBundles[bundlePath] = bundle;
-            AppLog.w("GetBundleSync: {0}", bundlePath);
+            AppLog.d(Tag, "GetBundleSync: {0}", bundlePath);
         }
 
         if(bundle == null)
@@ -433,17 +435,17 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         var version = BuildConfig.Instance().Version.ToString();
-        var subPath = bundlePath;
-        var cachePath = CacheRoot + subPath;
+        var cachePath = CacheRoot + bundlePath;
         var fileUrl = "file://" + cachePath;
 
         var isLocal = true;
-        if(!File.Exists(cachePath)
-        || UpdateSys.Instance.NeedUpdate(subPath)
+        var needUpdate = UpdateSys.Instance.NeedUpdate(bundlePath);
+        if(   !File.Exists(cachePath)
+            || needUpdate
         )
         {
             isLocal = false;
-            fileUrl = HttpRoot + version + "/" + subPath + BuildConfig.CompressedExtension;
+            fileUrl = HttpRoot + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
 
         AppLog.d(Tag, fileUrl);
@@ -464,11 +466,15 @@ public class AssetSys : SingleMono<AssetSys>
                     MemoryStream outStream = new MemoryStream();
                     BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
 
+                    AsyncSave(cachePath, outStream.GetBuffer());
+
+                    if(IsLoaded(bundlePath))
+                    {
+                        UnloadBundle(bundlePath);
+                    }
+
                     // TODO: decode buffer
                     mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
-
-                    AsyncSave(cachePath, outStream.GetBuffer());
-                    UpdateSys.Instance.Updated(subPath);
                 }
             }
             else
@@ -549,6 +555,7 @@ public class AssetSys : SingleMono<AssetSys>
         if(mLoadedBundles.TryGetValue(path, out outBundle) && outBundle != null)
         {
             outBundle.Unload(unloadAllLoadedObjects);
+            mLoadedBundles.Remove(path);
             AppLog.d(Tag, "UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
     }
@@ -571,6 +578,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// </summary>
     public static void AsyncSave(string fname, byte[] bytes)
     {
+        AppLog.d(Tag, fname);
         var dir = Path.GetDirectoryName(fname);
         if(!Directory.Exists(dir))
         {

@@ -11,7 +11,7 @@ local this = #SCRIPTNAME#
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
 -- function this.coroutine_demo()
---     coroutine_call(function()
+--     util.coroutine_call(function()
 --         print('#SCRIPTNAME# coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil

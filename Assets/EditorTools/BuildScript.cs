@@ -122,7 +122,7 @@ public class BuildScript
                 var nn = 0;
                 var info = new DirectoryInfo(BuildConfig.BundleResRoot);
                 var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
-                    .Where(p => p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime);
+                    .Where(p => (rebuild || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime));
                 foreach (var f in res)
                 {
                     EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());

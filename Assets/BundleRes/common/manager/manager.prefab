@@ -142,8 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: common/global/global
-    textAsset: {fileID: 102900000, guid: 2cce223751a6e4c04b897fa415d53222, type: 3}
+    path: common/manager/manager
+    textAsset: {fileID: 5, guid: f0c1c701890bb4dde9decf2bf2b6ab23, type: 3}
   injections:
   - obj: {fileID: 1412133623965120}
     exportComIdx: 1

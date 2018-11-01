@@ -72,6 +72,7 @@ public static class XLuaGenConfig
         typeof(UnityEngine.WaitForSeconds),
         typeof(UnityEngine.Resources),
         typeof(UnityEngine.TextAsset),
+        typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.Keyframe),
         typeof(UnityEngine.AnimationCurve),
         typeof(UnityEngine.AnimationClip),
@@ -115,18 +116,19 @@ public static class XLuaGenConfig
         typeof(TableView.TableViewController.OnSelectRow),
         typeof(TableView.CellDidSelectEvent),
         typeof(TableView.CellDidHighlightEvent),
+        typeof(Action<DataObject>),
         #endregion customer
 
         #region System
-        typeof(Action),
         typeof(System.Action),
         typeof(System.Collections.IEnumerator),
         typeof(Func<double, double, double>),
         typeof(Action<string>),
         typeof(Action<double>),
+        typeof(Action<System.Object>),
         typeof(Action<UnityEngine.Object>),
-        typeof(Action<UnityEngine.Texture2D>),
-        typeof(Action<DataObject>),
+        // typeof(Action<UnityEngine.Texture2D>),
+        typeof(Action<UnityEngine.WWW>),
         #endregion System
 
         #region UnityEngine

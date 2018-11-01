@@ -267,7 +267,6 @@ public class UpdateSys : SingleMono<UpdateSys>
     public void Updated(string subPath)
     {
         // AppLog.d(Tag, "Updated: {0}", subPath);
-        var dirs = subPath.Split('/');
         //lock(mDiffListLock)
         {
 
@@ -284,6 +283,8 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             
             AssetSys.Instance.UnloadBundle(subPath, false);
+            AssetSys.Instance.GetBundleSync(subPath);
+
         }
     }
 

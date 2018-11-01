@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
@@ -73,17 +74,21 @@ namespace AssetBundleServer
         static void WriteFile(HttpListenerContext ctx, string basePath, bool detailedLogging)
         {
             HttpListenerRequest request = ctx.Request;
-            string rawUrl = request.RawUrl;
+            var qidx = request.RawUrl.IndexOf('?');
+            string rawUrl = qidx < 0 ? request.RawUrl : request.RawUrl.Substring(0,qidx);
+
+            // var parameters = qidx < 0 ? null : request.RawUrl.Substring( qidx + 1 ).Split('&').ToList();
+            // var version = parameters.Find(i => i.StartsWith("version="));
+
             // if(string.IsNullOrEmpty(rawUrl) || rawUrl == "/")
             //     rawUrl = "index.html";
             string path = basePath + rawUrl;
-
 
             if (detailedLogging)
                 Log("Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
             else
-                Console.Write("Requesting file: '{0}' ... ", request.RawUrl);
+                Log("Requesting file: '{0}' ... ", request.RawUrl);
 
             var response = ctx.Response;
             try
@@ -102,7 +107,7 @@ namespace AssetBundleServer
                 {
                     fs = File.OpenRead(path);
                 }
-                // using ()
+                if(fs != null)
                 {
                     string filename = Path.GetFileName(path);
                     //response is HttpListenerContext.Response...
@@ -115,29 +120,31 @@ namespace AssetBundleServer
 
                     byte[] buffer = new byte[64 * 1024];
                     int read;
-                    using (BinaryWriter bw = new BinaryWriter(response.OutputStream))
+                    // using (BinaryWriter bw = new BinaryWriter(response.OutputStream))
                     {
                         while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             response.OutputStream.Write(buffer, 0, read);
-                            // bw.Flush(); //seems to have no effect
                         }
 
-                        bw.Close();
                     }
 
-                    Log("completed: " + rawUrl);
-                    // response.StatusCode = (int)HttpStatusCode.OK;
-                    // response.StatusDescription = "OK";
+                    Log(request.RemoteEndPoint.Address + ": " + rawUrl);
+                    response.StatusDescription = "OK";
 
                     fs.Dispose();
-                    response.OutputStream.Close();
-                    response.Close();
                 }
+                else
+                {
+                    Error(rawUrl + "not found");
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                }
+                response.OutputStream.Close();
+                response.Close();
             }
             catch (System.Exception exc)
             {
-                Error("Exception: {4}: {5}:\nRequested file failed: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}'"
+                Error("Requested failed path: '{0}'. \nRawUrl: {1} \nUrl: '{2}' \nbasePath: '{3}' \nException: {4}: {5}:"
                     , path, request.RawUrl, request.Url, basePath, exc.GetType(), exc.Message);
                 response.Abort();
             }
