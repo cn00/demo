@@ -8,7 +8,7 @@ namespace TableView
         {
             if (range.count == 0)
             {
-                throw new System.InvalidOperationException("Range is invalid");
+                throw new System.InvalidOperationException("Range 0 is invalid");
             }
             return (range.from + range.count - 1);
         }

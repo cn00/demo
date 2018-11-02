@@ -130,6 +130,7 @@ namespace AssetBundleServer
                     }
 
                     Log(request.RemoteEndPoint.Address + ": " + rawUrl);
+                    response.StatusCode = (int)HttpStatusCode.OK;
                     response.StatusDescription = "OK";
 
                     fs.Dispose();

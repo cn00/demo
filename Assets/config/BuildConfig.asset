@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
-  UseBundle: 1
+  UseBundle: 0
   LogLevel: 3
   runInBackground: 1
   LastBuildTime: 131854580482767180

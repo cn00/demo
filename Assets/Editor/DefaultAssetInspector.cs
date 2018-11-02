@@ -215,6 +215,7 @@ public partial class DefaultAssetInspector : Editor
 
         bool enabled = GUI.enabled;
         GUI.enabled = true;
+        if(!File.Exists(assetPath))return;
         if(assetPath.IsExcel())
         {
             

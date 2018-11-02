@@ -48,3 +48,18 @@ OnApplicationQuit
 ### qr
 * Android
 * iOS
+
+
+### idfa
+```objc
+- (NSString *)identifierForAdvertising {
+    // Check whether advertising tracking is enabled
+    if([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
+        NSUUID *identifier = [[ASIdentifierManager sharedManager] advertisingIdentifier];
+        return [identifier UUIDString];
+    }
+
+    // Get and return IDFA
+    return nil;
+}
+```

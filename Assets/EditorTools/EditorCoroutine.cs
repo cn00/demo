@@ -7,14 +7,14 @@ using System.Reflection;
 
 using UnityEngine;
 using UnityEditor;
-public static class EditorCoroutineRunner
+public static class EditorCoroutine
 {
-    const string Tag = "EditorCoroutineRunner";
-    private class EditorCoroutine : IEnumerator
+    const string Tag = "EditorCoroutine";
+    private class Coroutine : IEnumerator
     {
         private Stack<IEnumerator> executionStack;
 
-        public EditorCoroutine(IEnumerator iterator)
+        public Coroutine(IEnumerator iterator)
         {
             this.executionStack = new Stack<IEnumerator>();
             this.executionStack.Push(iterator);
@@ -62,7 +62,7 @@ public static class EditorCoroutineRunner
         }
     }
 
-    private static List<EditorCoroutine> editorCoroutineList;
+    private static List<Coroutine> editorCoroutineList;
     private static List<IEnumerator> buffer;
 
     public static IEnumerator StartEditorCoroutineTest()
@@ -77,14 +77,14 @@ public static class EditorCoroutineRunner
     [MenuItem("Tools/==ClearDeveloperConsole")]
     public static void CallStartEditorCoroutineTest()
     {
-        EditorCoroutineRunner.EditorStartCoroutine(StartEditorCoroutineTest());
+        EditorCoroutine.StartCoroutine(StartEditorCoroutineTest());
     }
 
-    public static IEnumerator EditorStartCoroutine(IEnumerator iterator)
+    public static IEnumerator StartCoroutine(IEnumerator iterator)
     {
         if (editorCoroutineList == null)
         {
-            editorCoroutineList = new List<EditorCoroutine>();
+            editorCoroutineList = new List<Coroutine>();
         }
         if (buffer == null)
         {
@@ -105,7 +105,7 @@ public static class EditorCoroutineRunner
     {
         // If this iterator is already added  
         // Then ignore it this time  
-        foreach (EditorCoroutine editorCoroutine in editorCoroutineList)
+        foreach (Coroutine editorCoroutine in editorCoroutineList)
         {
             if (editorCoroutine.Find(iterator))
             {
@@ -131,7 +131,7 @@ public static class EditorCoroutineRunner
                 if (!Find(iterator))
                 {
                     // Added this as new EditorCoroutine
-                    editorCoroutineList.Add(new EditorCoroutine(iterator));
+                    editorCoroutineList.Add(new Coroutine(iterator));
                 }
             }
 

@@ -3,14 +3,9 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
-local socket = require "socket"
-print("--------")
-for k, v in pairs(socket) do
-    print(k, v)
-end
-print("--------")
+local coroutine_call = util.coroutine_call
 
-local excel_view = {
+local index = {
     RowIdxA = 1,
     
     ColumnIdxA = 0,
@@ -19,7 +14,7 @@ local excel_view = {
     
     dataSource = {}
 }
-local this = excel_view
+local this = index
 
 local yield_return = util.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -27,7 +22,7 @@ end)
 
 -- function this.coroutine_demo()
 --     return coroutine.create(function()
---         print('excel_view coroutine start!')
+--         print('index coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil
 --         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
@@ -36,6 +31,7 @@ end)
 --         local gameObj = GameObject.Instantiate(obj)
 --     end)
 -- end
+
 --AutoGenInit Begin
 function this.AutoGenInit()
     this.tableview_TableView = tableview:GetComponent("TableView.TableView")
@@ -53,6 +49,32 @@ function this.AutoGenInit()
     this.SliderColumText_Text = SliderColumText:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
+
+function this.downloadexcel()
+	coroutine_call(function()
+		local obj = nil
+		yield_return(CS.AssetSys.Instance:GetAsset(
+		"ui/loading/loading.prefab", function(asset)
+			obj = asset
+		end))
+		
+		local loading = GameObject.Instantiate(obj)
+		loading.name = "loading"
+		local oldLoading = GameObject.Find("loading")
+		GameObject.DestroyImmediate(oldLoading)
+		
+		obj = nil
+		yield_return(CS.AssetSys.Instance:GetAsset(
+		"ui/update/update.prefab", function(asset)
+			obj = asset
+		end))
+		local update = GameObject.Instantiate(obj)
+		update.name = "update"
+		
+		self.Destroy()
+	end)
+end
+
 function this.initSheetData(sheet)
     this.dataSource = {}
     print("initSheetData", sheet.FirstRowNum, sheet.LastRowNum)
@@ -66,13 +88,13 @@ end
 function this.Awake()
     this.AutoGenInit()
     print("this.Awake")
--- end
+end
 
--- function this.OnEnable()
---     print("this.OnEnable")
--- end
+function this.OnEnable()
+    print("this.OnEnable")
+end
 
--- function this.Start()
+function this.Start()
     print("this.Start")
     
     xlua.private_accessible(CS.TableView.TableView)
@@ -142,7 +164,7 @@ function this.Awake()
         new_sheet_tab.name = "sheet_tab_" .. sheet.SheetName
         new_sheet_tab.transform:SetParent(SheetContent.transform)
         local lua_sheet_tab = new_sheet_tab:GetComponent("LuaMonoBehaviour").luaTable
-        -- lua_sheet_tab.SetData(excel_view, sheet)
+        -- lua_sheet_tab.SetData(index, sheet)
         lua_sheet_tab.Text_Text.text = sheet.SheetName
         lua_sheet_tab.Button_Button.onClick:AddListener(function()
             for k, v in pairs(this.SheetTabs) do
@@ -223,4 +245,4 @@ function this.Destroy()
     GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return excel_view
+return index

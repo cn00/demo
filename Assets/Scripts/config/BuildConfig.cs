@@ -607,6 +607,48 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             EditorUtility.ClearProgressBar();
         }
 
+        // if rename some folders, then should call this
+        public static IEnumerator FixPrefabLuaPath()
+        {
+            var root = BuildConfig.BundleResRoot;
+            var prefabPaths = Directory.GetFiles(root, "*.prefab", SearchOption.AllDirectories);
+            var count = 0;
+            foreach (var i in prefabPaths)
+            {
+                var p = i.upath();
+                var prefab = AssetDatabase.LoadAssetAtPath(p, typeof(GameObject));
+                var go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                var luamonos = go.GetComponents<LuaMonoBehaviour>();
+                foreach (var luamono in luamonos)
+                {
+                    if(luamono.luaScript == null || luamono.luaScript.Asset == null)
+                    {
+                        AppLog.w(p + " luamono.luaScript not set");
+                        continue;
+                    }
+                    var tpath = AssetDatabase.GetAssetPath(luamono.luaScript.Asset);
+                    tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
+                    if(luamono.luaScript.path != tpath)
+                    {
+                        luamono.luaScript.path = tpath; 
+                        AppLog.d("FixPrefabLuaPath", p);
+                        EditorUtility.SetDirty(prefab);
+                    }
+                }
+
+                if(luamonos.Count() > 0)
+                {
+                    ++ count;
+                    PrefabUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.Default);
+                }
+                MonoBehaviour.DestroyImmediate(go);
+                EditorUtility.DisplayCancelableProgressBar("FixPrefabLuaPath ..."
+                    , count + "/" + prefabPaths.Count() + i, (float)(count) / prefabPaths.Count());
+                if(count % 10 == 0)
+                    yield return null;
+            }
+            EditorUtility.ClearProgressBar();
+        }
         void DrawBundleConfig(GUILayoutOption[] guiOpts)
         {
             // build
@@ -665,6 +707,19 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
                 }
             }
+
+            // update prefab lua path
+            GUILayout.Space(1f);
+            {
+                var rect = EditorGUILayout.GetControlRect();
+                var sn = 4;
+                var idx = -1;
+                if (GUI.Button(rect.Split(++idx, sn), "FixPrefabLuaPath"))
+                {
+                    EditorCoroutine.StartCoroutine(FixPrefabLuaPath());
+                }
+            }
+
 
             EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
             mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
@@ -742,7 +797,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         void BuildAB(BuildTarget target, bool rebuild)
         {
 
-            EditorCoroutineRunner.EditorStartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, ()=>{
+            EditorCoroutine.StartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, ()=>{
                 if (mTarget.BuildScene)
                     BuildScript.BuildStreamingScene(target);
 

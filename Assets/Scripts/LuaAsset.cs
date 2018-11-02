@@ -23,13 +23,13 @@ public class LuaAsset
         }
         set
         {
-            if(value == textAsset)
-                return;
+            // if(value == textAsset)
+            //     return;
             textAsset = value;
 #if UNITY_EDITOR
-            path = AssetDatabase.GetAssetPath(textAsset)
-                .Replace(BuildConfig.BundleResRoot, "")
-                .Replace(BuildConfig.LuaExtension, "");
+            var tpath = AssetDatabase.GetAssetPath(textAsset);
+            path = tpath.Remove(tpath.Length - 4)
+                .Replace(BuildConfig.BundleResRoot, "");
 #endif
         }
     }

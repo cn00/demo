@@ -51,10 +51,10 @@ namespace TableView
             get { return position; }
         }
 
-        private CellSizes cellSizes;
-        private PrefabCells prefabCells;
-        private VisibleCells visibleCells;
-        private ReusableCells reusableCells;
+        private CellSizes cellSizes = new CellSizes();
+        private PrefabCells prefabCells = new PrefabCells();
+        private VisibleCells visibleCells = new VisibleCells();
+        private ReusableCells reusableCells = new ReusableCells();
 
         private TableViewScroll tableViewScroll;
         private TableViewLayout tableViewLayout;
@@ -95,11 +95,6 @@ namespace TableView
         {
             isEmpty = true;
 
-            cellSizes = new CellSizes();
-            prefabCells = new PrefabCells();
-            visibleCells = new VisibleCells();
-
-            reusableCells = new ReusableCells();
             reusableCells.AddToParentTransform(this.transform as RectTransform);
 
             tableViewContent = new TableViewContent(this.transform as RectTransform);
@@ -121,8 +116,8 @@ namespace TableView
             tableViewLayout.Spacing = interItemSpacing;
             tableViewLayout.Padding = padding;
 
-            this.gameObject.AddComponent<RectMask2D>();
-            this.gameObject.AddComponent<CanvasRenderer>();
+            this.gameObject.GetOrAddComponent<RectMask2D>();
+            this.gameObject.GetOrAddComponent<CanvasRenderer>();
         }
 
         void Update()

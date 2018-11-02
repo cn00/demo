@@ -172,10 +172,9 @@ GameObject:
   m_Component:
   - component: {fileID: 224253292445043760}
   - component: {fileID: 114001000690257418}
-  - component: {fileID: 114496860835141096}
-  - component: {fileID: 114380889287166806}
+  - component: {fileID: 114255087680269516}
   m_Layer: 0
-  m_Name: table_view_cell_03
+  m_Name: table_view_cell_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,8 +209,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: ui/excel_viewer/table_view_cell/table_view_cell
-    textAsset: {fileID: 5, guid: a43569410ac914dde8511f7148e2b965, type: 3}
+    path: truth/index/cell/table_view_cell
+    textAsset: {fileID: 5, guid: 05c2a42e0ebd643c28380879ccac78ce, type: 3}
   injections:
   - obj: {fileID: 1931639233798544}
     exportComIdx: 1
@@ -266,7 +265,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: New Text
---- !u!114 &114380889287166806
+--- !u!114 &114255087680269516
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -277,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afd63e40ef5f94905a1d19b5cfaad09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ReuseIdentifier: table_view_cell_03
+  ReuseIdentifier: table_view_cell_02
 --- !u!114 &114403622078770500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -290,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0748042, g: 0.38679248, b: 0.25097486, a: 0.78431374}
+  m_Color: {r: 0.2735849, g: 0.078720175, b: 0.19295123, a: 0.7921569}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -311,18 +310,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: New Text
---- !u!114 &114496860835141096
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1931639233798544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5c540ae7321a4609a87407ad8c2e985, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReuseIdentifier: table_view_cell_03
 --- !u!114 &114561886531088996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -368,7 +355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0748042, g: 0.38679248, b: 0.25097486, a: 0.78431374}
+  m_Color: {r: 0.2735849, g: 0.078720175, b: 0.19295123, a: 0.7921569}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -401,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7216981, g: 1, b: 0.8199591, a: 1}
+  m_Color: {r: 1, g: 0.8160377, b: 0.9160873, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -483,7 +470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0748042, g: 0.38679248, b: 0.25097486, a: 0.78431374}
+  m_Color: {r: 0.2735849, g: 0.078720175, b: 0.19295123, a: 0.7921569}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -549,7 +536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0748042, g: 0.38679248, b: 0.25097486, a: 0.78431374}
+  m_Color: {r: 0.2735849, g: 0.078720175, b: 0.19295123, a: 0.7921569}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

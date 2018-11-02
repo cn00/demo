@@ -107,8 +107,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   luaScript:
-    path: ui/excel_viewer/sheet_tab
-    textAsset: {fileID: 5, guid: 56963e69aebc6410996c9cafa02bc10f, type: 3}
+    path: truth/index/sheet_tab
+    textAsset: {fileID: 5, guid: 1964490cfce1d4ab7a34f76d9e7aadd4, type: 3}
   injections:
   - obj: {fileID: 1840187608154264}
     exportComIdx: 3

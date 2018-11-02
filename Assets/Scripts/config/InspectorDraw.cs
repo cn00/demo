@@ -208,6 +208,10 @@ public class Inspector
         {
             (obj as XLua.LuaTable).Draw();
         }
+        else if (obj is UnityEngine.Object)
+        {
+            obj = EditorGUILayout.ObjectField(name, obj as UnityEngine.Object, typeof(UnityEngine.Object), true);
+        }
         else
         {
             DrawComObj(name, obj);
@@ -358,6 +362,11 @@ public class Inspector
                 else if (v is XLua.LuaTable)
                 {
                     (v as XLua.LuaTable).Draw();
+                }
+                else if (v is UnityEngine.Object)
+                {
+                    var tmp = EditorGUILayout.ObjectField(i.Name, v as UnityEngine.Object, typeof(UnityEngine.Object), true);
+                    i.SetValue(obj, tmp);
                 }
                 else if (v is object)
                 {

@@ -8,13 +8,13 @@ using System.Text.RegularExpressions;
 public static class PathUtils
 {
     #region const
-    public const string ImagesRegex = "(.png$|.jpg$|.tga$|.psd$|.tiff$|.gif$|.jpeg$)";
-    public const string AudiosRegex = "(.mp3$|.ogg$|.wav$|.aiff$)";
-    public const string VideosRegex = "(.mov$|.mpg$|.mp4$|.avi$|.asf$|.mpeg$)";
-    public const string ObjectRegex = "(.asset$|.prefab$)";
-    public const string UserTextRegex = "(.lua$|.sql$)";
-    public const string TextRegex = "(.txt$|.lua$|.xml$|.yaml$|.sql$|.bytes$)";
-    public const string ExcelRegex = "(.xls$|.xlsx$)";
+    public const string ImagesRegex = "(\\.png$|\\.jpg$|\\.tga$|\\.psd$|\\.tiff$|\\.gif$|\\.jpeg$)";
+    public const string AudiosRegex = "(\\.mp3$|\\.ogg$|\\.wav$|\\.aiff$)";
+    public const string VideosRegex = "(\\.mov$|\\.mpg$|\\.mp4$|\\.avi$|\\.asf$|\\.mpeg$)";
+    public const string ObjectRegex = "(\\.asset$|\\.prefab$)";
+    public const string UserTextRegex = "(\\.lua$|\\.sql$)";
+    public const string TextRegex = "(\\.txt$|\\.lua$|\\.xml$|\\.yaml$|\\.sql$|\\.bytes$)";
+    public const string ExcelRegex = "(\\.xls$|\\.xlsx$)";
     public const string PunctuationRegex = "(`|~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\-|\\+|\\=|\\[|\\]|\\{|\\}]|;|:|'|\"|,|<|\\.|>|\\?|/|\\\\| |\\t|\\r|\\n)";
     #endregion const
 

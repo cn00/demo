@@ -550,7 +550,7 @@ public class BuildScript
             // version.Patch += 1;
             PlayerSettings.bundleVersion = version.ToString();
             //AndroidAssetBundleDelete();
-            EditorCoroutineRunner.EditorStartCoroutine(BuildAssetBundle(buildTarget, true));
+            EditorCoroutine.StartCoroutine(BuildAssetBundle(buildTarget, true));
         }
         finally
         {

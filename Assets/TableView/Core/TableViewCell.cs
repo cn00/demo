@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace TableView
 {
-    public abstract class TableViewCell : MonoBehaviour, ISelectHandler, ISubmitHandler, IPointerClickHandler
+    public class TableViewCell : MonoBehaviour, ISelectHandler, ISubmitHandler, IPointerClickHandler
     {
         #region Property
 

@@ -245,7 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   luaScript:
     path: ui/loading/src/loading
-    textAsset: {fileID: 102900000, guid: e956273597f507c438c6e70bb0bafbcb, type: 3}
+    textAsset: {fileID: 5, guid: e956273597f507c438c6e70bb0bafbcb, type: 3}
   injections:
   - obj: {fileID: 1320277300347884}
     exportComIdx: 0
