@@ -14,44 +14,35 @@ using System.Text.RegularExpressions;
 public class SheetStruct
 {
     public string Name;
-    public static string[] ColumnNames = new []{
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-        "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"};
     public ISheet Sheet { get; set; }
 
-    public uint RowIdxA = 1;
-    public uint ColumnIdxA = 0;
+    public int RowIdxA = 1;
+    public int ColumnIdxA = 0;
 
-    public uint RowPerPage = 10;
-    public uint ColumnPerPage = 5;
+    public int RowPerPage = 10;
+    public int ColumnPerPage = 5;
     public string PinColumn = "";
     int PinColumnIdx
     {
         get
         {
-            int idx = 0;
-            for(int i = 0; i < ColumnNames.Length; ++i)
-            {
-                if(PinColumn == ColumnNames[i])
-                {
-                    idx = i;
-                    break;
-                }
-            }
-            PinColumn = ColumnNames[idx];
-            return idx;
+            return NPOI.ExcelExtension.NameColumn(PinColumn);
         }
     }
 
     public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
     {
-        // base.DrawInspector();
+        RowIdxA = (int)RowIdxA < 0 ? 0 : RowIdxA;
+        RowPerPage = (int)RowPerPage < 0 ? 0 : RowPerPage;
+        ColumnIdxA = (int)ColumnIdxA < 0 ? 0 : ColumnIdxA;
+        ColumnPerPage = (int)ColumnPerPage < 0 ? 0 : ColumnPerPage;
 
         Sheet.SheetName = Name;
         PinColumn = PinColumn.ToUpper();
 
         var hasPinColumn = !string.IsNullOrEmpty(PinColumn);
 
+        var head = Sheet.Row(0);
         // column name
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("\\", new GUILayoutOption[]
@@ -63,15 +54,14 @@ public class SheetStruct
         {
             EditorGUILayout.LabelField(PinColumn, guiOpts);
         }
-        for(int i = (int)ColumnIdxA; i < ColumnNames.Length && i < (int)(ColumnIdxA + ColumnPerPage - (hasPinColumn ? 1 : 0)); ++i)
+        for(int i = (int)ColumnIdxA; i < head.LastCellNum && i < (int)(ColumnIdxA + ColumnPerPage - (hasPinColumn ? 1 : 0)); ++i)
         {
-            EditorGUILayout.LabelField(ColumnNames[i], guiOpts);
+            EditorGUILayout.LabelField(NPOI.ExcelExtension.ColumnName(i), guiOpts);
         }
         EditorGUILayout.EndHorizontal();
 
         // head
         EditorGUILayout.BeginHorizontal();
-        var head = Sheet.Row(0);
         EditorGUILayout.LabelField((head.Cell(0).RowIndex + 1).ToString(), new GUILayoutOption[]
         {
             GUILayout.Width(30),
@@ -113,8 +103,8 @@ public class SheetStruct
         if (GUI.Button(rect.Split(++idx, sn), "PageUp"))
         {
             RowIdxA -= RowPerPage;
-            RowIdxA = (int)RowIdxA < 0 ? 0 : RowIdxA;
         }
+        // PinColumn = (int)PinColumn < 0 ? 0 : PinColumn;
     }
 }
 
@@ -141,7 +131,9 @@ public class BookStruct
         };
         foreach (var s in Sheets)
         {
-            Inspector.DrawComObj(s.Name, s);
+            Inspector.DrawComObj(s.Name, s, null, () => {
+                s.DrawInspector(0, guiOpts);
+            });
         }
 
         if(GUI.changed)
