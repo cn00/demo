@@ -17,8 +17,8 @@ using System.Text.RegularExpressions;
 
 public class LuaMonoBehaviour : MonoBehaviour
 {
-    [SerializeField,HideInInspector]
-    public LuaAsset luaScript = new LuaAsset();
+    // [SerializeField,HideInInspector]
+    public LuaAsset LuaScript = new LuaAsset();
 
     [Serializable]
     public class Injection
@@ -47,34 +47,11 @@ public class LuaMonoBehaviour : MonoBehaviour
         protected set;
     }
 
-    bool mInited = false;
-    public bool Inited { 
-        get
-        {
-            return mInited 
-            // && AssetSys.Instance.Inited
-            // && LuaSys.Instance.Inited
-            ;
-        } 
-        protected set
-        {
-            mInited = value;
-        }
-    }
-
-    IEnumerator AsyncInit()
-    {
-        yield return null;
-    }
-
     void Init()
     {
-        // while(!LuaSys.Instance.Inited)
-        //     yield return null;
-
-        byte[] textBytes = LuaSys.Instance.LuaLoader(luaScript.path) ?? Encoding.UTF8.GetBytes( "return {}");
+        byte[] textBytes = LuaSys.Instance.LuaLoader(LuaScript.Path) ?? Encoding.UTF8.GetBytes( "return {}");
         var luaInstance = LuaSys.Instance;
-        luaTable = luaInstance.GetLuaTable(textBytes, this, luaScript.path);
+        luaTable = luaInstance.GetLuaTable(textBytes, this, LuaScript.Path);
 
         luaTable.Get("Awake", out luaAwake);
         luaTable.Get("OnEnable", out luaOnEnable);
@@ -83,32 +60,20 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("Update", out luaUpdate);
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
-
-        Inited = true;
-        enabled = true;
-        if(Inited && luaAwake != null)
-        {
-            luaAwake();
-        }
-        
-        // yield return null;
     }
 
     void Awake()
     {
-        enabled = false;
-        Inited = false;
-        // StartCoroutine(Init());
         Init();
+
+        if(luaAwake != null)
+        {
+            luaAwake();
+        }
     }
 
     private void OnEnable()
     {
-        if(!Inited)
-        {
-            Init();
-        }
-        
         if(luaOnEnable != null)
         {
             luaOnEnable();
@@ -148,7 +113,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(Inited && luaLateUpdate != null)
+        if(luaLateUpdate != null)
         {
             luaLateUpdate();
         }
@@ -177,8 +142,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         CleanLua();
 
-        luaScript.path = path;
-        // StartCoroutine(Init());
+        LuaScript.Path = path;
         Init();
     }
 

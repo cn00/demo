@@ -14,5 +14,9 @@ public class LuaImporter : ScriptedImporter
     public override void OnImportAsset(AssetImportContext ctx)
     {
         AppLog.d(Tag, "OnImportAsset: " + ctx.assetPath);
+        File.Copy(ctx.assetPath, ctx.assetPath + ".txt", true);
+        // TODO: clean comments, compress, encode, base64 .lua.txt
+
+        AssetDatabase.ImportAsset(ctx.assetPath + ".txt");
     }
 }

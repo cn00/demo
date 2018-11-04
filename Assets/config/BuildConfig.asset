@@ -14,14 +14,14 @@ MonoBehaviour:
   UseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131854580482767180
+  LastBuildTime: 131857872736017700
   Version:
     Name: 
     Major: 1
     Minor: 1
     Patch: 0
-  m_Ip: 10.23.22.233
-  m_Port: 8008
+  Ip: http://10.23.114.141:8008/
+  Port: 8008
   ForceRebuild: 0
   BuildScene: 0
   mGroups:
@@ -31,8 +31,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: video/op.bd
-      mSize: 5853470
-      mMd5: A4EB8D5B3FAB87DBAD2E7E3FC027D808
+      mSize: 5853505
+      mMd5: C74F4258C06E4922D0E03A10D9CEC516
       mVersion: 1.1.0
   - Foldout: 0
     Name: module_tmp
@@ -69,32 +69,32 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: ui/boot.bd
-      mSize: 3684
-      mMd5: 3CF22DCAE2101676456212FA9D2FF1FB
+      mSize: 3711
+      mMd5: DB5CA709C07996D67DBA47D4AF9F63F2
       mVersion: 1.1.0
     - mName: ui/excel_viewer.bd
-      mSize: 30486
-      mMd5: 9766975E61F7E747F0A5F1F9E77C752B
+      mSize: 46752
+      mMd5: A08445DF9D9D00FCF9F650688790A42C
       mVersion: 1.1.0
     - mName: ui/loading.bd
-      mSize: 100082
-      mMd5: 975FFBFCB2BE92F60B1D90313AA3512C
+      mSize: 100095
+      mMd5: 84D5267BCF751BA448BBC94D20800785
       mVersion: 1.1.0
     - mName: ui/login.bd
-      mSize: 20808
-      mMd5: D8897FDC6BF870DA11C4BDBF154E522D
+      mSize: 20829
+      mMd5: 56655B65BF20809D1A8B04FA42D368C3
       mVersion: 1.1.0
     - mName: ui/qrcode.bd
-      mSize: 60133
-      mMd5: 155D55672A1743D59528A8EB826E2E37
+      mSize: 60140
+      mMd5: 60DBEC598372C859329091EB7B8F7470
       mVersion: 1.1.0
     - mName: ui/test.bd
-      mSize: 20421
-      mMd5: 4032B17ED20050CC2D8AFC696FE3F8E0
+      mSize: 20438
+      mMd5: D7C78A9FC1AD07D47D15120C4B581D3B
       mVersion: 1.1.0
     - mName: ui/update.bd
-      mSize: 16597
-      mMd5: 0B2E44AA3A8CBF8DC66B904DA05D421E
+      mSize: 16618
+      mMd5: 5B73697203DA40106AA24ED919DFF58F
       mVersion: 1.1.0
   - Foldout: 0
     Name: common
@@ -102,16 +102,16 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: common/excel.bd
-      mSize: 12442
-      mMd5: B715DE037B095A3C4D6AD21C16FAB898
+      mSize: 12458
+      mMd5: A6C1FC0F125CDF43C3ADEBE5D67D4DD0
       mVersion: 1.1.0
     - mName: common/global.bd
       mSize: 1974
       mMd5: A430EA6CDE9B5D11CB5336DFD3F27C57
       mVersion: 1.1.0
     - mName: common/manager.bd
-      mSize: 4548
-      mMd5: 246291E0554FA80118F524E8CAE1DFC8
+      mSize: 4576
+      mMd5: 8BE13E50AA0A5C75C34E10A1C6861AFF
       mVersion: 1.1.0
     - mName: common/ui.bd
       mSize: 8886
@@ -140,8 +140,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3667
-      mMd5: 33BA0A08B3B88345F51C80A45FB28302
+      mSize: 3653
+      mMd5: 5084165D3817C67F8C44B5300D0DD9F9
       mVersion: 1.1.0
   - Foldout: 0
     Name: truth

@@ -209,9 +209,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: ui/excel_viewer/table_view_cell/table_view_cell
-    textAsset: {fileID: 5, guid: a43569410ac914dde8511f7148e2b965, type: 3}
+  LuaScript:
+    Path: ui/excel_viewer/table_view_cell/table_view_cell.lua
+    LuaText: {fileID: 4900000, guid: 692fa1051143348589619f19a158fb8b, type: 3}
+  LuaText: {fileID: 4900000, guid: 692fa1051143348589619f19a158fb8b, type: 3}
   injections:
   - obj: {fileID: 1931639233798544}
     exportComIdx: 1

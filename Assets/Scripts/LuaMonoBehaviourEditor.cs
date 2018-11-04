@@ -12,19 +12,21 @@ public class LuaMonoBehaviourEditor : Editor
 {
     const string Tag = "LuaMonoBebaviourEdirot";
     LuaMonoBehaviour mLuaMono = null;
-    string LuaStr = "";
+    string LuaText = "";
+
+    UnityEngine.Object mSourceLua = null;
     public void OnEnable()
     {
         mLuaMono = (LuaMonoBehaviour)target;
-        var luaPath = AssetDatabase.GetAssetPath(mLuaMono.luaScript.Asset.GetInstanceID());
-        if (File.Exists(luaPath))
-            LuaStr = File.ReadAllText(luaPath);
+        if(mLuaMono.LuaScript.LuaText == null)
+            return;
 
-        var tpath = luaPath.Remove(luaPath.Length - 4)
-            .Replace(BuildConfig.BundleResRoot, "");
-        if(tpath != mLuaMono.luaScript.path)
+        var luaPath = AssetDatabase.GetAssetPath(mLuaMono.LuaScript.LuaText.GetInstanceID());
+        luaPath = luaPath.Remove(luaPath.Length - 4);
+        if (File.Exists(luaPath))
         {
-            EditorUtility.SetDirty(mLuaMono);
+            LuaText = File.ReadAllText(luaPath);
+            mSourceLua = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(luaPath);
         }
     }
 
@@ -33,21 +35,26 @@ public class LuaMonoBehaviourEditor : Editor
     {
         base.OnInspectorGUI();
 
-        var tmpAsset = EditorGUILayout.ObjectField("Lua", mLuaMono.luaScript.Asset, typeof(UnityEngine.Object), true);
-        EditorGUILayout.LabelField(mLuaMono.luaScript.path);
-        var luaPath = AssetDatabase.GetAssetPath(tmpAsset.GetInstanceID());
-        if (tmpAsset != null && luaPath.EndsWith(BuildConfig.LuaExtension))
+        var luaAsset = EditorGUILayout.ObjectField("LuaSrc", mSourceLua, typeof(UnityEngine.Object), true);
+        EditorGUILayout.LabelField(mLuaMono.LuaScript.Path);
+        if (luaAsset != null)
         {
-            // new
-            if (mLuaMono.luaScript.Asset != tmpAsset)
-                LuaStr = File.ReadAllText(luaPath);
-            // renamed
-            var tpath = luaPath.Remove(luaPath.Length - 4)
-                .Replace(BuildConfig.BundleResRoot, "");
-            if(tpath != mLuaMono.luaScript.path)
+            var luaPath = AssetDatabase.GetAssetPath(luaAsset.GetInstanceID());
+            var txtPath = luaPath + ".txt";
+            if(luaPath.EndsWith(BuildConfig.LuaExtension))
             {
-                EditorUtility.SetDirty(mLuaMono);
-                mLuaMono.luaScript.Asset = tmpAsset;
+                mSourceLua = luaAsset;
+                var txtAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(txtPath);
+                if (txtAsset != mLuaMono.LuaScript.LuaText)
+                {
+                    // new
+                    LuaText = File.ReadAllText(luaPath);
+
+                    mLuaMono.LuaScript.LuaText = txtAsset;
+                    mLuaMono.LuaScript.Path = luaPath.Remove(luaPath.Length - 4)
+                        .Replace(BuildConfig.BundleResRoot, "");
+                    EditorUtility.SetDirty(mLuaMono);
+                }
             }
         }
 
@@ -102,7 +109,7 @@ public class LuaMonoBehaviourEditor : Editor
                             var comName = comType.Substring(comType.LastIndexOf('.') + 1);
                             var oldExp = item.obj.name + "_" + comName;
                             string newExp = nname + "_" + comName;
-                            LuaStr = LuaStr.Replace("." + oldExp, "." + newExp);
+                            LuaText = LuaText.Replace("." + oldExp, "." + newExp);
                             item.obj.name = nname;
                         }
                     }
@@ -134,11 +141,11 @@ public class LuaMonoBehaviourEditor : Editor
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
             {
-                var path = BuildConfig.BundleResRoot + mLuaMono.luaScript.path + BuildConfig.LuaExtension;
-                var pattern = Regex.Match(LuaStr, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
-                LuaStr = LuaStr.Replace(pattern.ToString(), luaMemberValue);
-                File.WriteAllText(path, LuaStr);
-                AppLog.d(Tag, mLuaMono.luaScript.path + BuildConfig.LuaExtension + " write ok");
+                var path = BuildConfig.BundleResRoot + mLuaMono.LuaScript.Path + BuildConfig.LuaExtension;
+                var pattern = Regex.Match(LuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
+                LuaText = LuaText.Replace(pattern.ToString(), luaMemberValue);
+                File.WriteAllText(path, LuaText);
+                AppLog.d(Tag, mLuaMono.LuaScript.Path + BuildConfig.LuaExtension + " write ok");
             }
         }
 

@@ -141,9 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: common/manager/manager
-    textAsset: {fileID: 5, guid: f0c1c701890bb4dde9decf2bf2b6ab23, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
+  LuaText: {fileID: 0}
   injections:
   - obj: {fileID: 1412133623965120}
     exportComIdx: 1
@@ -162,9 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: common/manager/scene_manager
-    textAsset: {fileID: 102900000, guid: d70a523eca3254b12889a3d7f8ad66c3, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
+  LuaText: {fileID: 0}
   injections: []
 --- !u!114 &114739290049429514
 MonoBehaviour:
@@ -177,9 +179,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: common/manager/scene_manager
-    textAsset: {fileID: 102900000, guid: d70a523eca3254b12889a3d7f8ad66c3, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
+  LuaText: {fileID: 0}
   injections: []
 --- !u!114 &114739862896866072
 MonoBehaviour:
@@ -192,7 +195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: common/manager/manager
-    textAsset: {fileID: 102900000, guid: f0c1c701890bb4dde9decf2bf2b6ab23, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
+  LuaText: {fileID: 0}
   injections: []

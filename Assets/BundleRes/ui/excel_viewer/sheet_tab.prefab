@@ -106,9 +106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: ui/excel_viewer/sheet_tab
-    textAsset: {fileID: 5, guid: 56963e69aebc6410996c9cafa02bc10f, type: 3}
+  LuaScript:
+    Path: ui/excel_viewer/sheet_tab.lua
+    LuaText: {fileID: 4900000, guid: 506e24b15a70f4a21a9bf36b4be8606a, type: 3}
+  LuaText: {fileID: 4900000, guid: 506e24b15a70f4a21a9bf36b4be8606a, type: 3}
   injections:
   - obj: {fileID: 1840187608154264}
     exportComIdx: 3

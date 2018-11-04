@@ -87,15 +87,15 @@ end
 
 function this.Awake()
     this.AutoGenInit()
-    print("this.Awake")
+    print("Index.Awake")
 end
 
 function this.OnEnable()
-    print("this.OnEnable")
+    print("Index.OnEnable")
 end
 
 function this.Start()
-    print("this.Start")
+    print("Index.Start")
     
     xlua.private_accessible(CS.TableView.TableView)
     
@@ -118,11 +118,6 @@ function this.Start()
             end
         end
         
-        -- if table.tableView.LayoutOrientation == 1 then
-        --     size = cell.rectTransform.height
-        -- else
-        --     size = cell.rectTransform.width
-        -- end
         return size
     end
     this.tableview_TableViewController.CellAtRow = function(tb, row)
@@ -139,7 +134,7 @@ function this.Start()
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
         -- cellmono.luaTable.SetData(this.dataSource[row+1])
         cellmono.luaTable.SetExcelCellData(this.dataSource[row + 1], this.ColumnIdxA, this.ColumnPerPage)
-        print("CellAtRow", row)
+        -- print("CellAtRow", row)
         return cell
     end
     

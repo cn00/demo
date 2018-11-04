@@ -1305,9 +1305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: ui/excel_viewer/excel_view
-    textAsset: {fileID: 5, guid: 550f500cdee034e64a739c2d876eadca, type: 3}
+  LuaScript:
+    Path: ui/excel_viewer/excel_view
+    LuaText: {fileID: 4900000, guid: 689db3455622e47628293aff8025cb92, type: 3}
   injections:
   - obj: {fileID: 1907794263777396}
     exportComIdx: 1
@@ -1826,9 +1826,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: ui/excel_viewer/sheet_tab
-    textAsset: {fileID: 5, guid: 56963e69aebc6410996c9cafa02bc10f, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
   injections:
   - obj: {fileID: 1821950276844134}
     exportComIdx: 3

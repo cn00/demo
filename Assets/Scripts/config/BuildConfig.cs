@@ -119,7 +119,7 @@ public class AppVersion
 /// Assets/BundleRes 下需要打包的资源目录配置
 /// </summary>
 [ExecuteInEditMode]
-public class BuildConfig : SingletonAsset<BuildConfig>
+public partial class BuildConfig : SingletonAsset<BuildConfig>
 {
     #region const
     public const string BundleResDir = "BundleRes";
@@ -171,10 +171,10 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public AppVersion Version = new AppVersion("1.0.0") { Name = "Version" };
 
     [HideInInspector, SerializeField]
-    string m_Ip = "http://10.23.114.141:8008/";
+    public string Ip = "http://10.23.114.141:8008/";
 
     [HideInInspector, SerializeField]
-    string m_Port = "8008";
+    public string Port = "8008";
 
     /// <summary>
     /// http://ip:port/path/to/root/
@@ -182,7 +182,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     /// <value>The http root.</value>
     public string ServerRoot
     {
-        get { return string.Format("http://{0}:{1}/", m_Ip, m_Port); }
+        get { return string.Format("http://{0}:{1}/", Ip, Port); }
     }
 
     [Serializable]
@@ -354,7 +354,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     [HideInInspector, SerializeField]
     BundleManifest mGroups = new BundleManifest();
-    protected BundleManifest Groups { get { return mGroups; } set { mGroups = value; } }
+    public BundleManifest Groups { get { return mGroups; } protected set { mGroups = value; } }
 
     public BundleInfo GetBundleInfo(string path)
     {
@@ -406,7 +406,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     [HideInInspector, SerializeField]
     public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server();
-    static string LocalIpAddress()
+    public static string LocalIpAddress()
     {
         IPAddress ipAddress = NetSys.LocalIpAddress()[0];
         var strLocalIP = ipAddress.ToString();
@@ -519,299 +519,5 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         BuildScript.GenericBuild(SCENES, config.OutputPath(), config.Channel.BuildTargetGroup(), config.Channel.BuildTarget(), options);
     }
 
-    #region CustomEditor
-    [CustomEditor(typeof(BuildConfig))]
-    public class Editor : UnityEditor.Editor
-    {
-        bool allInclude = false;
-        bool allRebuild = false;
-        bool showBundles = false;
-        bool showBuilds = false;
-
-        BuildConfig mTarget = null;
-        public void OnEnable()
-        {
-            mTarget = target as BuildConfig;
-        }
-
-        void Refresh()
-        {
-            mTarget.m_Ip = LocalIpAddress();
-
-            var newGroups = new BundleManifest();
-            var groups = Directory.GetDirectories(BuildConfig.BundleResRoot, "*", SearchOption.TopDirectoryOnly);
-            int n = 0;
-            foreach (var group in groups)
-            {
-                EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float)(++n) / groups.Length);
-
-                var groupName = group.upath().Replace(BuildConfig.BundleResRoot, "");
-                GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
-                if (groupInfo == null)
-                {
-                    groupInfo = new GroupInfo()
-                    {
-                        Name = groupName,
-                        Bundles = new List<BundleInfo>(),
-                    };
-                }
-
-                var newBundles = new List<BundleInfo>();
-                foreach (var bundle in Directory.GetDirectories(group, "*", SearchOption.TopDirectoryOnly))
-                {
-                    var bundlePath = bundle.upath();
-                    var bundleName = bundlePath.Replace(BundleResRoot, "") + BundlePostfix;
-                    var assetBundle = AssetImporter.GetAtPath(bundlePath);
-                    if (assetBundle != null)
-                    {
-                        assetBundle.assetBundleName = bundleName;
-                    }
-
-                    //var bundleName = bundle.upath().Replace(group + "/", "");
-                    var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
-                    if (bundleInfo == null)
-                    {
-                        bundleInfo = new BundleInfo()
-                        {
-                            Name = bundleName,
-                        };
-                    }
-
-                    ulong time = 0;
-                    foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
-                    {
-                        var assetImporter = AssetImporter.GetAtPath(f);
-                        if (assetImporter != null)
-                        {
-                            assetImporter.assetBundleName = bundleName;//"";//
-                            var assetTimeStamp = assetImporter.assetTimeStamp;
-                            if (time < assetTimeStamp)
-                                time = assetTimeStamp;
-                        }
-                    }
-
-                    // if (time > 0)
-                        newBundles.Add(bundleInfo);
-                }//for 2
-
-                //            AssetDatabase.GetAllAssetBundleNames();
-                // AssetDatabase.RemoveUnusedAssetBundleNames();
-
-                groupInfo.Bundles = newBundles;
-
-                if (groupInfo.Bundles.Count > 0)
-                    newGroups.Add(groupInfo);
-            }//for 1
-            mTarget.Groups = newGroups;
-
-            EditorUtility.ClearProgressBar();
-        }
-
-        // if rename some folders, then should call this
-        public static IEnumerator FixPrefabLuaPath()
-        {
-            var root = BuildConfig.BundleResRoot;
-            var prefabPaths = Directory.GetFiles(root, "*.prefab", SearchOption.AllDirectories);
-            var count = 0;
-            foreach (var i in prefabPaths)
-            {
-                var p = i.upath();
-                var prefab = AssetDatabase.LoadAssetAtPath(p, typeof(GameObject));
-                var go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                var luamonos = go.GetComponents<LuaMonoBehaviour>();
-                foreach (var luamono in luamonos)
-                {
-                    if(luamono.luaScript == null || luamono.luaScript.Asset == null)
-                    {
-                        AppLog.w(p + " luamono.luaScript not set");
-                        continue;
-                    }
-                    var tpath = AssetDatabase.GetAssetPath(luamono.luaScript.Asset);
-                    tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
-                    if(luamono.luaScript.path != tpath)
-                    {
-                        luamono.luaScript.path = tpath; 
-                        AppLog.d("FixPrefabLuaPath", p);
-                        EditorUtility.SetDirty(prefab);
-                    }
-                }
-
-                if(luamonos.Count() > 0)
-                {
-                    ++ count;
-                    PrefabUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.Default);
-                }
-                MonoBehaviour.DestroyImmediate(go);
-                EditorUtility.DisplayCancelableProgressBar("FixPrefabLuaPath ..."
-                    , count + "/" + prefabPaths.Count() + i, (float)(count) / prefabPaths.Count());
-                if(count % 10 == 0)
-                    yield return null;
-            }
-            EditorUtility.ClearProgressBar();
-        }
-        void DrawBundleConfig(GUILayoutOption[] guiOpts)
-        {
-            // build
-            GUILayout.Space(1f);
-            {
-                var rect = EditorGUILayout.GetControlRect();
-                var rebuild = mTarget.ForceRebuild;
-                var sn = 5;
-                var idx = -1;
-                if (GUI.Button(rect.Split(++idx, sn), "BuildWin"))
-                {
-                    BuildAB(BuildTarget.StandaloneWindows, rebuild);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "BuildAnd"))
-                {
-                    BuildAB(BuildTarget.Android, rebuild);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "BuildiOS"))
-                {
-                    BuildAB(BuildTarget.iOS, rebuild);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "BuildMac"))
-                {
-                    BuildAB(BuildTarget.StandaloneOSX, rebuild);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "Clean"))
-                {
-                }
-
-            }
-
-            // clean
-            GUILayout.Space(1f);
-            {
-                var rect = EditorGUILayout.GetControlRect();
-                var sn = 5;
-                var idx = -1;
-                if (GUI.Button(rect.Split(++idx, sn), "Refresh"))
-                {
-                    Refresh();
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "CleanWin"))
-                {
-                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneWindows), true);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "CleanAnd"))
-                {
-                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.Android), true);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "CleaniOS"))
-                {
-                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
-                }
-                if (GUI.Button(rect.Split(++idx, sn), "CleanMac"))
-                {
-                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
-                }
-            }
-
-            // update prefab lua path
-            GUILayout.Space(1f);
-            {
-                var rect = EditorGUILayout.GetControlRect();
-                var sn = 4;
-                var idx = -1;
-                if (GUI.Button(rect.Split(++idx, sn), "FixPrefabLuaPath"))
-                {
-                    EditorCoroutine.StartCoroutine(FixPrefabLuaPath());
-                }
-            }
-
-
-            EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
-            mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
-            mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
-
-            ++EditorGUI.indentLevel;
-            foreach (var i in mTarget.Groups)
-            {
-                i.DrawGroup(0, guiOpts);
-            }
-            --EditorGUI.indentLevel;
-        }
-
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-
-            mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
-
-            GUILayoutOption[] guiOpts = new GUILayoutOption[]
-            {
-                GUILayout.Width(30),
-                GUILayout.ExpandWidth(true),
-            };
-
-            mTarget.Version.Draw(0, guiOpts);
-
-
-            EditorGUILayout.Space();
-            
-            // Bundles
-            showBundles = EditorGUILayout.Foldout(showBundles, "AssetBundle", true);
-            if (showBundles)
-            {
-                EditorGUILayout.LabelField("HttpRoot");
-                EditorGUILayout.BeginHorizontal();
-                {
-                    mTarget.m_Ip = EditorGUILayout.TextField(mTarget.m_Ip);
-                    mTarget.m_Port = EditorGUILayout.TextField(mTarget.m_Port);
-                }
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.Space();
-
-                using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
-                {
-                    DrawBundleConfig(guiOpts);
-                }
-            }
-
-            //apk ios.proj exe app etc.
-            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds, false, item => {
-                var i = item as ChannelConfig;
-                if (string.IsNullOrEmpty(i.Name))
-                {
-                    i.Name = i.Channel + ":" + (int)i.Channel;
-                }
-            });
-
-            // server
-            Inspector.DrawComObj("BundleServer", mTarget.BundleServer);
-            // if(mTarget.BundleServer.thread != null)
-            //     mTarget.BundleServer.Runing = mTarget.BundleServer.thread.IsAlive;
-
-            mTarget.DrawSaveButton();
-
-            if (GUI.changed)
-            {
-                AppLog.LogLevel = mTarget.LogLevel;
-                PlayerSettings.bundleVersion = mTarget.Version.ToString();
-                EditorUtility.SetDirty(mTarget);
-            }
-        }
-
-        void BuildAB(BuildTarget target, bool rebuild)
-        {
-
-            EditorCoroutine.StartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, ()=>{
-                if (mTarget.BuildScene)
-                    BuildScript.BuildStreamingScene(target);
-
-                BuildScript.GenBundleManifest(target);
-                BuildScript.GenVersionFile(target);
-                mTarget.Groups.Sort((a, b) => b.Size.CompareTo(a.Size));
-            }));
-        }
-
-        private void OnDestroy()
-        {
-            //            AssetDatabase.SaveAssets();
-        }
-    }
-    #endregion CustomEditor
 #endif
 }

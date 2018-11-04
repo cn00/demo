@@ -70,7 +70,6 @@ end
 
 function boot.Awake()
 	boot.AutoGenInit()
-    boot.coroutine_boot(1,2,2,4)
 end
 
 -- function boot.OnEnable()
@@ -78,11 +77,10 @@ end
 
 -- end
 
--- function boot.Start()
---     print("boot.Start")
-
-
--- end
+function boot.Start()
+    print("boot.Start")
+    boot.coroutine_boot(1,2,2,4)
+end
 
 -- function boot.FixedUpdate()
 

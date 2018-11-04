@@ -51,7 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: common/excel/sheet/sheet
-    textAsset: {fileID: 102900000, guid: 94ee9ed48ef474adf8d7c24406d654aa, type: 3}
+  LuaScript:
+    Path: 
+    LuaText: {fileID: 0}
+  LuaText: {fileID: 0}
   injections: []

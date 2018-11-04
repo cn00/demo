@@ -11,26 +11,21 @@ using UnityEditor;
 public class LuaAsset
 {
     [SerializeField]
-    public string path = "";
+    public string Path = "";
 
-    [SerializeField]
-    private Object textAsset = null;
-    public Object Asset
-    {
-        get
-        {
-            return textAsset;
-        }
-        set
-        {
-            // if(value == textAsset)
-            //     return;
-            textAsset = value;
+    public TextAsset LuaText;
+    
 #if UNITY_EDITOR
-            var tpath = AssetDatabase.GetAssetPath(textAsset);
-            path = tpath.Remove(tpath.Length - 4)
-                .Replace(BuildConfig.BundleResRoot, "");
-#endif
+    Object mLuaSrc = null;
+    public Object LuaSrc
+    {
+        get {
+            return mLuaSrc;
+        }
+        set {
+            mLuaSrc = value;
+
         }
     }
+#endif
 }

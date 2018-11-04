@@ -208,9 +208,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: truth/index/cell/table_view_cell
-    textAsset: {fileID: 5, guid: 05c2a42e0ebd643c28380879ccac78ce, type: 3}
+  LuaScript:
+    Path: truth/index/cell/table_view_cell
+    LuaText: {fileID: 4900000, guid: 32245043d5978428b9f33212664b7ff8, type: 3}
   injections:
   - obj: {fileID: 1931639233798544}
     exportComIdx: 2

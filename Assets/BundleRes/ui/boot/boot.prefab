@@ -63,7 +63,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaScript:
-    path: ui/boot/boot
-    textAsset: {fileID: 5, guid: 6c23e2168559bfc40a994f4991c79336, type: 3}
+  LuaScript:
+    Path: ui/boot/boot.lua
+    LuaText: {fileID: 4900000, guid: ca4951aab829f4d92a8447efab6ebcc8, type: 3}
+  LuaText: {fileID: 4900000, guid: ca4951aab829f4d92a8447efab6ebcc8, type: 3}
   injections: []

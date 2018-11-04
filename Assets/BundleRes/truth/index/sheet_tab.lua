@@ -25,10 +25,10 @@ local this = sheet_tab
 -- end
 
 --AutoGenInit Begin
-function sheet_tab.AutoGenInit()
-    sheet_tab.Button_Button = Button:GetComponent("UnityEngine.UI.Button")
-    sheet_tab.Text_Text = Text:GetComponent("UnityEngine.UI.Text")
-    sheet_tab.Button_Image = Button:GetComponent("UnityEngine.UI.Image")
+function this.AutoGenInit()
+    this.Button_Button = Button:GetComponent("UnityEngine.UI.Button")
+    this.Text_Text = Text:GetComponent("UnityEngine.UI.Text")
+    this.Button_Image = Button:GetComponent("UnityEngine.UI.Image")
 end
 --AutoGenInit End
 

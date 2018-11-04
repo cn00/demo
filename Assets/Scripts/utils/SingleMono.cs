@@ -56,7 +56,7 @@ public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
     {
         Inited = true;
         enabled = true;
-        AppLog.d(typeof(T).ToString(), "[{0}] inited.", typeof(T));
+        AppLog.d(typeof(T).ToString(), "inited.");
         yield return null;
     }
 }
