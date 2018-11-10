@@ -12,6 +12,11 @@ using UnityEditor;
 
 public class LuaSys : SingleMono<LuaSys>
 {
+    [SerializeField]
+    public string[] PackagePath = new []{
+        "lua/plugins/",
+        "lua/utility/"
+    };
     const string Tag = "LuaSys";
     //all lua behaviour shared one luaenv only!
     internal LuaEnv luaEnv = new LuaEnv();
@@ -41,63 +46,76 @@ public class LuaSys : SingleMono<LuaSys>
         return luaTable;
     }
 
-    public byte[] LuaLoader(string filename)
+    // public byte[] Require(string filename)
+    // {
+    //     return Require(ref filename);
+    // }
+    public byte[] Require(ref string luapath)
     {
-        return LuaLoader(ref filename);
+        return Require(luapath);
     }
-    public byte[] LuaLoader(ref string filename)
+    public byte[] Require(string luapath, string search = "", int retry = 0)
     {
-        if(string.IsNullOrEmpty(filename))
+        if(string.IsNullOrEmpty(luapath))
             return null;
             
         var LuaExtension = BuildConfig.LuaExtension;
 
-        if(filename.EndsWith(LuaExtension))
+        if(luapath.EndsWith(LuaExtension))
         {
-            filename = filename.Remove(filename.LastIndexOf(LuaExtension));
+            luapath = luapath.Remove(luapath.LastIndexOf(LuaExtension));
         }
-        AppLog.d(Tag, "require: " + filename);
 
         byte[] bytes = null;
+        var assetName = search + luapath.Replace(".", "/") + LuaExtension;
+        // var assetName2 = "lua/plugins/" + luapath.Replace(".", "/") + LuaExtension;
+        AppLog.d(Tag, "require: " + assetName);
 #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
 #endif
         {
-            var data = AssetSys.Instance.GetAssetSync<TextAsset>(filename.Replace(".", "/") + LuaExtension + ".txt");
+            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName + ".txt");
             // if(data == null)
             // {
-            //     data = AssetSys.Instance.GetAssetSync<TextAsset>("lua/" + filename.Replace(".", "/") + LuaExtension + ".txt");
+            //     data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName2 + ".txt");
             // }
             if(data!=null)
                 bytes = data.bytes;
-            else
-                AppLog.e(filename + " lua not found");
+            // else
+            //     AppLog.e(Tag, luapath + " lua not found");
         }
 #if UNITY_EDITOR
         else
         {
-            var assetName = BuildConfig.BundleResRoot + filename.Replace(".", "/") + LuaExtension;
-            var assetName2 = BuildConfig.BundleResRoot + "lua/" + filename.Replace(".", "/") + LuaExtension;
-            if(File.Exists(assetName))
+            if(File.Exists(BuildConfig.BundleResRoot + assetName))
             {
-                bytes = File.ReadAllBytes(assetName);
+                bytes = File.ReadAllBytes(BuildConfig.BundleResRoot + assetName);
             }
-            else if(File.Exists(assetName2))
-            {
-                bytes = File.ReadAllBytes(assetName2);
-            }
-            else
-            {
-                AppLog.e(assetName + " lua not found.");
-            }
+            // else if(File.Exists(BuildConfig.BundleResRoot + assetName2))
+            // {
+            //     bytes = File.ReadAllBytes(BuildConfig.BundleResRoot + assetName2);
+            // }
+            // else
+            // {
+            //     AppLog.e(Tag, "[{0}] or [{1}] not found.", assetName, assetName2);
+            // }
         }
 #endif
+        if(bytes == null && retry < PackagePath.Length)
+        {
+            bytes = Require(luapath, PackagePath[retry], ++retry);
+            AppLog.d(Tag, "filaly: retry={0}, luapath={1}", retry, PackagePath[retry] + luapath);
+            // if(retry == 0)
+            //     bytes = Require("lua/plugins/" + luapath, ++retry);
+            // if(retry == 1)
+            //     bytes = Require("lua/utility/" + luapath, ++retry);
+        }
         return bytes;
     }
 
     public override IEnumerator Init()
     {
-        luaEnv.AddLoader(LuaLoader);
+        luaEnv.AddLoader(Require);
         yield return base.Init();
     }
 
@@ -112,6 +130,17 @@ public class LuaSys : SingleMono<LuaSys>
     //     yield return base.Init();
     // }
 
+    [CSharpCallLua]
+    public delegate object[] TableDelegate(LuaTable table);
+    public LuaTable GetMetaTable(LuaTable table)
+    {
+        var tabledelegate = GlobalEnv.Global.GetInPath<TableDelegate>("BridgingClass.GetMetaTable");
+        LuaTable fileData = null;
+        object[] ret = tabledelegate(table);
+        if(ret != null && ret.Length > 0)
+            fileData = ret[0] as LuaTable;
+        return fileData;
+    }
     public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")
     {
         LuaTable env = null;

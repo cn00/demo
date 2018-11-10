@@ -49,7 +49,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
                 else
                 {
-                    AppLog.e(www.error);
+                    AppLog.e(Tag, www.error);
                 }
             });
         }
@@ -100,7 +100,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             else
             {
-                AppLog.e("get local md5 list error: " + www.error);
+                AppLog.e(Tag, "get local md5 list error: " + www.error);
             }
         });
 
@@ -181,7 +181,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 }
                 else
                 {
-                    AppLog.e("DownloadDiffFiles: " + i + www.error);
+                    AppLog.e(Tag, "DownloadDiffFiles: " + i + www.error);
                 }
             });
 

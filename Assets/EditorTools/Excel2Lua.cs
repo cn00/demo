@@ -131,7 +131,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         }
         catch (Exception e)
         {
-            AppLog.e(e);
+            AppLog.e(Tag, e);
         }
         luabuild.Append("\n}\n");
 
@@ -213,8 +213,8 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
         if (errno > 0)
         {
-            AppLog.e("{0} errors", errno);
-            AppLog.e(errmsg);
+            AppLog.e(Tag, "{0} errors", errno);
+            AppLog.e(Tag, errmsg);
         }
 
     }
@@ -234,7 +234,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         // }
         // catch (Exception e)
         // {
-        //     AppLog.e("error：" + e.Message);
+        //     AppLog.e(Tag, "error：" + e.Message);
         // }
 
         mConfig.LastBuildTime = DateTime.Now.ToFileTimeUtc();

@@ -3,12 +3,6 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
-local socket = require "socket"
-print("--------")
-for k, v in pairs(socket) do
-    print(k, v)
-end
-print("--------")
 
 local excel_view = {
     RowIdxA = 1,

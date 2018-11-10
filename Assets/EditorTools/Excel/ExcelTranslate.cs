@@ -237,7 +237,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         }
                         else
                         {
-                            AppLog.e(i, j, ojp, " != ", jp, trans);
+                            AppLog.e(Tag, i, j, ojp, " != ", jp, trans);
                         }
                     }
                     inbook.Write(path);

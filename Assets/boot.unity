@@ -159,6 +159,67 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc4e8af39086c46ea9e7b037404d56c9, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1001 &409504333
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 604.01245
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 420.12598
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -1.9948907
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114739290049429514, guid: 026f17fb4fbe7422fab220922092242c,
+        type: 2}
+      propertyPath: LuaScript.Path
+      value: common/manager/scene_manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 114739290049429514, guid: 026f17fb4fbe7422fab220922092242c,
+        type: 2}
+      propertyPath: LuaScript.LuaText
+      value: 
+      objectReference: {fileID: 4900000, guid: 1d5d1e0bb575642b99941a96b671d511, type: 3}
+    - target: {fileID: 1013339268840872, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 026f17fb4fbe7422fab220922092242c, type: 2}
+  m_IsPrefabAsset: 0
+--- !u!4 &450522399 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4359675727273526, guid: 026f17fb4fbe7422fab220922092242c,
+    type: 2}
+  m_PrefabInternal: {fileID: 409504333}
 --- !u!1 &565171238
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,9 +470,57 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1636341453899542, guid: d2b479731b62a4f2dacef04afabf8816, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2b479731b62a4f2dacef04afabf8816, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &2016850155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2016850156}
+  - component: {fileID: 2016850157}
+  m_Layer: 0
+  m_Name: network
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2016850156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2016850155}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 450522399}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2016850157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2016850155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LuaScript:
+    Path: common/manager/network
+    LuaText: {fileID: 4900000, guid: ced76ee9937d14198a0e6b20b9c6073c, type: 3}
+  injections: []
 --- !u!1 &2104789697
 GameObject:
   m_ObjectHideFlags: 0

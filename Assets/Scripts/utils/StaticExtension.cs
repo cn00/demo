@@ -84,6 +84,28 @@ public static class GameObjectExtension
 
 }
 
+    namespace XLua
+    {
+        #if USE_UNI_LUA
+        using LuaAPI = UniLua.Lua;
+        using RealStatePtr = UniLua.ILuaState;
+        using LuaCSFunction = UniLua.CSharpFunctionDelegate;
+        #else
+        using LuaAPI = XLua.LuaDLL.Lua;
+        using RealStatePtr = System.IntPtr;
+        using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
+        #endif
+        public partial class LuaTable
+        {
+            public LuaTable GetMetaTable()
+            {
+                return LuaSys.Instance.GetMetaTable(this);
+            }
+
+            public string Name = "";
+        }
+    }
+
 public static class LuaTableExtension
 {
     public static string ToString(this XLua.LuaTable self, string fmt = null, int indent = 0, bool strfun = false)
@@ -149,7 +171,7 @@ public static class LuaTableExtension
     {
         EditorGUI.indentLevel += indent;
         var Foldout = self.ContainsKey("Foldout") ? self.Get<bool>("Foldout"):false;
-        Foldout = EditorGUILayout.Foldout(Foldout, self.Name + ":" + self.GetType().ToString(), true);
+        Foldout = EditorGUILayout.Foldout(Foldout, self.Name + ": LuaTable", true);
         self.Set("Foldout", Foldout);
         if (Foldout)
         {
@@ -168,7 +190,10 @@ public static class LuaTableExtension
                     else
                     {
                         EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("[" + k + "]: " + (v != null ? v.GetType().ToString() : "null"));
+                        var tname = (v != null ? v.GetType().ToString() : "nil");
+                        var dotidx = tname.LastIndexOf('.');
+                        if(dotidx > 0)tname = tname.Substring(dotidx+1);
+                        EditorGUILayout.LabelField("[" + k + "]: " + tname);
                         if (v is bool)
                         {
                             var tmp = EditorGUILayout.Toggle((bool)v);
@@ -219,7 +244,10 @@ public static class LuaTableExtension
                     else
                     {
                         EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField(k + ": " + (v != null ? v.GetType().ToString() : "null"));
+                        var tname = (v != null ? v.GetType().ToString() : "nil");
+                        var dotidx = tname.LastIndexOf('.');
+                        if(dotidx > 0)tname = tname.Substring(dotidx+1);
+                        EditorGUILayout.LabelField(k + ": " + tname);
                         if (v is bool)
                         {
                             var tmp = EditorGUILayout.Toggle((bool)v);
@@ -268,6 +296,13 @@ public static class LuaTableExtension
                     }
                 });
 
+                // metatable
+                var meta = self.GetMetaTable();
+                if(meta != null)
+                {
+                    meta.Name = "__meta";
+                    meta.Draw(indent+1);
+                }
             }
         }
         EditorGUI.indentLevel -= indent;

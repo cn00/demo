@@ -142,9 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
-  LuaText: {fileID: 0}
+    Path: common/manager/manager
+    LuaText: {fileID: 4900000, guid: 31079773e6ebb422f9a104d1b31fea84, type: 3}
   injections:
   - obj: {fileID: 1412133623965120}
     exportComIdx: 1
@@ -164,9 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
-  LuaText: {fileID: 0}
+    Path: common/manager/message_sys
+    LuaText: {fileID: 4900000, guid: 1b6d320c34773426f99e1093b08f9bcc, type: 3}
   injections: []
 --- !u!114 &114739290049429514
 MonoBehaviour:
@@ -182,7 +180,6 @@ MonoBehaviour:
   LuaScript:
     Path: 
     LuaText: {fileID: 0}
-  LuaText: {fileID: 0}
   injections: []
 --- !u!114 &114739862896866072
 MonoBehaviour:
@@ -196,7 +193,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
-  LuaText: {fileID: 0}
+    Path: common/manager/message_sys
+    LuaText: {fileID: 4900000, guid: 1b6d320c34773426f99e1093b08f9bcc, type: 3}
   injections: []

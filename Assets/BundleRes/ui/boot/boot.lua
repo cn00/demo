@@ -3,6 +3,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
+require("lua.utility.BridgingClass")
 
 local boot = {
     1, 2, 3, 4,
@@ -49,6 +50,14 @@ function boot.coroutine_boot(first, ...)
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
 
+        obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("data/fb/monsterdata_txt.mon.txt", function(asset)
+            obj = asset.Data
+        end))
+        boot.fbtestdata = obj
+        print("fbtestdata:", obj)
+        boot.FlatbuffersTest(obj)
+
 	    obj = nil
 	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
 	        obj = asset;
@@ -82,6 +91,26 @@ function boot.Start()
     boot.coroutine_boot(1,2,2,4)
 end
 
+function boot.FlatbuffersTest(buffer)
+    local fb = require("flatbuffers")
+    boot.flatbuffers = assert(require("flatbuffers"))
+    monster = assert(require("proto.MyGame.Example.Monster"))  
+    test = assert(require("proto.MyGame.Example.Equipment"))
+    vec3 = assert(require("proto.MyGame.Example.Vec3"))
+
+    boot.fbbuf = fb.binaryArray.New(buffer)
+    boot.monsterN = monster.New()
+    boot.monster = monster.GetRootAsMonster(boot.fbbuf, 0)
+    boot.monstert = {
+        Hp = boot.monster:Hp(),
+        mana = boot.monster:Mana(),
+        color = boot.monster:Color(),
+    }
+    print("Mana():", boot.monster:Mana())
+    -- for k,v in pairs(getmetatable(boot.monster)["__index"]) do 
+    --     print("boot.monster", k, v)
+    -- end
+end
 -- function boot.FixedUpdate()
 
 -- end

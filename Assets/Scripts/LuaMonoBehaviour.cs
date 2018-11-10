@@ -49,7 +49,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void Init()
     {
-        byte[] textBytes = LuaSys.Instance.LuaLoader(LuaScript.Path) ?? Encoding.UTF8.GetBytes( "return {}");
+        byte[] textBytes = LuaSys.Instance.Require(LuaScript.Path) ?? Encoding.UTF8.GetBytes( "return {}");
         var luaInstance = LuaSys.Instance;
         luaTable = luaInstance.GetLuaTable(textBytes, this, LuaScript.Path);
 

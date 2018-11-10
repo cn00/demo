@@ -26,14 +26,14 @@ namespace AssetBundleServer
         public Thread thread = null;
         public void WatchDog(object processID)
         {
-            Log("Watching parent processID: {0}!", processID);
+            AppLog.d(Tag, "Watching parent processID: {0}!", processID);
             Process masterProcess = Process.GetProcessById((int)processID);
             while (masterProcess == null || !masterProcess.HasExited)
             {
                 Thread.Sleep(1000);
             }
 
-            Log("Exiting because parent process has exited!");
+            AppLog.d(Tag, "Exiting because parent process has exited!");
             Environment.Exit(0);
         }
 
@@ -43,7 +43,7 @@ namespace AssetBundleServer
             {
                 bool detailedLogging = false;
                 var ctx = await l.GetContextAsync();
-                WriteFile(ctx, BasePath, detailedLogging);
+                SendFile(ctx, BasePath, detailedLogging);
             }
             catch (HttpListenerException)
             {
@@ -71,7 +71,7 @@ namespace AssetBundleServer
             }
         }
 
-        static void WriteFile(HttpListenerContext ctx, string basePath, bool detailedLogging)
+        static void SendFile(HttpListenerContext ctx, string basePath, bool detailedLogging)
         {
             HttpListenerRequest request = ctx.Request;
             var qidx = request.RawUrl.IndexOf('?');
@@ -85,10 +85,10 @@ namespace AssetBundleServer
             string path = basePath + rawUrl;
 
             if (detailedLogging)
-                Log("Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
+                AppLog.d(Tag, "Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
             else
-                Log("Requesting file: '{0}' ... ", request.RawUrl);
+                AppLog.d(Tag, "Requesting file: '{0}' ... ", request.RawUrl);
 
             var response = ctx.Response;
             try
@@ -129,15 +129,16 @@ namespace AssetBundleServer
 
                     }
 
-                    Log(request.RemoteEndPoint.Address + ": " + rawUrl);
-                    response.StatusCode = (int)HttpStatusCode.OK;
-                    response.StatusDescription = "OK";
+                    AppLog.d(Tag, request.RemoteEndPoint.Address + ": " + rawUrl);
+                    // response.StatusCode = (int)HttpStatusCode.OK;
+                    // response.StatusDescription = "OK";
 
+                    fs.Close();
                     fs.Dispose();
                 }
                 else
                 {
-                    Error(rawUrl + "not found");
+                    AppLog.e(Tag, rawUrl + "not found");
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                 }
                 response.OutputStream.Close();
@@ -145,7 +146,7 @@ namespace AssetBundleServer
             }
             catch (System.Exception exc)
             {
-                Error("Requested failed path: '{0}'. \nRawUrl: {1} \nUrl: '{2}' \nbasePath: '{3}' \nException: {4}: {5}:"
+                AppLog.e(Tag, "Requested failed path: '{0}'. \nRawUrl: {1} \nUrl: '{2}' \nbasePath: '{3}' \nException: {4}: {5}:"
                     , path, request.RawUrl, request.Url, basePath, exc.GetType(), exc.Message);
                 response.Abort();
             }
@@ -156,7 +157,7 @@ namespace AssetBundleServer
             if (thread != null && thread.IsAlive && Runing)
                 thread.Abort();
             thread = new Thread(Main);
-            Log("http thread: " + thread.ManagedThreadId);
+            AppLog.d(Tag, "http thread: " + thread.ManagedThreadId);
             Runing = true;
             thread.Start();
         }
@@ -167,17 +168,6 @@ namespace AssetBundleServer
             thread = null;
             Runing = false;
         }
-
-        static void Log(string fmt, params object[] args)
-        {
-            AppLog.d(Tag, fmt, args);
-        }
-
-        static void Error(string fmt, params object[] args)
-        {
-            AppLog.e(fmt, args);
-        }
-
     }
 }
 #endif //UNITY_EDITOR

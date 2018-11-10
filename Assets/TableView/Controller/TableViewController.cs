@@ -5,6 +5,7 @@ namespace TableView
 {
     public class TableViewController : MonoBehaviour, ITableViewDataSource, ITableViewDelegate
     {
+        public static string Tag = "TableViewController";
         public TableView tableView;
         public GameObject[] prefabCells;
 
@@ -37,7 +38,7 @@ namespace TableView
             }
             else
             {
-                AppLog.w("delegate null");
+                AppLog.w(Tag, "delegate null");
                 var cell = CellAt(tableView, row);
                 return 100f;
             }

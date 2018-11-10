@@ -205,9 +205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
-  LuaText: {fileID: 0}
+    Path: common/excel/cell/cell
+    LuaText: {fileID: 4900000, guid: 8ecdcb9a1543043558ec98f326bb03e3, type: 3}
   injections:
   - obj: {fileID: 1542255227646406}
     exportComIdx: 3

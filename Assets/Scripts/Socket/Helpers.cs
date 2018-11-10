@@ -97,7 +97,7 @@ namespace Net
             }
             catch (System.Exception e)
             {
-                AppLog.e(e.ToString());
+                AppLog.e(Tag, e.ToString());
             }
 
             // error
@@ -142,7 +142,7 @@ namespace Net
             }
             else
             {
-                AppLog.e("GetFrameData return null");
+                AppLog.e(Tag, "GetFrameData return null");
                 return Encoding.Default.GetString(Data, 0, Data.Length);
             }
         }

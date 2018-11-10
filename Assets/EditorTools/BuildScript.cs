@@ -45,7 +45,7 @@ public class BuildScript
         }
         catch (Exception e)
         {
-            AppLog.e("BuildPlayer failure: " + e);
+            AppLog.e(Tag, "BuildPlayer failure: " + e);
         }
 
         ProcessStartInfo pi = new ProcessStartInfo(
@@ -140,7 +140,9 @@ public class BuildScript
 
             var options = (
                 BuildAssetBundleOptions.None
+              | BuildAssetBundleOptions.CompleteAssets
               | BuildAssetBundleOptions.ChunkBasedCompression
+              | BuildAssetBundleOptions.DeterministicAssetBundle
             //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
             );
 

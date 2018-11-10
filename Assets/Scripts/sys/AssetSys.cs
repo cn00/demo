@@ -42,6 +42,7 @@ public static class AssetExtern
 
 public static class BundleHelper
 {
+    public static string Tag = "BundleHelper";
     #region 压缩
 
     #region LZMA
@@ -66,7 +67,7 @@ public static class BundleHelper
     {
         if(!File.Exists(inFile))
         {
-            AppLog.e(inFile + " not found");
+            AppLog.e(Tag, inFile + " not found");
             return;
         }
 
@@ -318,7 +319,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         if(asset == null)
         {
-            AppLog.w("[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+            AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
         }
         return asset;
     }
@@ -326,6 +327,11 @@ public class AssetSys : SingleMono<AssetSys>
     public string GetBundlePath (string assetSubPath)
     {
         var dirs = assetSubPath.Split('/');
+        if(dirs.Length < 2)
+        {
+            AppLog.w(Tag, "bundle not found for: " + assetSubPath);
+            return null;
+        }
         string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
         // bundleName = mManifest.GetAllAssetBundles().First(i => i.StartsWith(bundleName));
         return bundleName;
@@ -336,11 +342,11 @@ public class AssetSys : SingleMono<AssetSys>
     /// </summary>
     public IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
     {
-        yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
-    }
+    //     yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
+    // }
 
-    public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
-    {
+    // public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
+    // {
         UnityEngine.Object resObj = default(UnityEngine.Object);
 #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
@@ -357,11 +363,16 @@ public class AssetSys : SingleMono<AssetSys>
                     if(textPath.EndsWith(".lua"))
                         textPath += ".txt";
                     var textAsset = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath);
-                    resObj = new DataObject(textAsset.bytes);
+                    if(textAsset != null)
+                        resObj = new DataObject(textAsset.bytes);
+                    else
+                    {
+                        AppLog.e(Tag, textPath + " not found.");
+                    }
                 }
                 else
                 {
-                    resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
+                    resObj = bundle.LoadAsset<UnityEngine.Object>(BuildConfig.BundleResRoot + assetSubPath);
                 }
             });
         }
@@ -377,19 +388,19 @@ public class AssetSys : SingleMono<AssetSys>
             }
             else
             {
-                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
+                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(BuildConfig.BundleResRoot + assetSubPath);
             }
         }
 #endif
         if(callBack != null)
-            callBack((T)resObj);
+            callBack(resObj);
     }
 
     public AssetBundle GetBundleSync(string bundlePath)
     {
         if(string.IsNullOrEmpty(bundlePath))
         {
-            AppLog.e("bundlePath [{0}] not correct.", bundlePath);
+            AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
             return null;
         }
 
@@ -397,18 +408,22 @@ public class AssetSys : SingleMono<AssetSys>
         if(!mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
             var cachePath = CacheRoot + bundlePath;
-            bundle = AssetBundle.LoadFromFile(cachePath);
-            if(bundle == null)
+            if(File.Exists(cachePath))
+                bundle = AssetBundle.LoadFromFile(cachePath);
+            if(bundle == null) // try Resources.Load
             {
                 bundle = Resources.Load<AssetBundle>(bundlePath);
             }
-            mLoadedBundles[bundlePath] = bundle;
             AppLog.d(Tag, "GetBundleSync: {0}", bundlePath);
         }
 
-        if(bundle == null)
+        if(bundle != null)
         {
-            AppLog.w("[{0}] did not download yet.", bundlePath);
+            mLoadedBundles[bundlePath] = bundle;
+        }
+        else
+        {
+            AppLog.w(Tag, "[{0}] did not download yet.", bundlePath);
         }
         return bundle;
     }
@@ -422,7 +437,7 @@ public class AssetSys : SingleMono<AssetSys>
         string bundlePath = bundleName;
         if(string.IsNullOrEmpty(bundlePath))
         {
-            AppLog.e("bundlePath [{0}] not correct.", bundlePath);
+            AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
             yield break;
         }
 
@@ -480,7 +495,7 @@ public class AssetSys : SingleMono<AssetSys>
             else
             {
                 err = true;
-                AppLog.e(fileUrl + ": " + www.error);
+                AppLog.e(Tag, fileUrl + ": " + www.error);
             }
         });
         if(err)
@@ -532,7 +547,7 @@ public class AssetSys : SingleMono<AssetSys>
             }
             else
             {
-                AppLog.e("{0}: {1}", www.error, url);
+                AppLog.e(Tag, "{0}: {1}", www.error, url);
             }
             if(endCallback != null)
             {

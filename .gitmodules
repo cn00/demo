@@ -10,3 +10,6 @@
 [submodule "Assets/Editor/XUPorter"]
 	path = Assets/Editor/XUPorter
 	url = git@github.com:cn00/XUPorter.git
+[submodule "XLua-src"]
+	path = XLua-src
+	url = ../XLua
