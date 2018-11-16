@@ -14,6 +14,7 @@ public class LuaSys : SingleMono<LuaSys>
 {
     [SerializeField]
     public string[] PackagePath = new []{
+        "lua/proto/",
         "lua/plugins/",
         "lua/utility/"
     };
@@ -103,8 +104,9 @@ public class LuaSys : SingleMono<LuaSys>
 #endif
         if(bytes == null && retry < PackagePath.Length)
         {
-            bytes = Require(luapath, PackagePath[retry], ++retry);
+            bytes = Require(luapath, PackagePath[retry], 1+retry);
             AppLog.d(Tag, "filaly: retry={0}, luapath={1}", retry, PackagePath[retry] + luapath);
+
             // if(retry == 0)
             //     bytes = Require("lua/plugins/" + luapath, ++retry);
             // if(retry == 1)
@@ -131,16 +133,14 @@ public class LuaSys : SingleMono<LuaSys>
     // }
 
     [CSharpCallLua]
-    public delegate object[] TableDelegate(LuaTable table);
-    public LuaTable GetMetaTable(LuaTable table)
+    public delegate object TableDelegate(LuaTable table);
+    public object CallLuaHelp(string luaMethodPath, LuaTable table)
     {
-        var tabledelegate = GlobalEnv.Global.GetInPath<TableDelegate>("BridgingClass.GetMetaTable");
-        LuaTable fileData = null;
-        object[] ret = tabledelegate(table);
-        if(ret != null && ret.Length > 0)
-            fileData = ret[0] as LuaTable;
-        return fileData;
+        var tabledelegate = GlobalEnv.Global.GetInPath<TableDelegate>(luaMethodPath);
+        object outData = tabledelegate(table);
+        return outData;
     }
+
     public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")
     {
         LuaTable env = null;

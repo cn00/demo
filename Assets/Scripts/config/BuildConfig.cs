@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Diagnostics;
 
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 
@@ -413,9 +414,73 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         return strLocalIP;
     }
 
-    public override bool Init()
+    public static IEnumerator Execute(string exe, string prmt 
+        , DataReceivedEventHandler OutputDataReceived = null
+        , Action end = null
+        , float total = 0, string processingtag = "bash", string info = ""
+    )
     {
-        return base.Init();
+        bool finished = false;
+        var process = new System.Diagnostics.Process();
+        var processing = 0f;
+        try
+        {
+            // UnityEngine.Debug.Log(exe + " " + prmt);
+            ProcessStartInfo pi = new ProcessStartInfo(exe, prmt);
+            pi.WorkingDirectory = ".";
+            pi.RedirectStandardInput = false;
+            pi.RedirectStandardOutput = true;
+            pi.RedirectStandardError = true;
+            pi.UseShellExecute = false;
+            pi.CreateNoWindow = true;
+
+            if(OutputDataReceived != null)
+                process.OutputDataReceived += OutputDataReceived;
+            process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+                if(e.Data.StartsWith(processingtag))
+                    ++processing;
+                // UnityEngine.Debug.Log(e.Data);
+            };
+            process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                    UnityEngine.Debug.LogError(e.GetType() + ": " + e.Data);
+            };
+            process.Exited += (object sender, EventArgs e) =>
+            {
+                finished = true;
+                UnityEngine.Debug.Log("Exit");
+            };
+
+            process.StartInfo = pi;
+            process.EnableRaisingEvents = true;
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            // process.WaitForExit();
+        }
+        catch(Exception e)
+        {
+            UnityEngine.Debug.LogError("catch: " + e);
+        }
+
+        while (!finished)
+        {
+            if(total > 1)
+            {
+                EditorUtility.DisplayCancelableProgressBar("uploading ...", info + ": " + processing + "/" + total, processing/total);
+            }
+            yield return null;
+        }
+        if(end != null)
+            end();
+
+        // UnityEngine.Debug.Log("finished: " + process.ExitCode);
+        EditorUtility.ClearProgressBar();
+        yield return null;
     }
 
     public override void Save()
@@ -442,7 +507,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
     {
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            Debug.LogError("workspace not in this config");
+            AppLog.e(Tag, "workspace not in this config");
             return;
         }
         if (config.Channel.isAndroid())
@@ -472,7 +537,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         }
         else
         {
-            Debug.LogError("Unknow ChannelConfig: " + config.Channel);
+            AppLog.e(Tag, "Unknow ChannelConfig: " + config.Channel);
         }
         PlayerSettings.SetApplicationIdentifier(config.Channel.BuildTargetGroup(), config.BundleId);
         PlayerSettings.productName = config.ProductName;
@@ -497,7 +562,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
 
         AssetDatabase.Refresh();
 
-        Debug.Log("DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
+        AppLog.d(Tag, "DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
     }
 
     public static void BuildPkg(ChannelConfig config)
@@ -510,7 +575,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
 
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            Debug.LogError("workspace not in this config");
+            AppLog.e(Tag, "workspace not in this config");
             return;
         }
 
