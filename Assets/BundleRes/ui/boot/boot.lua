@@ -15,7 +15,7 @@ local boot = {
         11,22,33,44
     }
 }
-local self = boot
+local this = boot
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -37,15 +37,17 @@ function boot.coroutine_boot(first, ...)
             obj = asset
         end))
         local loading = CS.UnityEngine.GameObject.Instantiate(obj)
-
-		yield_return(CS.UpdateSys.Instance:CheckUpdate())
-        print("UpdateSys.CheckUpdate 1")
         
         obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
             obj = asset
         end))
         local manager = CS.UnityEngine.GameObject.Instantiate(obj)
+
+        this.manager = _G.manager
+
+		yield_return(CS.UpdateSys.Instance:CheckUpdate())
+        print("UpdateSys.CheckUpdate 1")
 
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
@@ -94,22 +96,29 @@ end
 function boot.FlatbuffersTest(buffer)
     local fb = require("flatbuffers")
     boot.flatbuffers = assert(require("flatbuffers"))
-    monster = assert(require("proto.MyGame.Example.Monster"))  
-    test = assert(require("proto.MyGame.Example.Equipment"))
-    vec3 = assert(require("proto.MyGame.Example.Vec3"))
+    monster = assert(require("MyGame.Example.Monster"))  
+    test = assert(require("MyGame.Example.Equipment"))
+    vec3 = assert(require("MyGame.Example.Vec3"))
 
     boot.fbbuf = fb.binaryArray.New(buffer)
-    boot.monsterN = monster.New()
     boot.monster = monster.GetRootAsMonster(boot.fbbuf, 0)
     boot.monstert = {
         Hp = boot.monster:Hp(),
         mana = boot.monster:Mana(),
         color = boot.monster:Color(),
     }
-    print("Mana():", boot.monster:Mana())
+    for k, v in pairs(getmetatable(boot.monster)["__index"])do
+        if k ~= "Init" and type(v) == "function" then
+            print("---" .. k, v, v(boot.monster, 0))
+            -- assert((function (  )
+                -- boot.monstert["----" .. k] = v(boot.monster, 1)
+            -- end)())
+        end
+    end
     -- for k,v in pairs(getmetatable(boot.monster)["__index"]) do 
     --     print("boot.monster", k, v)
     -- end
+    boot.monsterN = monster.New()
 end
 -- function boot.FixedUpdate()
 
