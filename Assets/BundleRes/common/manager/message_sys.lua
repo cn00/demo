@@ -9,12 +9,7 @@ local message_sys = {}
 local self = message_sys
 
 local msgs = {
-    ["key"] = {
-        callbacks = {
-
-        },
-        data = {}
-    },
+    -- key = {listeners}
 }
 self.msgs = msgs
 
@@ -60,19 +55,16 @@ function message_sys.FixedUpdate()
 end
 
 function message_sys.Trigger( key, data )
-    for k, v in pairs(msgs) do
-        for k1, v1 in pairs(v.callbacks) do
-            v1(v.data)
-        end
-        v.callbacks = {}
+    for k, v in pairs(msgs[key]) do
+        v(data)
     end
+    msgs[key] = nil
 end
 
 function message_sys.AddListener( key, fun )
     local event = msgs[key] or {}
-    event.callbacks = event.callbacks or {}
-    if event.callbacks[fun] == nil then
-        event.callbacks[fun] = fun
+    if event[fun] == nil then
+        event[fun] = fun
     end
     msgs[key] = event
 end

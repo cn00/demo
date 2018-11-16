@@ -44,7 +44,16 @@ function boot.coroutine_boot(first, ...)
         end))
         local manager = CS.UnityEngine.GameObject.Instantiate(obj)
 
-        this.manager = _G.manager
+        this.msgmanager = _G.manager.message_sys_LuaMonoBehaviour.luaTable
+
+        this.msgmanager.AddListener("test001", function ( data )
+            print("test001", data)
+        end)
+        print("AddListener test001")
+
+        yield_return(CS.UnityEngine.WaitForSeconds(5))
+        this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
+
 
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
@@ -67,7 +76,6 @@ function boot.coroutine_boot(first, ...)
 	    print("lua login 1", obj);
 	    local login = CS.UnityEngine.GameObject.Instantiate(obj);
 
-        -- yield_return(CS.UnityEngine.WaitForSeconds(3))
 
 	    loading:SetActive(false)
 

@@ -199,41 +199,20 @@ public static class LuaTableExtension
             };
             using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
             {
-                self.ForEach<int, object>((k, v) =>
+                self.ForEach<object, object>((k, v) =>
                 {
+                    var kk = k.ToString();
+                    if(k is int)
+                        kk =  "[" + kk + "]";
                     if (v is XLua.LuaTable)
                     {
                         var t = (v as XLua.LuaTable);
-                        t.Set("Name", "[" + k.ToString() + "]");
+                        t.Set("Name", kk);
                         t.Draw(indent);
                     }
                     else
                     {
-                        EditorGUILayout.BeginHorizontal();
-                        var tname = (v != null ? v.GetType().ToString() : "nil");
-                        var dotidx = tname.LastIndexOf('.');
-                        if(dotidx > 0)tname = tname.Substring(dotidx+1);
-                        EditorGUILayout.LabelField("[" + k + "]: " + tname);
-                        drawv(k,v);
-                        EditorGUILayout.EndHorizontal();
-                        if (v is LuaMonoBehaviour)
-                        {
-                            (v as LuaMonoBehaviour).luaTable.Draw(1+indent);
-                        }
-                    }
-                });
-
-                self.ForEach<string, object>((k, v) =>
-                {
-                    if (v is XLua.LuaTable)
-                    {
-                        var t = (v as XLua.LuaTable);
-                        t.Set("Name", k);
-                        t.Draw(indent);
-                    }
-                    else
-                    {
-                        if(k == "Foldout" || k == "Name")
+                        if(kk == "Foldout" || kk == "Name")
                         {
                             return;
                         }
@@ -241,7 +220,7 @@ public static class LuaTableExtension
                         var tname = (v != null ? v.GetType().ToString() : "nil");
                         var dotidx = tname.LastIndexOf('.');
                         if(dotidx > 0)tname = tname.Substring(dotidx+1);
-                        EditorGUILayout.LabelField(k + ": " + tname);
+                        EditorGUILayout.LabelField(kk + ": " + tname);
                         drawv(k,v);
                         EditorGUILayout.EndHorizontal();
                         if (v is LuaMonoBehaviour)
