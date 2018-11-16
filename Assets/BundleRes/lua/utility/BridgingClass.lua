@@ -4,7 +4,7 @@ function BridgingClass.GetMetaTable( tab )
 	local mt = getmetatable(tab)
 	-- print("BridgingClass.GetMetaTable", tab, mt)
 	-- if mt ~= nil then mt.Name = "__meta" end
-	return {mt}
+	return mt
 end
 
 function BridgingClass.GetTable(name, id, key)
