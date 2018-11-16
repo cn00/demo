@@ -16,6 +16,7 @@ local msgs = {
         data = {}
     },
 }
+self.msgs = msgs
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
@@ -58,13 +59,25 @@ function message_sys.FixedUpdate()
 
 end
 
-function message_sys.Update()
+function message_sys.Trigger( key, data )
     for k, v in pairs(msgs) do
-        for k1, v1 in ipairs(v.callbacks) do
+        for k1, v1 in pairs(v.callbacks) do
             v1(v.data)
         end
         v.callbacks = {}
     end
+end
+
+function message_sys.AddListener( key, fun )
+    local event = msgs[key] or {}
+    event.callbacks = event.callbacks or {}
+    if event.callbacks[fun] == nil then
+        event.callbacks[fun] = fun
+    end
+    msgs[key] = event
+end
+
+function message_sys.Update()
 end
 
 function message_sys.LateUpdate()

@@ -8,10 +8,10 @@ local util = require "lua.utility.xlua.util"
 
 local manager = {
     name = "manager",
-    G = G
 }
-local self = manager
-_G.manager = manager
+local this = manager
+G.manager = manager
+
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
@@ -29,39 +29,44 @@ _G.manager = manager
 -- end
 
 --AutoGenInit Begin
-function manager.AutoGenInit()
+function this.AutoGenInit()
+    this.master_manager_LuaMonoBehaviour = master_manager:GetComponent("LuaMonoBehaviour")
+    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
+    this.message_sys_LuaMonoBehaviour = message_sys:GetComponent("LuaMonoBehaviour")
 end
 --AutoGenInit End
 
-function manager.Awake()
-	self.AutoGenInit()
+function this.Awake()
+    this.AutoGenInit()
+    
+    print("manager.Awake")
+
 end
 
-function manager.OnEnable()
+function this.OnEnable()
     print("manager.OnEnable")
-
 end
 
-function manager.Start()
+function this.Start()
     print("manager.Start")
 
     --assert(coroutine.resume(manager.coroutine_demo()))
 
 end
 
-function manager.FixedUpdate()
+function this.FixedUpdate()
 
 end
 
-function manager.Update()
+function this.Update()
 
 end
 
-function manager.LateUpdate()
+function this.LateUpdate()
 
 end
 
-function manager.OnDestroy()
+function this.OnDestroy()
     print("manager.OnDestroy")
 
 end

@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4134402296093960}
   - component: {fileID: 114739290049429514}
   m_Layer: 0
-  m_Name: manager_sys
+  m_Name: message_sys
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,23 @@ GameObject:
   - component: {fileID: 4264924841105874}
   - component: {fileID: 114739862896866072}
   m_Layer: 0
-  m_Name: manager
+  m_Name: master_manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1895297008779552
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4910660610771502}
+  - component: {fileID: 114552578871805904}
+  m_Layer: 0
+  m_Name: network
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,8 +143,22 @@ Transform:
   - {fileID: 4264924841105874}
   - {fileID: 4128441584194778}
   - {fileID: 4134402296093960}
+  - {fileID: 4910660610771502}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4910660610771502
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895297008779552}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4359675727273526}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114453235478954606
 MonoBehaviour:
@@ -163,8 +193,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: common/manager/message_sys
-    LuaText: {fileID: 4900000, guid: 1b6d320c34773426f99e1093b08f9bcc, type: 3}
+    Path: common/manager/scene_manager
+    LuaText: {fileID: 4900000, guid: 1d5d1e0bb575642b99941a96b671d511, type: 3}
+  injections: []
+--- !u!114 &114552578871805904
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895297008779552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LuaScript:
+    Path: common/manager/network
+    LuaText: {fileID: 4900000, guid: ced76ee9937d14198a0e6b20b9c6073c, type: 3}
   injections: []
 --- !u!114 &114739290049429514
 MonoBehaviour:
@@ -178,8 +223,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
+    Path: common/manager/message_sys
+    LuaText: {fileID: 4900000, guid: 1b6d320c34773426f99e1093b08f9bcc, type: 3}
   injections: []
 --- !u!114 &114739862896866072
 MonoBehaviour:
