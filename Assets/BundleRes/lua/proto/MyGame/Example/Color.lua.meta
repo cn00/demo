@@ -4,7 +4,7 @@ ScriptedImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
   userData: 
-  assetBundleName: 
+  assetBundleName: lua/proto.bd
   assetBundleVariant: 
   script: {fileID: 11500000, guid: b860bff52791b405e81f1449154ffbf3, type: 3}
   scale: 1

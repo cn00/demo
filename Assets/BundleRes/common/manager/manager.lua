@@ -30,9 +30,9 @@ G.manager = manager
 
 --AutoGenInit Begin
 function this.AutoGenInit()
-    this.master_manager_LuaMonoBehaviour = master_manager:GetComponent("LuaMonoBehaviour")
-    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
     this.message_sys_LuaMonoBehaviour = message_sys:GetComponent("LuaMonoBehaviour")
+    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
+    this.network_LuaMonoBehaviour = network:GetComponent("LuaMonoBehaviour")
 end
 --AutoGenInit End
 

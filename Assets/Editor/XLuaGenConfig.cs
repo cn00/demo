@@ -14,6 +14,16 @@ using System.Runtime;
 using SQLite;
 using TableView;
 
+#if USE_UNI_LUA
+using LuaAPI = UniLua.Lua;
+using RealStatePtr = UniLua.ILuaState;
+using LuaCSFunction = UniLua.CSharpFunctionDelegate;
+#else
+using LuaAPI = XLua.LuaDLL.Lua;
+using RealStatePtr = System.IntPtr;
+using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
+#endif
+
 //配置的详细介绍请看Doc下《XLua的配置.doc》
 public static class XLuaGenConfig
 {
@@ -117,6 +127,7 @@ public static class XLuaGenConfig
         typeof(TableView.CellDidSelectEvent),
         typeof(TableView.CellDidHighlightEvent),
         typeof(Action<DataObject>),
+        typeof(LuaCSFunction),
         #endregion customer
 
         #region System

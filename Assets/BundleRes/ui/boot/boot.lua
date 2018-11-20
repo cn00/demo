@@ -5,6 +5,15 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 require("lua.utility.BridgingClass")
 
+local ffi = require "ffi"
+ffi.cdef [[
+    struct testT
+    {
+        char* name;
+        int id;
+    }
+]]
+
 local boot = {
     1, 2, 3, 4,
     s = "sssss",
@@ -49,6 +58,12 @@ function boot.coroutine_boot(first, ...)
         this.msgmanager.AddListener("test001", function ( data )
             print("test001", data)
         end)
+        this.msgmanager.AddListener("test001", function ( data )
+            print("test001 11", data)
+        end)
+        this.msgmanager.AddListener("test002", function ( data )
+            print("test002", data)
+        end)
         print("AddListener test001")
 
         yield_return(CS.UnityEngine.WaitForSeconds(5))
@@ -61,13 +76,13 @@ function boot.coroutine_boot(first, ...)
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
 
-        obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("data/fb/monsterdata_txt.mon.txt", function(asset)
-            obj = asset.Data
-        end))
-        boot.fbtestdata = obj
-        print("fbtestdata:", obj)
-        boot.FlatbuffersTest(obj)
+        -- obj = nil
+        -- yield_return(CS.AssetSys.Instance:GetAsset("data/fb/monsterdata_txt.mon.txt", function(asset)
+        --     obj = asset.Data
+        -- end))
+        -- boot.fbtestdata = obj
+        -- print("fbtestdata:", obj)
+        -- boot.FlatbuffersTest(obj)
 
 	    obj = nil
 	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)

@@ -6,6 +6,16 @@ using System.Linq;
 using UnityEngine;
 using XLua;
 
+#if USE_UNI_LUA
+using LuaAPI = UniLua.Lua;
+using RealStatePtr = UniLua.ILuaState;
+using LuaCSFunction = UniLua.CSharpFunctionDelegate;
+#else
+using LuaAPI = XLua.LuaDLL.Lua;
+using RealStatePtr = System.IntPtr;
+using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
+#endif
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -118,6 +128,13 @@ public class LuaSys : SingleMono<LuaSys>
     public override IEnumerator Init()
     {
         luaEnv.AddLoader(Require);
+
+        // luaEnv.AddBuildin("socket.socket", XLua.StaticLuaCallbacks.LoadSocketCore);
+        // luaEnv.AddBuildin("socket.util", XLua.LuaDLL.Lua.LoadSocketScripts);
+        luaEnv.AddBuildin("mime.core", XLua.LuaDLL.Lua.LoadSocketMime);
+        luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
+        luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFfi);
+
         yield return base.Init();
     }
 

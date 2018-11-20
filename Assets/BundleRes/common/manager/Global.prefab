@@ -55,9 +55,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PackagePath:
-  - lua/proto/
+  - lua/
   - lua/plugins/
   - lua/utility/
+  - lua/proto/
 --- !u!114 &114948996167133382
 MonoBehaviour:
   m_ObjectHideFlags: 1

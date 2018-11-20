@@ -59,22 +59,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1412133623965120
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4264924841105874}
-  - component: {fileID: 114739862896866072}
-  m_Layer: 0
-  m_Name: master_manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1895297008779552
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,7 +86,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4359675727273526}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4134402296093960
 Transform:
@@ -115,20 +99,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4359675727273526}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4264924841105874
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1412133623965120}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4359675727273526}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4359675727273526
 Transform:
@@ -140,7 +111,6 @@ Transform:
   m_LocalPosition: {x: 604.01245, y: 420.12598, z: -1.9948907}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4264924841105874}
   - {fileID: 4128441584194778}
   - {fileID: 4134402296093960}
   - {fileID: 4910660610771502}
@@ -158,7 +128,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4359675727273526}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114453235478954606
 MonoBehaviour:
@@ -175,11 +145,11 @@ MonoBehaviour:
     Path: common/manager/manager
     LuaText: {fileID: 4900000, guid: 31079773e6ebb422f9a104d1b31fea84, type: 3}
   injections:
-  - obj: {fileID: 1412133623965120}
+  - obj: {fileID: 1166545898124404}
     exportComIdx: 1
   - obj: {fileID: 1360762031260614}
     exportComIdx: 1
-  - obj: {fileID: 1166545898124404}
+  - obj: {fileID: 1895297008779552}
     exportComIdx: 1
 --- !u!114 &114543841820642590
 MonoBehaviour:
@@ -217,21 +187,6 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1166545898124404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LuaScript:
-    Path: common/manager/message_sys
-    LuaText: {fileID: 4900000, guid: 1b6d320c34773426f99e1093b08f9bcc, type: 3}
-  injections: []
---- !u!114 &114739862896866072
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1412133623965120}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
