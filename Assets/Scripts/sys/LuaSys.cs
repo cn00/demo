@@ -57,10 +57,6 @@ public class LuaSys : SingleMono<LuaSys>
         return luaTable;
     }
 
-    // public byte[] Require(string filename)
-    // {
-    //     return Require(ref filename);
-    // }
     public byte[] Require(ref string luapath)
     {
         return Require(luapath);
@@ -86,14 +82,8 @@ public class LuaSys : SingleMono<LuaSys>
 #endif
         {
             var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName + ".txt");
-            // if(data == null)
-            // {
-            //     data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName2 + ".txt");
-            // }
             if(data!=null)
                 bytes = data.bytes;
-            // else
-            //     AppLog.e(Tag, luapath + " lua not found");
         }
 #if UNITY_EDITOR
         else
@@ -102,25 +92,11 @@ public class LuaSys : SingleMono<LuaSys>
             {
                 bytes = File.ReadAllBytes(BuildConfig.BundleResRoot + assetName);
             }
-            // else if(File.Exists(BuildConfig.BundleResRoot + assetName2))
-            // {
-            //     bytes = File.ReadAllBytes(BuildConfig.BundleResRoot + assetName2);
-            // }
-            // else
-            // {
-            //     AppLog.e(Tag, "[{0}] or [{1}] not found.", assetName, assetName2);
-            // }
         }
 #endif
         if(bytes == null && retry < PackagePath.Length)
         {
             bytes = Require(luapath, PackagePath[retry], 1+retry);
-            AppLog.d(Tag, "filaly: retry={0}, luapath={1}", retry, PackagePath[retry] + luapath);
-
-            // if(retry == 0)
-            //     bytes = Require("lua/plugins/" + luapath, ++retry);
-            // if(retry == 1)
-            //     bytes = Require("lua/utility/" + luapath, ++retry);
         }
         return bytes;
     }
@@ -150,12 +126,20 @@ public class LuaSys : SingleMono<LuaSys>
     // }
 
     [CSharpCallLua]
-    public delegate object TableDelegate(LuaTable table);
-    public object CallLuaHelp(string luaMethodPath, LuaTable table)
+    public delegate object LuaFuncDelegate(object luaobj,object luaobj2);
+    Dictionary<string, LuaFuncDelegate> mLuaFuncDelegate = new Dictionary<string, LuaFuncDelegate>();
+    public LuaFuncDelegate GetLuaFunc(LuaTable self, string luaMethodPath)
     {
-        var tabledelegate = GlobalEnv.Global.GetInPath<TableDelegate>(luaMethodPath);
-        object outData = tabledelegate(table);
-        return outData;
+        LuaFuncDelegate luafun = null;
+        if(!mLuaFuncDelegate.TryGetValue(luaMethodPath, out luafun))
+        {
+            luafun = mLuaFuncDelegate[luaMethodPath] = self.GetInPath<LuaFuncDelegate>(luaMethodPath);
+        }
+        return luafun;
+    }
+    public LuaFuncDelegate GetGLuaFunc(string luaMethodPath)
+    {
+        return GetLuaFunc(GlobalEnv.Global, luaMethodPath);
     }
 
     public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")

@@ -3,59 +3,29 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
-local util = require "lua.utility.sprotoparser"
 local socket = require "lua.socket.socket"
-for k,v in pairs(socket) do print (k,v) end
+local sprotoparser = require "lua.utility.sprotoparser"
 
 local http = require "socket.http"
 local ltn12 = require "socket.ltn12"
-print("require http", http)
 
-local response_body = {}  
-local post_data = "post_data"  
-local res, code, headers, status = http.request "http://localhost:8008"
--- local res, code, headers, status = http.request
--- {  
--- 	-- url = "http://anbolihua.iteye.com/blog/2316423",
--- 	url = "http://localhost:8008/index.html",
--- 	method = "GET",
--- 	-- headers =
--- 	-- {
--- 	-- 	["Content-Type"] = "text/html; charset=utf-8",
--- 	-- 	-- ["Content-Length"] = #post_data,
--- 	-- },
--- 	source = ltn12.source.string(post_data),
--- 	sink = ltn12.sink.table(response_body)
--- }
-print("http.request", res, code, headers, status)
-for k,v in pairs(headers) do print(k, v) end
-
-
-
-local lpeg = require "lpeg"
-local ffi = require "ffi"
--- print("--------")
---     for k, v in pairs(lpeg) do
---         print("lpeg", k, v)
---     end
-    --[[
-        dns	table: 0x14d1024c0
-        skip	function: 0x139fafc90
-        _SETSIZE	1024.0
-        protect	function: 0x139faead0
-        select	function: 0x139fb2cf0
-        udp6	function: 0x139fb4e00
-        sleep	function: 0x139fb42f0
-        _VERSION	LuaSocket 3.0-rc1
-        gettime	function: 0x139fb42a0
-        __unload	function: 0x139fafcd0
-        tcp	function: 0x139fb3c30
-        tcp6	function: 0x139fb3c40
-        connect	function: 0x139fb3c50
-        udp	function: 0x139fb4df0
-        newtry	function: 0x139faea70
-    ]]
-print("--------")
+local response_body = {}
+local post_data = "post_data"
+-- local res, code, headers, status = http.request "http://localhost:8008"
+local res, code, headers, status = http.request
+{  
+	url = "http://anbolihua.iteye.com/blog/2316423",
+	-- url = "http://localhost:8008/index.html",
+	method = "GET",
+	headers =
+	{
+		["Content-Type"] = "text/html; charset=utf-8",
+		-- ["Content-Length"] = #post_data,
+	},
+	source = ltn12.source.string(post_data),
+	sink = ltn12.sink.table(response_body)
+}
+print("http.request", util.dump {res, code, headers, status, response_body=response_body})
 
 local Tag = "[network]"
 local network = {

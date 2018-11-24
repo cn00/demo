@@ -206,7 +206,7 @@ public class Inspector
         }
         else if (obj is XLua.LuaTable)
         {
-            (obj as XLua.LuaTable).Draw();
+            (obj as XLua.LuaTable).Draw(name);
         }
         else if (obj is UnityEngine.Object)
         {
@@ -361,7 +361,7 @@ public class Inspector
                 }
                 else if (v is XLua.LuaTable)
                 {
-                    (v as XLua.LuaTable).Draw();
+                    (v as XLua.LuaTable).Draw(name);
                 }
                 else if (v is UnityEngine.Object)
                 {

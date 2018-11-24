@@ -88,8 +88,27 @@ public static class LuaTableExtension
 {
     public static LuaTable GetMetaTable(this XLua.LuaTable self)
     {
-        var meta = LuaSys.Instance.CallLuaHelp("BridgingClass.GetMetaTable", self) as LuaTable;
+        var meta = LuaSys.Instance.GetGLuaFunc("BridgingClass.GetMetaTable")(self, null) as LuaTable;
         return meta;
+    }
+    public static string GetFuncId(this XLua.LuaFunction self)
+    {
+        var id = LuaSys.Instance.GetGLuaFunc("BridgingClass.GetFuncId")(self, null) as string;
+        return id;
+    }
+
+    public static void RawSet(this XLua.LuaTable self, object k, object v)
+    {
+        LuaTable kv = LuaSys.Instance.luaEnv.NewTable();
+        kv.Set("k", k);
+        kv.Set("v", v);
+        LuaSys.Instance.GetGLuaFunc("BridgingClass.RawSet")(self, kv);
+    }
+
+
+    public static string ToStringLua(this XLua.LuaTable self)
+    {
+        return LuaSys.Instance.GetGLuaFunc("BridgingClass.ToStringLua")(self, null) as string;
     }
 
     public static string ToString(this XLua.LuaTable self, string fmt = null, int indent = 0, bool strfun = false)
@@ -152,15 +171,19 @@ public static class LuaTableExtension
     }
 #if UNITY_EDITOR
     public delegate object ValueDelegate(object k, object o);
-    public static void Draw(this XLua.LuaTable self, int indent = 0, GUILayoutOption[] guiOpts = null)
+    public static void Draw(this XLua.LuaTable self, string ltname = "luat", int indent = 0, GUILayoutOption[] guiOpts = null)
     {
+        LuaSys.Instance.GetGLuaFunc("BridgingClass.Draw")(self, null);
+        // if(EditorGUI.indentLevel > 5)
+            return;
         EditorGUI.indentLevel += indent;
-        var name = self.ContainsKey("Name") ? self.Get<string>("Name"):"";
+        var name = (self.ContainsKey("Name") ? self.Get<string>("Name"):ltname);
         var Foldout = self.ContainsKey("Foldout") ? self.Get<bool>("Foldout"):false;
-        Foldout = EditorGUILayout.Foldout(Foldout, name + ": LuaTable", true);
-        self.Set("Foldout", Foldout);
+        Foldout = EditorGUILayout.Foldout(Foldout, name + " " + self.ToStringLua(), true);
+        self.RawSet("Foldout", Foldout);
         if (Foldout)
         {
+            self.RawSet("Drawed", true);
             ValueDelegate drawv = (k, v)=>{
                 if (v is bool)
                 {
@@ -195,6 +218,15 @@ public static class LuaTableExtension
                 {
                     EditorGUILayout.ObjectField((v as Component).gameObject, typeof(UnityEngine.Object), true);
                 }
+                else if (v is LuaFunction)
+                {
+                    var fun = v as LuaFunction;
+                    EditorGUILayout.TextField(fun.GetFuncId());
+                }
+                else if (v != null)
+                {
+                    EditorGUILayout.LabelField(v.ToString());
+                }
                 return v;
             };
             using (var verticalScope = new EditorGUILayout.VerticalScope("box"))
@@ -202,13 +234,24 @@ public static class LuaTableExtension
                 self.ForEach<object, object>((k, v) =>
                 {
                     var kk = k.ToString();
-                    if(k is int)
+                    // if (kk == "_G")
+                    //     return;
+                    if(k is Int64)
                         kk =  "[" + kk + "]";
                     if (v is XLua.LuaTable)
                     {
                         var t = (v as XLua.LuaTable);
-                        t.Set("Name", kk);
-                        t.Draw(indent);
+                        t.RawSet("Name", kk);
+                        var Drawed = t.ContainsKey("Drawed") ? t.Get<bool>("Drawed"):false;
+                        if(!Drawed)
+                        {
+                            // t.RawSet("Drawed", true);
+                            t.Draw(kk, 1);
+                        }
+                        else
+                        {
+                            EditorGUILayout.LabelField(kk + "->" + t.ToStringLua());
+                        }
                     }
                     else
                     {
@@ -217,28 +260,32 @@ public static class LuaTableExtension
                             return;
                         }
                         EditorGUILayout.BeginHorizontal();
-                        var tname = (v != null ? v.GetType().ToString() : "nil");
-                        var dotidx = tname.LastIndexOf('.');
-                        if(dotidx > 0)tname = tname.Substring(dotidx+1);
-                        EditorGUILayout.LabelField(kk + ": " + tname);
-                        drawv(k,v);
+                        {
+                            var tname = (v != null ? v.GetType().ToString() : "nil");
+                            var dotidx = tname.LastIndexOf('.');
+                            if(dotidx > 0)tname = tname.Substring(dotidx+1);
+                            EditorGUILayout.LabelField(kk + ":" + tname);
+                            drawv(k,v);
+                        }
                         EditorGUILayout.EndHorizontal();
                         if (v is LuaMonoBehaviour)
                         {
-                            (v as LuaMonoBehaviour).luaTable.Draw(1+indent);
+                            var t = (v as LuaMonoBehaviour).luaTable;
+                            t.Draw("LuaMono", 1);
                         }
                     }
-                });
+                });//ForEach
 
                 // metatable
                 var meta = self.GetMetaTable();
                 if(meta != null)
                 {
-                    meta.Set("Name", "__meta");
-                    meta.Draw(indent+1);
+                    meta.Draw("__meta", 1);
                 }
             }
-        }
+            self.RawSet("Drawed", false);
+        }//if
+
         EditorGUI.indentLevel -= indent;
     }
 #endif
