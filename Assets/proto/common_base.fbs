@@ -1,0 +1,11 @@
+// Example IDL file for our monster's schema.
+
+namespace common;
+
+struct Vec3 {
+  x:float;
+  y:float;
+  z:float;
+}
+
+enum Color:byte { Red = 0, Green, Blue = 2 }

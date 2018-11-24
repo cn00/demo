@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 79c2b6953d8064c40be2afaf7cb9e996
+guid: 509ff4b71caf945adb1790baf03dac6b
 ScriptedImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
   userData: 
-  assetBundleName: lua/proto.bd
+  assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: b860bff52791b405e81f1449154ffbf3, type: 3}
   scale: 1

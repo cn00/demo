@@ -1,0 +1,37 @@
+// Example IDL file for our monster's schema.
+
+// https://cloud.tencent.com/developer/article/1199066
+
+include "common_base.fbs";
+include "common_obj.fbs";
+
+
+namespace Sample;
+
+table shareT{
+  pos:common.Vec3;
+  mana:short = 150;
+}
+
+table Monster_c2s {
+  pos:common.Vec3;
+  mana:short = 150;
+  hp:short = 100;
+  name:string;
+  st:shareT;
+}
+root_type Monster_c2s;
+
+table Monster_s2c {
+  pos:common.Vec3;
+  mana:short = 150;
+  hp:short = 100;
+  name:string;
+  // friendly:bool = false (deprecated);
+  inventory:[ubyte];
+  color:common.Color = Blue;
+  weapons:[common.Weapon];
+  equipped:common.Equipment;
+  st:shareT;
+}
+root_type Monster_s2c;

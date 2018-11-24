@@ -1,0 +1,19 @@
+// Example IDL file for our monster's schema.
+
+namespace common;
+
+table Weapon {
+  name:string;
+  damage:short;
+}
+
+table Jewery {
+  name:string;
+  damage:short;
+}
+table Jewery2 {
+  name:string;
+  damage:short;
+}
+
+union Equipment { Jewery,Weapon,Jewery2 } // Optionally add more tables.

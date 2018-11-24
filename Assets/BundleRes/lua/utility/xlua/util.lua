@@ -134,13 +134,65 @@ local function createdelegate(delegate_cls, obj, impl_cls, method_name, paramete
     return CS.System.Delegate.CreateDelegate(typeof(delegate_cls), obj, m)
 end
 
-local function dump(tb, indent)
-    if typeof(tb) ~= "table" then return typeof(tb) end
-    local sb = {}
-
-    return table.concat(sb, ",")
+local function dump(obj, breakline)
+    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
+    getIndent = function(level)
+        if breakline == nil or breakline == true then
+            return string.rep("\t", level)
+        else
+            return ""
+        end
+    end
+    quoteStr = function(str)
+        return '"' .. string.gsub(str, '"', '\"') .. '"'
+    end
+    wrapKey = function(val)
+        if breakline == nil or breakline == true then
+            if type(val) == "number" then
+                return "[" .. val .. "] = "
+            elseif type(val) == "string" then
+                return "[" .. quoteStr(val) .. "] = "
+            else
+                return "[" .. tostring(val) .. "] = "
+            end
+        else
+            if type(val) == "string" then
+                return quoteStr(val) .. " = "
+            else
+                return ""
+            end
+        end
+    end
+    wrapVal = function(val, level)
+        if type(val) == "table" then
+            return dumpObj(val, level)
+        elseif type(val) == "number" then
+            return val
+        elseif type(val) == "string" then
+            return quoteStr(val)
+        else
+            return tostring(val)
+        end
+    end
+    dumpObj = function(obj, level)
+        if type(obj) ~= "table" then
+            return wrapVal(obj)
+        end
+        level = level + 1
+        local tokens = {}
+        tokens[#tokens + 1] = "{"
+        for k, v in pairs(obj) do
+            tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+        end
+        tokens[#tokens + 1] = getIndent(level - 1) .. "}"
+        if breakline == nil or breakline == true then
+            return table.concat(tokens, "\n")
+        else
+            return table.concat(tokens, " ")
+        end
+    end
+    return dumpObj(obj, 0)
 end
-
 return {
     async_to_sync = async_to_sync,
     coroutine_call = coroutine_call,
@@ -150,4 +202,5 @@ return {
     hotfix_ex = hotfix_ex,
     bind = bind,
     createdelegate = createdelegate,
+    dump = dump,
 }

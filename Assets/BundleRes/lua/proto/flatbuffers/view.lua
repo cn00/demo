@@ -16,7 +16,7 @@ function m.New(buf, pos)
         bytes = type(buf) == "string" and binaryarray.New(buf) or buf,
         pos = pos
     }
-    setmetatable(o, {__index = mt, __metatable = mt_name})
+    setmetatable(o, {__index = mt, mt_name = mt_name})
     return o
 end
 
@@ -59,7 +59,7 @@ function mt:Vector(off)
 end
 
 function mt:Union(t2, off)
-    assert(getmetatable(t2) == mt_name)
+    assert(getmetatable(t2).mt_name == mt_name)
     N.UOffsetT:EnforceNumber(off)
     
     off = off + self.pos
