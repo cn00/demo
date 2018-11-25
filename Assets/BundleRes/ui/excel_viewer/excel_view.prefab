@@ -1827,8 +1827,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: 
-    LuaText: {fileID: 0}
+    Path: ui/excel_viewer/sheet_tab
+    LuaText: {fileID: 4900000, guid: 506e24b15a70f4a21a9bf36b4be8606a, type: 3}
   injections:
   - obj: {fileID: 1821950276844134}
     exportComIdx: 3

@@ -41,24 +41,25 @@ local function Draw(self, opt)
 	local name = (self["Name"] or opt.ltname);
 	local Foldout = self["Foldout"] or false;
 	if(type(Foldout) ~= "boolean")then Foldout = false end
-	Foldout = EditorGUILayout.Foldout(Foldout, name .. " " .. tostring(self), true);
+	Foldout = EditorGUILayout.Foldout(Foldout, name .. ": " .. tostring(self), true);
 	rawset(self, "Foldout", Foldout);
 	if (Foldout) then
 		-- rawset(self, "Drawed", true);
 		local drawv = function(k, v)
 			-- print("drawv_" .. tostring(k), type(v))
-			if (type(v) == "boolean") then
+			local typev = type(v)
+			if (typev == "boolean") then
 				local tmp = EditorGUILayout.Toggle(v);
 				self[k] = tmp;
-			elseif (type(v) == "number") then
+			elseif (typev == "number") then
 				local tmp = EditorGUILayout.LongField(v);
 				self[k] = tmp;
-			elseif (type(v) == "string") then
+			elseif (typev == "string") then
 				local tmp = EditorGUILayout.TextField(v);
 				self[k] = tmp;
-			elseif (type(v) == "function") then
+			elseif (typev == "function") then
 				EditorGUILayout.TextField(GetFuncId(v));
-			elseif (type(v) == "userdata") then
+			elseif (typev == "userdata") then
 				local vs = tostring(v)
 				if string.match( vs,"UnityEngine" ) or string.match( vs,"LuaMonoBehaviour" ) then
 					EditorGUILayout.ObjectField(v.gameObject, typeof(CS.UnityEngine.Object), true);

@@ -81,7 +81,7 @@ function boot.coroutine_boot(first, ...)
         end)
         print("AddListener test001")
 
-        yield_return(UnityEngine.WaitForSeconds(5))
+        yield_return(UnityEngine.WaitForSeconds(1))
         this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
 
 
@@ -93,10 +93,12 @@ function boot.coroutine_boot(first, ...)
 
         obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset("data/fb/monsterdata_txt.mon.txt", function(asset)
-            obj = asset.Data
+            print(asset)
+            -- obj = asset.text
+            obj = asset.bytes
         end))
         boot.fbtestdata = obj
-        print("fbtestdata:", obj)
+        print("fbtestdata:", #obj, obj)
         boot.FlatbuffersTest(obj)
 
 	    obj = nil

@@ -11,10 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
-  UseBundle: 0
+  UseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131871849113195790
+  LastBuildTime: 131876068179570180
   Version:
     Name: 
     Major: 1
@@ -22,46 +22,108 @@ MonoBehaviour:
     Patch: 0
   Ip: 10.23.22.233
   Port: 8008
-  ForceRebuild: 1
+  ForceRebuild: 0
   BuildScene: 0
   mGroups:
   - Foldout: 0
-    Name: video
+    Name: chapter_01
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: video/op.bd
-      mSize: 5853477
-      mMd5: 280F5BAF6F9A72BB17880E46C951485E
+    - mName: chapter_01/level_01.bd
+      mSize: 1734
+      mMd5: 8999C0EC5115C5242160AB94F8BAA03F
       mVersion: 1.1.0
   - Foldout: 0
-    Name: module_tmp
+    Name: chapter_02
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: module_tmp/Materials.bd
+    - mName: chapter_02/level_01.bd
+      mSize: 1734
+      mMd5: 21EAF3BB5883CD8100589266BF46C352
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: common
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: common/excel.bd
+      mSize: 12431
+      mMd5: BD7AFC5B063000A4D25A37A87BD351BE
+      mVersion: 1.1.0
+    - mName: common/global.bd
+      mSize: 1974
+      mMd5: A430EA6CDE9B5D11CB5336DFD3F27C57
+      mVersion: 1.1.0
+    - mName: common/manager.bd
+      mSize: 7251
+      mMd5: 7F706258C7E962FB1F8A4864D75C92F1
+      mVersion: 1.1.0
+    - mName: common/ui.bd
+      mSize: 8886
+      mMd5: 6B7764835741F4965B2FD47E041B8517
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: config
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: config/config.bd
+      mSize: 3519
+      mMd5: 89EA957D500ADD966D75626FA5A3398F
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: data
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: data/fb.bd
+      mSize: 2028
+      mMd5: 2E98EFF2B8BD5C2A2D2D9CC932DD3540
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: lua
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: lua/proto.bd
+      mSize: 7968
+      mMd5: 74B28974EE07F42BEDF6CC77D09623AD
+      mVersion: 1.1.0
+    - mName: lua/socket.bd
+      mSize: 20640
+      mMd5: DE3F101488FBA4BB913B686E04EB3C4D
+      mVersion: 1.1.0
+    - mName: lua/table.bd
+      mSize: 1675
+      mMd5: C93DEF9C30E1F69CB6653AFA6ACDE752
+      mVersion: 1.1.0
+    - mName: lua/utility.bd
+      mSize: 14529
+      mMd5: 4781F73CFF8669B54DBB9A3CB256F549
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: proto
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: proto/Sample.bd
       mSize: 0
       mMd5: 
       mVersion: 
-    - mName: module_tmp/clothe.bd
-      mSize: 1895782
-      mMd5: 6E95AAA73A5F86C1336726C1333B2B7E
+    - mName: proto/common.bd
+      mSize: 2424
+      mMd5: 8A0502CAADF8941DBB8581E2852AC884
       mVersion: 1.1.0
-    - mName: module_tmp/grid.bd
-      mSize: 28372
-      mMd5: 7BED4A9F19B4F519C4C28BE980C75296
-      mVersion: 1.1.0
-    - mName: module_tmp/tree02.bd
-      mSize: 901037
-      mMd5: FE23CD8E2AE3EE440B24D404E03A8FA9
-      mVersion: 1.1.0
-    - mName: module_tmp/unity_tree.bd
-      mSize: 102227
-      mMd5: BC9D01FB80D05C95409A4C61D8B12D86
-      mVersion: 1.1.0
-    - mName: module_tmp/water.bd
-      mSize: 1702
-      mMd5: 921309E8839F846A147E1232D885BBD9
+  - Foldout: 0
+    Name: truth
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: truth/index.bd
+      mSize: 30257
+      mMd5: 4A108A51A422F14A2DE2662297D430D3
       mVersion: 1.1.0
   - Foldout: 0
     Name: ui
@@ -69,12 +131,12 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: ui/boot.bd
-      mSize: 4406
-      mMd5: D919B67D95E41118D62D547115829CE3
+      mSize: 4675
+      mMd5: E766B6B24AD32F563D8FD0B570504A46
       mVersion: 1.1.0
     - mName: ui/excel_viewer.bd
-      mSize: 30596
-      mMd5: 9FF8AA39221B164AFC31D48BEEC9D3EE
+      mSize: 30598
+      mMd5: 30AC49B79472D6FD850851A1F0BB9298
       mVersion: 1.1.0
     - mName: ui/loading.bd
       mSize: 100082
@@ -96,96 +158,14 @@ MonoBehaviour:
       mSize: 16607
       mMd5: 651F6293C8AE1D765DEEDE56F5D68BEE
       mVersion: 1.1.0
-  - Foldout: 1
-    Name: lua
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: lua/socket.bd
-      mSize: 20658
-      mMd5: CCEEB28DA2B0147253A4ED49FCC89CA2
-      mVersion: 1.1.0
-    - mName: lua/utility.bd
-      mSize: 12041
-      mMd5: 91F6D58201B85E646C61A535F5E27E6B
-      mVersion: 1.1.0
-    - mName: lua/plugins.bd
-      mSize: 7936
-      mMd5: 970388BCF7F4DF5307908AD3AD7BBB6E
-      mVersion: 1.1.0
-    - mName: lua/proto.bd
-      mSize: 2958
-      mMd5: 840D84AD4555099AE863973DDAFBD3AC
-      mVersion: 1.1.0
-    - mName: lua/table.bd
-      mSize: 1675
-      mMd5: C93DEF9C30E1F69CB6653AFA6ACDE752
-      mVersion: 1.1.0
   - Foldout: 0
-    Name: common
+    Name: video
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: common/excel.bd
-      mSize: 12431
-      mMd5: BD7AFC5B063000A4D25A37A87BD351BE
-      mVersion: 1.1.0
-    - mName: common/global.bd
-      mSize: 1974
-      mMd5: A430EA6CDE9B5D11CB5336DFD3F27C57
-      mVersion: 1.1.0
-    - mName: common/manager.bd
-      mSize: 7578
-      mMd5: A19B60450C3AEF8F7F22223204D6CD2F
-      mVersion: 1.1.0
-    - mName: common/ui.bd
-      mSize: 8886
-      mMd5: 6B7764835741F4965B2FD47E041B8517
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: truth
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: truth/index.bd
-      mSize: 30257
-      mMd5: 4A108A51A422F14A2DE2662297D430D3
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: config
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: config/config.bd
-      mSize: 3770
-      mMd5: 4450B764E0ACDD7D1E5592368D17A805
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: data
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: data/fb.bd
-      mSize: 2028
-      mMd5: 2E98EFF2B8BD5C2A2D2D9CC932DD3540
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: chapter_01
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: chapter_01/level_01.bd
-      mSize: 1734
-      mMd5: 8999C0EC5115C5242160AB94F8BAA03F
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: chapter_02
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: chapter_02/level_01.bd
-      mSize: 1734
-      mMd5: 21EAF3BB5883CD8100589266BF46C352
+    - mName: video/op.bd
+      mSize: 5854094
+      mMd5: AF3DE638DCF6F06106A63F86E1BA0117
       mVersion: 1.1.0
   mChannels:
   - Name: ios

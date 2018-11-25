@@ -47,7 +47,7 @@ function op.OnEnable()
 end
 
 function op.Start()
-	print("op.Start")
+	print("op.Start", op.Camera_Camera, op.VideoPlayer_VideoPlayer, op.Back_Button)
 	
 	--assert(coroutine.resume(op.coroutine_demo()))
 end

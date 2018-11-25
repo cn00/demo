@@ -47,16 +47,14 @@ function this.AutoGenInit()
     this.SliderColumText_Text = SliderColumText:GetComponent("UnityEngine.UI.Text")
 end
 --AutoGenInit End
-function this.initSheetData(sheet)
-    this.dataSource = {}
-    print("initSheetData", sheet.FirstRowNum, sheet.LastRowNum)
-    for i = sheet.FirstRowNum, sheet.LastRowNum do
-        table.insert(this.dataSource, sheet[i])
-    end
-    this.count_Text.text = #this.dataSource
-    this.tableview_TableView:ReloadData()
-end
 
+function string.split(s, delimiter)
+    local result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
 function this.Awake()
     this.AutoGenInit()
     print("this.Awake")
@@ -85,7 +83,12 @@ function this.Awake()
             local cell = excel_row:GetCell(i)
             if cell ~= nil then
                 local s = cell:StrValue()
-                local tmp = math.ceil(#s / 3 * 35 /(1700 / this.ColumnPerPage)) * hightperline
+                local ss = s:split('\n')
+                local lc = 1
+                for i,v in ipairs(ss) do
+                    lc = lc + 1 + math.ceil(#v / 3 * 40 /(1700 / this.ColumnPerPage))
+                end
+                local tmp = lc * hightperline
                 if tmp > size then size = tmp end
             end
         end
@@ -144,6 +147,7 @@ function this.Awake()
             end
             lua_sheet_tab.Button_Image.color = selcolor
             this.initSheetData(sheet)
+            this.tableview_TableView:ReloadData()
         end)
         table.insert(this.SheetTabs, lua_sheet_tab)
         SheetContent.transform.sizeDelta = {x = book.NumberOfSheets * 155, y = 50}
@@ -154,6 +158,7 @@ function this.Awake()
     if #this.Sheets > 0 then
         local sheet = this.Sheets[1].sheet
         this.initSheetData(sheet)
+        -- this.tableview_TableView:ReloadData()
         this.SliderColum_Slider.value = this.ColumnPerPage / this.ColumnPerPageMax
     end
     
@@ -198,6 +203,15 @@ function this.Awake()
     this.back_Button.onClick:AddListener(function()
         this.Back()
     end)
+end
+
+function this.initSheetData(sheet)
+    this.dataSource = {}
+    print("initSheetData", sheet.FirstRowNum, sheet.LastRowNum)
+    for i = sheet.FirstRowNum, sheet.LastRowNum do
+        table.insert(this.dataSource, sheet[i])
+    end
+    this.count_Text.text = #this.dataSource
 end
 
 function this.Back()
