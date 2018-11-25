@@ -8,6 +8,8 @@
 
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using XLua;
 using System.Runtime;
@@ -60,40 +62,6 @@ public static class XLuaGenConfig
         typeof(SQLite3),
         #endregion customer types
 
-        #region UnityEngine
-        typeof(UnityEngine.Application),
-        typeof(UnityEngine.ScreenCapture),
-        typeof(UnityEngine.Object),
-        typeof(UnityEngine.Vector2),
-        typeof(UnityEngine.Vector3),
-        typeof(UnityEngine.Vector4),
-        typeof(UnityEngine.Quaternion),
-        typeof(UnityEngine.Color),
-        typeof(UnityEngine.Ray),
-        typeof(UnityEngine.Bounds),
-        typeof(UnityEngine.Ray2D),
-        typeof(UnityEngine.Time),
-        typeof(UnityEngine.GameObject),
-        typeof(UnityEngine.Component),
-        typeof(UnityEngine.Behaviour),
-        typeof(UnityEngine.Transform),
-        typeof(UnityEngine.Rect),
-        typeof(UnityEngine.RectTransform),
-        typeof(UnityEngine.WaitForSeconds),
-        typeof(UnityEngine.Resources),
-        typeof(UnityEngine.TextAsset),
-        typeof(UnityEngine.Texture2D),
-        typeof(UnityEngine.Keyframe),
-        typeof(UnityEngine.AnimationCurve),
-        typeof(UnityEngine.AnimationClip),
-        typeof(UnityEngine.MonoBehaviour),
-        typeof(UnityEngine.ParticleSystem),
-        typeof(UnityEngine.SkinnedMeshRenderer),
-        typeof(UnityEngine.Renderer),
-        typeof(UnityEngine.WWW),
-        typeof(UnityEngine.Debug),
-        #endregion UnityEngine
-
         #region system
         typeof(System.Reflection.BindingFlags),
         typeof(System.Delegate),
@@ -105,9 +73,49 @@ public static class XLuaGenConfig
         typeof(Action<byte[]>),
         typeof(Action<double>),
         typeof(Action<UnityEngine.Object>),
-        typeof(Action<DataObject>),
         #endregion system
     };
+
+    [LuaCallCSharp]
+    public static List<Type> LuaCallCSharpUnityEngine
+    {
+        get
+        {
+            // UnityEngine.ADBannerView mm;
+            var l = new []{
+                    "UnityEngine"
+                    ,"UnityEngine.UI"
+                    ,"UnityEngine.AudioModule"
+                    ,"UnityEngine.CoreModule"
+                    ,"UnityEngine.VideoModule"
+                }
+                .Select(s => Assembly //
+                    .Load(s)
+                    .GetTypes()
+                    .Where(type => type.IsVisible
+                        // && !type.IsDefined(typeof(ObsoleteAttribute), true) // innerclass not work
+                        && !type.FullName.EndsWith("Attribute")
+                    )
+                )
+                .SelectMany(i => i)
+                .ToList();
+            //claen all obsolete innerclass
+            var obsolete = l.Where(type => type.GetCustomAttributes(true).Any(a => a.GetType() == typeof(ObsoleteAttribute))).Select(i=>i.FullName)
+            // no support
+            .Append("UnityEngine.TrailRenderer")
+            .Append("UnityEngine.LineRenderer")
+            .Append("Unity.Jobs.LowLevel.Unsafe")
+            .Append("Unity.Collections.LowLevel.Unsafe.UnsafeUtility")
+            ;
+            foreach(var i in obsolete){
+                // AppLog.d("obsolete", i);
+                // l.RemoveAll(ii => ii.FullName.StartsWith(i.FullName));// why not work
+                l = l.Where(ii => !ii.FullName.StartsWith(i)).ToList();
+            }
+            l.Sort((i,j)=>i.FullName.CompareTo(j.FullName));
+            return l;
+        }
+    }
 
     [Hotfix]
     public static List<Type> HotfixList = new List<Type>()
@@ -126,7 +134,6 @@ public static class XLuaGenConfig
         typeof(TableView.TableViewController.OnSelectRow),
         typeof(TableView.CellDidSelectEvent),
         typeof(TableView.CellDidHighlightEvent),
-        typeof(Action<DataObject>),
         typeof(LuaCSFunction),
         #endregion customer
 
@@ -159,6 +166,7 @@ public static class XLuaGenConfig
     //黑名单
     [BlackList]
     public static List<List<string>> BlackList = new List<List<string>>()  {
+        new List<string>(){"UnityEngine.TrailRenderer", "GetPositions"},
         new List<string>(){"UnityEngine.WWW", "GetMovieTexture"},
     #if UNITY_WEBGL
         new List<string>(){"UnityEngine.WWW", "threadPriority"},
