@@ -165,19 +165,6 @@ public static class BundleHelper
 
 }
 
-public class DataObject : UnityEngine.Object
-{
-    public byte[] Data { get; protected set; }
-    public DataObject(byte[] data)
-    {
-        Data = data;
-    }
-    public override string ToString()
-    {
-        return Encoding.UTF8.GetString(Data);
-    }
-}
-
 public class AssetSys : SingleMono<AssetSys>
 {
     public const string Tag = "AssetSys";
@@ -342,12 +329,12 @@ public class AssetSys : SingleMono<AssetSys>
     /// </summary>
     public IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
     {
-    //     yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
-    // }
+        yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
+    }
 
-    // public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
-    // {
-        UnityEngine.Object resObj = default(UnityEngine.Object);
+    public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
+    {
+        T resObj = null;//default(T);
 #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
 #endif
@@ -362,17 +349,15 @@ public class AssetSys : SingleMono<AssetSys>
                     var textPath = assetSubPath;
                     if(textPath.EndsWith(".lua"))
                         textPath += ".txt";
-                    var textAsset = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath);
-                    if(textAsset != null)
-                        resObj = new DataObject(textAsset.bytes);
-                    else
+                    resObj = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath) as T;
+                    if(resObj == null)
                     {
                         AppLog.e(Tag, textPath + " not found.");
                     }
                 }
                 else
                 {
-                    resObj = bundle.LoadAsset<UnityEngine.Object>(BuildConfig.BundleResRoot + assetSubPath);
+                    resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
                 }
             });
         }
@@ -380,18 +365,10 @@ public class AssetSys : SingleMono<AssetSys>
         // 编辑器从原始文件加载资源
         else
         {
-            // text
-            AppLog.d(Tag, "from file: " + assetSubPath);
-            if(assetSubPath.IsText())
-            {
-                resObj = new DataObject(File.ReadAllBytes(BuildConfig.BundleResRoot + assetSubPath));
-            }
-            else
-            {
-                resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(BuildConfig.BundleResRoot + assetSubPath);
-            }
+            resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
 #endif
+        AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj.GetType());
         if(callBack != null)
             callBack(resObj);
     }
@@ -576,16 +553,14 @@ public class AssetSys : SingleMono<AssetSys>
     }
 
     // TODO: not complete
-    public static T WwwSync<T>(string url) where T : UnityEngine.Object
+    public static WWW WwwSync<T>(string url) where T : UnityEngine.Object
     {
         WWW www = new WWW(url);
         while(!www.isDone && string.IsNullOrEmpty(www.error))
         {
             Thread.Sleep(1000);
         }
-        UnityEngine.Object obj = new DataObject(www.bytes);
-        www.Dispose();
-        return (T)obj;
+        return www;
     }
 
     /// <summary>
