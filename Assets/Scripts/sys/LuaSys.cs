@@ -75,8 +75,7 @@ public class LuaSys : SingleMono<LuaSys>
 
         byte[] bytes = null;
         var assetName = search + luapath.Replace(".", "/") + LuaExtension;
-        // var assetName2 = "lua/plugins/" + luapath.Replace(".", "/") + LuaExtension;
-        AppLog.d(Tag, "require: " + assetName);
+        // AppLog.d(Tag, "require: " + assetName);
 #if UNITY_EDITOR
         if(BuildConfig.Instance().UseBundle)
 #endif
