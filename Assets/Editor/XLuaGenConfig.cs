@@ -63,20 +63,24 @@ public static class XLuaGenConfig
         #endregion customer types
 
         #region system
-        typeof(System.Reflection.BindingFlags),
+        typeof(System.Object),
         typeof(System.Delegate),
         typeof(System.Convert),
-        typeof(System.Object),
-        typeof(System.Collections.Generic.List<int>),
-        typeof(Action),
-        typeof(Action<string>),
-        typeof(Action<byte[]>),
-        typeof(Action<double>),
-        typeof(Action<UnityEngine.Object>),
+        typeof(System.Collections.IList),
+        typeof(System.Reflection.BindingFlags),
         #endregion system
+
+        #region UnityEngine
+        typeof(UnityEngine.Object),
+        typeof(UnityEngine.Texture2D),
+        typeof(UnityEngine.GameObject),
+        typeof(UnityEngine.WaitForSeconds),
+        typeof(UnityEngine.AssetBundle),
+        typeof(UnityEngine.WWW),
+        #endregion
     };
 
-    [LuaCallCSharp]
+    // [LuaCallCSharp]
     public static List<Type> LuaCallCSharpUnityEngine
     {
         get
@@ -141,12 +145,16 @@ public static class XLuaGenConfig
         typeof(System.Action),
         typeof(System.Collections.IEnumerator),
         typeof(Func<double, double, double>),
-        typeof(Action<string>),
-        typeof(Action<double>),
-        typeof(Action<System.Object>),
-        typeof(Action<UnityEngine.Object>),
-        // typeof(Action<UnityEngine.Texture2D>),
-        typeof(Action<UnityEngine.WWW>),
+        typeof(System.Action<byte[]>),
+        typeof(System.Action<string>),
+        typeof(System.Action<double>),
+        typeof(System.Collections.IList),
+        typeof(System.Action<System.Object>),
+        typeof(System.Action<UnityEngine.Object>),
+        typeof(System.Action<UnityEngine.GameObject>),
+        typeof(System.Action<UnityEngine.AssetBundle>),
+        typeof(System.Action<UnityEngine.Texture2D>),
+        typeof(System.Action<UnityEngine.WWW>),
         #endregion System
 
         #region UnityEngine
@@ -154,6 +162,7 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Events.UnityEvent<string>),
         typeof(UnityEngine.Events.UnityEvent<float>),
         typeof(UnityEngine.Events.UnityEvent<int>),
+
         typeof(UnityEngine.Events.UnityAction),
         typeof(UnityEngine.Events.UnityAction<string>),
         typeof(UnityEngine.Events.UnityAction<float>),

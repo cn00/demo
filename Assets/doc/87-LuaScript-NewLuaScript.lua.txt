@@ -4,6 +4,10 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
+local print = function ( ... )
+    _G.print("[#SCRIPTNAME#]", ...)
+end
+
 local #SCRIPTNAME# = {}
 local this = #SCRIPTNAME#
 
@@ -11,15 +15,13 @@ local this = #SCRIPTNAME#
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
 -- function this.coroutine_demo()
---     util.coroutine_call(function()
---         print('#SCRIPTNAME# coroutine start!')
---         yield_return(UnityEngine.WaitForSeconds(1))
---         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---             obj = asset
---         end))
---         local gameObj = GameObject.Instantiate(obj)
---     end)
+--     print('coroutine start!')
+--     yield_return(UnityEngine.WaitForSeconds(1))
+--     local obj = nil
+--     yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--         obj = asset
+--     end))
+--     local gameObj = GameObject.Instantiate(obj)
 -- end
 
 --AutoGenInit Begin
@@ -33,7 +35,7 @@ end
 -- function this.OnEnable() end
 
 function this.Start()
-	--assert(coroutine.resume(this.coroutine_demo()))
+	--util.coroutine_call(this.coroutine_demo)
 end
 
 -- function this.FixedUpdate() end

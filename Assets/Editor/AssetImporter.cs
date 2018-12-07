@@ -30,10 +30,10 @@ public class AssetImporter : UnityEditor.AssetPostprocessor
     //This is called after importing of any number of assets is complete (when the Assets progress bar has reached the end).
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        foreach (string str in importedAssets)
-        {
-            Debug.Log("Reimported Asset: " + str);
-        }
+        // foreach (string str in importedAssets)
+        // {
+        //     Debug.Log("Reimported Asset: " + str);
+        // }
         foreach (string str in deletedAssets)
         {
             Debug.Log("Deleted Asset: " + str);

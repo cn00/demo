@@ -11,10 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
-  UseBundle: 1
+  UseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131876068179570180
+  LastBuildTime: 131886487694459930
   Version:
     Name: 
     Major: 1
@@ -26,22 +26,75 @@ MonoBehaviour:
   BuildScene: 0
   mGroups:
   - Foldout: 0
-    Name: chapter_01
+    Name: video
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: chapter_01/level_01.bd
-      mSize: 1734
-      mMd5: 8999C0EC5115C5242160AB94F8BAA03F
+    - mName: video/op.bd
+      mSize: 5853787
+      mMd5: 28B415C72CEA79F1320BB0F14E07D3C6
+      mVersion: 1.1.0
+  - Foldout: 1
+    Name: ui
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: ui/loading.bd
+      mSize: 102451
+      mMd5: 218ACDE028734E3A71324D2B64C65C0C
+      mVersion: 1.1.0
+    - mName: ui/qrcode.bd
+      mSize: 60682
+      mMd5: 3A771A24F32F987BEF7779ABC335E7B5
+      mVersion: 1.1.0
+    - mName: ui/excel_viewer.bd
+      mSize: 30736
+      mMd5: DBA464642D624DA40E87CD71C6C5E9CD
+      mVersion: 1.1.0
+    - mName: ui/boot.bd
+      mSize: 28984
+      mMd5: 0F827F3E4558D277802C27D2C48CFAA2
+      mVersion: 1.1.0
+    - mName: ui/login.bd
+      mSize: 20814
+      mMd5: 4D40C552D8175DE678B28BFC757F2251
+      mVersion: 1.1.0
+    - mName: ui/test.bd
+      mSize: 20419
+      mMd5: 62B56DF65F787576318E3B8D690B698D
+      mVersion: 1.1.0
+    - mName: ui/update.bd
+      mSize: 16608
+      mMd5: 45036A446F3591658F7FE4D9A0E11D61
       mVersion: 1.1.0
   - Foldout: 0
-    Name: chapter_02
+    Name: lua
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: chapter_02/level_01.bd
-      mSize: 1734
-      mMd5: 21EAF3BB5883CD8100589266BF46C352
+    - mName: lua/socket.bd
+      mSize: 20652
+      mMd5: 7CE893362B9589AF5C6A1773C6151646
+      mVersion: 1.1.0
+    - mName: lua/utility.bd
+      mSize: 18983
+      mMd5: 14AA806EF78B180846A018D25C1A86E2
+      mVersion: 1.1.0
+    - mName: lua/luadebug.bd
+      mSize: 17950
+      mMd5: 7BFD08763F947F6364E7761B3C088957
+      mVersion: 1.1.0
+    - mName: lua/proto.bd
+      mSize: 7976
+      mMd5: 0595F97E70E1F6CD8C15CA6F46141DE7
+      mVersion: 1.1.0
+    - mName: lua/flatbuffers.bd
+      mSize: 7905
+      mMd5: 9DF7C243AB12052E4D94ECE7598A2DC0
+      mVersion: 1.1.0
+    - mName: lua/table.bd
+      mSize: 1679
+      mMd5: DAF89D747C3972FC9C233771C483BA30
       mVersion: 1.1.0
   - Foldout: 0
     Name: common
@@ -49,20 +102,29 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: common/excel.bd
-      mSize: 12431
-      mMd5: BD7AFC5B063000A4D25A37A87BD351BE
+      mSize: 12434
+      mMd5: ACF72F743ECDB25CDFB1A5D64E4F4BE7
       mVersion: 1.1.0
     - mName: common/global.bd
-      mSize: 1974
-      mMd5: A430EA6CDE9B5D11CB5336DFD3F27C57
+      mSize: 1982
+      mMd5: D9E0A689C4AEE0691F1CDC5892626A27
       mVersion: 1.1.0
     - mName: common/manager.bd
-      mSize: 7251
-      mMd5: 7F706258C7E962FB1F8A4864D75C92F1
+      mSize: 7433
+      mMd5: D13F1C23350029E8400B927214EFACFB
       mVersion: 1.1.0
     - mName: common/ui.bd
       mSize: 8886
-      mMd5: 6B7764835741F4965B2FD47E041B8517
+      mMd5: AA4BC663E88FE966FB893D85B6473755
+      mVersion: 1.1.0
+  - Foldout: 0
+    Name: truth
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: truth/index.bd
+      mSize: 30254
+      mMd5: 0305EE3D5F6C2044549308BBC19FFE0C
       mVersion: 1.1.0
   - Foldout: 0
     Name: config
@@ -70,38 +132,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3519
-      mMd5: 89EA957D500ADD966D75626FA5A3398F
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: data
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: data/fb.bd
-      mSize: 2028
-      mMd5: 2E98EFF2B8BD5C2A2D2D9CC932DD3540
-      mVersion: 1.1.0
-  - Foldout: 0
-    Name: lua
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: lua/proto.bd
-      mSize: 7968
-      mMd5: 74B28974EE07F42BEDF6CC77D09623AD
-      mVersion: 1.1.0
-    - mName: lua/socket.bd
-      mSize: 20640
-      mMd5: DE3F101488FBA4BB913B686E04EB3C4D
-      mVersion: 1.1.0
-    - mName: lua/table.bd
-      mSize: 1675
-      mMd5: C93DEF9C30E1F69CB6653AFA6ACDE752
-      mVersion: 1.1.0
-    - mName: lua/utility.bd
-      mSize: 14529
-      mMd5: 4781F73CFF8669B54DBB9A3CB256F549
+      mSize: 3648
+      mMd5: 73022D8D8D028AA910E1DF8F9485C90D
       mVersion: 1.1.0
   - Foldout: 0
     Name: proto
@@ -113,60 +145,37 @@ MonoBehaviour:
       mMd5: 
       mVersion: 
     - mName: proto/common.bd
-      mSize: 2424
-      mMd5: 8A0502CAADF8941DBB8581E2852AC884
+      mSize: 2418
+      mMd5: F66C60E55AA3F2538E130E04A0720FFE
       mVersion: 1.1.0
   - Foldout: 0
-    Name: truth
+    Name: chapter_02
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: truth/index.bd
-      mSize: 30257
-      mMd5: 4A108A51A422F14A2DE2662297D430D3
+    - mName: chapter_02/level_01.bd
+      mSize: 1734
+      mMd5: F17F8EF81A74961E1283D279FF4FED2D
       mVersion: 1.1.0
   - Foldout: 0
-    Name: ui
+    Name: chapter_01
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: ui/boot.bd
-      mSize: 4675
-      mMd5: E766B6B24AD32F563D8FD0B570504A46
-      mVersion: 1.1.0
-    - mName: ui/excel_viewer.bd
-      mSize: 30598
-      mMd5: 30AC49B79472D6FD850851A1F0BB9298
-      mVersion: 1.1.0
-    - mName: ui/loading.bd
-      mSize: 100082
-      mMd5: DE5FDB9636E5F4D4570FAA1D13D8AEC6
-      mVersion: 1.1.0
-    - mName: ui/login.bd
-      mSize: 20810
-      mMd5: 8FDD9E2F4D85F94F0233314B4FC689E3
-      mVersion: 1.1.0
-    - mName: ui/qrcode.bd
-      mSize: 60136
-      mMd5: CA61BCC1F484565FD14146CAA67F7958
-      mVersion: 1.1.0
-    - mName: ui/test.bd
-      mSize: 20419
-      mMd5: D8722ABAE322CCC5950E1947D0E3ECD7
-      mVersion: 1.1.0
-    - mName: ui/update.bd
-      mSize: 16607
-      mMd5: 651F6293C8AE1D765DEEDE56F5D68BEE
+    - mName: chapter_01/level_01.bd
+      mSize: 1734
+      mMd5: 03C900DA195F6F04EEC17681ED1F7812
       mVersion: 1.1.0
   - Foldout: 0
-    Name: video
+    Name: data
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: video/op.bd
-      mSize: 5854094
-      mMd5: AF3DE638DCF6F06106A63F86E1BA0117
+    - mName: data/fb.bd
+      mSize: 1489
+      mMd5: 16228D94ADD8F7FE0D2E5F303743A844
       mVersion: 1.1.0
+  BundleBuildOptions: 784
   mChannels:
   - Name: ios
     BatchBuild: 0

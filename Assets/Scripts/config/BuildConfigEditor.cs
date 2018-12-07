@@ -14,9 +14,7 @@ using BundleInfo = BuildConfig.BundleInfo;
 #if UNITY_EDITOR
 using UnityEditor;
 public partial class BuildConfig
-// namespace BuildConfig
 {
-    public static string Tag = "BuildConfig";
     #region CustomEditor
     [CustomEditor(typeof(BuildConfig))]
     public class BuildConfigEditor : UnityEditor.Editor
@@ -299,6 +297,8 @@ public partial class BuildConfig
             EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
             mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
             mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
+
+            mTarget.BundleBuildOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumFlagsField("BundleBuildOptions", mTarget.BundleBuildOptions);
 
             ++EditorGUI.indentLevel;
             foreach (var i in mTarget.Groups)

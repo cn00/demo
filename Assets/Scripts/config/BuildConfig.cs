@@ -116,12 +116,10 @@ public class AppVersion
 
 }
 
-/// <summary>
-/// Assets/BundleRes 下需要打包的资源目录配置
-/// </summary>
 [ExecuteInEditMode]
 public partial class BuildConfig : SingletonAsset<BuildConfig>
 {
+    const string Tag = "BuildConfig";
     #region const
     public const string BundleResDir = "BundleRes";
     public const string BundleResRoot = "Assets/" + BundleResDir + "/";
@@ -317,8 +315,15 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
                 else
                     EditorGUILayout.LabelField((Size / 1024 / 1024).ToString() + "M", guiOpts);
                 EditorGUILayout.LabelField("", guiOpts);
+
+                // reimport
+                if(GUILayout.Button("reimport"))
+                {
+                    AssetDatabase.ImportAsset(BundleResRoot+Name, ImportAssetOptions.ImportRecursive);
+                }
             }
             EditorGUILayout.EndHorizontal();
+
             if (Foldout)
             {
                 DrawBundles(indent, guiOpts);
@@ -340,6 +345,13 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
                         EditorGUILayout.LabelField((f.Size / 1024).ToString() + "K", guiOpts);
                     else
                         EditorGUILayout.LabelField((f.Size / 1024 / 1024).ToString() + "M", guiOpts);
+                    // reimport
+                    if(GUILayout.Button("reimport"))
+                    {
+                        var path = BundleResRoot+f.Name.RReplace(".bd$", "");
+                        AppLog.d(Tag, "reimport {0}", path);
+                        AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -384,6 +396,16 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
     }
 
 #if UNITY_EDITOR
+    [HideInInspector, SerializeField]
+    public UnityEditor.BuildAssetBundleOptions BundleBuildOptions = (
+                BuildAssetBundleOptions.None
+            //   | BuildAssetBundleOptions.CompleteAssets
+              | BuildAssetBundleOptions.ChunkBasedCompression
+              | BuildAssetBundleOptions.DeterministicAssetBundle
+            //   | BuildAssetBundleOptions.DryRunBuild
+            //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
+            );
+
     public static void ClearLogs()
     {
         var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");

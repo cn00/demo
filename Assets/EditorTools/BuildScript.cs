@@ -122,29 +122,29 @@ public class BuildScript
                 var nn = 0;
                 var info = new DirectoryInfo(BuildConfig.BundleResRoot);
                 var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
-                    .Where(p => (rebuild || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime));
+                        .Where(p => (rebuild
+                        // || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime
+                        )
+                    );
                 foreach (var f in res)
                 {
                     EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());
 
                     var ftxt = f.FullName.Replace(pt, pt + ".txt");
                     File.Copy(f.FullName, ftxt, true);
+                    AssetDatabase.ImportAsset(ftxt, ImportAssetOptions.DontDownloadFromCacheServer);
                 }
             }
+
+            AssetDatabase.Refresh();
+            yield return null;
+            AssetDatabase.SaveAssets();
             yield return null;
 
             // this is the right time to update LastBuildTime if i continue edit lua while BuildAssetBundle
             BuildConfig.Instance().LastBuildTime = DateTime.Now.ToFileTimeUtc();
-            AssetDatabase.Refresh();
-            yield return null;
 
-            var options = (
-                BuildAssetBundleOptions.None
-              | BuildAssetBundleOptions.CompleteAssets
-              | BuildAssetBundleOptions.ChunkBasedCompression
-              | BuildAssetBundleOptions.DeterministicAssetBundle
-            //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
-            );
+            var options = BuildConfig.Instance().BundleBuildOptions;
 
             if (rebuild)
                 options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;

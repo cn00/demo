@@ -138,7 +138,7 @@ namespace AssetBundleServer
                 }
                 else
                 {
-                    AppLog.e(Tag, rawUrl + "not found");
+                    AppLog.e(Tag, rawUrl + " not found");
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                 }
                 response.OutputStream.Close();

@@ -142,8 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: common/manager/manager
-    LuaText: {fileID: 4900000, guid: 31079773e6ebb422f9a104d1b31fea84, type: 3}
+    Path: common/manager/message_sys
+    LuaText: {fileID: 4900000, guid: 85a4e92bc26ec4acb813ed4e556b4f79, type: 3}
   injections:
   - obj: {fileID: 1166545898124404}
     exportComIdx: 1

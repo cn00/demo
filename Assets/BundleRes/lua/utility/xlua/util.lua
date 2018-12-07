@@ -135,9 +135,10 @@ local function createdelegate(delegate_cls, obj, impl_cls, method_name, paramete
 end
 
 local function dump(obj, breakline)
+    breakline = breakline == nil or breakline == true
     local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
     getIndent = function(level)
-        if breakline == nil or breakline == true then
+        if breakline then
             return string.rep("\t", level)
         else
             return ""
@@ -147,7 +148,7 @@ local function dump(obj, breakline)
         return '"' .. string.gsub(str, '"', '\"') .. '"'
     end
     wrapKey = function(val)
-        if breakline == nil or breakline == true then
+        if breakline then
             if type(val) == "number" then
                 return "[" .. val .. "] = "
             elseif type(val) == "string" then
@@ -179,13 +180,20 @@ local function dump(obj, breakline)
             return wrapVal(obj)
         end
         level = level + 1
+
         local tokens = {}
         tokens[#tokens + 1] = "{"
-        for k, v in pairs(obj) do
-            tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+        if level < 5 then 
+            for k, v in pairs(obj) do
+                tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+            end
+            local meta = getmetatable(obj)
+            if meta ~= nil then tokens[#tokens + 1] = getIndent(level) .. "__meta = " .. wrapVal(meta, level) .. "," end
+        else
+            tokens[#tokens + 1] = getIndent(level) .. "..."
         end
         tokens[#tokens + 1] = getIndent(level - 1) .. "}"
-        if breakline == nil or breakline == true then
+        if breakline then
             return table.concat(tokens, "\n")
         else
             return table.concat(tokens, " ")

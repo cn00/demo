@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4084312229849198}
   - component: {fileID: 114508193309918702}
-  - component: {fileID: 114690866956546876}
   m_Layer: 0
   m_Name: boot
   m_TagString: Untagged
@@ -52,19 +51,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4663d90f21d58db419d82277de9788df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114690866956546876
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1551332117957392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LuaScript:
-    Path: ui/boot/boot.lua
-    LuaText: {fileID: 4900000, guid: ca4951aab829f4d92a8447efab6ebcc8, type: 3}
-  LuaText: {fileID: 4900000, guid: ca4951aab829f4d92a8447efab6ebcc8, type: 3}
-  injections: []

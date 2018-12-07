@@ -55,5 +55,14 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_luasocket_scripts(L);
         }
 
+        [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int nslua_init(System.IntPtr L);
+
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        public static int LoadNSLua(System.IntPtr L)
+        {
+            return nslua_init(L);
+        }
+
     }
 }

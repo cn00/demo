@@ -5,6 +5,8 @@ using System.Text;
 using System.Linq;
 using UnityEngine;
 using XLua;
+using System.Runtime.InteropServices;
+using System;
 
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
@@ -109,6 +111,8 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("mime.core", XLua.LuaDLL.Lua.LoadSocketMime);
         luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
         luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFfi);
+
+        luaEnv.AddBuildin("nslua", XLua.LuaDLL.Lua.LoadNSLua);
 
         yield return base.Init();
     }

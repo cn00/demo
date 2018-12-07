@@ -304,10 +304,10 @@ public class AssetSys : SingleMono<AssetSys>
         {
             asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
-        if(asset == null)
-        {
-            AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
-        }
+        // if(asset == null)
+        // {
+        //     AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+        // }
         return asset;
     }
 
@@ -398,10 +398,10 @@ public class AssetSys : SingleMono<AssetSys>
         {
             mLoadedBundles[bundlePath] = bundle;
         }
-        else
-        {
-            AppLog.w(Tag, "[{0}] did not download yet.", bundlePath);
-        }
+        // else
+        // {
+        //     AppLog.w(Tag, "[{0}] did not download yet.", bundlePath);
+        // }
         return bundle;
     }
 
