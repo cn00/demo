@@ -6,7 +6,7 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
 local scene_manager = {}
-local self = scene_manager
+local this = scene_manager
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -60,7 +60,7 @@ end
 --AutoGenInit End
 
 -- function scene_manager.Awake()
--- 	self.AutoGenInit()
+-- 	this.AutoGenInit()
 -- end
 
 -- function scene_manager.OnEnable()

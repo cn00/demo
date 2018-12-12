@@ -271,6 +271,8 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         [SerializeField]
         string mVersion;
         public string Version { get { return mVersion; } set { mVersion = value; } }
+
+        public bool mRebuild = false;
     }
 
     [Serializable]
@@ -302,6 +304,16 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
 
 #if UNITY_EDITOR
+        public void Refresh()
+        {
+            foreach(var i in mBundles)
+            {
+                if (i.mRebuild)
+                {
+                    AssetDatabase.ImportAsset(BundleResRoot+i.Name.RReplace(".bd$", ""), ImportAssetOptions.ImportRecursive);
+                }
+            }
+        }
         public void DrawGroup(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
@@ -316,10 +328,14 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
                     EditorGUILayout.LabelField((Size / 1024 / 1024).ToString() + "M", guiOpts);
                 EditorGUILayout.LabelField("", guiOpts);
 
-                // reimport
-                if(GUILayout.Button("reimport"))
+                var tmpRebuild = EditorGUILayout.Toggle(mRebuild);
+                if(mRebuild != tmpRebuild)
                 {
-                    AssetDatabase.ImportAsset(BundleResRoot+Name, ImportAssetOptions.ImportRecursive);
+                    mRebuild = tmpRebuild;
+                    foreach (var f in Bundles)
+                    {
+                        f.mRebuild = mRebuild;
+                    }
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -339,22 +355,28 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
                 EditorGUILayout.BeginHorizontal();
                 {
                     EditorGUILayout.LabelField(f.Name.Replace(Name + "/", "- "), guiOpts);
+                    // reimport
+                    // var rect = EditorGUILayout.GetControlRect();
+                    // GUIStyle style = new GUIStyle();
+                    // style.alignment = TextAnchor.MiddleLeft;
+                    // if(GUILayout.Button(f.Name.Replace(Name + "/", "- "), guiOpts))
+                    // {
+                    //     var path = BundleResRoot+f.Name.RReplace(".bd$", "");
+                    //     AppLog.d(Tag, "reimport {0}", path);
+                    //     AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
+                    // }
                     if (f.Size < 1024)//B
                         EditorGUILayout.LabelField((f.Size).ToString(), guiOpts);
                     else if (f.Size < 1024 * 1024)//K
                         EditorGUILayout.LabelField((f.Size / 1024).ToString() + "K", guiOpts);
                     else
                         EditorGUILayout.LabelField((f.Size / 1024 / 1024).ToString() + "M", guiOpts);
-                    // reimport
-                    if(GUILayout.Button("reimport"))
-                    {
-                        var path = BundleResRoot+f.Name.RReplace(".bd$", "");
-                        AppLog.d(Tag, "reimport {0}", path);
-                        AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
-                    }
+
+                    f.mRebuild = EditorGUILayout.Toggle(f.mRebuild);
                 }
                 EditorGUILayout.EndHorizontal();
             }
+            mRebuild = !Bundles.Any(i => i.mRebuild == false);
         }
 #endif
     }
@@ -368,6 +390,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
     [HideInInspector, SerializeField]
     BundleManifest mGroups = new BundleManifest();
     public BundleManifest Groups { get { return mGroups; } protected set { mGroups = value; } }
+
 
     public BundleInfo GetBundleInfo(string path)
     {
@@ -396,6 +419,14 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
     }
 
 #if UNITY_EDITOR
+    public void RefreshGroups()
+    {
+        foreach(var i in mGroups)
+        {
+            i.Refresh();
+        }
+    }
+
     [HideInInspector, SerializeField]
     public UnityEditor.BuildAssetBundleOptions BundleBuildOptions = (
                 BuildAssetBundleOptions.None

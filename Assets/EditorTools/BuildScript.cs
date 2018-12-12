@@ -115,26 +115,29 @@ public class BuildScript
             if (File.Exists(oldManifestPath))
                 File.Copy(oldManifestPath, oldManifestPath + ".old", true);
 
-            // copy .lua|.sql to (.lua|.sql).txt
-            var userTextPatterns = ".lua|.sql";
-            foreach (var pt in userTextPatterns.Split('|'))
-            {
-                var nn = 0;
-                var info = new DirectoryInfo(BuildConfig.BundleResRoot);
-                var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
-                        .Where(p => (rebuild
-                        // || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime
-                        )
-                    );
-                foreach (var f in res)
-                {
-                    EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());
+            // // copy .lua|.sql to (.lua|.sql).txt
+            // var userTextPatterns = ".lua|.sql";
+            // foreach (var pt in userTextPatterns.Split('|'))
+            // {
+            //     var nn = 0;
+            //     var info = new DirectoryInfo(BuildConfig.BundleResRoot);
+            //     var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
+            //             .Where(p => (rebuild
+            //             // || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime
+            //             )
+            //         );
+            //     foreach (var f in res)
+            //     {
+            //         EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());
 
-                    var ftxt = f.FullName.Replace(pt, pt + ".txt");
-                    File.Copy(f.FullName, ftxt, true);
-                    AssetDatabase.ImportAsset(ftxt, ImportAssetOptions.DontDownloadFromCacheServer);
-                }
-            }
+            //         var ftxt = f.FullName.Replace(pt, pt + ".txt");
+            //         File.Copy(f.FullName, ftxt, true);
+            //         AssetDatabase.ImportAsset(ftxt, ImportAssetOptions.DontDownloadFromCacheServer);
+            //     }
+            // }
+
+            BuildConfig.Instance().RefreshGroups();
+            yield return null;
 
             AssetDatabase.Refresh();
             yield return null;

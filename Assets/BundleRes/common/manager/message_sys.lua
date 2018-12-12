@@ -6,12 +6,12 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
 local message_sys = {}
-local self = message_sys
+local this = message_sys
 
 local msgs = {
     -- key = {listeners}
 }
-self.msgs = msgs
+this.msgs = msgs
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
@@ -30,12 +30,15 @@ self.msgs = msgs
 -- end
 
 --AutoGenInit Begin
-function message_sys.AutoGenInit()
+function this.AutoGenInit()
+    this.message_sys_LuaMonoBehaviour = message_sys:GetComponent("LuaMonoBehaviour")
+    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
+    this.network_LuaMonoBehaviour = network:GetComponent("LuaMonoBehaviour")
+    this.console_LuaMonoBehaviour = console:GetComponent("LuaMonoBehaviour")
 end
 --AutoGenInit End
 
 function message_sys.Awake()
-	self.AutoGenInit()
 end
 
 function message_sys.OnEnable()
@@ -44,6 +47,7 @@ function message_sys.OnEnable()
 end
 
 function message_sys.Start()
+	this.AutoGenInit()
     print("message_sys.Start")
 
     --assert(coroutine.resume(message_sys.coroutine_demo()))

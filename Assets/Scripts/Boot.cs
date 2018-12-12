@@ -9,6 +9,7 @@ public class Boot : SingleMono<Boot>
     const string Tag = "Boot";
     public override void Awake()
     {
+        
         AppLog.isEditor = Application.isEditor;
         AppLog.d(Tag, "App.Awake 0");
         #if UNITY_EDITOR

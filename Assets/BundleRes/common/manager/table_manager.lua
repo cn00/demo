@@ -6,7 +6,7 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
 local table_manager = {}
-local self = table_manager
+local this = table_manager
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
@@ -29,7 +29,7 @@ function table_manager.AutoGenInit() end
 --AutoGenInit End
 
 function table_manager.Awake()
-	self.AutoGenInit()
+	this.AutoGenInit()
 end
 
 function table_manager.OnEnable()

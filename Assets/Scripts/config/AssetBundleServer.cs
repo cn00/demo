@@ -87,8 +87,8 @@ namespace AssetBundleServer
             if (detailedLogging)
                 AppLog.d(Tag, "Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
-            else
-                AppLog.d(Tag, "Requesting file: '{0}' ... ", request.RawUrl);
+            // else
+            //     AppLog.d(Tag, "Requesting file: '{0}' ... ", request.RawUrl);
 
             var response = ctx.Response;
             try

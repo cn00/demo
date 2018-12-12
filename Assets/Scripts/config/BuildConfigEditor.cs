@@ -52,6 +52,7 @@ public partial class BuildConfig
                     {
                         Name = groupName,
                         Bundles = new List<BundleInfo>(),
+                        mRebuild = true,
                     };
                 }
 
@@ -76,7 +77,6 @@ public partial class BuildConfig
                         };
                     }
 
-                    ulong time = 0;
                     foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
                     {
                         var assetImporter = AssetImporter.GetAtPath(f);
@@ -84,8 +84,6 @@ public partial class BuildConfig
                         {
                             assetImporter.assetBundleName = bundleName;//"";//
                             var assetTimeStamp = assetImporter.assetTimeStamp;
-                            if (time < assetTimeStamp)
-                                time = assetTimeStamp;
                         }
                     }
 
@@ -97,6 +95,7 @@ public partial class BuildConfig
                 // AssetDatabase.RemoveUnusedAssetBundleNames();
 
                 groupInfo.Bundles = newBundles;
+                groupInfo.Refresh();
 
                 if (groupInfo.Bundles.Count > 0)
                     newGroups.Add(groupInfo);

@@ -201,7 +201,21 @@ local function dump(obj, breakline)
     end
     return dumpObj(obj, 0)
 end
+
+local function isnilgo(go)
+    if go == nil then
+		return true
+	end
+	
+	if type(go) == "userdata" and go.IsNull ~= nil then
+		return go:IsNull()
+	end
+	
+    return false
+end
+
 return {
+    isnilgo = isnilgo,
     async_to_sync = async_to_sync,
     coroutine_call = coroutine_call,
     cs_generator = cs_generator,

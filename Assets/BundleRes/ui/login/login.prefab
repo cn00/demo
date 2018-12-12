@@ -697,9 +697,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: ui/login/login.lua
-    LuaText: {fileID: 4900000, guid: 180d048e4cbfb49a0a550e5ce4955bb7, type: 3}
-  LuaText: {fileID: 4900000, guid: 180d048e4cbfb49a0a550e5ce4955bb7, type: 3}
+    Path: ui/login/login
+    LuaText: {fileID: 4900000, guid: 541b11bcab6c5445f8a502ffc2fd6033, type: 3}
   injections:
   - obj: {fileID: 1563094278687416}
     exportComIdx: 3

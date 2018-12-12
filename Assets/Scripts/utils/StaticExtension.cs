@@ -42,8 +42,10 @@ public static class CollectionExtensions
 
 public static class RectExtension
 {
-    public static Rect Split(this Rect rect, int index, int count)
+    public static Rect Split(this Rect rect, int index, int count, float indent = 0f)
     {
+        if(indent > 0)
+            rect = new Rect(rect.x + indent, rect.y, rect.width - indent, rect.height);
         int r = (int)rect.width % count; // Remainder used to compensate width and position.
         int width = (int)(rect.width / count);
         rect.width = width + (index < r ? 1 : 0) + (index + 1 == count ? (rect.width - (int)rect.width) : 0f);

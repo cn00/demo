@@ -28,9 +28,34 @@ public class LuaMonoBehaviourEditor : Editor
             LuaText = File.ReadAllText(luaPath);
             mSourceLua = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(luaPath);
         }
+
+        refreshAutoGen();
     }
 
     static bool mShowInjections = true;
+    static bool mShowLuaAutogens = true;
+    string luaMemberValue;
+    void refreshAutoGen()
+    {
+        string luaname = "this";//mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
+        luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
+        foreach (var i in mLuaMono.injections.Where(o => o != null && o.obj != null))
+        {
+            var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
+            var injectName = i.obj.name;
+            var luakey = i.obj.name + "_" + comType.Substring(comType.LastIndexOf('.') + 1);
+            if(i.obj == mLuaMono.gameObject)
+            {
+                injectName = "mono.gameObject";
+                luakey = comType.Substring(comType.LastIndexOf('.') + 1);
+            }
+            luaMemberValue += "\n    " + luaname + "." + luakey
+                + " = " + injectName
+                + ":GetComponent(\""
+                + comType + "\")";
+        }
+        luaMemberValue += "\nend\n--AutoGenInit End";
+    }
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -116,38 +141,24 @@ public class LuaMonoBehaviourEditor : Editor
                 }
                 EditorGUILayout.EndHorizontal();
             }
-
-            // gen lua code
-            string luaname = "this";//mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
-            string luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
-            foreach (var i in mLuaMono.injections.Where(o => o != null && o.obj != null))
-            {
-                var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
-                var injectName = i.obj.name;
-                var luakey = i.obj.name + "_" + comType.Substring(comType.LastIndexOf('.') + 1);
-                if(i.obj == mLuaMono.gameObject)
-                {
-                    injectName = "mono.gameObject";
-                    luakey = comType.Substring(comType.LastIndexOf('.') + 1);
-                }
-                luaMemberValue += "\n    " + luaname + "." + luakey
-                    + " = " + injectName
-                    + ":GetComponent(\""
-                    + comType + "\")";
-            }
-            luaMemberValue += "\nend\n--AutoGenInit End";
-            GUILayout.TextArea(luaMemberValue);
-
-            var rect = EditorGUILayout.GetControlRect();
-            if (GUI.Button(rect.Split(1, 3), "Wtrite to lua"))
-            {
-                var path = BuildConfig.BundleResRoot + mLuaMono.LuaScript.Path + BuildConfig.LuaExtension;
-                var pattern = Regex.Match(LuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
-                LuaText = LuaText.Replace(pattern.ToString(), luaMemberValue);
-                File.WriteAllText(path, LuaText);
-                AppLog.d(Tag, mLuaMono.LuaScript.Path + BuildConfig.LuaExtension + " write ok");
-            }
         }
+
+        // gen lua code
+        if (GUI.changed)
+            refreshAutoGen();
+
+        var rect = EditorGUILayout.GetControlRect();
+        if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
+        {
+            var path = BuildConfig.BundleResRoot + mLuaMono.LuaScript.Path + BuildConfig.LuaExtension;
+            var pattern = Regex.Match(LuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End", RegexOptions.Multiline).ToString();
+            LuaText = LuaText.Replace(pattern.ToString(), luaMemberValue);
+            File.WriteAllText(path, LuaText);
+            AppLog.d(Tag, mLuaMono.LuaScript.Path + BuildConfig.LuaExtension + " write ok");
+        }
+        mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);
+        if(mShowLuaAutogens)
+            GUILayout.TextArea(luaMemberValue);
 
         // lua debug
         if (mLuaMono.luaTable != null)

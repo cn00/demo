@@ -108,6 +108,8 @@ public class ChannelConfig
     public int BuildType = (int)AndroidBuildType.Debug;
     public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Internal;
 
+    public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
+
     public AppBuildOptions OptionFlags = 0;
     public AppChannel Channel = AppChannel.Android;
 
@@ -133,18 +135,18 @@ public class ChannelConfig
 
     public string OutputPath()
     {
-        string target_path = PackageName;
+        string target_path = "bin/" + Name;
         if (Channel.isAndroid())
         {
             if (BuildSystem == AndroidBuildSystem.Gradle
             && (OptionFlags.HasFlag(AppBuildOptions.AcceptExternalModificationsToPlayer)))
             {
-                target_path = "./and.proj";
+                target_path = "bin/and.proj";
                 // PlayerSettings.Android.GradleProjName = "android." +  PackageName;
             }
             else
             {
-                var name = PackageName;
+                var name = Name;
                 if (AddTime)
                     name += DateTime.Now.ToString("-yyyyMdHHmmss");
                 Directory.CreateDirectory("./bin");
@@ -155,7 +157,7 @@ public class ChannelConfig
         }
         else if (Channel.isIOS())
         {
-            target_path = "./ios.proj." + PackageName;
+            target_path = "./bin/" + Name;
             if (Emulator)
             {
                 PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;

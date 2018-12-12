@@ -29,25 +29,23 @@ print("http.request", util.dump {res, code, headers, status, response_body=respo
 
 local Tag = "[network]"
 local network = {
-	Ip = "127.0.0.1",
+	Ip = "10.23.22.233",
 	Port = "8888"
 }
 local this = network
 
--- local yield_return = util.async_to_sync(function (to_yield, callback)
---     mono:YieldAndCallback(to_yield, callback)
--- end)
--- function this.coroutine_demo()
---     util.coroutine_call(function()
---         print('network coroutine start!')
---         yield_return(UnityEngine.WaitForSeconds(1))
---         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---             obj = asset
---         end))
---         local gameObj = GameObject.Instantiate(obj)
---     end)
--- end
+local yield_return = util.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
+function this.coroutine_demo()
+	print('network coroutine start!')
+	yield_return(UnityEngine.WaitForSeconds(1))
+	local obj = nil
+	yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+		obj = asset
+	end))
+	local gameObj = GameObject.Instantiate(obj)
+end
 
 --AutoGenInit Begin
 function this.AutoGenInit() end
@@ -59,9 +57,16 @@ end
 
 -- function this.OnEnable() end
 
--- local conn = assert(socket.connect(this.Ip, this.Port))
 function this.Start()
-	--assert(coroutine.resume(this.coroutine_demo()))
+    -- util.coroutine_call(this.coroutine_demo)
+	if this.conn ~= nil and this.conn:getstats() == 1 then 
+		--https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
+		-- this.conn:shutdown()
+		this.conn:close()
+		this.conn = nil
+	end
+	local conn = assert(socket.connect(this.Ip, this.Port))
+	this.conn = conn
 	-- print("conn:", conn)
 	-- for k, v in pairs(getmetatable(conn)["__index"])do
 	-- 	print("conn_meta", k, v)
@@ -98,7 +103,11 @@ end
 
 -- function this.LateUpdate() end
 
--- function this.OnDestroy() end
+function this.OnDestroy()
+	if this.conn ~= nil and this.conn:getstats() == 1 then 
+		this.conn:close()
+	end
+end
 
 function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
