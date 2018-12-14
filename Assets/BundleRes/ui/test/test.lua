@@ -10,7 +10,7 @@ if os == ios then
     require "nslua"
 end
 
-local util = require "lua.utility.xlua.util"
+local util = require "utility.xlua.util"
 local coroutine_call = util.coroutine_call
 local test = {}
 local this = test

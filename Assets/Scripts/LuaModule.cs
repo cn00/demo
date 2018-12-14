@@ -56,12 +56,12 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         }
 
         [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int nslua_init(System.IntPtr L);
+        public static extern int luaopen_nslua(System.IntPtr L);
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int LoadNSLua(System.IntPtr L)
         {
-            return nslua_init(L);
+            return luaopen_nslua(L);
         }
 
     }

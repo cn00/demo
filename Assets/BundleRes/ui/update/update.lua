@@ -4,7 +4,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 
-local util = require "lua.utility.xlua.util"
+local util = require "utility.xlua.util"
 
 local update = {
 	process = 0,

@@ -1,6 +1,6 @@
 
-require "lua.utility.memory"
-require "lua.utility.profiler"
-require "lua.utility.xlua.util"
-require "lua.utility.BridgingClass"
-require "lua.utility.table"
+require "utility.memory"
+require "utility.profiler"
+require "utility.xlua.util"
+require "utility.BridgingClass"
+require "utility.table"

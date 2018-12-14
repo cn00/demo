@@ -2,7 +2,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "utility.xlua.util"
 local coroutine_call = util.coroutine_call
 
 local op = {}

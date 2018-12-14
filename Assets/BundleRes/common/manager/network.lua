@@ -2,9 +2,9 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
-local socket = require "lua.socket.socket"
-local sprotoparser = require "lua.utility.sprotoparser"
+local util = require "utility.xlua.util"
+local socket = require "socket.socket"
+local sprotoparser = require "utility.sprotoparser"
 
 local http = require "socket.http"
 local ltn12 = require "socket.ltn12"

@@ -1,4 +1,4 @@
-local util = require "lua.utility.xlua.util"
+local util = require "utility.xlua.util"
 require("lua.utility.BridgingClass")
 local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
