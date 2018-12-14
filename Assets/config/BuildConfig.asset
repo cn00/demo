@@ -14,7 +14,7 @@ MonoBehaviour:
   UseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131892454600300060
+  LastBuildTime: 131892564817667260
   Version:
     Name: 
     Major: 1
@@ -121,8 +121,8 @@ MonoBehaviour:
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/manager.bd
-      mSize: 9050
-      mMd5: 008C7381F49010BE47F31C2A9AEB6279
+      mSize: 9510
+      mMd5: 6FB4DD420BC12AF1E295F0E47A2C1F08
       mVersion: 1.1.0
       mRebuild: 1
     - mName: common/ui.bd
@@ -151,8 +151,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3666
-      mMd5: 156C8D48AE3D1DA83A38CE257E55DC33
+      mSize: 3669
+      mMd5: 34B919A5259580100FD9E74D46F013CD
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0

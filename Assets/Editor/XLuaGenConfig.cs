@@ -71,6 +71,7 @@ public static class XLuaGenConfig
         #endregion system
 
         #region UnityEngine
+        typeof(UnityEngine.Application),
         typeof(UnityEngine.Object),
         typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.GameObject),
@@ -158,6 +159,9 @@ public static class XLuaGenConfig
         #endregion System
 
         #region UnityEngine
+        typeof(UnityEngine.LogType),
+        typeof(UnityEngine.Application.LogCallback),
+
         typeof(UnityEngine.Events.UnityEvent),
         typeof(UnityEngine.Events.UnityEvent<string>),
         typeof(UnityEngine.Events.UnityEvent<float>),

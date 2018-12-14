@@ -115,6 +115,7 @@ function this.ffitest()
         } Vector4;
     ]]
 
+	
     local vector = ffi.typeof('Vector4 *')
 	local v = CS.UnityEngine.Vector4(12.3, 23.4, 34.5, 45.6)
 	--[[
