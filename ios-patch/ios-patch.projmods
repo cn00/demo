@@ -1,0 +1,101 @@
+{
+    "group": "ios-patch",
+    "compiler_flags": [
+        "-DUSE_DATASDK",
+        // "-DIOS_TW=1",
+    ],
+    "linker_flags": [
+        "-ObjC", 
+        "-lresolv",
+        "-weak_framework",
+        "CoreMotion",
+        "-weak-lSystem",
+        "-Wl,-undefined,dynamic_lookup",
+    ],
+    "embed_binaries": [],
+    "overwriteBuildSetting":{
+        "SWIFT_VERSION": {
+            "all":"4.2",
+        },
+        "GCC_ENABLE_OBJC_EXCEPTIONS": {
+            "all":"YES",
+        },
+        "ENABLE_BITCODE": {
+            "all":"NO",
+        },
+        "ONLY_ACTIVE_ARCH":{
+            "all": "YES",
+            "Release": "NO",
+        },
+        "ARCHS": {
+            "all": "arm64",
+        },
+        "LD_RUNPATH_SEARCH_PATHS":{
+            "all":"@executable_path/Frameworks",
+        },
+    },
+    "syslibs": [
+        // "libc++.tbd",
+        // "libz.tbd"
+    ],
+    "userlibs": [ // *.a
+    ],
+    "frameworks": [
+        "CoreData.framework",
+        "Security.framework",
+        "AdSupport.framework",
+        "StoreKit.framework",
+        "SystemConfiguration.framework",
+        "CoreGraphics.framework",
+        "UIKit.framework",
+        "Foundation.framework",
+    ],
+    "userframeworks": [
+    ],
+    "headerpaths": [
+        "ios-patch/BLGameSdk/BlGameSdkLib/include",
+        "ios-patch:ios-patch/NSLua",
+        // "ios-patch/BLDataSdk/include",
+    ],
+    "plist": {
+        "NSAppTransportSecurity":{
+            "NSAllowsArbitraryLoads":"YES"
+        },
+        "urltype" : [
+            {
+                "role": "Editor",
+                "name" : "",
+                "schemes":[
+                    "a3biligame",
+                ]
+            },
+
+            // //komeo 
+            // {
+            //     "role": "Editor",
+            //     "name" : "fb",
+            //     "schemes":[
+            //         "fb2195831977115857",
+            //     ]
+            // },
+            // {
+            //     "role": "Editor",
+            //     "name" : "google",
+            //     "schemes":[
+            //         "com.googleusercontent.apps.663290335646-r26u7pvaompfrtn6rbiq7jak4bf4uvcv"
+            //     ]
+            // }
+        ],
+    },
+    /*
+    files
+    */
+    "files":   [// user framework, bundle support
+    ],
+
+    "folders": [// framework bundle and xcdatamodeld also support
+        "ios-patch:ios-patch/BLGameSdk",
+        "ios-patch:ios-patch/NSLua",
+    ],
+    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$"]
+}
