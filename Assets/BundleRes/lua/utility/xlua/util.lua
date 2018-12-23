@@ -201,6 +201,7 @@ local function dump(obj, breakline)
     end
     return dumpObj(obj, 0)
 end
+table.dump = dump
 
 local function isnilgo(go)
     if go == nil then

@@ -112,6 +112,8 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
         luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFfi);
 
+        luaEnv.AddBuildin("lfb", XLua.LuaDLL.Lua.LoadLfb);
+
         luaEnv.AddBuildin("nslua", XLua.LuaDLL.Lua.LoadNSLua);
 
         yield return base.Init();

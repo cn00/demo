@@ -37,6 +37,15 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         }
 
         [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int luaopen_lfb(System.IntPtr L);
+
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        public static int LoadLfb(System.IntPtr L)
+        {
+            return luaopen_lfb(L);
+        }
+
+        [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_mime_core(System.IntPtr L);
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]

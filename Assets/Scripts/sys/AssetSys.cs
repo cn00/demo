@@ -368,7 +368,7 @@ public class AssetSys : SingleMono<AssetSys>
             resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
 #endif
-        AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj.GetType());
+        AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj?.GetType());
         if(callBack != null)
             callBack(resObj);
     }

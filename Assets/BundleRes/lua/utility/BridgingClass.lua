@@ -91,7 +91,7 @@ local function Draw(self, opt)
 				 if (kk == "_G") then
 					goto continue;
 				 end
-				if (vtype == "number") then
+				if (type(k) == "number") then
 					kk =  "[" .. kk .. "]";
 				end
 				-- value

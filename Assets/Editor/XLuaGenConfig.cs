@@ -53,6 +53,7 @@ public static class XLuaGenConfig
         typeof(AssetSys),
         typeof(UpdateSys),
         typeof(LuaSys),
+        typeof(LuaEnv),
         typeof(LuaMonoBehaviour),
         typeof(NetSys),
         typeof(QRCodeEncodeController),
@@ -63,6 +64,7 @@ public static class XLuaGenConfig
         #endregion customer types
 
         #region system
+        // typeof(System.IntPtr),
         typeof(System.Object),
         typeof(System.Delegate),
         typeof(System.Convert),

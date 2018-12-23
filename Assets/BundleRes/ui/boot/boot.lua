@@ -3,7 +3,6 @@ require("lua.utility.BridgingClass")
 local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
 
-
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
@@ -81,21 +80,12 @@ function boot.coroutine_boot(first, ...)
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
 
-        obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("data/fb/monsterdata_txt.mon.txt", function(asset)
-            print("monsterdata_txt", (asset:GetType()))
-            obj = asset.bytes
-        end))
-        boot.fbtestdata = obj
-        print("fbtestdata:", #obj, obj)
-        boot.FlatbuffersTest(obj)
-
-	    obj = nil
-	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
-	        obj = asset;
-	    end))
-	    print("lua login 1", obj);
-	    local login = GameObject.Instantiate(obj);
+	    -- obj = nil
+	    -- yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+	    --     obj = asset;
+	    -- end))
+	    -- print("lua login 1", obj);
+	    -- local login = GameObject.Instantiate(obj);
 
         loading:SetActive(false)
         
@@ -124,33 +114,6 @@ function boot.Start()
 
     boot.coroutine_boot(1,2,2,4)
     -- boot.breakInfoFun,boot.xpcallFun = require("luadebug.LuaDebug")("localhost", 7003)
-end
-
-function boot.FlatbuffersTest(buffer)
-    boot.flatbuffers = assert(require("flatbuffers.flatbuffers"))
-    local fb = boot.flatbuffers
-    boot.monsterc2s = assert(require("Sample.Monster_c2s"))
-    boot.monsters2c = assert(require("Sample.Monster_s2c"))
-
-    -- boot.fbbuf = fb.binaryArray.New(buffer)
-    -- boot.monster = monster.GetRootAsMonster(boot.fbbuf, 0)
-    -- boot.monstert = {
-    --     Hp = boot.monster:Hp(),
-    --     mana = boot.monster:Mana(),
-    --     color = boot.monster:Color(),
-    -- }
-    -- for k, v in pairs(getmetatable(boot.monster)["__index"])do
-    --     if k ~= "Init" and type(v) == "function" then
-    --         print("---" .. k, v, v(boot.monster, 0))
-    --         -- assert((function (  )
-    --             -- boot.monstert["----" .. k] = v(boot.monster, 1)
-    --         -- end)())
-    --     end
-    -- end
-
-    -- for k,v in pairs(getmetatable(boot.monster)["__index"]) do 
-    --     print("boot.monster", k, v)
-    -- end
 end
 
 local Time = UnityEngine.Time

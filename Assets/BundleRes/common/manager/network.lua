@@ -9,6 +9,16 @@ local sprotoparser = require "utility.sprotoparser"
 local http = require "socket.http"
 local ltn12 = require "socket.ltn12"
 
+local lfb = require "lfb"
+local flatbuffers = require "flatbuffers.flatbuffers"
+local proto, ptid, bfbs_names = require ("proto.proto") ()
+
+local print = function ( ... )
+    _G.print("[network]", ...)
+end
+
+print(proto, ptid)
+
 local response_body = {}
 local post_data = "post_data"
 -- local res, code, headers, status = http.request "http://localhost:8008"
@@ -29,26 +39,32 @@ print("http.request", util.dump {res, code, headers, status, response_body=respo
 
 local Tag = "[network]"
 local network = {
+	connect_stat = false,
 	Ip = "10.23.22.233",
-	Port = "8888"
+	Port = "8001",
+	socket = socket,
 }
 local this = network
+local coroutine_call = util.coroutine_call
+
+local conn_stat = {
+	offline = 0,
+	connecting = 1,
+	connected = 2,
+}
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 function this.coroutine_demo()
 	print('network coroutine start!')
-	yield_return(UnityEngine.WaitForSeconds(1))
-	local obj = nil
-	yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
-		obj = asset
-	end))
-	local gameObj = GameObject.Instantiate(obj)
+	
 end
 
 --AutoGenInit Begin
-function this.AutoGenInit() end
+function this.AutoGenInit()
+    this.Button_Button = Button:GetComponent("UnityEngine.UI.Button")
+end
 --AutoGenInit End
 
 function this.Awake()
@@ -56,50 +72,236 @@ function this.Awake()
 end
 
 -- function this.OnEnable() end
+local function fb_test( ... )
+	local monster = proto[ptid.monsterc2s]
+	local vec3 = require "common.Vec3"
+	local shareT = require "Sample.shareT"
 
-function this.Start()
-    -- util.coroutine_call(this.coroutine_demo)
+	local b = flatbuffers.Builder(1)
+    local name = b:CreateString("MyMonster")
+	
+	-- all children should build before parent
+	shareT.Start(b)
+	local pos = vec3.CreateVec3(b, 1999.0, 2.0, 3.0)
+	shareT.AddPos(b, pos)
+    shareT.AddMana(b, 8888)
+	local st = shareT.End(b)
+	
+	monster.Start(b)
+	
+	local pos2 = vec3.CreateVec3(b, 2.0, 22.0, 23.0)
+	monster.AddPos(b, pos2)
+
+    monster.AddHp(b, 9980)
+    monster.AddMana(b, 9999)
+	monster.AddName(b, name)
+	
+	monster.AddSt(b, st)
+	
+    local mon = monster.End(b)
+	
+    if FBSizePrefix then
+        b:FinishSizePrefixed(mon)
+    else
+        b:Finish(mon)
+    end
+	local buf, offset = b:Output(true), b:Head()
+	local size = #buf
+	print("offset:" .. offset, "size:"..size)
+	
+	this.conn:send(ptid.monsterc2s)
+	this.conn:send(10000000+size)
+	this.conn:send(1000+offset)
+	this.conn:send(buf)
+
+	-- buf = flatbuffers.binaryArray.New(buf)
+	-- offset = 0
+	-- offset = offset + flatbuffers.N.Int32.bytewidth
+	-- local size = flatbuffers.N.Int32:Unpack(buf, offset)
+	-- local c2s = proto[ptid.monsterc2s].GetRoot(buf, offset)
+	-- print(offset, size, c2s:Name(), c2s:Hp())
+end
+-- print("this:", util.dump(this))
+
+function this.co_init_lfbs()
+	-- for k,v in pairs(lfb) do
+	-- 	print(k, v)
+	-- end
+	local lfb = lfb()
+	this.lfb = lfb
+	for i,v in ipairs(bfbs_names) do
+		local obj
+		yield_return(CS.AssetSys.Instance:GetAsset(v, function(asset)
+			obj = asset.bytes
+			-- print(v, (asset:GetType()), #obj, obj:gsub("[\0-\13]",""))
+		end))
+		-- local ok, content = assert(lfb:load_bfbs_file("Assets/BundleRes/" .. bfbs_name))
+		-- print("sample.bfbs.txt 2", #content, #obj, content:gsub("[\0-\13]",""))
+
+		local ok = assert(lfb:load_bfbs(v, #obj, obj))
+		print(i,v, ok)
+	end
+end
+
+local Monster_c2s = {
+	-- pos:common.Vec3;
+	-- mana:short = 150;
+	-- hp:short = 100;
+	-- name:string;
+	-- st:shareT;
+	pos = {x = 1100000, y = 22,z = 33},
+	mana = 989,
+	hp = 89,
+	name = "name Monster_c2s",
+	st = {
+		-- pos:common.Vec3;
+		-- mana:short = 150;
+		pos = {x = 99, y = 88, z = 77},
+		mana = 456,
+	}
+}
+this.Monster_c2s = Monster_c2s
+
+local Monster_s2c = {
+	-- pos:common.Vec3;
+	-- mana:short = 150;
+	-- hp:short = 100;
+	-- name:string;
+	-- // friendly:bool = false (deprecated);
+	-- inventory:[ubyte];
+	-- color:common.Color = Blue;
+	-- weapons:[common.Weapon];
+	-- equipped:common.Equipment;
+	-- st:shareT;
+	pos = {x = 11, y = 22,z = 33},
+	mana = 989,
+	hp = 89,
+	name = "name Monster_c2s",
+	st = {
+		-- pos:common.Vec3;
+		-- mana:short = 150;
+		pos = {x = 99, y = 88, z = 77},
+		mana = 456,
+	}
+}
+this.Monster_s2c = Monster_s2c
+
+function this.lfb_test()
+	coroutine_call(function()
+		while(waitfor_lfb_init)do
+			yield_return(UnityEngine.WaitForSeconds(0.1))
+		end
+
+		local protoid = ptid.monsterc2s
+		local lfb = this.lfb
+		this.loaded_bfbs = lfb:loaded()
+		local buf
+		print("this.loaded_bfbs", util.dump(this.loaded_bfbs))
+		local ex = os.clock()
+		for i = 1,10000 do
+			buf = assert(lfb:encode("sample.bfbs.txt", proto[protoid], this.Monster_c2s))
+		end
+		local ey = os.clock()
+		print("encode 10000s", ey-ex, #buf, buf:gsub("[\0-\13]",""))
+			
+		this.conn:send(protoid)
+		this.conn:send(10000000+ #buf)
+		-- this.conn:send(1000+offset)
+		this.conn:send(buf)
+
+		local ey = os.clock()
+		local t  
+		for i = 1, 10000 do
+			t = assert(lfb:decode("sample.bfbs.txt", proto[protoid], buf))
+		end
+		local ez = os.clock()
+		print("decode 10000s:", ez - ey, #t, util.dump(t))
+	end)
+end
+
+function this.coroutine_start_receive()
+	print('coroutine_start_receive')
+	while true 
+	do
+		local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
+		-- print("canread", #canread, #this.client)
+		for _, c in ipairs(canread) do
+			c:settimeout(0.1)
+			local protoid, err = c:receive(8)
+			if protoid == nil then 
+				print("goto continue", err)
+				this.connect_stat = conn_stat.offline
+				c:close()
+				goto continue 
+			end
+			protoid = tonumber(protoid, 10)
+			local size = tonumber(c:receive(8), 10) - 10000000
+			local data = c:receive(size)
+			-- local data, err = c:receive()
+			print("receive", #data, data:gsub("[\0-\13]",""), err)
+
+			if not err then
+				print()
+			elseif(err == "closed")then
+				this.connect_stat = conn_stat.offline
+				c:close()
+				-- this.ondisconnect( c )
+			else
+				c:send("___ERRORPC"..err.. "\r\n")
+			end
+			::continue::
+		end
+
+		yield_return(UnityEngine.WaitForSeconds(1))
+	end
+end
+
+function this.Connect()
 	if this.conn ~= nil and this.conn:getstats() == 1 then 
 		--https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
 		-- this.conn:shutdown()
 		this.conn:close()
 		this.conn = nil
 	end
-	local conn = assert(socket.connect(this.Ip, this.Port))
-	this.conn = conn
-	-- print("conn:", conn)
-	-- for k, v in pairs(getmetatable(conn)["__index"])do
-	-- 	print("conn_meta", k, v)
-	-- end
-	--[[
-		accept function: 0x13da99530
-		bind function: 0x13da99660
-		class tcp{client} 
-		close function: 0x13da994f0
-		connect function: 0x13da99730
-		dirty function: 0x13da99820
-		getfamily function: 0x13da99860
-		getfd function: 0x13da998b0
-		getoption function: 0x13da998f0
-		getpeername function: 0x13da99930
-		getsockname function: 0x13da99970
-		getstats function: 0x13da999b0
-		listen function: 0x13da99a10
-		receive function: 0x13da99ac0
-		send function: 0x13da99af0
-		setfd function: 0x13da99b20
-		setoption function: 0x13da99b60
-		setpeername function: 0x13da99730
-		setsockname function: 0x13da99660
-		setstats function: 0x13da999e0
-		settimeout function: 0x13da99ba0
-		shutdown function: 0x13da99bd0
-	]]
+	this.connect_stat = conn_stat.connecting
+	coroutine_call(function ()
+		while (this.connect_stat == conn_stat.connecting) do
+			print("try connect ...")
+			local conn, err = socket.connect(this.Ip, this.Port)
+			print("connect", conn, err)
+			if err == nil and conn then
+				this.conn = conn
+				this.connect_stat = conn_stat.connected
+			-- else if err == "connection refused" then
+			-- 	print(err)
+			else
+				print("unknow err", err)
+			end
+			yield_return(UnityEngine.WaitForSeconds(1))
+		end
+	end)
+end
+
+function this.Start()
+	coroutine_call(this.co_init_lfbs)
+
+	this.Connect()
+
+	this.Button_Button.onClick:AddListener(this.lfb_test)
+	-- fb_test()
+
+	util.coroutine_call(this.coroutine_demo)
+	util.coroutine_call(this.coroutine_start_receive)
 end
 
 -- function this.FixedUpdate() end
 
--- function this.Update() end
+function this.Update() 
+	if (this.connect_stat == conn_stat.offline)then
+		print("reconnect ...")
+		this.Connect()
+	end
+end
 
 -- function this.LateUpdate() end
 
@@ -112,109 +314,5 @@ end
 function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
-local function send_package(conn, pack)
-	local package = string.pack(">s2", pack)
-	print("send_package", #package, package)
-	conn:send(package)
-end
-
-local function unpack_package(text)
-	local size = #text
-	if size < 2 then
-		return nil, text
-	end
-	local s = text:byte(1) * 256 + text:byte(2)
-	if size < s+2 then
-		return nil, text
-	end
-
-	return text:sub(3,2+s), text:sub(3+s)
-end
-
-local function recv_package(last)
-	local result
-	result, last = unpack_package(last)
-	if result then
-		return result, last
-	end
-	local r, receive_status = conn:receive()
-	print("recv_package", r, receive_status)
-	if not r then
-		return nil, last
-	end
-	if r == "" then
-		error "Server closed"
-	end
-	return unpack_package(last .. r)
-end
-
-local session = 0
-
-local function request( name, args, session )
-	return string.format("%s:%s:%s", name, args, session)
-end
-local function send_request(name, args)
-	session = session + 1
-	local str = request(name, args, session)
-	send_package(conn, str)
-	print("Request:", session, name, args)
-end
-
-local last = ""
-
-local function print_request(name, args)
-	print("REQUEST", name)
-	if args then
-		for k,v in pairs(args) do
-			print(k,v)
-		end
-	end
-end
-
-local function print_response(session, args)
-	print("RESPONSE", session)
-	if args then
-		for k,v in pairs(args) do
-			print(k,v)
-		end
-	end
-end
-
-local function print_package(t, ...)
-	if t == "REQUEST" then
-		print_request(...)
-	else
-		assert(t == "RESPONSE")
-		print_response(...)
-	end
-end
-local function dispatch_package()
-	while true do
-		local v
-		v, last = recv_package(last)
-		if not v then
-			break
-		end
-
-		print_package(host:dispatch(v))
-	end
-end
-
--- send_request("handshake")
--- send_request("set", { what = "hello", value = "world" })
-
--- while true do
--- 	dispatch_package()
--- 	local cmd = socket.readstdin()
--- 	if cmd then
--- 		if cmd == "quit" then
--- 			send_request("quit")
--- 		else
--- 			send_request("get", { what = cmd })
--- 		end
--- 	else
--- 		socket.usleep(100)
--- 	end
--- end
 
 return network

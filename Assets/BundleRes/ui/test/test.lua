@@ -93,10 +93,25 @@ function this.oc_blsdk_logout()
 end
 
 function this.ffitest()
-    print("ffitest began")
-
+	print("ffitest began")
+	
+	
     local ffi = require "ffi"
-    this.ffi = ffi
+	this.ffi = ffi
+	
+	local L = CS.LuaSys.Instance.GlobalEnv.L
+	print("ffi", ffi, CS.LuaSys.Instance.GlobalEnv, CS.LuaSys.Instance.GlobalEnv.L)
+	ffi.cdef[[
+		int luaopen_lfb(void* L);
+	]]
+	print("ffi.C.luaopen_lfb", ffi.C.luaopen_lfb, CS.LuaSys.Instance.GlobalEnv.AddBuildin)
+	-- CS.LuaSys.Instance.GlobalEnv:AddBuildin("lfb", function ( L )
+		ffi.C.luaopen_lfb(L)
+	-- end)
+	local lfb = require "lfb"
+	this.lfb=lfb
+	print("lfb", lfb)
+
     -- for k,v in pairs(ffi) do
     --     print("ffi", k,v)
     -- end
@@ -146,10 +161,10 @@ function this.ffitest()
 		ffi.cdef [[
 			/*int fprintf(void * , const char * , ...); ok in sim*/ 
 			int fprintf(void *, const char *, ...);
-			int test_pow(int v);
+			/*int test_pow(int v);*/
 		]]
-		local tp = ffi.C.test_pow(66)
-		print("test_pow", tp)
+		-- local tp = ffi.C.test_pow(66)
+		-- print("test_pow", tp)
 		local f = io.open(CS.AssetSys.CacheRoot .. "ffi.test.txt", "a")
 		print("fprintf", f)
 		local fout = ffi.C.fprintf(f, "test: %s\n", "foo")
@@ -158,7 +173,77 @@ function this.ffitest()
     print("ffitest end")
 end
 
+local function printt( t, indent )
+	indent = indent or 0
+	for k,v in pairs(t) do
+		print(("\t"):rep(indent),k,v)
+		if type(v) == "table" then
+			printt(v, indent + 1)
+		end
+	end
+end
+
 -- print("this:", util.dump(this))
+function this.lfb_test()
+	coroutine_call(function()
+		local lfb = require "lfb"
+		for k,v in pairs(lfb) do
+			print(k,v)
+		end
+		local obj
+		yield_return(CS.AssetSys.Instance:GetAsset("data/fb/sample.bfbs.txt", function(asset)
+			print("sample.bfbs.txt", (asset:GetType()))
+			obj = asset.bytes
+		end))
+		local ok = lfb.load_bfbs(obj)
+		-- local ok = lfb.load_bfbs_file("Assets/BundleRes/data/fb/sample.bfbs.txt")
+		print("load_bfbs ok?", ok)
+		local Monster_c2s = {
+			-- pos:common.Vec3;
+			-- mana:short = 150;
+			-- hp:short = 100;
+			-- name:string;
+			-- st:shareT;
+			pos = {x = 11, y = 22,z = 33},
+			mana = 989,
+			hp = 89,
+			name = "name Monster_c2s",
+			st = {
+				-- pos:common.Vec3;
+				-- mana:short = 150;
+				pos = {x = 99, y = 88, z = 77},
+				mana = 456,
+			}
+		}
+		local Monster_s2c = {
+			-- pos:common.Vec3;
+			-- mana:short = 150;
+			-- hp:short = 100;
+			-- name:string;
+			-- // friendly:bool = false (deprecated);
+			-- inventory:[ubyte];
+			-- color:common.Color = Blue;
+			-- weapons:[common.Weapon];
+			-- equipped:common.Equipment;
+			-- st:shareT;
+			pos = {x = 11, y = 22,z = 33},
+			mana = 989,
+			hp = 89,
+			name = "name Monster_c2s",
+			st = {
+				-- pos:common.Vec3;
+				-- mana:short = 150;
+				pos = {x = 99, y = 88, z = 77},
+				mana = 456,
+			}
+		}
+		local buf = assert(lfb.encode("Monster_s2c", Monster_c2s))
+		print("buf", #buf, buf:gsub("[\0-\13]",""))
+		local t = assert(lfb.decode("Monster_s2c", buf))
+		print("decode:", #t, "end.")
+		-- printt(t)
+	end)
+end
 
 function this.CheckUpdate()
 	coroutine_call(function()
@@ -385,6 +470,7 @@ function this.AutoGenInit()
     this.blsdk_login_Button = blsdk_login:GetComponent("UnityEngine.UI.Button")
     this.blsdk_logout_Button = blsdk_logout:GetComponent("UnityEngine.UI.Button")
     this.ffi_test_Button = ffi_test:GetComponent("UnityEngine.UI.Button")
+    this.lfb_test_Button = lfb_test:GetComponent("UnityEngine.UI.Button")
 end
 --AutoGenInit End
 function this.Awake()
@@ -410,6 +496,8 @@ function this.Start()
 	this.blsdk_login_Button.onClick:AddListener(this.oc_blsdk_login)
 	this.blsdk_logout_Button.onClick:AddListener(this.oc_blsdk_logout)
 	this.ffi_test_Button.onClick:AddListener(this.ffitest)
+
+	this.lfb_test_Button.onClick:AddListener(this.lfb_test)
 
 	local ixonEndEdit = function(text)
 		this.iy_InputField:Select()
