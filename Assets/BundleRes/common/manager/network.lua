@@ -11,12 +11,13 @@ local ltn12 = require "socket.ltn12"
 
 local lfb = require "lfb"
 local proto, ptid, bfbs_names = require ("proto.proto") ()
+print("require proto", proto, ptid, bfbs_names)
 
+local logtag = "[network]"
 local print = function ( ... )
-    _G.print("[network]", ...)
+    _G.print(logtag, ...)
+    -- _G.print(util.dump({...}, true, logtag))
 end
-
-print(proto, ptid)
 
 local response_body = {}
 local post_data = "post_data"
@@ -215,7 +216,7 @@ function this.lfb_test()
 			t = assert(lfb:decode("sample.bfbs.txt", proto[protoid], buf))
 		end
 		local ez = os.clock()
-		print("decode 10000s:", ez - ey, #t, util.dump(t))
+		print("decode 10000s:", ez - ey, #t, util.dump(t, true, logtag))
 	end)
 end
 

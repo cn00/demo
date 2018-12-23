@@ -134,12 +134,16 @@ local function createdelegate(delegate_cls, obj, impl_cls, method_name, paramete
     return CS.System.Delegate.CreateDelegate(typeof(delegate_cls), obj, m)
 end
 
-local function dump(obj, breakline)
+local function dump(obj, breakline, prefix)
     breakline = breakline == nil or breakline == true
+    if type(prefix) ~= "string" then
+        prefix = ""
+    end
+
     local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
     getIndent = function(level)
         if breakline then
-            return string.rep("\t", level)
+            return prefix .. string.rep("\t", level)
         else
             return ""
         end
@@ -170,7 +174,7 @@ local function dump(obj, breakline)
         elseif type(val) == "number" then
             return val
         elseif type(val) == "string" then
-            return quoteStr(val)
+            return quoteStr(val:gsub("[\0-\15]", ""):gsub("\n", "\\n"):gsub("\r", "\\r"))
         else
             return tostring(val)
         end
