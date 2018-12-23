@@ -246,9 +246,6 @@ public partial class BuildConfig
                 {
                     BuildAB(BuildTarget.StandaloneOSX, rebuild);
                 }
-                if (GUI.Button(rect.Split(++idx, sn), "Clean"))
-                {
-                }
 
             }
 
@@ -258,10 +255,6 @@ public partial class BuildConfig
                 var rect = EditorGUILayout.GetControlRect();
                 var sn = 5;
                 var idx = -1;
-                if (GUI.Button(rect.Split(++idx, sn), "Refresh"))
-                {
-                    Refresh();
-                }
                 if (GUI.Button(rect.Split(++idx, sn), "CleanWin"))
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneWindows), true);
@@ -286,6 +279,10 @@ public partial class BuildConfig
                 var rect = EditorGUILayout.GetControlRect();
                 var sn = 4;
                 var idx = -1;
+                if (GUI.Button(rect.Split(++idx, sn), "Refresh"))
+                {
+                    Refresh();
+                }
                 if (GUI.Button(rect.Split(++idx, sn), "FixPrefabLuaPath"))
                 {
                     EditorCoroutine.StartCoroutine(FixPrefabLuaPath());

@@ -31,10 +31,6 @@ this.msgs = msgs
 
 --AutoGenInit Begin
 function this.AutoGenInit()
-    this.message_sys_LuaMonoBehaviour = message_sys:GetComponent("LuaMonoBehaviour")
-    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
-    this.network_LuaMonoBehaviour = network:GetComponent("LuaMonoBehaviour")
-    this.console_LuaMonoBehaviour = console:GetComponent("LuaMonoBehaviour")
 end
 --AutoGenInit End
 

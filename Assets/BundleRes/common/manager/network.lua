@@ -10,7 +10,6 @@ local http = require "socket.http"
 local ltn12 = require "socket.ltn12"
 
 local lfb = require "lfb"
-local flatbuffers = require "flatbuffers.flatbuffers"
 local proto, ptid, bfbs_names = require ("proto.proto") ()
 
 local print = function ( ... )
@@ -73,6 +72,7 @@ end
 
 -- function this.OnEnable() end
 local function fb_test( ... )
+	local flatbuffers = require "flatbuffers.flatbuffers"
 	local monster = proto[ptid.monsterc2s]
 	local vec3 = require "common.Vec3"
 	local shareT = require "Sample.shareT"
