@@ -6,6 +6,11 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "utility.xlua.util"
 
+local print = function ( ... )
+    _G.print("[manager]", ... )
+    -- _G.print("[manager]", debug.traceback())
+end
+
 local manager = {
     name = "manager",
 }
@@ -29,10 +34,13 @@ G.manager = manager
 -- end
 
 --AutoGenInit Begin
+--DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.message_sys_LuaMonoBehaviour = message_sys:GetComponent("LuaMonoBehaviour")
-    this.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
-    this.network_LuaMonoBehaviour = network:GetComponent("LuaMonoBehaviour")
+    this.message_LuaMonoBehaviour = message:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.scene_LuaMonoBehaviour = scene:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.network_LuaMonoBehaviour = network:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.console_LuaMonoBehaviour = console:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.Button_Button = Button:GetComponent(typeof(CS.UnityEngine.UI.Button))
 end
 --AutoGenInit End
 
@@ -49,6 +57,16 @@ end
 
 function this.Start()
     print("manager.Start")
+    this.network = this.network_LuaMonoBehaviour.luaTable
+    this.scene = this.scene_LuaMonoBehaviour.luaTable
+    this.message = this.message_LuaMonoBehaviour.luaTable
+    this.console = this.console_LuaMonoBehaviour.luaTable
+    print("manager"
+        ,this.network
+        ,this.scene
+        ,this.message
+        ,this.console
+    )
 
     --assert(coroutine.resume(manager.coroutine_demo()))
 

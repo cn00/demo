@@ -35,6 +35,7 @@ end
 --AutoGenInit End
 
 function message_sys.Awake()
+	this.AutoGenInit()
 end
 
 function message_sys.OnEnable()
@@ -43,7 +44,6 @@ function message_sys.OnEnable()
 end
 
 function message_sys.Start()
-	this.AutoGenInit()
     print("message_sys.Start")
 
     --assert(coroutine.resume(message_sys.coroutine_demo()))
@@ -56,7 +56,12 @@ end
 
 function message_sys.Trigger( key, data )
     for k, v in pairs(msgs[key]) do
-        v(data)
+        if type(v) == "function" then
+             v(data) 
+        else 
+            print("no a function " .. k .. ":" .. tostring(v)) 
+            msgs[key] = nil
+        end
     end
     msgs[key] = nil
 end

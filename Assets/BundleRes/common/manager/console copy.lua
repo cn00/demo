@@ -43,7 +43,7 @@ function this.coroutine_start_accept()
 			this.onconnect( c )
 		end
 
-		yield_return(UnityEngine.WaitForSeconds(1))
+		yield_return(UnityEngine.WaitForSeconds(0.1))
 	end
 end
 
@@ -51,7 +51,7 @@ function this.coroutine_start_receive()
 	print('coroutine_start_receive')
 	while this.listing 
 	do
-		local canread, sendt, status = socket.select(this.client, nil, 0.001)
+		local canread, sendt, status = socket.select(this.client, nil, 0.02)
 		-- print("canread", #canread, #this.client)
 		for _, c in ipairs(canread) do
 			-- c:settimeout(0.01)
@@ -67,7 +67,7 @@ function this.coroutine_start_receive()
 			end
 		end
 
-		yield_return(UnityEngine.WaitForSeconds(1))
+		yield_return(UnityEngine.WaitForSeconds(0.1))
 	end
 end
 
@@ -77,17 +77,10 @@ local man =
 	bc:			broadcast msg
 	h/help:		show this help
 ]]
-local function logcreate(c)
-	return function ( condition, stackTrace, type )
-		c:send(condition)
-		c:send("\n")
-	end
-end
-local LogType = UnityEngine.LogType
 function this.passercmd( c, cmd )
 	local pidx = match(S' '^0 * (R'az'^0 * R'09'^0), cmd)
 	local exe = string.sub(cmd, 1, pidx)
-	local params = string.sub( cmd, pidx+1 )
+	local params = string.sub( cmd, pidx )
 	exe = string.gsub( exe, ' ', '' )
 	local commands = {
 		help = function ()
@@ -109,26 +102,9 @@ function this.passercmd( c, cmd )
 				msg = msg .. i .. " " .. tostring(v) .. ":" .. v:getpeername() ..(c == v and "(me)\n" or "\n")
 			end
 			c:send(msg)
-		end,
-		log = function (p)
-			this.logl = this.logl or function( condition, stackTrace, type )
-				c:send(tostring(type) .. condition)
-				if(type == LogType.Error or type == LogType.Exception)then
-					c:send(string.gsub(stackTrace, "\n", "\n[App]\t"))
-				end
-				c:send("\n")
-			end
-			if(p == "off")then 
-				UnityEngine.Application.logMessageReceived("-", this.logl)
-				c:send("remote log off\n")
-			else
-				UnityEngine.Application.logMessageReceived("+", this.logl)
-				c:send("remote log on\n")
-			end
 		end
 	}
 	commands.h = commands.help
-	commands.l = commands.log
 	this.commands = commands
 	local command = this.commands[exe]
 	if(command ~= nil)then command(params)end
@@ -162,7 +138,7 @@ function this.ondisconnect( c )
 	if idx ~= -1 then
 		c:close()
 		table.remove( this.client,idx )
-		this.broadcast(c, "byebye " .. tostring(c:getpeername()))
+		this.broadcast(c, "byebye " .. tostring(c))
 		-- this.client[c:getfd()] = nil
 	end
 end
@@ -178,10 +154,40 @@ end
 -- function this.OnEnable() end
 
 function this.Start()
-	local server, err = socket.bind(this.Ip, this.Port, 1)
-	print("server:", server, err)
+	local tcp6 = socket.tcp6()
+	this.tcp6 = tcp6
+	tcp6:bind("[::]", "9999")
+	tcp6:listen()
+	local server = tcp6
+	-- local server = assert(socket.bind(this.Ip, this.Port))
+	this["server.family"] = server:getfamily()
+	print("server:", server, this["server.family"])
 	this.listing = true
 	-- server:listen(0)
+	--[[
+		accept function: 0x13da99530
+		bind function: 0x13da99660
+		class tcp{client} 
+		close function: 0x13da994f0
+		connect function: 0x13da99730
+		dirty function: 0x13da99820
+		getfamily function: 0x13da99860
+		getfd function: 0x13da998b0
+		getoption function: 0x13da998f0
+		getpeername function: 0x13da99930
+		getsockname function: 0x13da99970
+		getstats function: 0x13da999b0
+		listen function: 0x13da99a10
+		receive function: 0x13da99ac0
+		send function: 0x13da99af0
+		setfd function: 0x13da99b20
+		setoption function: 0x13da99b60
+		setpeername function: 0x13da99730
+		setsockname function: 0x13da99660
+		setstats function: 0x13da999e0
+		settimeout function: 0x13da99ba0
+		shutdown function: 0x13da99bd0
+	]]
 	local count = 0
 	this.server = server
 	util.coroutine_call(this.coroutine_start_accept)

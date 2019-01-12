@@ -19,23 +19,23 @@ local print = function ( ... )
     -- _G.print(util.dump({...}, true, logtag))
 end
 
-local response_body = {}
-local post_data = "post_data"
--- local res, code, headers, status = http.request "http://localhost:8008"
-local res, code, headers, status = http.request
-{  
-	url = "http://anbolihua.iteye.com/blog/2316423",
-	-- url = "http://localhost:8008/index.html",
-	method = "GET",
-	headers =
-	{
-		["Content-Type"] = "text/html; charset=utf-8",
-		-- ["Content-Length"] = #post_data,
-	},
-	source = ltn12.source.string(post_data),
-	sink = ltn12.sink.table(response_body)
-}
-print("http.request", util.dump {res, code, headers, status, response_body=response_body})
+-- local response_body = {}
+-- local post_data = "post_data"
+-- -- local res, code, headers, status = http.request "http://localhost:8008"
+-- local res, code, headers, status = http.request
+-- {  
+-- 	url = "http://anbolihua.iteye.com/blog/2316423",
+-- 	-- url = "http://localhost:8008/index.html",
+-- 	method = "GET",
+-- 	headers =
+-- 	{
+-- 		["Content-Type"] = "text/html; charset=utf-8",
+-- 		-- ["Content-Length"] = #post_data,
+-- 	},
+-- 	source = ltn12.source.string(post_data),
+-- 	sink = ltn12.sink.table(response_body)
+-- }
+-- print("http.request", util.dump {res, code, headers, status, response_body=response_body})
 
 local Tag = "[network]"
 local network = {
@@ -71,59 +71,6 @@ function this.Awake()
 	this.AutoGenInit()
 end
 
--- function this.OnEnable() end
-local function fb_test( ... )
-	local flatbuffers = require "flatbuffers.flatbuffers"
-	local monster = proto[ptid.monsterc2s]
-	local vec3 = require "common.Vec3"
-	local shareT = require "Sample.shareT"
-
-	local b = flatbuffers.Builder(1)
-    local name = b:CreateString("MyMonster")
-	
-	-- all children should build before parent
-	shareT.Start(b)
-	local pos = vec3.CreateVec3(b, 1999.0, 2.0, 3.0)
-	shareT.AddPos(b, pos)
-    shareT.AddMana(b, 8888)
-	local st = shareT.End(b)
-	
-	monster.Start(b)
-	
-	local pos2 = vec3.CreateVec3(b, 2.0, 22.0, 23.0)
-	monster.AddPos(b, pos2)
-
-    monster.AddHp(b, 9980)
-    monster.AddMana(b, 9999)
-	monster.AddName(b, name)
-	
-	monster.AddSt(b, st)
-	
-    local mon = monster.End(b)
-	
-    if FBSizePrefix then
-        b:FinishSizePrefixed(mon)
-    else
-        b:Finish(mon)
-    end
-	local buf, offset = b:Output(true), b:Head()
-	local size = #buf
-	print("offset:" .. offset, "size:"..size)
-	
-	this.conn:send(ptid.monsterc2s)
-	this.conn:send(10000000+size)
-	this.conn:send(1000+offset)
-	this.conn:send(buf)
-
-	-- buf = flatbuffers.binaryArray.New(buf)
-	-- offset = 0
-	-- offset = offset + flatbuffers.N.Int32.bytewidth
-	-- local size = flatbuffers.N.Int32:Unpack(buf, offset)
-	-- local c2s = proto[ptid.monsterc2s].GetRoot(buf, offset)
-	-- print(offset, size, c2s:Name(), c2s:Hp())
-end
--- print("this:", util.dump(this))
-
 function this.co_init_lfbs()
 	-- for k,v in pairs(lfb) do
 	-- 	print(k, v)
@@ -144,48 +91,14 @@ function this.co_init_lfbs()
 	end
 end
 
-local Monster_c2s = {
-	-- pos:common.Vec3;
-	-- mana:short = 150;
-	-- hp:short = 100;
-	-- name:string;
-	-- st:shareT;
-	pos = {x = 1100000, y = 22,z = 33},
-	mana = 989,
-	hp = 89,
-	name = "name Monster_c2s",
-	st = {
-		-- pos:common.Vec3;
-		-- mana:short = 150;
-		pos = {x = 99, y = 88, z = 77},
-		mana = 456,
-	}
+local Action_Move = {
+	head = {
+		id = "10000",
+	},
+	from = {x = 11,  y = 22,  z = 33},
+	to   = {x = 911, y = 922, z = 933},
 }
-this.Monster_c2s = Monster_c2s
-
-local Monster_s2c = {
-	-- pos:common.Vec3;
-	-- mana:short = 150;
-	-- hp:short = 100;
-	-- name:string;
-	-- // friendly:bool = false (deprecated);
-	-- inventory:[ubyte];
-	-- color:common.Color = Blue;
-	-- weapons:[common.Weapon];
-	-- equipped:common.Equipment;
-	-- st:shareT;
-	pos = {x = 11, y = 22,z = 33},
-	mana = 989,
-	hp = 89,
-	name = "name Monster_c2s",
-	st = {
-		-- pos:common.Vec3;
-		-- mana:short = 150;
-		pos = {x = 99, y = 88, z = 77},
-		mana = 456,
-	}
-}
-this.Monster_s2c = Monster_s2c
+this.Action_Move = Action_Move
 
 function this.lfb_test()
 	coroutine_call(function()
@@ -193,30 +106,30 @@ function this.lfb_test()
 			yield_return(UnityEngine.WaitForSeconds(0.1))
 		end
 
-		local protoid = ptid.monsterc2s
+		local protoid = ptid.Action_Move
 		local lfb = this.lfb
 		this.loaded_bfbs = lfb:loaded()
 		local buf
 		print("this.loaded_bfbs", util.dump(this.loaded_bfbs))
 		local ex = os.clock()
 		for i = 1,10000 do
-			buf = assert(lfb:encode("sample.bfbs.txt", proto[protoid], this.Monster_c2s))
+			buf = assert(lfb:encode("proto.bfbs.txt", proto[protoid], this.Action_Move))
 		end
 		local ey = os.clock()
-		print("encode 10000s", ey-ex, #buf, buf:gsub("[\0-\13]",""))
+		print("encode 10000 times", ey-ex, #buf, buf:gsub("[\0-\13]",""))
 			
 		this.conn:send(protoid)
-		this.conn:send(10000000+ #buf)
+		this.conn:send(10000000 + #buf)
 		-- this.conn:send(1000+offset)
 		this.conn:send(buf)
 
 		local ey = os.clock()
 		local t  
 		for i = 1, 10000 do
-			t = assert(lfb:decode("sample.bfbs.txt", proto[protoid], buf))
+			t = assert(lfb:decode("proto.bfbs.txt", proto[protoid], buf))
 		end
 		local ez = os.clock()
-		print("decode 10000s:", ez - ey, #t, util.dump(t, true, logtag))
+		print("decode 10000 times:", ez - ey, #t, util.dump(t, true, logtag))
 	end)
 end
 
@@ -241,6 +154,14 @@ function this.coroutine_start_receive()
 			-- local data, err = c:receive()
 			print("receive", #data, data:gsub("[\0-\13]",""), err)
 
+			local res_cb = this.wait_for_res[protoid - 10000000]
+			if res_cb ~= nil then
+				local lfb = this.lfb
+				local t = assert(lfb:decode("proto.bfbs.txt", proto[protoid], data))
+				res_cb(t)
+				this.wait_for_res[protoid - 10000000] = nil
+			end 
+
 			if not err then
 				print()
 			elseif(err == "closed")then
@@ -254,6 +175,19 @@ function this.coroutine_start_receive()
 		end
 
 		yield_return(UnityEngine.WaitForSeconds(1))
+	end
+end
+
+
+this.wait_for_res = {}
+function this.send(protoid, dt, res_cb)
+	local lfb = this.lfb
+	local buf = assert(lfb:encode("proto.bfbs.txt", proto[protoid], dt))
+	this.conn:send(protoid)
+	this.conn:send(10000000 + #buf)
+	this.conn:send(buf)
+	if res_cb ~= nil then
+		this.wait_for_res[protoid] = res_cb
 	end
 end
 

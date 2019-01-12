@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4134402296093960}
   - component: {fileID: 114739290049429514}
   m_Layer: 0
-  m_Name: message_sys
+  m_Name: message
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ GameObject:
   - component: {fileID: 4128441584194778}
   - component: {fileID: 114543841820642590}
   m_Layer: 0
-  m_Name: scene_manager
+  m_Name: scene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -354,8 +354,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: common/manager/message_sys
-    LuaText: {fileID: 4900000, guid: 85a4e92bc26ec4acb813ed4e556b4f79, type: 3}
+    Path: common/manager/manager
+    LuaText: {fileID: 4900000, guid: 4d075291d12d24b6780da3c10343a7e1, type: 3}
   injections:
   - obj: {fileID: 1166545898124404}
     exportComIdx: 1
@@ -379,8 +379,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: common/manager/scene_manager
-    LuaText: {fileID: 4900000, guid: b69783cadf0e948928116aec6b1bfed1, type: 3}
+    Path: common/manager/scene
+    LuaText: {fileID: 4900000, guid: 9a88a8a5cab864b1da4188691ea340f0, type: 3}
   injections: []
 --- !u!114 &114552578871805904
 MonoBehaviour:
@@ -409,8 +409,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LuaScript:
-    Path: common/manager/message_sys
-    LuaText: {fileID: 4900000, guid: 85a4e92bc26ec4acb813ed4e556b4f79, type: 3}
+    Path: common/manager/message
+    LuaText: {fileID: 4900000, guid: a7dd5cfa31e214305b50f4b7fd28c88b, type: 3}
   injections: []
 --- !u!114 &114886810775008028
 MonoBehaviour:
