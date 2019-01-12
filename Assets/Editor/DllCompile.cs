@@ -149,11 +149,7 @@ public class DllCompile : SingletonAsset<DllCompile>
                 var tmpDir = AssetDatabase.GetAssetPath(Instance().PathGetterObj.GetInstanceID());
                 EditorGUILayout.SelectableLabel(tmpDir);
             }
-#if UNITY_EDITOR_OSX
-                var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Unity.app/Contents/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
-#elif UNITY_EDITOR_WIN
-                var distDir = AppDomain.CurrentDomain.BaseDirectory + "/Data/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
-#endif
+            var distDir = UnityEditor.EditorApplication.applicationContentsPath + "/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
             EditorGUILayout.SelectableLabel(distDir);
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))

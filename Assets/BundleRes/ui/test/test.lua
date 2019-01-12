@@ -454,23 +454,52 @@ function this.coroutine_insert_10000()
 	end)
 end
 
+function this.PlanetTest(  )
+	coroutine_call(function (  )
+		local obj = nil
+		yield_return(CS.AssetSys.Instance:GetAsset(
+			"bilibili/planet/planet.prefab",
+			function(asset)
+				obj = asset
+			end
+		))
+		local go = GameObject.Instantiate(obj)
+		go.name = "planet"
+
+		yield_return(CS.AssetSys.Instance:GetAsset(
+			"bilibili/planet/Capsule_1.prefab",
+			function(asset)
+				obj = asset
+			end
+		))
+		local go = GameObject.Instantiate(obj)
+		go.name = "Capsule_1"
+
+		local oldLoading = GameObject.Find("loading")
+		GameObject.DestroyImmediate(oldLoading)
+		
+		this.Destroy()
+	end)
+end
+
 --AutoGenInit Begin
 function this.AutoGenInit()
-    this.Insert_10000_Button = Insert_10000:GetComponent("UnityEngine.UI.Button")
-    this.ix_InputField = ix:GetComponent("UnityEngine.UI.InputField")
-    this.iy_InputField = iy:GetComponent("UnityEngine.UI.InputField")
-    this.Insertxy_Button = Insertxy:GetComponent("UnityEngine.UI.Button")
-    this.OpenOP_Button = OpenOP:GetComponent("UnityEngine.UI.Button")
-    this.CheckUpdate_Button = CheckUpdate:GetComponent("UnityEngine.UI.Button")
-    this.QRCode_Button = QRCode:GetComponent("UnityEngine.UI.Button")
-    this.IpAddress_Button = IpAddress:GetComponent("UnityEngine.UI.Button")
-    this.tableview_Button = tableview:GetComponent("UnityEngine.UI.Button")
-    this.nslua_Button = nslua:GetComponent("UnityEngine.UI.Button")
-    this.blsdk_init_Button = blsdk_init:GetComponent("UnityEngine.UI.Button")
-    this.blsdk_login_Button = blsdk_login:GetComponent("UnityEngine.UI.Button")
-    this.blsdk_logout_Button = blsdk_logout:GetComponent("UnityEngine.UI.Button")
-    this.ffi_test_Button = ffi_test:GetComponent("UnityEngine.UI.Button")
-    this.lfb_test_Button = lfb_test:GetComponent("UnityEngine.UI.Button")
+    this.Insert_10000_Button = Insert_10000:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.ix_InputField = ix:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.iy_InputField = iy:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.Insertxy_Button = Insertxy:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.OpenOP_Button = OpenOP:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.CheckUpdate_Button = CheckUpdate:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.QRCode_Button = QRCode:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.IpAddress_Button = IpAddress:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.tableview_Button = tableview:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.nslua_Button = nslua:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.blsdk_init_Button = blsdk_init:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.blsdk_login_Button = blsdk_login:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.blsdk_logout_Button = blsdk_logout:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.ffi_test_Button = ffi_test:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.lfb_test_Button = lfb_test:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.planet_Button = planet:GetComponent(typeof(CS.UnityEngine.UI.Button))
 end
 --AutoGenInit End
 function this.Awake()
@@ -498,6 +527,8 @@ function this.Start()
 	this.ffi_test_Button.onClick:AddListener(this.ffitest)
 
 	this.lfb_test_Button.onClick:AddListener(this.lfb_test)
+	
+	this.planet_Button.onClick:AddListener(this.PlanetTest)
 
 	local ixonEndEdit = function(text)
 		this.iy_InputField:Select()

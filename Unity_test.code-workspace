@@ -2,19 +2,15 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"path": "bin/ios/Unity-iPhone.xcodeproj"
 		}
 	],
 	"settings": {
+		"files.associations": {
+			"*.bjs": "javascript",
+			"*.javascript": "javascript"
+		},
 		"luaide.scriptRoots": [
-			"Assets/BundleRes/",
-			"Assets/BundleRes/lua",
-			"Assets/BundleRes/proto",
-		],
-		"files.exclude": {
-			"**/*.lua.txt": true,
-		}
-	},
+			"Assets/BundleRes/"
+		]
+	}
 }

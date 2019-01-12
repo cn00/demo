@@ -338,6 +338,7 @@ public partial class BuildConfig
                 using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
                 {
                     DrawBundleConfig(guiOpts);
+                    verticalScope2.Dispose();
                 }
             }
 

@@ -524,7 +524,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         {
             if(total > 1)
             {
-                EditorUtility.DisplayCancelableProgressBar("uploading ...", info + ": " + processing + "/" + total, processing/total);
+                EditorUtility.DisplayCancelableProgressBar("processing ...", info + ": " + processing + "/" + total, processing/total);
             }
             yield return null;
         }

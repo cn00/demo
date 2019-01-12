@@ -4,12 +4,13 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
+-- #SCRIPTNAME#
+
 local print = function ( ... )
     _G.print("[#SCRIPTNAME#]", ...)
 end
 
-local #SCRIPTNAME# = {}
-local this = #SCRIPTNAME#
+local this = {}
 
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
@@ -40,6 +41,19 @@ end
 
 -- function this.FixedUpdate() end
 
+-- function this.OnTriggerEnter(otherCollider) end
+-- function this.OnTriggerStay(otherCollider) end
+-- function this.OnTriggerExit(otherCollider) end
+
+-- function this.OnCollisionEnter(otherCollision) end
+
+-- function this.OnMouseOver() end
+-- function this.OnMouseEnter() end
+-- function this.OnMouseDown() end
+-- function this.OnMouseDrag() end
+-- function this.OnMouseUp() end
+-- function this.OnMouseExit() end
+
 -- function this.Update() end
 
 -- function this.LateUpdate() end
@@ -50,4 +64,4 @@ function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return #SCRIPTNAME#
+return this

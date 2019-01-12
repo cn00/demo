@@ -7,21 +7,12 @@ local sqlite = CS.SQLite.SQLite3
 local util = require "utility.xlua.util"
 
 local login = {
-	string0 = "sss",
-	number0 = 0,
-	testString = {
-		testkey = "test string ...",
-		number = 12321,
-		boolv = false,
-		table2 = {
-			boolv = true,
-			kk2 = "jlkjl",
-			num2 = 999
-		}
-	}
 }
 
 local self = login
+local this = login
+
+local Game = _G.Game
 
 local yield_return =
 	util.async_to_sync(
@@ -88,25 +79,16 @@ function login.Awake()
 	-- gmono.luaTable.login = self
 end
 
-function login.OnEnable()
-	print("login.OnEnable")
-end
+-- function login.OnEnable()end
 
-function login.Start()
-	print("login.Start")
-end
+-- function login.Start()end
 
-function login.FixedUpdate()
-end
+-- function login.FixedUpdate()end
 
-function login.Update()
-end
+-- function login.Update()end
 
-function login.LateUpdate()
-end
+-- function login.LateUpdate()end
 
-function login.OnDestroy()
-	print("login.OnDestroy")
-end
+-- function login.OnDestroy()end
 
 return login

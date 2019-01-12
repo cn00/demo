@@ -2,10 +2,22 @@
 
 namespace common;
 
+struct Vec2 {
+  x:float;
+  y:float;
+}
+
 struct Vec3 {
   x:float;
   y:float;
   z:float;
+}
+
+struct Vec4 {
+  x:float;
+  y:float;
+  z:float;
+  w:float;
 }
 
 enum Color:byte { Red = 0, Green, Blue = 2 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   UseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131900154893250800
+  LastBuildTime: 131917367467723330
   Version:
     Name: 
     Major: 1
@@ -25,6 +25,31 @@ MonoBehaviour:
   ForceRebuild: 0
   BuildScene: 0
   mGroups:
+  - Foldout: 0
+    Name: Audio
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: Audio/button.bd
+      mSize: 0
+      mMd5: 
+      mVersion: 
+      mRebuild: 0
+  - Foldout: 0
+    Name: bilibili
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: bilibili/cheers.bd
+      mSize: 3230
+      mMd5: 9C221FF6CE39E30E07FE5F432FF992ED
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: bilibili/planet.bd
+      mSize: 1275625
+      mMd5: A50C04DE41A61B1074CE79D0377D45D3
+      mVersion: 1.1.0
+      mRebuild: 0
   - Foldout: 0
     Name: chapter_01
     mInclude: 0
@@ -45,29 +70,29 @@ MonoBehaviour:
       mMd5: DE9968B6C5677822A023B9202E796F7C
       mVersion: 1.1.0
       mRebuild: 0
-  - Foldout: 0
+  - Foldout: 1
     Name: common
     mInclude: 0
     mRebuild: 0
     mBundles:
+    - mName: common/manager.bd
+      mSize: 18081
+      mMd5: 262C3FC4F7E4436956BA88A2AF03D6C7
+      mVersion: 1.1.0
+      mRebuild: 1
     - mName: common/excel.bd
       mSize: 12435
       mMd5: D50016422C6D5E8B878AD1C81DCF0BD4
       mVersion: 1.1.0
       mRebuild: 0
-    - mName: common/global.bd
-      mSize: 1976
-      mMd5: 57D53964DB260CBA8F9C73A3C6008F77
-      mVersion: 1.1.0
-      mRebuild: 0
-    - mName: common/manager.bd
-      mSize: 18459
-      mMd5: 8F26A1AD57CA9E4F41946FB6EEE93BED
-      mVersion: 1.1.0
-      mRebuild: 0
     - mName: common/ui.bd
       mSize: 8886
       mMd5: 6B7764835741F4965B2FD47E041B8517
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: common/global.bd
+      mSize: 1976
+      mMd5: 57D53964DB260CBA8F9C73A3C6008F77
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -76,8 +101,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3528
-      mMd5: A4EFC2723D742DCF81A7829DF5F4F3C0
+      mSize: 3683
+      mMd5: 69C8BA190DFC2DA1B228302186F086AC
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -91,10 +116,10 @@ MonoBehaviour:
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/proto.bd
-      mSize: 1474
-      mMd5: A4A175DE66A51BC5C1F40D4CDB3C6330
+      mSize: 1427
+      mMd5: 0015EC36D33881FCA5278298306E89D0
       mVersion: 1.1.0
-      mRebuild: 0
+      mRebuild: 1
     - mName: lua/socket.bd
       mSize: 20652
       mMd5: 8892FA8B8A418D9AE434A9B9D55911E2
@@ -106,8 +131,8 @@ MonoBehaviour:
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/utility.bd
-      mSize: 22697
-      mMd5: 4139C031A2316555119BBF4E47AE91A9
+      mSize: 22767
+      mMd5: E774013F13DF9DF291759BED7E61AC09
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -116,8 +141,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: proto/bfbs.bd
-      mSize: 2498
-      mMd5: 3397BBBFE1F7711BD6A012119E853590
+      mSize: 2698
+      mMd5: 2E97ED5C44371AF0D55089E88B31ABC3
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -136,8 +161,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: ui/boot.bd
-      mSize: 27224
-      mMd5: C0AA60CAFB13DBAE62464D66F8078C2A
+      mSize: 27358
+      mMd5: ABB44D0837CA536E9D437050E219563E
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/excel_viewer.bd
@@ -151,8 +176,8 @@ MonoBehaviour:
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/login.bd
-      mSize: 20816
-      mMd5: 9453BAECABA480FDED45E8E9CE760E9A
+      mSize: 20676
+      mMd5: 8BDF4A7337C0548E903DF53185F15127
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/qrcode.bd
@@ -161,8 +186,8 @@ MonoBehaviour:
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/test.bd
-      mSize: 28278
-      mMd5: 2F995FDD71169C13B45554B57C7E3203
+      mSize: 28633
+      mMd5: 8C82D6326C891E5F0DD9F2D8CA807965
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/update.bd

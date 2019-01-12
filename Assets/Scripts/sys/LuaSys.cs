@@ -48,12 +48,13 @@ public class LuaSys : SingleMono<LuaSys>
         meta.Dispose();
 
         luaTable.Set("mono", lb);
+        luaTable.Set("gameObject", lb.gameObject);
+        luaTable.Set("transform", lb.transform);
         if(lb.injections != null && lb.injections.Length > 0)
         {
             foreach(var injection in lb.injections.Where(i => i.obj != null))
             {
                 luaTable.Set(injection.obj.name, injection.obj);
-                // AppLog.d(Tag, "injections:{0}:{1}", injection.obj.name, injection.obj);
             }
         }
         return luaTable;

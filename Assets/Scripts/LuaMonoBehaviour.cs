@@ -37,6 +37,20 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaOnEnable;
     private Action luaStart;
     private Action luaFixedUpdate;
+
+    private Action<Collider> luaOnTriggerEnter;
+    private Action<Collider> luaOnTriggerStay;
+    private Action<Collider> luaOnTriggerExit;
+
+    private Action<Collision> luaOnCollisionEnter;
+
+    private Action luaOnMouseEnter;
+    private Action luaOnMouseOver;
+    private Action luaOnMouseDown;
+    private Action luaOnMouseDrag;
+    private Action luaOnMouseUp;
+    private Action luaOnMouseExit;
+
     private Action luaUpdate;
     private Action luaLateUpdate;
     private Action luaOnDestroy;
@@ -57,6 +71,18 @@ public class LuaMonoBehaviour : MonoBehaviour
         luaTable.Get("OnEnable", out luaOnEnable);
         luaTable.Get("Start", out luaStart);
         luaTable.Get("FixedUpdate", out luaFixedUpdate);
+        
+        {
+            luaTable.Get("OnTriggerEnter", out luaOnTriggerEnter);
+            luaTable.Get("OnTriggerStay", out luaOnTriggerStay);
+            luaTable.Get("OnTriggerExit", out luaOnTriggerExit);
+
+            luaTable.Get("OnCollisionEnter", out luaOnCollisionEnter);
+
+            luaTable.Get("OnMouseDown", out luaOnMouseDown);
+            luaTable.Get("OnMouseDrag", out luaOnMouseDrag);
+        }
+
         luaTable.Get("Update", out luaUpdate);
         luaTable.Get("LateUpdate", out luaLateUpdate);
         luaTable.Get("OnDestroy", out luaOnDestroy);
@@ -96,6 +122,107 @@ public class LuaMonoBehaviour : MonoBehaviour
             luaFixedUpdate();
         }
     }
+
+    #region OnTrigger
+    private void OnTriggerEnter(Collider other)
+    {
+        if (luaOnTriggerEnter != null)
+        {
+            luaOnTriggerEnter(other);
+        }
+    }
+
+    // stayCount allows the OnTriggerStay to be displayed less often
+    // than it actually occurs.
+    private void OnTriggerStay(Collider other)
+    {
+        if (luaOnTriggerStay != null)
+        {
+            luaOnTriggerStay(other);
+            // if (stayCount > 0.25f)
+            // {
+            //     Debug.Log("staying");
+            //     stayCount = stayCount - 0.25f;
+            // }
+            // else
+            // {
+            //     stayCount = stayCount + Time.deltaTime;
+            // }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (luaOnTriggerExit != null)
+        {
+            luaOnTriggerExit(other);
+        }
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        // ContactPoint contact = other.contacts[0];
+        // Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
+        // Vector3 pos = contact.point;
+        // Instantiate(explosionPrefab, pos, rot);
+        // Destroy(gameObject);
+        if(luaOnCollisionEnter != null)
+        {
+            luaOnCollisionEnter(other);
+        }
+    }
+    #endregion OnTrigger
+
+    #region Mouse
+
+    void OnMouseOver()
+    {
+        if (luaOnMouseOver != null)
+        {
+            luaOnMouseOver();
+        }
+    }
+
+    void OnMouseEnter()
+    {
+        if (luaOnMouseEnter != null)
+        {
+            luaOnMouseEnter();
+        }
+    }
+
+    void OnMouseDown()
+    {
+        if (luaOnMouseDown != null)
+        {
+            luaOnMouseDown();
+        }
+    }
+
+    void OnMouseDrag()
+    {
+        if(luaOnMouseDrag != null)
+        {
+            luaOnMouseDrag();
+        }
+    }
+
+    void OnMouseUp()
+    {
+        if (luaOnMouseUp != null)
+        {
+            luaOnMouseUp();
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (luaOnMouseExit != null)
+        {
+            luaOnMouseExit();
+        }
+    }
+    #endregion Mouse
 
     // Update is called once per frame
     void Update()

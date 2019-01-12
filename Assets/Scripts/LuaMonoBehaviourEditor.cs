@@ -38,7 +38,7 @@ public class LuaMonoBehaviourEditor : Editor
     void refreshAutoGen()
     {
         string luaname = "this";//mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
-        luaMemberValue = "--AutoGenInit Begin\nfunction " + luaname + ".AutoGenInit()";
+        luaMemberValue = "--AutoGenInit Begin\n--DO NOT EDIT THIS FUNCTION MANUALLY.\nfunction " + luaname + ".AutoGenInit()";
         foreach (var i in mLuaMono.injections.Where(o => o != null && o.obj != null))
         {
             var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
@@ -46,13 +46,13 @@ public class LuaMonoBehaviourEditor : Editor
             var luakey = i.obj.name + "_" + comType.Substring(comType.LastIndexOf('.') + 1);
             if(i.obj == mLuaMono.gameObject)
             {
-                injectName = "mono.gameObject";
+                injectName = "gameObject";
                 luakey = comType.Substring(comType.LastIndexOf('.') + 1);
             }
             luaMemberValue += "\n    " + luaname + "." + luakey
                 + " = " + injectName
-                + ":GetComponent(\""
-                + comType + "\")";
+                + ":GetComponent(typeof(CS."
+                + comType + "))";
         }
         luaMemberValue += "\nend\n--AutoGenInit End";
     }

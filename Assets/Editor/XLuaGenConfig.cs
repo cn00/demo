@@ -77,6 +77,15 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Object),
         typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.GameObject),
+        typeof(UnityEngine.Transform),
+
+        typeof(UnityEngine.Rigidbody),
+        typeof(UnityEngine.Physics),
+        typeof(UnityEngine.RaycastHit),
+
+        typeof(UnityEngine.Vector2),
+        typeof(UnityEngine.Vector3),
+        typeof(UnityEngine.Vector4),
         typeof(UnityEngine.WaitForSeconds),
         typeof(UnityEngine.AssetBundle),
         typeof(UnityEngine.WWW),

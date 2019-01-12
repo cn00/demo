@@ -1,4 +1,27 @@
 
+### network
+* auto adjustable group based local and global network
+```lua
+{ -- groups
+	{ -- group
+		type = "group",
+		children = {
+			{
+				type = "user",
+			},
+			-- ...
+		},
+		connect = { -- group commanders, connected other groups
+			{
+				type = "user",
+			},
+			-- ...
+		}
+	},
+	-- ...
+}
+```
+
 ### bundle pack
 * 
 

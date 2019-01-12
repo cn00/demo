@@ -26,6 +26,9 @@ local boot = {
 }
 local this = boot
 
+local Game = _G.Game or {}
+_G.Game = Game
+
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
@@ -38,6 +41,7 @@ end)
 function boot.coroutine_boot(first, ...)
     -- local args = {...}
     util.coroutine_call(function(...)
+        print("boot.coroutine_boot")
         -- print(debug.traceback("test traceback"))
         -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
         -- yield_return(UnityEngine.WaitForSeconds(1))
@@ -57,7 +61,12 @@ function boot.coroutine_boot(first, ...)
             obj = asset
         end))
         local manager = GameObject.Instantiate(obj)
-        this.msgmanager = manager:GetComponent("LuaMonoBehaviour").luaTable
+        Game.manager = manager
+        this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
+
+        yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
+
+        this.msgmanager = this.manager.message
 
         this.msgmanager.AddListener("test001", function ( data )
             print("test001", data)
@@ -70,9 +79,6 @@ function boot.coroutine_boot(first, ...)
         end)
         print("AddListener test001")
 
-        -- yield_return(UnityEngine.WaitForSeconds(1))
-        this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
-
 
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
@@ -80,15 +86,17 @@ function boot.coroutine_boot(first, ...)
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
 
-	    -- obj = nil
-	    -- yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
-	    --     obj = asset;
-	    -- end))
-	    -- print("lua login 1", obj);
-	    -- local login = GameObject.Instantiate(obj);
+	    obj = nil
+	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+	        obj = asset;
+	    end))
+	    print("lua login 1", obj);
+	    local login = GameObject.Instantiate(obj);
 
         loading:SetActive(false)
-        
+
+        yield_return(UnityEngine.WaitForSeconds(9))
+        this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
     end)
 end
 
@@ -98,7 +106,8 @@ end
 --AutoGenInit End
 
 function boot.Awake()
-	boot.AutoGenInit()
+    boot.AutoGenInit()
+    
 end
 
 -- function boot.OnEnable()
@@ -109,6 +118,9 @@ end
 function boot.Start()
     mobdebug.start("localhost", 8172)
     print("boot.Start mobdebug", mobdebug)
+    
+    print("UnityEditor.EditorApplication.applicationContentsPath", CS.UnityEditor.EditorApplication.applicationContentsPath)
+    print("UnityEditor.EditorApplication.applicationPath", CS.UnityEditor.EditorApplication.applicationPath)
 
     boot.mobdebug = mobdebug
 
