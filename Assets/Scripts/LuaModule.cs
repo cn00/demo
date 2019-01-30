@@ -73,5 +73,15 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_nslua(L);
         }
 
+
+        [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int luaopen_p7zip(System.IntPtr L);
+
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        public static int LoadP7zip(System.IntPtr L)
+        {
+            return luaopen_p7zip(L);
+        }
+
     }
 }

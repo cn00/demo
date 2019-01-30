@@ -4,6 +4,8 @@ local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 local sqlite = CS.SQLite.SQLite3
 
+local p7zip = require "p7zip"
+
 local ios = UnityEngine.RuntimePlatform.IPhonePlayer
 local os = UnityEngine.Application.platform --"iOS" --"OSX Editor"
 if os == ios then
@@ -18,6 +20,13 @@ local this = test
 local print = function ( ... )
     _G.print("[test]", ... )
     -- _G.print("[this]", debug.traceback())
+end
+
+print("p7zip", p7zip)
+function this.P7zipTest()
+	coroutine_call(function()
+		p7zip.execute("7z a test.7z obj -p123456")
+	end)
 end
 
 function YieldAndCallback(to_yield, callback)
