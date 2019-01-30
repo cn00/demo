@@ -106,7 +106,7 @@ function this.lfb_test()
 			yield_return(UnityEngine.WaitForSeconds(0.1))
 		end
 
-		local protoid = ptid.Action_Move
+		local protoid = ptid.Action_Move_c2s
 		local lfb = this.lfb
 		this.loaded_bfbs = lfb:loaded()
 		local buf
