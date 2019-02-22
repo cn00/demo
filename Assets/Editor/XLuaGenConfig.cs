@@ -56,15 +56,16 @@ public static class XLuaGenConfig
         typeof(LuaEnv),
         typeof(LuaMonoBehaviour),
         typeof(NetSys),
-        typeof(QRCodeEncodeController),
-        typeof(QRCodeDecodeController),
-        typeof(JavaUtil),
+        //typeof(QRCodeEncodeController),
+        //typeof(QRCodeDecodeController),
+        //typeof(JavaUtil),
         typeof(AppLog),
         typeof(SQLite3),
         #endregion customer types
 
         #region system
         // typeof(System.IntPtr),
+        typeof(System.Text.Encoding),
         typeof(System.Object),
         typeof(System.Delegate),
         typeof(System.Convert),

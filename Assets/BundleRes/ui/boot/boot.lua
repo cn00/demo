@@ -14,15 +14,6 @@ end
 
 local boot = {
     G = _G,
-    Name = "boot",
-    1, 2, 3, 4,
-    s = "sssss",
-    {5, 6, 7, 8, 9,},
-    num = 9999,
-    hahahaah = {
-        dd = 999,
-        11,22,33,44
-    }
 }
 local this = boot
 
@@ -116,7 +107,7 @@ end
 -- end
 
 function boot.Start()
-    mobdebug.start("localhost", 8172)
+    mobdebug.start("localhost", 8173)
     print("boot.Start mobdebug", mobdebug)
     
     print("UnityEditor.EditorApplication.applicationContentsPath", CS.UnityEditor.EditorApplication.applicationContentsPath)

@@ -2,6 +2,8 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
+
+require "utility.init"
 local util = require "utility.xlua.util"
 local socket = require "socket.socket"
 local sprotoparser = require "utility.sprotoparser"
@@ -9,14 +11,14 @@ local sprotoparser = require "utility.sprotoparser"
 local http = require "socket.http"
 local ltn12 = require "socket.ltn12"
 
-local lfb = require "lfb"
+local lfb = require("lfb")()
 local proto, ptid, bfbs_names = require ("proto.proto") ()
 print("require proto", proto, ptid, bfbs_names)
 
 local logtag = "[network]"
 local print = function ( ... )
     _G.print(logtag, ...)
-    -- _G.print(util.dump({...}, true, logtag))
+    -- _G.print(table.dump({...}, true, logtag))
 end
 
 -- local response_body = {}
@@ -35,8 +37,8 @@ end
 -- 	source = ltn12.source.string(post_data),
 -- 	sink = ltn12.sink.table(response_body)
 -- }
--- print("http.request", util.dump {res, code, headers, status, response_body=response_body})
-
+-- print("http.request", table.dump {res, code, headers, status, response_body=response_body})
+local protopath = "proto.bfbs.txt"
 local Tag = "[network]"
 local network = {
 	connect_stat = false,
@@ -75,7 +77,6 @@ function this.co_init_lfbs()
 	-- for k,v in pairs(lfb) do
 	-- 	print(k, v)
 	-- end
-	local lfb = lfb()
 	this.lfb = lfb
 	for i,v in ipairs(bfbs_names) do
 		local obj
@@ -110,13 +111,13 @@ function this.lfb_test()
 		local lfb = this.lfb
 		this.loaded_bfbs = lfb:loaded()
 		local buf
-		print("this.loaded_bfbs", util.dump(this.loaded_bfbs))
-		local ex = os.clock()
-		for i = 1,10000 do
-			buf = assert(lfb:encode("proto.bfbs.txt", proto[protoid], this.Action_Move))
-		end
-		local ey = os.clock()
-		print("encode 10000 times", ey-ex, #buf, buf:gsub("[\0-\13]",""))
+		print("this.loaded_bfbs", protoid, table.dump(this.loaded_bfbs))
+		-- local ex = os.clock()
+		-- for i = 1,10000 do
+			buf = assert(lfb:encode(protopath, proto[protoid], this.Action_Move))
+		-- end
+		-- local ey = os.clock()
+		-- print("encode 10000 times", ey-ex, #buf, buf:gsub("[\0-\13]",""))
 			
 		this.conn:send(protoid)
 		this.conn:send(10000000 + #buf)
@@ -126,10 +127,10 @@ function this.lfb_test()
 		local ey = os.clock()
 		local t  
 		for i = 1, 10000 do
-			t = assert(lfb:decode("proto.bfbs.txt", proto[protoid], buf))
+			t = assert(lfb:decode(protopath, proto[protoid], buf))
 		end
 		local ez = os.clock()
-		print("decode 10000 times:", ez - ey, #t, util.dump(t, true, logtag))
+		print("decode 10000 times:", ez - ey, #t, table.dump(t, true, logtag))
 	end)
 end
 
@@ -139,6 +140,8 @@ function this.coroutine_start_receive()
 	do
 		local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
 		-- print("canread", #canread, #this.client)
+		-- local liner, err = c:receive("*l")
+		-- print("read line", #liner, liner:gsub("[\0-\13]",""), err)
 		for _, c in ipairs(canread) do
 			c:settimeout(0.1)
 			local protoid, err = c:receive(8)
@@ -157,7 +160,7 @@ function this.coroutine_start_receive()
 			local res_cb = this.wait_for_res[protoid - 10000000]
 			if res_cb ~= nil then
 				local lfb = this.lfb
-				local t = assert(lfb:decode("proto.bfbs.txt", proto[protoid], data))
+				local t = assert(lfb:decode(protopath, proto[protoid], data))
 				res_cb(t)
 				this.wait_for_res[protoid - 10000000] = nil
 			end 
@@ -169,7 +172,7 @@ function this.coroutine_start_receive()
 				c:close()
 				-- this.ondisconnect( c )
 			else
-				c:send("___ERRORPC"..err.. "\r\n")
+				c:send("<color=red>___ERRORPC"..err.. "<color/>\r\n")
 			end
 			::continue::
 		end
@@ -181,8 +184,7 @@ end
 
 this.wait_for_res = {}
 function this.send(protoid, dt, res_cb)
-	local lfb = this.lfb
-	local buf = assert(lfb:encode("proto.bfbs.txt", proto[protoid], dt))
+	local buf = assert(lfb:encode(protopath, proto[protoid], dt))
 	this.conn:send(protoid)
 	this.conn:send(10000000 + #buf)
 	this.conn:send(buf)
@@ -207,6 +209,7 @@ function this.Connect()
 			if err == nil and conn then
 				this.conn = conn
 				this.connect_stat = conn_stat.connected
+				print("<color=green>connected to server ok</color>.")
 			-- else if err == "connection refused" then
 			-- 	print(err)
 			else

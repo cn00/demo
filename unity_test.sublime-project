@@ -1,4 +1,5 @@
 {
+	"solution_file": "unity_test.sln",
 	"folders":
 	[
 		// unity_test root
@@ -56,7 +57,7 @@
 		},
 		// UnityCsReference
 		{
-			"path": "~/ws/UnityCsReference",
+			"path": "../UnityCsReference",
 			"file_include_patterns":
 			[
 				"*.c",
@@ -79,5 +80,34 @@
 				".settings"
 			],
 		},
-	]
+	],
+	"build_systems":
+	[
+		{
+			"name": "skynet (OSX)",
+			"working_dir": "${project_path}/skynet/build",
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"shell_cmd": "mkdir -p ${project_path}/skynet/build && cd ${project_path}/skynet/build && cmake .. make -j12",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "cmake",
+					"shell_cmd": "mkdir -p ${project_path}/skynet/build && cd ${project_path}/skynet/build && cmake .. && make -j12"
+				},
+				{
+					"name": "clean",
+					"shell_cmd": "make -j12 clean"
+				},
+				{
+					"name": "rebuild",
+					"shell_cmd": "rm -rf ${project_path}/skynet/build && mkdir -p ${project_path}/skynet/build && cd ${project_path}/skynet/build && cmake .. && make -j12 rebuild_cache"
+				},
+				{
+					"name": "run",
+					"shell_cmd": "cd ${project_path}/skynet/build && ./skynet app/config.lua"
+				},
+			],
+		},
+	],
 }

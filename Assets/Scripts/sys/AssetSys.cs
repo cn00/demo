@@ -10,6 +10,8 @@ using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Events;
 using XLua;
+using XLua.LuaDLL;
+using System.Runtime.InteropServices;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -42,6 +44,9 @@ public static class AssetExtern
 
 public static class BundleHelper
 {
+    [DllImport(Lua.LUADLL, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int p7zip_executeCommand(string cmd);
+
     public static string Tag = "BundleHelper";
     #region 压缩
 
@@ -70,6 +75,10 @@ public static class BundleHelper
             AppLog.e(Tag, inFile + " not found");
             return;
         }
+
+        var cmd = "7z a " + outFile + ".7z \"" + inFile + "\" -p123456";
+        AppLog.d("BundleHelper", cmd);
+        p7zip_executeCommand(cmd);
 
         var outDir = Path.GetDirectoryName(outFile);
         if(!Directory.Exists(outDir))

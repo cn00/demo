@@ -140,7 +140,7 @@ public static class ExcelUtils
         return -1;
     }
 
-    public static void Draw(this IRow self, GUILayoutOption[] guiOpts = null)
+    public static void Draw(this IRow self, GUILayoutOption[] guiOpts)
     {
         self.Draw(0, self.Count(), guiOpts);
     }
