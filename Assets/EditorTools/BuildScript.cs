@@ -162,6 +162,8 @@ public class BuildScript
                 oldManifest = AssetBundle.LoadFromFile(oldManifestPath + ".old").LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             var allAssetBundles = manifest.GetAllAssetBundles().ToList();
             allAssetBundles.Add(TargetName(targetPlatform));
+
+            // collect news
             var n = 0;
             foreach (var i in allAssetBundles)
             {
@@ -188,6 +190,8 @@ public class BuildScript
                     // TODO: encode bundle
                     
                     BundleHelper.CompressFileLZMA(path, lzmaPath);
+
+
                 }
 
                 // copy

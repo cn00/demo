@@ -40,13 +40,15 @@ public enum AppChannel
     None,
     #region Android
     Android_begin,
-    Android,
+    and_bili,
+    and_komeo_google,
+    and_komeo_mycard,
     Android_end,
     #endregion Android
 
     #region iOS
     ios_begin,
-    ios,
+    ios_bili,
     ios_end
     #endregion iOS
 }
@@ -111,7 +113,7 @@ public class ChannelConfig
     public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
 
     public AppBuildOptions OptionFlags = 0;
-    public AppChannel Channel = AppChannel.Android;
+    public AppChannel Channel = AppChannel.and_bili;
 
     public bool Emulator = false;
     [NonSerialized]

@@ -23,6 +23,7 @@ public partial class BuildConfig
         bool allRebuild = false;
         bool showBundles = false;
         bool showBuilds = false;
+        bool showConfigs = false;
         bool showXLuaConfig = false;
         List<string> XLuaConfigUnityEngine;
 
@@ -350,6 +351,8 @@ public partial class BuildConfig
                     i.Name = i.Channel + ":" + (int)i.Channel;
                 }
             });
+
+            Inspector.DrawList("Configs", mTarget.Configs, ref showConfigs, false, null);
 
             // Inspector.DrawList("XLuaConfig", XLuaConfigUnityEngine, ref showXLuaConfig);
 

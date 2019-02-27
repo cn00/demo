@@ -77,11 +77,15 @@ public class Inspector
                     if(foreach_item != null)
                         foreach_item(iobj);
                 }// foreach
-                --EditorGUI.indentLevel;
+                // --EditorGUI.indentLevel;
             }
             catch(Exception e)
             {
-                AppLog.d(Tag, e);
+                AppLog.e(Tag, e);
+            }
+            finally
+            {
+                --EditorGUI.indentLevel;
             }
         }
     }
@@ -142,7 +146,7 @@ public class Inspector
         }
         else if (obj is Enum)
         {
-            if (name.ToLower().Contains("flag"))
+            if (name.ToLower().Contains("flag") || name.ToLower().Contains("mask"))
             {
                 obj = EditorGUILayout.EnumFlagsField(name, (Enum)obj);
             }
@@ -157,8 +161,10 @@ public class Inspector
         }
         else if(obj is uint)
         {
-            int vv = Convert.ToInt32((object)obj);
-            obj = EditorGUILayout.IntField(name, vv);
+            uint vv = (uint)obj;
+            var ivv = EditorGUILayout.IntField(name, (int)vv);
+            ivv = ivv < 0 ? 0 : ivv;
+            obj = (uint)ivv;// & 0xefffffff;
         }
         else if ( obj is long)
         {
@@ -268,6 +274,10 @@ public class Inspector
                     // | BindingFlags.InvokeMethod
                 ).Where(i => i.Name.EndsWith("Btn")||i.Name.StartsWith("Btn")).ToList();
                 var NumPerRow = 4;
+                var npobj = fields.Find(ifobj => ifobj.Name.ToLower() == "btnperrow");
+                if(npobj != null)
+                    NumPerRow = (int)(uint)npobj.GetValue(obj);
+                NumPerRow = NumPerRow < 1 ? 1 : NumPerRow;
                 for(var rowi = 0; rowi < (int)(actionfild.Count + NumPerRow*0.5) / NumPerRow; ++rowi)
                 {
                     var rect = EditorGUILayout.GetControlRect();
@@ -286,11 +296,27 @@ public class Inspector
             if(begin != null)begin();
 
             fields.Sort(delegate (FieldInfo i, FieldInfo j) {
+                if(i.Name == "Name" && j.Name != "Name")
+                {
+                    return -1;
+                }
+                if(j.Name == "Name" && i.Name != "Name")
+                {
+                    return 1;
+                }
                 if((i.GetValue(obj) is bool) && !(j.GetValue(obj) is bool))
                 {
                     return -1;
                 }
                 if((j.GetValue(obj) is bool) && !(i.GetValue(obj) is bool))
+                {
+                    return 1;
+                }
+                if((i.GetValue(obj) is IList) && !(j.GetValue(obj) is IList))
+                {
+                    return -1;
+                }
+                if((j.GetValue(obj) is IList) && !(i.GetValue(obj) is IList))
                 {
                     return 1;
                 }
@@ -307,8 +333,16 @@ public class Inspector
             // ++EditorGUI.indentLevel;
             foreach (var i in fields)
             {
-                if(i.Name.EndsWith("Foldout"))
+                bool skipflag = i.Name.EndsWith("Foldout");
+                // #if UNITY_ANDROID
+                // skipflag &= i.Name.StartsWith("iOS");
+                // #endif
+                // #if UNITY_IOS
+                // skipflag &= i.Name.StartsWith("Android");
+                // #endif
+                if(skipflag)
                     continue;
+
                 var v = i.GetValue(obj);
                 // if ((v is bool)|| (v is Enum)|| (v is int)||(v is uint)||( v is long)|| (v is double )||( v is float)|| (v is string))
                 if ((v is ValueType) || (v is string))
@@ -370,7 +404,10 @@ public class Inspector
                 }
                 else if (v is object)
                 {
-                    DrawComObj(i.Name, v);
+                    ++EditorGUI.indentLevel;
+                    using (var verticalScope2 = new EditorGUILayout.VerticalScope("box"))
+                    {DrawComObj(i.Name, v);}
+                    --EditorGUI.indentLevel;
                 }
             }
             // --EditorGUI.indentLevel;

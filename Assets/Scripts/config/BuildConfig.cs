@@ -25,11 +25,27 @@ public static class BundleManifestExtension
 [Serializable]
 public class AppVersion
 {
-    public string Name;
     public uint Major = 0; // 主版本
     public uint Minor = 0; // 次版本
     public uint Patch = 0; // 补丁版本
+    [NonSerialized]
+    public bool Foldout = false;
 
+    public uint BtnPerRow = 3;
+    // public void MajorABtn(){++Major;}
+    // public void MinorABtn(){++Minor;}
+    // public void PatchABtn(){++Patch;}
+    // public void MajorDBtn(){--Major;}
+    // public void MinorDBtn(){--Minor;}
+    // public void PatchDBtn(){--Patch;}
+
+
+    public AppVersion()
+    {
+        Major = 1;
+        Minor = 0;
+        Patch = 0;
+    }
     public AppVersion(string v)
     {
         var vs = v.Split('.');
@@ -119,6 +135,44 @@ public class AppVersion
 [ExecuteInEditMode]
 public partial class BuildConfig : SingletonAsset<BuildConfig>
 {
+
+    [Serializable]
+    public class Config{
+        public string Name = "name";
+        public AppChannel Channel = AppChannel.and_bili;
+        public BuildTarget targetPlatform = BuildTarget.Android;
+        public AppVersion version = new AppVersion("1.0.0");
+
+        public uint BtnPerRow = 3;
+        public bool BatchBuild = false;
+        public bool AddTime = false;
+        public string ProductName = "A3! 满开剧团";
+        public string BundleId = "com.bili.a3";
+        public string PackageName = "a3";
+        public string BuildNum = "0"; 
+        public List<string> DefineSymbols = new List<string>();
+
+        public int BuildType = (int)AndroidBuildType.Debug;
+        public AndroidBuildSystem AndroidBuildSystem = AndroidBuildSystem.Gradle;
+
+        public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
+
+        public AppBuildOptions BuildOptionFlags = 0;
+
+        [NonSerialized]
+        public bool Foldout = false;
+
+        public void BuildPkgBtn()
+        {
+
+        }
+        public void BuildABBtn()
+        {
+
+        }
+    }
+    public List<Config> Configs = new List<Config>();
+
     const string Tag = "BuildConfig";
     #region const
     public const string BundleResDir = "BundleRes";
@@ -167,7 +221,7 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
     public long LastBuildTime = 0L;
 
     [SerializeField, HideInInspector]
-    public AppVersion Version = new AppVersion("1.0.0") { Name = "Version" };
+    public AppVersion Version = new AppVersion("1.0.0");
 
     [HideInInspector, SerializeField]
     public string Ip = "http://10.23.114.141:8008/";
