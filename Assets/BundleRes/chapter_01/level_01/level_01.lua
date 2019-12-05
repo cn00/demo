@@ -1,6 +1,6 @@
 ﻿
 
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local level_01_01 = {}
 local self = level_01_01

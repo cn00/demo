@@ -1,18 +1,18 @@
-﻿
+
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 
-require "utility.init"
-local util = require "utility.xlua.util"
+require "init"
+local util = require "xlua.util"
 local socket = require "socket.socket"
-local sprotoparser = require "utility.sprotoparser"
+local sprotoparser = require "sprotoparser"
 
 local http = require "socket.http"
 local ltn12 = require "socket.ltn12"
 
 local lfb = require("lfb")()
-local proto, ptid, bfbs_names = require ("proto.proto") ()
+local proto, ptid, bfbs_names = require ("proto") ()
 print("require proto", proto, ptid, bfbs_names)
 
 local logtag = "[network]"
@@ -64,8 +64,9 @@ function this.coroutine_demo()
 end
 
 --AutoGenInit Begin
+--DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.Button_Button = Button:GetComponent("UnityEngine.UI.Button")
+    this.Button_Button = Button:GetComponent(typeof(CS.UnityEngine.UI.Button))
 end
 --AutoGenInit End
 

@@ -76,9 +76,11 @@ public static class BundleHelper
             return;
         }
 
-        var cmd = "7z a " + outFile + ".7z \"" + inFile + "\" -p123456";
+        var cmd = "7z a \"" + outFile + ".7z\" \"" + inFile + "\" -p123456";
         AppLog.d("BundleHelper", cmd);
         p7zip_executeCommand(cmd);
+
+        // if(true)return;
 
         var outDir = Path.GetDirectoryName(outFile);
         if(!Directory.Exists(outDir))

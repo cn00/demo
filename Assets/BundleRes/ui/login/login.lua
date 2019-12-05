@@ -4,7 +4,7 @@ local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 local sqlite = CS.SQLite.SQLite3
 
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local login = {
 }

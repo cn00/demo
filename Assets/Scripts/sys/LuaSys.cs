@@ -26,6 +26,7 @@ public class LuaSys : SingleMono<LuaSys>
 {
     [SerializeField]
     public string[] PackagePath = new []{
+        "lua/com/",
         "lua/proto/",
         "lua/plugins/",
         "lua/utility/"

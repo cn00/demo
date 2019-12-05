@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local table_view_cell = {}
 local self = table_view_cell

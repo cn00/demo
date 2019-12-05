@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local table_view_cell = {}
 local self = table_view_cell
@@ -25,17 +25,18 @@ local self = table_view_cell
 -- end
 
 --AutoGenInit Begin
-function table_view_cell.AutoGenInit()
-    table_view_cell.TableViewCellController = mono.gameObject:GetComponent("TableView.TableViewCellController")
-    table_view_cell.Image_Image = Image:GetComponent("UnityEngine.UI.Image")
-    table_view_cell.Text_Text = Text:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_1_Text = Text_1:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_2_Text = Text_2:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_3_Text = Text_3:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_4_Text = Text_4:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_5_Text = Text_5:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_6_Text = Text_6:GetComponent("UnityEngine.UI.Text")
-    table_view_cell.Text_7_Text = Text_7:GetComponent("UnityEngine.UI.Text")
+--DO NOT EDIT THIS FUNCTION MANUALLY.
+function this.AutoGenInit()
+    this.LuaMonoBehaviour = gameObject:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.Image_Image = Image:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.Text_Text = Text:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_1_Text = Text_1:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_2_Text = Text_2:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_3_Text = Text_3:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_4_Text = Text_4:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_5_Text = Text_5:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_6_Text = Text_6:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.Text_7_Text = Text_7:GetComponent(typeof(CS.UnityEngine.UI.Text))
 end
 --AutoGenInit End
 

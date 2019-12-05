@@ -1,4 +1,4 @@
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 require("lua.utility.BridgingClass")
 local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
@@ -77,12 +77,12 @@ function boot.coroutine_boot(first, ...)
 		yield_return(CS.NetSys.Instance:Init())
         print("NetSys 1")
 
-	    obj = nil
-	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
-	        obj = asset;
-	    end))
-	    print("lua login 1", obj);
-	    local login = GameObject.Instantiate(obj);
+--	    obj = nil
+--	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--	        obj = asset;
+--	    end))
+--	    print("lua login 1", obj);
+--	    local login = GameObject.Instantiate(obj);
 
         loading:SetActive(false)
 

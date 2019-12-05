@@ -2,30 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 [System.Serializable]
-public class LuaAsset
+public class LuaAsset : ScriptableObject
 {
-    [SerializeField]
     public string Path = "";
+    public string Value;
+    public TextAsset TextAsset;
 
-    public TextAsset LuaText;
-    
 #if UNITY_EDITOR
-    Object mLuaSrc = null;
-    public Object LuaSrc
-    {
-        get {
-            return mLuaSrc;
-        }
-        set {
-            mLuaSrc = value;
-
-        }
-    }
+    public UnityEngine.Object mAsset;
 #endif
 }

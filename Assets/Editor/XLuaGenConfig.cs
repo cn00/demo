@@ -111,24 +111,12 @@ public static class XLuaGenConfig
                     .GetTypes()
                     .Where(type => type.IsVisible
                         // && !type.IsDefined(typeof(ObsoleteAttribute), true) // innerclass not work
+                        && !type.GetCustomAttributes(true).Any(a => a.GetType() == typeof(ObsoleteAttribute))
                         && !type.FullName.EndsWith("Attribute")
                     )
                 )
                 .SelectMany(i => i)
                 .ToList();
-            //claen all obsolete innerclass
-            var obsolete = l.Where(type => type.GetCustomAttributes(true).Any(a => a.GetType() == typeof(ObsoleteAttribute))).Select(i=>i.FullName)
-            // no support
-            .Append("UnityEngine.TrailRenderer")
-            .Append("UnityEngine.LineRenderer")
-            .Append("Unity.Jobs.LowLevel.Unsafe")
-            .Append("Unity.Collections.LowLevel.Unsafe.UnsafeUtility")
-            ;
-            foreach(var i in obsolete){
-                // AppLog.d("obsolete", i);
-                // l.RemoveAll(ii => ii.FullName.StartsWith(i.FullName));// why not work
-                l = l.Where(ii => !ii.FullName.StartsWith(i)).ToList();
-            }
             l.Sort((i,j)=>i.FullName.CompareTo(j.FullName));
             return l;
         }

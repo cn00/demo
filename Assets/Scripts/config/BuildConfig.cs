@@ -8,11 +8,11 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.Diagnostics;
 
-using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif //UNITY_EDITOR
+
+using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 
 public static class BundleManifestExtension
 {
@@ -132,15 +132,15 @@ public class AppVersion
 
 }
 
-[ExecuteInEditMode]
-public partial class BuildConfig : SingletonAsset<BuildConfig>
+//[ExecuteInEditMode]
+public class BuildConfig : SingletonAsset<BuildConfig>
 {
 
     [Serializable]
     public class Config{
         public string Name = "name";
         public AppChannel Channel = AppChannel.and_bili;
-        public BuildTarget targetPlatform = BuildTarget.Android;
+        // public BuildTarget targetPlatform = BuildTarget.Android;
         public AppVersion version = new AppVersion("1.0.0");
 
         public uint BtnPerRow = 3;
@@ -152,12 +152,12 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         public string BuildNum = "0"; 
         public List<string> DefineSymbols = new List<string>();
 
+        #if UNITY_EDITOR
         public int BuildType = (int)AndroidBuildType.Debug;
         public AndroidBuildSystem AndroidBuildSystem = AndroidBuildSystem.Gradle;
-
         public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
-
         public AppBuildOptions BuildOptionFlags = 0;
+        #endif
 
         [NonSerialized]
         public bool Foldout = false;
@@ -209,7 +209,19 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
         }
     }
 
-    public bool UseBundle = false;
+    public bool mUseBundle = false;
+
+    public bool UseBundle
+    {
+        get
+        {
+            #if UNITY_EDITOR
+            return mUseBundle;
+            #else 
+            return true;
+            #endif
+        }
+    }
 
     public AppLog.Level LogLevel = AppLog.Level.Debug;
 
@@ -443,7 +455,8 @@ public partial class BuildConfig : SingletonAsset<BuildConfig>
 
     [HideInInspector, SerializeField]
     BundleManifest mGroups = new BundleManifest();
-    public BundleManifest Groups { get { return mGroups; } protected set { mGroups = value; } }
+    
+    public BundleManifest Groups { get { return mGroups; } set { mGroups = value; } }
 
 
     public BundleInfo GetBundleInfo(string path)

@@ -2,6 +2,21 @@
 -- Objective-C Classes
 --
 
+
+-- test 
+function didLoginFailureWithError_error_( error )
+  print("didLoginFailureWithError_error_", error.code, error.localizedDescription)
+end
+
+function didLoginSuccessWithAccessKey_accessKey_uid_( accessKey, uid )
+  print("didLoginSuccessWithAccessKey_accessKey_uid_", accessKey, uid)
+end
+
+
+--end test
+
+
+
 -- Send Objective-C Messages 
 function sendMesg (target, selector, ...)
    local to_send = {}

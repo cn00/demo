@@ -15,7 +15,7 @@ public class AssetImporter : UnityEditor.AssetPostprocessor
     //get a notification just before any Asset is imported.
     void OnPreprocessAsset()
     {
-        if (assetImporter.importSettingsMissing)
+        if (assetImporter)
         {
             ModelImporter modelImporter = assetImporter as ModelImporter;
             if (modelImporter != null)

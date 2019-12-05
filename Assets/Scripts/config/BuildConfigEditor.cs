@@ -7,18 +7,17 @@ using System;
 using System.Text.RegularExpressions;
 using System.Net;
 
+#if UNITY_EDITOR
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 using GroupInfo = BuildConfig.GroupInfo;
 using BundleInfo = BuildConfig.BundleInfo;
 
-#if UNITY_EDITOR
 using UnityEditor;
-public partial class BuildConfig
-{
     #region CustomEditor
     [CustomEditor(typeof(BuildConfig))]
     public class BuildConfigEditor : UnityEditor.Editor
     {
+        private const string Tag = "BuildConfigEditor";
         bool allInclude = false;
         bool allRebuild = false;
         bool showBundles = false;
@@ -188,7 +187,7 @@ public partial class BuildConfig
                 var luamonos = go.GetComponents<LuaMonoBehaviour>();
                 foreach (var luamono in luamonos)
                 {
-                    if(luamono.LuaScript == null )//|| luamono.LuaScript.Text == null)
+                    if(luamono.mAsset == null )//|| luamono.LuaScript.Text == null)
                     {
                         AppLog.w(Tag, p + " luamono.luaScript not set");
                         continue;
@@ -197,8 +196,8 @@ public partial class BuildConfig
                     // var txtasset = AssetDatabase.LoadAssetAtPath<TextAsset>(txtpath);
                     {
 
-                    var tpath = AssetDatabase.GetAssetPath(luamono.LuaScript.LuaText);
-                    luamono.LuaScript.Path = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
+                    var tpath = AssetDatabase.GetAssetPath(luamono.mAsset);
+                    luamono.luaPath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
                     // tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
                     // if(luamono.LuaScript.path != tpath)
                     // {
@@ -390,7 +389,6 @@ public partial class BuildConfig
         }
     }
     #endregion CustomEditor
-}
 #endif //UNITY_EDITOR
 
 

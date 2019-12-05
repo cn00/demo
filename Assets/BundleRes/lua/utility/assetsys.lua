@@ -2,7 +2,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local assetsys= {}
 local this = assetsys

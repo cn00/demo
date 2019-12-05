@@ -35,7 +35,7 @@ local system = ({ --NOTE: You reading this should check the indexing in the clos
 
 		maxpath	= 4096, --Good guy unix!
 
-		timet	= "typedef long int time_t;", --Not sure if long int or long long int or __int32_t so fuck it!
+		timet	= "typedef long time_t;", --Not sure if long int or long long int or __int32_t so fuck it!
 		utimes	= "utimebuf",
 		utime	= "utime",
 	}
@@ -49,9 +49,11 @@ ffi.cdef(
 		int		]] .. system.mkdir  .. [[
 
 				]] .. system.timet  .. [[
-		struct	]] .. system.utimes .. [[ { time_t actime; time_t modtime; };
+		/* struct	]] .. system.utimes .. [[ { time_t actime; time_t modtime; };*/
 		int		]] .. system.utime  .. [[ ( unsigned char *file, struct ]] .. system.utimes .. [[ *times );
-		]]
+	]]
+
+
 )
 
 --(IMPLEMENTING STAT AND IT'S STRUCTURE IS WAY TOO HARD)
@@ -161,7 +163,7 @@ else
 		typedef uint32_t 	ino_t;
 		typedef off_t		off64_t; /* Probably not usted but whatever */
 		typedef ino_t		ino64_t; /* Probably not usted but whatever */
-
+		/*
 		struct dirent {
 			ino_t			d_ino;
 			off_t			d_off;
@@ -169,7 +171,7 @@ else
 			unsigned char	d_type;
 			char			d_name[256];
 		};
-
+		*/
 		DIR			   *opendir		(const char *);
 		struct dirent  *readdir		(DIR *);
 		int				closedir	(DIR *);

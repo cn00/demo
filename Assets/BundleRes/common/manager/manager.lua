@@ -4,7 +4,7 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 
 local print = function ( ... )
     _G.print("[manager]", ... )

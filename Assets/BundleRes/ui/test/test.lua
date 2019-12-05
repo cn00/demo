@@ -12,7 +12,7 @@ if os == ios then
     require "nslua"
 end
 
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 local coroutine_call = util.coroutine_call
 local test = {}
 local this = test
@@ -25,7 +25,8 @@ end
 print("p7zip", p7zip)
 function this.P7zipTest()
 	coroutine_call(function()
-		p7zip.execute("7z a test.7z obj -p123456")
+		local ret = p7zip.execute("7z a test.7z obj -p123456")
+		print("p7zip", ret)
 	end)
 end
 
@@ -492,6 +493,7 @@ function this.PlanetTest(  )
 end
 
 --AutoGenInit Begin
+--DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.Insert_10000_Button = Insert_10000:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.ix_InputField = ix:GetComponent(typeof(CS.UnityEngine.UI.InputField))
@@ -509,6 +511,7 @@ function this.AutoGenInit()
     this.ffi_test_Button = ffi_test:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.lfb_test_Button = lfb_test:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.planet_Button = planet:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.p7zip_Button = p7zip:GetComponent(typeof(CS.UnityEngine.UI.Button))
 end
 --AutoGenInit End
 function this.Awake()
@@ -538,6 +541,8 @@ function this.Start()
 	this.lfb_test_Button.onClick:AddListener(this.lfb_test)
 	
 	this.planet_Button.onClick:AddListener(this.PlanetTest)
+
+	this.p7zip_Button.onClick:AddListener(this.P7zipTest)
 
 	local ixonEndEdit = function(text)
 		this.iy_InputField:Select()

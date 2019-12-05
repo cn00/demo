@@ -17,8 +17,11 @@ using System.Text.RegularExpressions;
 
 public class LuaMonoBehaviour : MonoBehaviour
 {
-    // [SerializeField,HideInInspector]
-    public LuaAsset LuaScript = new LuaAsset();
+    [SerializeField]
+    public string luaPath = "";
+
+    [HideInInspector]
+    public UnityEngine.Object mAsset;
 
     [Serializable]
     public class Injection
@@ -63,9 +66,15 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void Init()
     {
-        byte[] textBytes = LuaSys.Instance.Require(LuaScript.Path) ?? Encoding.UTF8.GetBytes( "return {}");
+        byte[] textBytes = LuaSys.Instance.Require(luaPath) ?? Encoding.UTF8.GetBytes( "return {}");
         var luaInstance = LuaSys.Instance;
-        luaTable = luaInstance.GetLuaTable(textBytes, this, LuaScript.Path);
+        luaTable = luaInstance.GetLuaTable(textBytes, this, luaPath);
+
+        if (luaTable == null)
+        {
+            Debug.LogErrorFormat("error load lua:{0}", luaPath);
+            return;
+        }
 
         luaTable.Get("Awake", out luaAwake);
         luaTable.Get("OnEnable", out luaOnEnable);
@@ -269,7 +278,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         CleanLua();
 
-        LuaScript.Path = path;
+        luaPath = path;
         Init();
     }
 

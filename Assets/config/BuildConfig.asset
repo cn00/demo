@@ -3,24 +3,81 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
+  Configs:
+  - Name: and
+    Channel: 2
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 4
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 989
+    BuildOptionFlags: 0
+  - Name: and-bili
+    Channel: 2
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 3
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 988
+    BuildOptionFlags: 0
+  - Name: name
+    Channel: 7
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 3
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: zzq
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 988
+    BuildOptionFlags: 0
   UseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 131951235016204480
+  LastBuildTime: 132199159344402200
   Version:
-    Name: 
     Major: 1
     Minor: 1
     Patch: 0
+    BtnPerRow: 3
   Ip: 10.23.22.233
   Port: 8008
   ForceRebuild: 0
@@ -32,8 +89,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: video/op.bd
-      mSize: 5853834
-      mMd5: 6A5E58DC2DA38A1AE73A3357EBA1A038
+      mSize: 5852406
+      mMd5: 1D4C41516471F4A30EEF1B203608CC9C
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -42,13 +99,13 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: bilibili/cheers.bd
-      mSize: 3251
-      mMd5: C846089C62F1A9AD2BF29CEB7EF1E509
+      mSize: 2435
+      mMd5: 3DAB9375EC8431E3C69B13F3E0E126D8
       mVersion: 1.1.0
       mRebuild: 0
     - mName: bilibili/planet.bd
-      mSize: 1270755
-      mMd5: 7147AC7CF95348F21E208D13917DCF89
+      mSize: 1265120
+      mMd5: 102ED1B618EC7C546A86E671330FBDE8
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -57,38 +114,38 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: ui/boot.bd
-      mSize: 27282
-      mMd5: 0E228CF456495AB7D5A3719C95DA1C25
+      mSize: 2213
+      mMd5: 1B59AFB1CA4E86939323CA9EB209BFD8
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/excel_viewer.bd
-      mSize: 30799
-      mMd5: 0A235E094EB4B2BD36CFF9888E12D8F4
+      mSize: 26639
+      mMd5: 0D2ED8E6C4BE577A1D69EF515CA107BD
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/loading.bd
-      mSize: 89745
-      mMd5: 52BF0FB9FB1B5591B38FE0496872CF43
+      mSize: 100268
+      mMd5: 30B7A6174B6C956AF6B09CC1B3131628
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/login.bd
-      mSize: 20661
-      mMd5: 805E12A89AA7034455115BC76AD9D817
+      mSize: 18907
+      mMd5: C74EC88BBB20245A40FDE060B00FA21D
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/qrcode.bd
-      mSize: 60524
-      mMd5: AB57B96A8104D03536FB8429E8657742
+      mSize: 57814
+      mMd5: 43FA2CB6B87AD836E331FE84F5288F8C
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/test.bd
-      mSize: 28723
-      mMd5: F79F5482D2BAA8E73FCB6025EAEF9319
+      mSize: 23595
+      mMd5: 51BF0A80D19DA228AF993A01B1F38CEC
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/update.bd
-      mSize: 16606
-      mMd5: 185A40ED20E2333A46D9C0771291A305
+      mSize: 14618
+      mMd5: E2F1D0EB7650A1A635B6329D94CDFBAD
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -98,52 +155,52 @@ MonoBehaviour:
     mBundles:
     - mName: lua/luadebug.bd
       mSize: 17968
-      mMd5: 7DD3DFDC188657BE6A007FC567065D59
+      mMd5: 91A60043EBBB679F2EE7325F49B625E9
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/proto.bd
       mSize: 1445
-      mMd5: 31BB32656E21918C26B12BE6732D7ED1
+      mMd5: BF431B1ED5F78F746745AF28E014C8D0
       mVersion: 1.1.0
       mRebuild: 1
     - mName: lua/socket.bd
       mSize: 20670
-      mMd5: 0E348F2C08B17A2BA6340AD0C6473B01
+      mMd5: 25F16C91C2ED77BBA603946D5559D09C
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/table.bd
       mSize: 1695
-      mMd5: 31CCCFD65F9BA724D042D9234EBDB579
+      mMd5: C49D98A6E17C1D321C335FB18CCCE4C8
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/utility.bd
-      mSize: 22625
-      mMd5: 532C3F5A3D6810A72369BA2C1AC440D1
+      mSize: 18394
+      mMd5: D99796D36BFB9AC65F2D3D46AA6B19D4
       mVersion: 1.1.0
       mRebuild: 0
-  - Foldout: 1
+  - Foldout: 0
     Name: common
     mInclude: 0
     mRebuild: 0
     mBundles:
     - mName: common/manager.bd
-      mSize: 18272
-      mMd5: F316630F17E06D3AFAC35C76C74576D1
+      mSize: 10854
+      mMd5: A52744BC670F07F22F833229CC502F86
       mVersion: 1.1.0
-      mRebuild: 1
+      mRebuild: 0
     - mName: common/excel.bd
-      mSize: 12459
-      mMd5: A5B571D946D3A8FE91C831186AE60474
+      mSize: 10843
+      mMd5: 4766CF3F7887C6C5BB184F391AA3F85A
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/ui.bd
-      mSize: 8899
-      mMd5: 530B71088DDD59DB3927BC7A98B5D8EF
+      mSize: 8438
+      mMd5: 17EA57B1152992EAF94DDD57B8E89D94
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/global.bd
       mSize: 1994
-      mMd5: 02E085E88D699949A58AF5652C7DB367
+      mMd5: 2AA6AB4B08D461694918E8AE3F799CE5
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -152,8 +209,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: truth/index.bd
-      mSize: 30204
-      mMd5: 79391190497856FE2D3D166D4DED8299
+      mSize: 26019
+      mMd5: 19AE1DE360F0C6083DF8DEF3B349D773
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -162,8 +219,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 3691
-      mMd5: 66C58AB7C5B7AC7198EEFFF19180F158
+      mSize: 4144
+      mMd5: 4A07B8B979EC4025DB0B1D6EE50E76A8
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -173,7 +230,7 @@ MonoBehaviour:
     mBundles:
     - mName: proto/bfbs.bd
       mSize: 2716
-      mMd5: C80FAFD918ADA7D2ED3C0B8E08264AD7
+      mMd5: EB3D052E5E965FB35CAA82A09B5BB737
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -183,7 +240,7 @@ MonoBehaviour:
     mBundles:
     - mName: chapter_01/level_01.bd
       mSize: 1756
-      mMd5: 4EC45BDEC42FC5FE3941E92B38DEC6B4
+      mMd5: 33478B794B8323896D195CA76395E948
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -193,7 +250,7 @@ MonoBehaviour:
     mBundles:
     - mName: chapter_02/level_01.bd
       mSize: 1750
-      mMd5: CAF9AA726D21C0B3C2E5BECA60546EE9
+      mMd5: 40E3929BE3DC658ACD9E9CC0A72EA001
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -214,14 +271,14 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3
     PackageName: a3
-    BuildNum: 3
+    BuildNum: 10
     Version: 1.0.0
     DefineSymbols: 
     BuildType: 0
     BuildSystem: 0
     iOSSdkVersion: 988
     OptionFlags: 1025
-    Channel: 5
+    Channel: 7
     Emulator: 0
   - Name: Android:2
     BatchBuild: 0
@@ -229,13 +286,13 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 55
+    BuildNum: 58
     Version: 1.0.0
-    DefineSymbols: 
+    DefineSymbols: HOTFIX_ENABLE;USE_XLUA;
     BuildType: 0
     BuildSystem: 1
     iOSSdkVersion: 989
-    OptionFlags: 33
+    OptionFlags: 65569
     Channel: 2
     Emulator: 0
   BundleServer:

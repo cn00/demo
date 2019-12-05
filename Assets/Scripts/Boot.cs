@@ -26,7 +26,8 @@ public class Boot : SingleMono<Boot>
         while(!LuaSys.Instance.Inited)
             yield return null;
 
-        yield return AssetSys.Instance.GetBundle("lua/utility.bd");
+        if(BuildConfig.Instance().UseBundle)
+            yield return AssetSys.Instance.GetBundle("lua/utility.bd");
 
         var lua = gameObject.AddComponent<LuaMonoBehaviour>();
         lua.SetLua("ui/boot/boot.lua");

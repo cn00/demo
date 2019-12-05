@@ -2,7 +2,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "utility.xlua.util"
+local util = require "xlua.util"
 local socket = require "socket.socket"
 local loadstring = loadstring
 local lpeg = require "lpeg"
@@ -15,12 +15,13 @@ local print = function ( ... )
     _G.print("[console]", ...)
 end
 
-local console = {
+local this = {
 	client = {},
 	Ip = "*",
-	Port = "9999"
+	Port = "9988",
+	server = nil,
 }
-local this = console
+--local this = console
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -210,4 +211,4 @@ function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return console
+return this
