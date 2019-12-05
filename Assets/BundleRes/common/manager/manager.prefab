@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 4362035663638594}
   - component: {fileID: 114948718687894372}
   m_Layer: 0
-  m_Name: manager(Clone)
+  m_Name: manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,7 +109,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1855188881930654
 GameObject:
   m_ObjectHideFlags: 1
@@ -273,8 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: 
-  mAsset: {fileID: 0}
+  luaPath: common/manager/network
+  mAsset: {fileID: 5, guid: f52688cec68e547c9b4c5b63d905430e, type: 3}
   injections:
   - obj: {fileID: 1855188881930654}
     exportComIdx: 3
