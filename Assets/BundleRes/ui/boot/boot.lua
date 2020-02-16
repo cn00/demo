@@ -4,8 +4,11 @@ local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
 
 local CS = CS
+local AssetSys = CS.AssetSys
+local File = CS.System.IO.File
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
+local UnityWebRequest = UnityEngine.Networking.UnityWebRequest
 
 local print = function ( ... )
     _G.print("[boot]", ... )
@@ -43,39 +46,39 @@ function boot.coroutine_boot(first, ...)
         print(obj)
         local loading = GameObject.Instantiate(obj)
 
-        yield_return(CS.AssetSys.Instance:GetBundle("lua/socket.bd", function ( bundle )
-            print(bundle)
-        end))
+        -- yield_return(CS.AssetSys.Instance:GetBundle("lua/socket.bd", function ( bundle )
+        --     print(bundle)
+        -- end))
         
-        obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
-            obj = asset
-        end))
-        local manager = GameObject.Instantiate(obj)
-        Game.manager = manager
-        this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
+        -- obj = nil
+        -- yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
+        --     obj = asset
+        -- end))
+        -- local manager = GameObject.Instantiate(obj)
+        -- Game.manager = manager
+        -- this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
 
-        yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
+        -- yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
 
-        this.msgmanager = this.manager.message
+        -- this.msgmanager = this.manager.message
 
-        this.msgmanager.AddListener("test001", function ( data )
-            print("test001", data)
-        end)
-        this.msgmanager.AddListener("test001", function ( data )
-            print("test001 11", data)
-        end)
-        this.msgmanager.AddListener("test002", function ( data )
-            print("test002", data)
-        end)
-        print("AddListener test001")
+        -- this.msgmanager.AddListener("test001", function ( data )
+        --     print("test001", data)
+        -- end)
+        -- this.msgmanager.AddListener("test001", function ( data )
+        --     print("test001 11", data)
+        -- end)
+        -- this.msgmanager.AddListener("test002", function ( data )
+        --     print("test002", data)
+        -- end)
+        -- print("AddListener test001")
 
 
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
 
-		yield_return(CS.NetSys.Instance:Init())
-        print("NetSys 1")
+		-- yield_return(CS.NetSys.Instance:Init())
+        -- print("NetSys 1")
 
 --	    obj = nil
 --	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
@@ -84,10 +87,42 @@ function boot.coroutine_boot(first, ...)
 --	    print("lua login 1", obj);
 --	    local login = GameObject.Instantiate(obj);
 
+
+        -- yield_return(CS.AssetSys.Instance:GetAsset("video/op/op.prefab", function(asset)
+        --     obj = asset
+        -- end))
+        -- print(obj)
+        -- local write_player = GameObject.Instantiate(obj)
+
+        local videoname = "1-滕王阁序-640.mp4"
+        local videourl = "http://192.168.2.104:8000/mp4/" .. videoname
+        local cachePath = AssetSys.CacheRoot .. videoname
+        if not File.Exists(cachePath) then
+            local www = UnityWebRequest.Get(videourl)
+            local dlh = www.downloadHandler
+            print("download ... ", videourl)
+            yield_return(www:SendWebRequest())
+
+            if (www.isNetworkError or www.isHttpError) then
+                print("www error: ", videourl)
+            else
+                print("www ok:", www.downloadedBytes,  dlh.data)
+                File.WriteAllBytes(cachePath, dlh.data)
+            end
+        else
+            print("use cache:", cachePath)
+        end
+
+        yield_return(CS.AssetSys.Instance:GetAsset("write_player/player/player.prefab", function(asset)
+            obj = asset
+        end))
+        print(obj)
+        local write_player = GameObject.Instantiate(obj)
+
         loading:SetActive(false)
 
-        yield_return(UnityEngine.WaitForSeconds(9))
-        this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
+        -- yield_return(UnityEngine.WaitForSeconds(9))
+        -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
     end)
 end
 

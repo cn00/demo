@@ -12,8 +12,10 @@ using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 using GroupInfo = BuildConfig.GroupInfo;
 using BundleInfo = BuildConfig.BundleInfo;
 
-using UnityEditor;
+namespace UnityEditor
+{
     #region CustomEditor
+
     [CustomEditor(typeof(BuildConfig))]
     public class BuildConfigEditor : UnityEditor.Editor
     {
@@ -27,6 +29,7 @@ using UnityEditor;
         List<string> XLuaConfigUnityEngine;
 
         BuildConfig mTarget = null;
+
         public void OnEnable()
         {
             mTarget = target as BuildConfig;
@@ -42,7 +45,7 @@ using UnityEditor;
             int n = 0;
             foreach (var group in groups)
             {
-                EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float)(++n) / groups.Length);
+                EditorUtility.DisplayCancelableProgressBar("update group ...", group, (float) (++n) / groups.Length);
 
                 var groupName = group.upath().Replace(BuildConfig.BundleResRoot, "");
                 GroupInfo groupInfo = mTarget.Groups.Find(i => i.Name == groupName);
@@ -77,19 +80,20 @@ using UnityEditor;
                         };
                     }
 
-                    foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories).Where(i => !i.EndsWith(".meta")))
+                    foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories)
+                        .Where(i => !i.EndsWith(".meta")))
                     {
                         var assetImporter = AssetImporter.GetAtPath(f);
                         if (assetImporter != null)
                         {
-                            assetImporter.assetBundleName = bundleName;//"";//
+                            assetImporter.assetBundleName = bundleName; //"";//
                             var assetTimeStamp = assetImporter.assetTimeStamp;
                         }
                     }
 
                     // if (time > 0)
-                        newBundles.Add(bundleInfo);
-                }//for 2
+                    newBundles.Add(bundleInfo);
+                } //for 2
 
                 //            AssetDatabase.GetAllAssetBundleNames();
                 // AssetDatabase.RemoveUnusedAssetBundleNames();
@@ -99,12 +103,14 @@ using UnityEditor;
 
                 if (groupInfo.Bundles.Count > 0)
                     newGroups.Add(groupInfo);
-            }//for 1
+            } //for 1
+
             mTarget.Groups = newGroups;
 
             EditorUtility.ClearProgressBar();
         }
-        public static IEnumerator Execute(string exe, string prmt 
+
+        public static IEnumerator Execute(string exe, string prmt
             , System.Diagnostics.DataReceivedEventHandler OutputDataReceived = null
             , Action end = null
             , float total = 0, string processingtag = "bash", string info = ""
@@ -124,13 +130,13 @@ using UnityEditor;
                 pi.UseShellExecute = false;
                 pi.CreateNoWindow = true;
 
-                if(OutputDataReceived != null)
+                if (OutputDataReceived != null)
                     process.OutputDataReceived += OutputDataReceived;
                 process.OutputDataReceived += (sender, e) =>
                 {
                     if (string.IsNullOrEmpty(e.Data))
                         return;
-                    if(e.Data.StartsWith(processingtag))
+                    if (e.Data.StartsWith(processingtag))
                         ++processing;
                     // UnityEngine.Debug.Log(e.Data);
                 };
@@ -152,20 +158,23 @@ using UnityEditor;
                 process.BeginErrorReadLine();
                 // process.WaitForExit();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 UnityEngine.Debug.LogError("catch: " + e);
             }
 
             while (!finished)
             {
-                if(total > 1)
+                if (total > 1)
                 {
-                    EditorUtility.DisplayCancelableProgressBar("uploading ...", info + ": " + processing + "/" + total, processing/total);
+                    EditorUtility.DisplayCancelableProgressBar("uploading ...", info + ": " + processing + "/" + total,
+                        processing / total);
                 }
+
                 yield return null;
             }
-            if(end != null)
+
+            if (end != null)
                 end();
 
             // UnityEngine.Debug.Log("finished: " + process.ExitCode);
@@ -187,40 +196,44 @@ using UnityEditor;
                 var luamonos = go.GetComponents<LuaMonoBehaviour>();
                 foreach (var luamono in luamonos)
                 {
-                    if(luamono.mAsset == null )//|| luamono.LuaScript.Text == null)
+                    if (luamono.mAsset == null) //|| luamono.LuaScript.Text == null)
                     {
                         AppLog.w(Tag, p + " luamono.luaScript not set");
                         continue;
                     }
+
                     // var txtpath = tpath + ".txt";
                     // var txtasset = AssetDatabase.LoadAssetAtPath<TextAsset>(txtpath);
                     {
 
-                    var tpath = AssetDatabase.GetAssetPath(luamono.mAsset);
-                    luamono.luaPath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
-                    // tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
-                    // if(luamono.LuaScript.path != tpath)
-                    // {
-                    //     luamono.LuaScript.path = tpath;
-                    //     AppLog.d("FixPrefabLuaPath", p);
-                    // }
+                        var tpath = AssetDatabase.GetAssetPath(luamono.mAsset);
+                        luamono.luaPath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
+                        // tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
+                        // if(luamono.LuaScript.path != tpath)
+                        // {
+                        //     luamono.LuaScript.path = tpath;
+                        //     AppLog.d("FixPrefabLuaPath", p);
+                        // }
                         EditorUtility.SetDirty(prefab);
                     }
                 }
 
-                if(luamonos.Count() > 0)
+                if (luamonos.Count() > 0)
                 {
-                    ++ count;
+                    ++count;
                     PrefabUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.Default);
                 }
+
                 MonoBehaviour.DestroyImmediate(go);
                 EditorUtility.DisplayCancelableProgressBar("FixPrefabLuaPath ..."
-                    , count + "/" + prefabPaths.Count() + i, (float)(count) / prefabPaths.Count());
-                if(count % 10 == 0)
+                    , count + "/" + prefabPaths.Count() + i, (float) (count) / prefabPaths.Count());
+                if (count % 10 == 0)
                     yield return null;
             }
+
             EditorUtility.ClearProgressBar();
         }
+
         void DrawBundleConfig(GUILayoutOption[] guiOpts)
         {
             // build
@@ -234,14 +247,17 @@ using UnityEditor;
                 {
                     BuildAB(BuildTarget.StandaloneWindows, rebuild);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "BuildAnd"))
                 {
                     BuildAB(BuildTarget.Android, rebuild);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "BuildiOS"))
                 {
                     BuildAB(BuildTarget.iOS, rebuild);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "BuildMac"))
                 {
                     BuildAB(BuildTarget.StandaloneOSX, rebuild);
@@ -259,14 +275,17 @@ using UnityEditor;
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneWindows), true);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "CleanAnd"))
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.Android), true);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "CleaniOS"))
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "CleanMac"))
                 {
                     Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
@@ -283,6 +302,7 @@ using UnityEditor;
                 {
                     Refresh();
                 }
+
                 if (GUI.Button(rect.Split(++idx, sn), "FixPrefabLuaPath"))
                 {
                     EditorCoroutine.StartCoroutine(FixPrefabLuaPath());
@@ -290,17 +310,21 @@ using UnityEditor;
             }
 
 
-            EditorGUILayout.LabelField("LastBuildTime", DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
+            EditorGUILayout.LabelField("LastBuildTime",
+                DateTime.FromFileTime(mTarget.LastBuildTime).ToString("yyyy/MM/dd HH:mm:ss"));
             mTarget.ForceRebuild = EditorGUILayout.Toggle("ForceRebuild", mTarget.ForceRebuild, guiOpts);
             mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
 
-            mTarget.BundleBuildOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumFlagsField("BundleBuildOptions", mTarget.BundleBuildOptions);
+            mTarget.BundleBuildOptions =
+                (BuildAssetBundleOptions) EditorGUILayout.EnumFlagsField("BundleBuildOptions",
+                    mTarget.BundleBuildOptions);
 
             ++EditorGUI.indentLevel;
             foreach (var i in mTarget.Groups)
             {
                 i.DrawGroup(0, guiOpts);
             }
+
             --EditorGUI.indentLevel;
         }
 
@@ -308,7 +332,8 @@ using UnityEditor;
         {
             base.OnInspectorGUI();
 
-            mTarget.runInBackground = PlayerSettings.runInBackground = EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
+            mTarget.runInBackground = PlayerSettings.runInBackground =
+                EditorGUILayout.Toggle("runInBackground", mTarget.runInBackground);
 
             GUILayoutOption[] guiOpts = new GUILayoutOption[]
             {
@@ -320,7 +345,7 @@ using UnityEditor;
 
 
             EditorGUILayout.Space();
-            
+
             // Bundles
             showBundles = EditorGUILayout.Foldout(showBundles, "AssetBundle", true);
             if (showBundles)
@@ -343,11 +368,12 @@ using UnityEditor;
             }
 
             //apk ios.proj exe app etc.
-            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds, false, item => {
+            Inspector.DrawList("Channels", mTarget.Channels, ref showBuilds, false, item =>
+            {
                 var i = item as ChannelConfig;
                 if (string.IsNullOrEmpty(i.Name))
                 {
-                    i.Name = i.Channel + ":" + (int)i.Channel;
+                    i.Name = i.Channel + ":" + (int) i.Channel;
                 }
             });
 
@@ -373,7 +399,8 @@ using UnityEditor;
         void BuildAB(BuildTarget target, bool rebuild)
         {
 
-            EditorCoroutine.StartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, ()=>{
+            EditorCoroutine.StartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, () =>
+            {
                 if (mTarget.BuildScene)
                     BuildScript.BuildStreamingScene(target);
 
@@ -388,7 +415,9 @@ using UnityEditor;
             //            AssetDatabase.SaveAssets();
         }
     }
+
     #endregion CustomEditor
+}
 #endif //UNITY_EDITOR
 
 

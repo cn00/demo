@@ -14,7 +14,7 @@ public class LuaAsset : ScriptableObject
     public string Value;
     public TextAsset TextAsset;
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
     public UnityEngine.Object mAsset;
-#endif
+//#endif
 }

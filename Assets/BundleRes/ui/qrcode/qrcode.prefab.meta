@@ -1,8 +1,7 @@
 fileFormatVersion: 2
 guid: da5ee02e2e6ac40bb91460fe9585b003
-NativeFormatImporter:
+PrefabImporter:
   externalObjects: {}
-  mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/qrcode.bd
   assetBundleVariant: 

@@ -15,7 +15,6 @@ using XLua;
 using System.Runtime;
 using SQLite;
 using TableView;
-
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
@@ -30,7 +29,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 public static class XLuaGenConfig
 {
     //lua中要使用到C#库的配置，比如C#标准库，或者Unity API，第三方库等。
-    [LuaCallCSharp, Hotfix]
+    [LuaCallCSharp]
     public static List<Type> LuaCallCSharp = new List<Type>()
     {
         #region customer types
@@ -64,7 +63,7 @@ public static class XLuaGenConfig
         #endregion customer types
 
         #region system
-        // typeof(System.IntPtr),
+        typeof(System.IO.File),
         typeof(System.Text.Encoding),
         typeof(System.Object),
         typeof(System.Delegate),
@@ -90,17 +89,42 @@ public static class XLuaGenConfig
         typeof(UnityEngine.WaitForSeconds),
         typeof(UnityEngine.AssetBundle),
         typeof(UnityEngine.WWW),
+        
+        typeof(UnityEngine.Networking.UnityWebRequest),
+        typeof(UnityEngine.Networking.DownloadHandler),
+        typeof(UnityEngine.Networking.UnityWebRequestMultimedia),
+        
+        typeof(UnityEngine.Video.VideoPlayer),
+        typeof(UnityEngine.Video.VideoClip),
+        typeof(UnityEngine.UI.Toggle)
         #endregion
     };
 
-    // [LuaCallCSharp]
+//    [LuaCallCSharp]
     public static List<Type> LuaCallCSharpUnityEngine
     {
         get
         {
+            var blacks = new List<string>()
+            {
+                "XLua",
+                ".Apple",
+                ".iPhone",
+                ".iOS",
+                ".tvOS",
+                ".Android",
+                ".WSA",
+                ".Windows",
+                ".Unsafe",
+                ".AudioSettings",
+                ".Light",
+                "UnityEditor",
+                "UnityEngine.TextureCompressionQuality",
+            };
             // UnityEngine.ADBannerView mm;
             var l = new []{
-                    "UnityEngine"
+                    //"Assembly-CSharp"
+                    "UnityEngine.CoreModule"
                     ,"UnityEngine.UI"
                     ,"UnityEngine.AudioModule"
                     ,"UnityEngine.CoreModule"
@@ -110,9 +134,11 @@ public static class XLuaGenConfig
                     .Load(s)
                     .GetTypes()
                     .Where(type => type.IsVisible
-                        // && !type.IsDefined(typeof(ObsoleteAttribute), true) // innerclass not work
+                        && !type.IsDefined(typeof(ObsoleteAttribute), true) // innerclass not work
                         && !type.GetCustomAttributes(true).Any(a => a.GetType() == typeof(ObsoleteAttribute))
                         && !type.FullName.EndsWith("Attribute")
+                        && !type.FullName.Contains("Unsafe")
+                        && !blacks.Any(i => type.FullName.Contains(i))
                     )
                 )
                 .SelectMany(i => i)
@@ -202,5 +228,8 @@ public static class XLuaGenConfig
         new List<string>(){"System.IO.DirectoryInfo", "Create", "System.Security.AccessControl.DirectorySecurity"},
         new List<string>(){"System.Text.Encoding", "GetCharCount", "GetByteCount", "GetBytes"},
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
+        new List<string>(){"UnityEngine.AudioSettings", "GetSpatializerPluginNames","SetSpatializerPluginName"},
+        new List<string>(){"UnityEngine.UI.Text", "OnRebuildRequested"},
+        new List<string>(){"UnityEngine.Texture", "imageContentsHash"}
     };
 }

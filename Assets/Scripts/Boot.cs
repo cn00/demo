@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class Boot : SingleMono<Boot>
 {
@@ -12,10 +13,10 @@ public class Boot : SingleMono<Boot>
         
         AppLog.isEditor = Application.isEditor;
         AppLog.d(Tag, "App.Awake 0");
-        #if UNITY_EDITOR
-        if(BuildConfig.Instance().UseBundle)
-            BuildConfig.Instance().BundleServer.StartBtn();
-        #endif
+//        #if UNITY_EDITOR
+//        if(BuildConfig.Instance().UseBundle)
+//            BuildConfig.Instance().BundleServer.StartBtn();
+//        #endif
         base.Awake();
     }
 
@@ -33,5 +34,10 @@ public class Boot : SingleMono<Boot>
         lua.SetLua("ui/boot/boot.lua");
         lua.enabled = true;
         yield return base.Init();
+    }
+
+    private void Update()
+    {
+        
     }
 }

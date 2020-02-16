@@ -76,9 +76,9 @@ public static class BundleHelper
             return;
         }
 
-        var cmd = "7z a \"" + outFile + ".7z\" \"" + inFile + "\" -p123456";
-        AppLog.d("BundleHelper", cmd);
-        p7zip_executeCommand(cmd);
+//        var cmd = "7z a \"" + outFile + ".7z\" \"" + inFile + "\" -p123456";
+//        AppLog.d("BundleHelper", cmd);
+//        p7zip_executeCommand(cmd);
 
         // if(true)return;
 
@@ -189,7 +189,7 @@ public class AssetSys : SingleMono<AssetSys>
         {
             if(string.IsNullOrEmpty(mCacheRoot))
             {
-                var cacheDirName = "AssetBundle/";
+                var cacheDirName = "ab/";
 #if UNITY_EDITOR
 #   if UNITY_IOS
                 cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
@@ -453,49 +453,63 @@ public class AssetSys : SingleMono<AssetSys>
 
         AppLog.d(Tag, fileUrl);
         bool err = false;
-        yield return Www(fileUrl, (WWW www) =>
+        WWW www = new WWW(fileUrl);
+        yield return www;
+        if(string.IsNullOrEmpty(www.error))
         {
-            if(string.IsNullOrEmpty(www.error))
+            if(isLocal)
             {
-                if(isLocal)
-                {
-                    mLoadedBundles[bundlePath] = www.assetBundle;
-                }
-                else
-                {
-#if UNITY_EDITOR
-                    AsyncSave(cachePath + BuildConfig.CompressedExtension, www.bytes);
-#endif
-                    MemoryStream outStream = new MemoryStream();
-                    BundleHelper.DecompressFileLZMA(new MemoryStream(www.bytes), outStream);
-
-                    AsyncSave(cachePath, outStream.GetBuffer());
-
-                    if(IsLoaded(bundlePath))
-                    {
-                        UnloadBundle(bundlePath);
-                    }
-
-                    // TODO: decode buffer
-                    mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
-                }
+                mLoadedBundles[bundlePath] = www.assetBundle;
             }
             else
             {
-                err = true;
-                AppLog.e(Tag, fileUrl + ": " + www.error);
+                var bytes = www.bytes;
+#if UNITY_EDITOR
+                AsyncSave(cachePath + BuildConfig.CompressedExtension, bytes);//保留.lzma
+#endif
+                MemoryStream outStream = new MemoryStream();
+                var thread = new Thread(() =>{
+                    BundleHelper.DecompressFileLZMA(new MemoryStream(bytes), outStream);
+    
+                    AsyncSave(cachePath, outStream.GetBuffer());
+
+                    lock (mLoadedBundles)
+                    {
+                        if(IsLoaded(bundlePath))
+                        {
+                            UnloadBundle(bundlePath);
+                        }
+        
+                    }
+                });
+                thread.Start();
+                while (thread.IsAlive)
+                {
+                    AppLog.d(Tag, "子线程 {0} 工作中。。。", fileUrl);
+                    yield return new WaitForSeconds(0.3f);
+                }
+                AppLog.d(Tag, "子线程完成 {0}", fileUrl);
+                // TODO: decode buffer
+                mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
             }
-        });
+        }
+        else
+        {
+            err = true;
+            AppLog.e(Tag, fileUrl + ": " + www.error);
+        } 
+        www.Dispose();
+        
         if(err)
             yield break;
 
         // Dependencies
-        if(mManifest != null)
+        if(mManifest != null)// 加载 manifest 时本身为空
         {
             var deps = mManifest.GetAllDependencies(bundlePath);
             foreach(var i in deps)
             {
-                AppLog.d(Tag, "Dependencies: " + i);
+                AppLog.d(Tag, "Dependencies: {0} +> {1}", bundlePath, i);
                 yield return GetBundle(i);
             }
         }
@@ -547,7 +561,7 @@ public class AssetSys : SingleMono<AssetSys>
                 endCallback(www);
             }
         }
-        www.Dispose();
+//        www.Dispose();
 
         yield return null;
     }

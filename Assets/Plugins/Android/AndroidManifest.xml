@@ -1,34 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.onevcat.uniwebview"
-  android:installLocation="preferExternal"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bili.a3.test"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0">
-    <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true"
-        android:anyDensity="true"/>
 
     <application
-    android:icon="@drawable/app_icon"
-        android:label="@string/app_name"
-        android:debuggable="true">
-        <activity android:name="com.onevcat.uniwebview.AndroidPlugin"
-                  android:label="@string/app_name"
-                  android:hardwareAccelerated="true"
-                  android:windowSoftInputMode="adjustResize"
-                  android:launchMode="singleTop"
-                  android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
+        android:usesCleartextTraffic="true"
+        android:banner="@drawable/app_banner"
+        android:icon="@mipmap/app_icon"
+        android:isGame="true"
+        android:label="@string/app_name">
+        <activity
+            android:name="com.bili.a3.test.UnityPlayerActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
+            android:hardwareAccelerated="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.lib_name" android:value="unity" />
-            <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="unity" />
+            <meta-data
+                android:name="unityplayer.ForwardNativeEventsToDalvik"
+                android:value="true" />
         </activity>
+
+        <meta-data
+            android:name="unity.build-id"
+            android:value="dba7907c-fa54-4573-ad02-0e6b29b3a5fc" />
+        <meta-data
+            android:name="unity.splash-mode"
+            android:value="0" />
+        <meta-data
+            android:name="unity.splash-enable"
+            android:value="True" />
     </application>
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+    <uses-feature android:glEsVersion="0x00020000" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen.multitouch"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen.multitouch.distinct"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>

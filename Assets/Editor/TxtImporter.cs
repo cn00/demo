@@ -14,17 +14,16 @@ public class TxtImporter : ScriptedImporter
         File.Copy(ctx.assetPath, ctx.assetPath + ".txt", true);
         AppLog.d(Tag, "OnImportAsset: {0} => {1}", ctx.assetPath, ctx.assetPath + ".txt");
         // TODO: clean comments, compress, encode, base64 .lua.txt
-        
+
         AssetDatabase.ImportAsset(ctx.assetPath + ".txt");
-        
-        // var text = File.ReadAllText(ctx.assetPath);
+
+        var text = File.ReadAllText(ctx.assetPath);
         // var text1 = AssetDatabase.LoadAssetAtPath<TextAsset>(ctx.assetPath);
         // var asset = ScriptableObject.CreateInstance<LuaAsset>();
         // asset.Value = text;
-        //
-        // ctx.AddObjectToAsset("main obj", asset, LoadIconTexture());
-        // ctx.SetMainObject(asset);
-
+        var asset = new TextAsset(text);
+        ctx.AddObjectToAsset("main obj", asset, LoadIconTexture());
+        ctx.SetMainObject(asset);
     }
     
     private const string k_IconName = "lua_icon";

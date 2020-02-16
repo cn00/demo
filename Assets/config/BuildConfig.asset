@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -69,17 +70,17 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  UseBundle: 0
+  mUseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132199159344402200
+  LastBuildTime: 132263298078742190
   Version:
     Major: 1
     Minor: 1
     Patch: 0
     BtnPerRow: 3
-  Ip: 10.23.22.233
-  Port: 8008
+  Ip: 192.168.2.104
+  Port: 8000
   ForceRebuild: 0
   BuildScene: 0
   mGroups:
@@ -89,23 +90,28 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: video/op.bd
-      mSize: 5852406
-      mMd5: 1D4C41516471F4A30EEF1B203608CC9C
+      mSize: 5863959
+      mMd5: 757CDC0077B79699863FCB9ECEB8E677
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
-    Name: bilibili
+    Name: font
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: bilibili/cheers.bd
-      mSize: 2435
-      mMd5: 3DAB9375EC8431E3C69B13F3E0E126D8
+    - mName: font/fzxz.bd
+      mSize: 2363847
+      mMd5: 3C85C0F2C951EC7E156EFEDE96FD9E6F
       mVersion: 1.1.0
       mRebuild: 0
-    - mName: bilibili/planet.bd
-      mSize: 1265120
-      mMd5: 102ED1B618EC7C546A86E671330FBDE8
+  - Foldout: 1
+    Name: write_player
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: write_player/player.bd
+      mSize: 621727
+      mMd5: 4397B7B1AE85ECE6F794ABB70EC666D7
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -114,38 +120,38 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: ui/boot.bd
-      mSize: 2213
-      mMd5: 1B59AFB1CA4E86939323CA9EB209BFD8
+      mSize: 20384
+      mMd5: E321A8F737B65DCC3EC6326C3E016AC3
       mVersion: 1.1.0
-      mRebuild: 0
+      mRebuild: 1
     - mName: ui/excel_viewer.bd
-      mSize: 26639
-      mMd5: 0D2ED8E6C4BE577A1D69EF515CA107BD
+      mSize: 21030
+      mMd5: 0228F3CF4F137BF8AAFA791AEE1BBC8A
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/loading.bd
-      mSize: 100268
-      mMd5: 30B7A6174B6C956AF6B09CC1B3131628
+      mSize: 87297
+      mMd5: B9783E4EB64B0FAF1521660E96FB486A
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/login.bd
-      mSize: 18907
-      mMd5: C74EC88BBB20245A40FDE060B00FA21D
+      mSize: 12889
+      mMd5: 0DC2EF32A242B3CFE801300A918877DF
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/qrcode.bd
-      mSize: 57814
-      mMd5: 43FA2CB6B87AD836E331FE84F5288F8C
+      mSize: 30717
+      mMd5: EC21DA30A9F76A5D9427E9BB06BAB529
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/test.bd
-      mSize: 23595
-      mMd5: 51BF0A80D19DA228AF993A01B1F38CEC
+      mSize: 19980
+      mMd5: 70D194CE811157125591D06E07AEC999
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/update.bd
-      mSize: 14618
-      mMd5: E2F1D0EB7650A1A635B6329D94CDFBAD
+      mSize: 10715
+      mMd5: 495B3778A32BAA4EA443FA10F437CD84
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -153,29 +159,24 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: lua/luadebug.bd
-      mSize: 17968
-      mMd5: 91A60043EBBB679F2EE7325F49B625E9
+    - mName: lua/com.bd
+      mSize: 43560
+      mMd5: E3D50E4727726CB8FC03A74186D4FD03
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/proto.bd
-      mSize: 1445
-      mMd5: BF431B1ED5F78F746745AF28E014C8D0
-      mVersion: 1.1.0
-      mRebuild: 1
-    - mName: lua/socket.bd
-      mSize: 20670
-      mMd5: 25F16C91C2ED77BBA603946D5559D09C
+      mSize: 1052
+      mMd5: 16E9D115B930480F44426187C79225EA
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/table.bd
-      mSize: 1695
-      mMd5: C49D98A6E17C1D321C335FB18CCCE4C8
+      mSize: 1249
+      mMd5: 9E2E7A2CEFCA7209ACA3CE5FFF0BF7C6
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/utility.bd
-      mSize: 18394
-      mMd5: D99796D36BFB9AC65F2D3D46AA6B19D4
+      mSize: 13635
+      mMd5: F9AC183A628A99646E7307759C18FC88
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -183,24 +184,24 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: common/manager.bd
-      mSize: 10854
-      mMd5: A52744BC670F07F22F833229CC502F86
-      mVersion: 1.1.0
-      mRebuild: 0
     - mName: common/excel.bd
-      mSize: 10843
-      mMd5: 4766CF3F7887C6C5BB184F391AA3F85A
-      mVersion: 1.1.0
-      mRebuild: 0
-    - mName: common/ui.bd
-      mSize: 8438
-      mMd5: 17EA57B1152992EAF94DDD57B8E89D94
+      mSize: 8109
+      mMd5: 5E45543DDA0B00BFFB8E1D82BEBAC319
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/global.bd
-      mSize: 1994
-      mMd5: 2AA6AB4B08D461694918E8AE3F799CE5
+      mSize: 1450
+      mMd5: 7D547082ECF13E11C274B6C965C461BB
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: common/manager.bd
+      mSize: 12408
+      mMd5: C6F845EEB2174ED8B5488F4FD032D94B
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: common/ui.bd
+      mSize: 5619
+      mMd5: 6BD3D4F41224317D3BC5826548D8798D
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -209,38 +210,28 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: truth/index.bd
-      mSize: 26019
-      mMd5: 19AE1DE360F0C6083DF8DEF3B349D773
+      mSize: 20502
+      mMd5: 7C7BAA959D60B7E6B61656CF3C88C5C1
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
     Name: config
     mInclude: 0
-    mRebuild: 0
+    mRebuild: 1
     mBundles:
     - mName: config/config.bd
-      mSize: 4144
-      mMd5: 4A07B8B979EC4025DB0B1D6EE50E76A8
+      mSize: 2573
+      mMd5: 53EA51D6728C1EE8F9A446CC9ECEB1E6
       mVersion: 1.1.0
-      mRebuild: 0
-  - Foldout: 0
-    Name: proto
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: proto/bfbs.bd
-      mSize: 2716
-      mMd5: EB3D052E5E965FB35CAA82A09B5BB737
-      mVersion: 1.1.0
-      mRebuild: 0
+      mRebuild: 1
   - Foldout: 0
     Name: chapter_01
     mInclude: 0
     mRebuild: 0
     mBundles:
     - mName: chapter_01/level_01.bd
-      mSize: 1756
-      mMd5: 33478B794B8323896D195CA76395E948
+      mSize: 1279
+      mMd5: 3D3A573FBACCA824C6FC2C4EC5515B55
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -249,21 +240,11 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: chapter_02/level_01.bd
-      mSize: 1750
-      mMd5: 40E3929BE3DC658ACD9E9CC0A72EA001
+      mSize: 1277
+      mMd5: EE14FFEE99A45EF6C33C104B662CB372
       mVersion: 1.1.0
       mRebuild: 0
-  - Foldout: 0
-    Name: Audio
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: Audio/button.bd
-      mSize: 0
-      mMd5: 
-      mVersion: 
-      mRebuild: 0
-  BundleBuildOptions: 784
+  BundleBuildOptions: 16
   mChannels:
   - Name: ios
     BatchBuild: 0
@@ -286,15 +267,15 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 58
+    BuildNum: 75
     Version: 1.0.0
     DefineSymbols: HOTFIX_ENABLE;USE_XLUA;
     BuildType: 0
     BuildSystem: 1
     iOSSdkVersion: 989
-    OptionFlags: 65569
+    OptionFlags: 33
     Channel: 2
     Emulator: 0
   BundleServer:
-    Port: 8008
+    Port: 8000
     BasePath: ./AssetBundle/

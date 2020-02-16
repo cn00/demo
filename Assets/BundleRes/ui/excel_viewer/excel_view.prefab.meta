@@ -1,8 +1,7 @@
 fileFormatVersion: 2
 guid: fc4e8af39086c46ea9e7b037404d56c9
-NativeFormatImporter:
+PrefabImporter:
   externalObjects: {}
-  mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/excel_viewer.bd
   assetBundleVariant: 

@@ -101,7 +101,7 @@ public class BuildScript
         try
         {
             var outDir = BundleOutDir + TargetName(targetPlatform);
-            if (rebuild)
+            if (rebuild && Directory.Exists(outDir))
             {
                 Directory.Delete(outDir, true);
             }

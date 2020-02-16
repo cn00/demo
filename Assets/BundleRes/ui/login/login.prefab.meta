@@ -1,8 +1,7 @@
 fileFormatVersion: 2
 guid: c16549b11a5d2394f9a414dacc6273a7
-NativeFormatImporter:
+PrefabImporter:
   externalObjects: {}
-  mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/login.bd
   assetBundleVariant: 

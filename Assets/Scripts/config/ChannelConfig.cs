@@ -93,6 +93,8 @@ public static class AppChannelEditorExtension
 }
 
 #if UNITY_EDITOR
+namespace UnityEditor
+{
 [Serializable]
 public class ChannelConfig
 {
@@ -137,7 +139,7 @@ public class ChannelConfig
 
     public string OutputPath()
     {
-        string target_path = "bin/" + Name;
+        string target_path = "./" + Name;
         if (Channel.isAndroid())
         {
             if (BuildSystem == AndroidBuildSystem.Gradle
@@ -239,5 +241,6 @@ public class ChannelConfig
     {
 
     }
+}
 }
 #endif

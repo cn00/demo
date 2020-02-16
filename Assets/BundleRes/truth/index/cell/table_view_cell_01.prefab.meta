@@ -1,8 +1,7 @@
 fileFormatVersion: 2
 guid: 667279939106442c8b42aa7c4f798bbb
-NativeFormatImporter:
+PrefabImporter:
   externalObjects: {}
-  mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: truth/index.bd
   assetBundleVariant: 
