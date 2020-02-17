@@ -70,7 +70,7 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  mUseBundle: 1
+  mUseBundle: 0
   LogLevel: 3
   runInBackground: 1
   LastBuildTime: 132263298078742190
@@ -252,13 +252,13 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3
     PackageName: a3
-    BuildNum: 10
+    BuildNum: 12
     Version: 1.0.0
     DefineSymbols: 
     BuildType: 0
     BuildSystem: 0
     iOSSdkVersion: 988
-    OptionFlags: 1025
+    OptionFlags: 66561
     Channel: 7
     Emulator: 0
   - Name: Android:2

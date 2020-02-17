@@ -37,7 +37,7 @@ local function dump(obj, breakline)
         elseif type(val) == "string" then
             return quoteStr(val)
         else
-            return tostring(val)
+            return quoteStr(tostring(val))
         end
     end
     dumpObj = function(obj, level)
