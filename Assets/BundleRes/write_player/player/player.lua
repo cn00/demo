@@ -3,9 +3,11 @@ local CS = CS
 local File = CS.System.IO.File
 local AssetSys = CS.AssetSys
 local UnityEngine = CS.UnityEngine
+local Time = UnityEngine.Time
 local Input = UnityEngine.Input
 local Vector2 = UnityEngine.Vector2
 local Vector3 = UnityEngine.Vector3
+local Color = UnityEngine.Color
 
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
@@ -117,7 +119,7 @@ function this.init()
 					v.frame = this.op_movie_VideoPlayer.frame
 					v.modified = true
 				else
-					print("op_movie_VideoPlayer.time", v.btn, v.frame, this.op_movie_VideoPlayer.frame, this.op_movie_VideoPlayer.frameCount)
+					-- print("op_movie_VideoPlayer.time", v.btn, v.frame, this.op_movie_VideoPlayer.frame, this.op_movie_VideoPlayer.frameCount)
 					-- this.op_movie_VideoPlayer:Pause()
 					-- this.op_movie_VideoPlayer:Play()
 					this.op_movie_VideoPlayer.frame = v.frame
@@ -132,8 +134,6 @@ function this.init()
 		-- player.op_movie_VideoPlayer = op_movie:GetComponent("UnityEngine.Video.VideoPlayer") -- 不行
 		-- player.op_movie_VideoPlayer = op_movie:GetComponent(typeof(UnityEngine.Video.VideoPlayer)) -- 可以
 
-		print("this.op_movie_VideoPlayer", op_movie, this.op_movie_VideoPlayer)
-
 		this.playbackSpeedText_Text.text = this.op_movie_VideoPlayer.playbackSpeed
 		this.Slider_Slider.onValueChanged:AddListener(function(fval)
 			print("onValueChanged", fval, this.Slider_Slider.value, op_movie, this.op_movie_VideoPlayer)
@@ -147,6 +147,40 @@ function this.init()
 		end)
     end)
 end
+
+local function findidx(t, frame)
+	local l = #t
+	local a = 1
+	local b = l
+	local c = (a+b)//2
+	while(a < c and b > c )do
+		-- print("abc:", a, b, c, frame, t[c].frame)
+		if     frame > t[c].frame then 
+			a = c
+		elseif frame < t[c].frame then
+			b = c
+		else
+			return c
+		end
+		c = (a+b)//2
+	end
+	print("rabc:", a, b, c, frame, t[c].frame)
+	return a
+end
+
+this.currentidx = 1
+function this.Update()
+	if Time.frameCount % 128 == 0 then
+		local lastidx = this.currentidx
+		this.currentidx = findidx(this.btns, this.op_movie_VideoPlayer.frame)
+		if(lastidx ~= this.currentidx)then
+			print("current:", this.btns[this.currentidx].c)
+			this.btns[lastidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color.white
+			this.btns[this.currentidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color.red
+		end
+	end
+end
+
 
 -- function this.FixedUpdate() end
 
