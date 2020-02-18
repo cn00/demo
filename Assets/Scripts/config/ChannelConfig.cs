@@ -139,13 +139,13 @@ public class ChannelConfig
 
     public string OutputPath()
     {
-        string target_path = "./" + Name;
+        string target_path = "";
         if (Channel.isAndroid())
         {
             if (BuildSystem == AndroidBuildSystem.Gradle
             && (OptionFlags.HasFlag(AppBuildOptions.AcceptExternalModificationsToPlayer)))
             {
-                target_path = "bin/and.proj";
+                target_path = "and.proj";
                 // PlayerSettings.Android.GradleProjName = "android." +  PackageName;
             }
             else
@@ -154,14 +154,14 @@ public class ChannelConfig
                 if (AddTime)
                     name += DateTime.Now.ToString("-yyyyMdHHmmss");
                 Directory.CreateDirectory("./bin");
-                target_path = "./bin/" + name + "-" + BuildNum;
+                target_path = "bin/" + name + "-" + BuildNum;
                 if (Channel.BuildTarget() == UnityEditor.BuildTarget.Android)
                     target_path += ".apk";
             }
         }
         else if (Channel.isIOS())
         {
-            target_path = "./bin/" + Name;
+            target_path = "ios.proj";
             if (Emulator)
             {
                 PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -7,8 +6,9 @@ using UnityEngine.Events;
 using System.Linq;
 using XLua;
 using System.Text;
-
+using UnityEngine.Networking;
 using BundleManifest = System.Collections.Generic.List<BuildConfig.BundleInfo>;
+using Version = System.Version;
 
 public static class BytesExtension
 {
@@ -236,7 +236,8 @@ public class UpdateSys : SingleMono<UpdateSys>
 
             Diff();
 
-            yield return DownloadDiffFiles();
+            // yield return DownloadDiffFiles();
+            var www = UnityWebRequest.Get("");
 
             BuildConfig.Instance().Version = mRemoteVersion;
 

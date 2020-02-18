@@ -17,6 +17,12 @@ public class Boot : SingleMono<Boot>
 //        if(BuildConfig.Instance().UseBundle)
 //            BuildConfig.Instance().BundleServer.StartBtn();
 //        #endif
+
+        var conf = Application.streamingAssetsPath + "/config.lua";
+        if (File.Exists(conf))
+        {
+            LuaSys.Instance.GlobalEnv.DoString(File.ReadAllText(conf));
+        }
         base.Awake();
     }
 

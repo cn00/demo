@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -74,6 +75,7 @@ public static class XLuaGenConfig
 
         #region UnityEngine
         typeof(UnityEngine.Application),
+        typeof(UnityEngine.RuntimePlatform),
         typeof(UnityEngine.Object),
         typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.GameObject),
@@ -92,11 +94,15 @@ public static class XLuaGenConfig
         
         typeof(UnityEngine.Networking.UnityWebRequest),
         typeof(UnityEngine.Networking.DownloadHandler),
-        typeof(UnityEngine.Networking.UnityWebRequestMultimedia),
+        typeof(UnityEngine.Networking.UnityWebRequestAsyncOperation),
         
         typeof(UnityEngine.Video.VideoPlayer),
         typeof(UnityEngine.Video.VideoClip),
-        typeof(UnityEngine.UI.Toggle)
+        typeof(UnityEngine.UI.Toggle),
+        
+        typeof(UnityEngine.Color),
+        typeof(UnityEngine.Time),
+        typeof(UnityEngine.Color),
         #endregion
     };
 
@@ -125,10 +131,10 @@ public static class XLuaGenConfig
             var l = new []{
                     //"Assembly-CSharp"
                     "UnityEngine.CoreModule"
-                    ,"UnityEngine.UI"
-                    ,"UnityEngine.AudioModule"
-                    ,"UnityEngine.CoreModule"
-                    ,"UnityEngine.VideoModule"
+//                    ,"UnityEngine.UI"
+//                    ,"UnityEngine.AudioModule"
+//                    ,"UnityEngine.CoreModule"
+//                    ,"UnityEngine.VideoModule"
                 }
                 .Select(s => Assembly //
                     .Load(s)
@@ -169,12 +175,24 @@ public static class XLuaGenConfig
         #endregion customer
 
         #region System
-        typeof(System.Action),
         typeof(System.Collections.IEnumerator),
         typeof(Func<double, double, double>),
+        typeof(System.Action),
         typeof(System.Action<byte[]>),
         typeof(System.Action<string>),
         typeof(System.Action<double>),
+        typeof(System.Action<int>),
+        typeof(System.Action<float>),
+        typeof(System.Action<bool>),
+        typeof(Action<FileStream>),
+        typeof(UnityEngine.Events.UnityAction),
+        typeof(UnityEngine.Events.UnityAction<byte[]>),
+        typeof(UnityEngine.Events.UnityAction<string>),
+        typeof(UnityEngine.Events.UnityAction<double>),
+        typeof(UnityEngine.Events.UnityAction<int>),
+        typeof(UnityEngine.Events.UnityAction<float>),
+        typeof(UnityEngine.Events.UnityAction<bool>),
+
         typeof(System.Collections.IList),
         typeof(System.Action<System.Object>),
         typeof(System.Action<UnityEngine.Object>),
