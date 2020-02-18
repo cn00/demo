@@ -17,7 +17,7 @@ public class XCodeProjectPatch
     [MenuItem("Tools/XCodeProjectPatch")]
     public static void Menu()
     {
-        OnPostProcessBuild(UnityEditor.BuildTarget.iOS, "bin/ios");
+        OnPostProcessBuild(UnityEditor.BuildTarget.iOS, "ios.proj");
     }
 
     [PostProcessBuild(999)]

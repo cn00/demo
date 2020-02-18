@@ -107,6 +107,13 @@ public static class LuaTableExtension
         LuaSys.Instance.GetGLuaFunc("BridgingClass.RawSet")(self, kv);
     }
 
+    public static LuaTable ToLuaTable(this object self)
+    {
+        LuaTable lt = LuaSys.Instance.luaEnv.NewTable();
+
+        return lt;
+    }
+
 
     public static string ToStringLua(this XLua.LuaTable self)
     {
