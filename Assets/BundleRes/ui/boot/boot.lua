@@ -39,12 +39,7 @@ function boot.coroutine_boot(first, ...)
         -- print(debug.traceback("test traceback"))
         -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
         -- yield_return(UnityEngine.WaitForSeconds(1))
-        local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
-            obj = asset
-        end))
-        print(obj)
-        local loading = GameObject.Instantiate(obj)
+
 
         -- yield_return(CS.AssetSys.Instance:GetBundle("lua/socket.bd", function ( bundle )
         --     print(bundle)
@@ -94,32 +89,11 @@ function boot.coroutine_boot(first, ...)
         -- print(obj)
         -- local write_player = GameObject.Instantiate(obj)
 
-        local videoname = "1-滕王阁序-640.mp4"
-        local videourl = "http://192.168.2.104:8000/mp4/" .. videoname
-        local cachePath = AssetSys.CacheRoot .. videoname
-        if not File.Exists(cachePath) then
-            local www = UnityWebRequest.Get(videourl)
-            local dlh = www.downloadHandler
-            print("download ... ", videourl)
-            yield_return(www:SendWebRequest())
-
-            if (www.isNetworkError or www.isHttpError) then
-                print("www error: ", videourl)
-            else
-                print("www ok:", www.downloadedBytes,  dlh.data)
-                File.WriteAllBytes(cachePath, dlh.data)
-            end
-        else
-            print("use cache:", cachePath)
-        end
-
         yield_return(CS.AssetSys.Instance:GetAsset("write_player/player/player.prefab", function(asset)
             obj = asset
         end))
         print(obj)
         local write_player = GameObject.Instantiate(obj)
-
-        loading:SetActive(false)
 
         -- yield_return(UnityEngine.WaitForSeconds(9))
         -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})

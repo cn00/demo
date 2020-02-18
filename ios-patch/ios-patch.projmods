@@ -54,8 +54,7 @@
     ],
     "headerpaths": [
         "ios-patch/BLGameSdk/BlGameSdkLib/include",
-        "ios-patch:ios-patch/NSLua",
-        // "ios-patch/BLDataSdk/include",
+        "ios-patch/NSLua",
     ],
     "plist": {
         "NSAppTransportSecurity":{
@@ -69,22 +68,6 @@
                     "a3biligame",
                 ]
             },
-
-            // //komeo 
-            // {
-            //     "role": "Editor",
-            //     "name" : "fb",
-            //     "schemes":[
-            //         "fb2195831977115857",
-            //     ]
-            // },
-            // {
-            //     "role": "Editor",
-            //     "name" : "google",
-            //     "schemes":[
-            //         "com.googleusercontent.apps.663290335646-r26u7pvaompfrtn6rbiq7jak4bf4uvcv"
-            //     ]
-            // }
         ],
     },
     /*
@@ -97,5 +80,5 @@
         "ios-patch:ios-patch/BLGameSdk",
         "ios-patch:ios-patch/NSLua",
     ],
-    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$"]
+    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$", "^*.md$"]
 }

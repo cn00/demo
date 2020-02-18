@@ -185,6 +185,7 @@ public static class XLuaGenConfig
         typeof(System.Action<float>),
         typeof(System.Action<bool>),
         typeof(Action<FileStream>),
+        
         typeof(UnityEngine.Events.UnityAction),
         typeof(UnityEngine.Events.UnityAction<byte[]>),
         typeof(UnityEngine.Events.UnityAction<string>),

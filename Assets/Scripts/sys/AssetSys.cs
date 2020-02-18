@@ -201,18 +201,11 @@ public class AssetSys : SingleMono<AssetSys>
             {
                 var cacheDirName = "ab/";
 #if UNITY_EDITOR
-# if UNITY_IOS
-                cacheDirName += PlatformName(RuntimePlatform.IPhonePlayer) + "/";
-# elif UNITY_ANDROID
-                cacheDirName += PlatformName(RuntimePlatform.Android) + "/";
-# else
-                cacheDirName += PlatformName(Application.platform) + "/";
-# endif
+                cacheDirName += PlatformName() + "/";
+                
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
 #else //!UNITY_EDITOR
-#   if UNITY_ANDROID
-                mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
-#   elif UNITY_IPHONE
+#   if UNITY_ANDROID || UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #   else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
@@ -223,6 +216,20 @@ public class AssetSys : SingleMono<AssetSys>
             return mCacheRoot;
         }
     } // set in Runtime
+
+    public static string PlatformName()
+    {
+        string name;
+# if UNITY_IOS
+        name = PlatformName(RuntimePlatform.IPhonePlayer);
+# elif UNITY_ANDROID
+        name= PlatformName(RuntimePlatform.Android);
+# else
+        name= PlatformName(Application.platform);
+# endif
+        return name;
+
+    }
 
     /// <summary>
     /// http://ip:port/path/to/root/platform/
@@ -451,7 +458,7 @@ public class AssetSys : SingleMono<AssetSys>
         )
         {
             isLocal = false;
-            fileUrl = HttpRoot + version + "/" + bundlePath + BuildConfig.CompressedExtension;
+            fileUrl = HttpRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
 
         AppLog.d(Tag, fileUrl);
@@ -467,39 +474,6 @@ public class AssetSys : SingleMono<AssetSys>
                 www.Dispose();
             }
             else
-            /*
-            {
-                var bytes = www.bytes;
-#if UNITY_EDITOR
-                AsyncSave(cachePath + BuildConfig.CompressedExtension, bytes); //保留.lzma
-#endif
-                MemoryStream outStream = new MemoryStream();
-                var thread = new Thread(() =>
-                {
-                    BundleHelper.DecompressFileLZMA(new MemoryStream(bytes), outStream);
-
-                    AsyncSave(cachePath, outStream.GetBuffer());
-
-                    lock (mLoadedBundles)
-                    {
-                        if (IsLoaded(bundlePath))
-                        {
-                            UnloadBundle(bundlePath);
-                        }
-                    }
-                });
-                thread.Start();
-                while (thread.IsAlive)
-                {
-                    AppLog.d(Tag, "子线程 {0} 工作中。。。", fileUrl);
-                    yield return new WaitForSeconds(0.3f);
-                }
-
-                AppLog.d(Tag, "子线程完成 {0}", fileUrl);
-                // TODO: decode buffer
-                mLoadedBundles[bundlePath] = AssetBundle.LoadFromMemory(outStream.GetBuffer());
-            }
-            */
             {
                 
                 FileStream lzmaStream = null;
@@ -567,46 +541,47 @@ public class AssetSys : SingleMono<AssetSys>
 
     public static IEnumerator Download(string url, string path, Action<FileStream> cb)
     {
-        var cachePath = path + ".tmp";
-        var cachDir = cachePath.Substring(0, cachePath.LastIndexOf('/'));
+        AppLog.d(Tag, "download:{0}", url);
+        var tmpPath = path + ".tmp";
+        var cachDir = tmpPath.Substring(0, tmpPath.LastIndexOf('/'));
         cachDir.CreateDir();
+
+        //打开上次下载的文件或新建文件 
+        System.IO.FileStream temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
+        var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
+        AppLog.d(Tag, "skip:{0}, {1}", temfs.Length, startPos);
 
         HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
         webRequest.Timeout = 1000*60*10;
         //webRequest.AllowReadStreamBuffering = true;
-
-        long countLength = webRequest.GetResponse().ContentLength;
-
-        //打开上次下载的文件或新建文件 
-        System.IO.FileStream fs = new System.IO.FileStream(cachePath, System.IO.FileMode.OpenOrCreate);
-        var startPos = fs.Seek(0, SeekOrigin.End);
-        AppLog.d(Tag, "skip:{0}, {1}", fs.Length, startPos);
-
-        if (fs.Length > 0)
+        if (temfs.Length > 0)
         {
-            webRequest.AddRange((int) fs.Length); //设置Range值
+            webRequest.AddRange((int) temfs.Length); //设置Range值
         }
 
-        System.Net.WebResponse res = webRequest.GetResponse();
-        System.IO.Stream ns = res.GetResponseStream();
+        System.Net.WebResponse response = webRequest.GetResponse();
+        long contentLength = response.ContentLength;
+
+        System.IO.Stream responseStream = response.GetResponseStream();
         int bufsize = 10 * 1024 * 1024; // 10M
 
+        var totalLength = temfs.Length + contentLength;
         byte[] buffer = new byte[bufsize];
-        int readSize = ns.Read(buffer, 0, bufsize);
-        double downloadedLength = fs.Length;
-        while (countLength > downloadedLength)
+        int readSize = responseStream.Read(buffer, 0, bufsize);
+        double downloadedLength = temfs.Length;
+        while (totalLength > downloadedLength)
         {
-            fs.Write(buffer, 0, readSize);
-            fs.Flush(true);
-            downloadedLength = fs.Length ;
+            temfs.Write(buffer, 0, readSize);
+            temfs.Flush(true);
+            downloadedLength = temfs.Length ;
             AppLog.d(Tag, string.Format(" {0:F}M / {1:F}M [{2}] {3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
-                , countLength * 1.0 / (1024 * 1024), readSize, url));
+                , contentLength * 1.0 / (1024 * 1024), readSize, url));
             
-            readSize = ns.Read(buffer, 0, bufsize);
+            readSize = responseStream.Read(buffer, 0, bufsize);
             yield return null;
         }
-        AppLog.d(Tag, "download {0}:{1}",countLength, downloadedLength);
+        AppLog.d(Tag, "download {0}:{1}",totalLength, downloadedLength);
 
 //        webRequest.BeginGetRequestStream( (IAsyncResult result) =>{
 //            FileStream stream = (FileStream) result.AsyncState;
@@ -614,7 +589,7 @@ public class AssetSys : SingleMono<AssetSys>
 //            stream.Close();
 //            stream.Dispose();
 //        },fs);
-        cb(fs);
+        cb(temfs);
         
         yield return null;
     }
