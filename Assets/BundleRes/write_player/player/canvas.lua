@@ -51,7 +51,7 @@ local startPos = Vector2()
 local direction
 function this.Update()
 
-	print("update", Input.touchCount, Input.simulateMouseWithTouches)
+	-- print("update", Input.touchCount, Input.simulateMouseWithTouches)
 	if Input.touchCount > 0 then
 		local touch = Input.GetTouch(0)
 		local case = {

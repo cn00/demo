@@ -9,7 +9,7 @@
 #import "LuaBridgedFunctions.h"
 #import "NSLua.h"
 
-#include "BLGameSdk.h"
+//#include "BLGameSdk.h"
 
 #define ADDMETHOD(name) \
 (lua_pushstring(L, #name), \
@@ -32,7 +32,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(NSLua,sharedLua)
 void get_game_sdk()
 {
     printf("%s\n", "get_game_sdk");
-    [BLGameSdk defaultGameSdk];
+//    [BLGameSdk defaultGameSdk];
 }
 
 - (id)init:(lua_State*)l
