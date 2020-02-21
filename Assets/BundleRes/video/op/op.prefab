@@ -325,8 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: video/op/op
-  mAsset: {fileID: 4900000, guid: 3b3c2e968b90244d8ba8c822f6ead3d1, type: 3}
+  LuaAsset: {fileID: 4900000, guid: 699f998ed25444d01b6d58ea6df4449b, type: 3}
   injections:
   - obj: {fileID: 1433011678118292}
     exportComIdx: 1

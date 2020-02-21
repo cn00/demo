@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: 441e2ba6c6b24419d8bd882e26a15011
 ScriptedImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    4900000: main obj
   externalObjects: {}
   userData: 
   assetBundleName: ui/qrcode.bd

@@ -195,10 +195,10 @@ namespace TableView
 
         public void RegisterPrefabForCellReuseIdentifier(GameObject prefab)
         {
-            var cellController = prefab.GetComponentInChildren<TableViewCellController>();
+            var cellController = prefab.GetComponentInChildren<TableViewCell>();
             if(cellController == null)
             {
-                cellController = prefab.AddComponent<TableViewCellController>();
+                cellController = prefab.AddComponent<TableViewCell>();
             }
             cellController.ReuseIdentifier = prefab.name;
             prefabCells.RegisterPrefabForCellReuseIdentifier(prefab, prefab.name/*cellController.ReuseIdentifier*/);

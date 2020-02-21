@@ -7,7 +7,7 @@ local util = require "xlua.util"
 
 local table_view_cell = {}
 local self = table_view_cell
-
+local this = self
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
@@ -27,7 +27,7 @@ local self = table_view_cell
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.LuaMonoBehaviour = gameObject:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.TableViewCellController = gameObject:GetComponent(typeof(CS.TableView.TableViewCellController))
     this.Image_Image = Image:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.Text_Text = Text:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.Text_1_Text = Text_1:GetComponent(typeof(CS.UnityEngine.UI.Text))

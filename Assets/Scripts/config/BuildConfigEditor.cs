@@ -196,25 +196,10 @@ namespace UnityEditor
                 var luamonos = go.GetComponents<LuaMonoBehaviour>();
                 foreach (var luamono in luamonos)
                 {
-                    if (luamono.mAsset == null) //|| luamono.LuaScript.Text == null)
+                    if (luamono.LuaAsset == null) //|| luamono.LuaScript.Text == null)
                     {
-                        AppLog.w(Tag, p + " luamono.luaScript not set");
+                        AppLog.w(Tag, p + " luamono.LuaAsset not set");
                         continue;
-                    }
-
-                    // var txtpath = tpath + ".txt";
-                    // var txtasset = AssetDatabase.LoadAssetAtPath<TextAsset>(txtpath);
-                    {
-
-                        var tpath = AssetDatabase.GetAssetPath(luamono.mAsset);
-                        luamono.luaPath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
-                        // tpath = tpath.Remove(tpath.Length - 4).Replace(BuildConfig.BundleResRoot, "");
-                        // if(luamono.LuaScript.path != tpath)
-                        // {
-                        //     luamono.LuaScript.path = tpath;
-                        //     AppLog.d("FixPrefabLuaPath", p);
-                        // }
-                        EditorUtility.SetDirty(prefab);
                     }
                 }
 

@@ -70,10 +70,10 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  mUseBundle: 0
+  mUseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132265163139671780
+  LastBuildTime: 132267679547560250
   Version:
     Major: 1
     Minor: 1
@@ -85,16 +85,6 @@ MonoBehaviour:
   BuildScene: 0
   mGroups:
   - Foldout: 0
-    Name: video
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - mName: video/op.bd
-      mSize: 5863959
-      mMd5: BFDDE1CE56DBE8E3722F920339CAF70D
-      mVersion: 1.1.0
-      mRebuild: 0
-  - Foldout: 0
     Name: font
     mInclude: 0
     mRebuild: 0
@@ -104,54 +94,69 @@ MonoBehaviour:
       mMd5: E0EB99C12B2932F8AC989E0439B7E5E0
       mVersion: 1.1.0
       mRebuild: 0
-  - Foldout: 1
-    Name: write_player
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - mName: write_player/player.bd
-      mSize: 623237
-      mMd5: 645675E47B7A3EC005F26BDC523975F9
-      mVersion: 1.1.0
-      mRebuild: 1
-  - Foldout: 1
+  - Foldout: 0
     Name: ui
     mInclude: 0
     mRebuild: 0
     mBundles:
+    - mName: ui/bg.bd
+      mSize: 1808178
+      mMd5: 00C47AB4A14212C3D312A0EDD3963B83
+      mVersion: 1.1.0
+      mRebuild: 0
     - mName: ui/loading.bd
-      mSize: 66336
-      mMd5: 49FA022F0E83A125C86AE2A812CC51A2
+      mSize: 66852
+      mMd5: B8A3F59E9CF0766F9A4773E3D6DA0B68
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/qrcode.bd
-      mSize: 31359
-      mMd5: 1F965ACED997379B0F4F3C7973209FB5
+      mSize: 31550
+      mMd5: C2B26DA9A4D34C6A320311864477EB0D
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/excel_viewer.bd
-      mSize: 21030
-      mMd5: AE2E20BF01D7D7DAE6A75665A482A577
-      mVersion: 1.1.0
-      mRebuild: 0
-    - mName: ui/boot.bd
-      mSize: 20096
-      mMd5: 8AB6D0B02981FDCECFC5449DB09301C1
+      mSize: 21080
+      mMd5: F0904C31A25CAB8017A87C010B83BED9
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/test.bd
-      mSize: 19980
-      mMd5: F3032AE1A6CA0F26E7EDDC23106BACD8
+      mSize: 20072
+      mMd5: A129521753EC8BA0DC64E0A8BE55E067
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: ui/boot.bd
+      mSize: 19974
+      mMd5: BD50D8F38D16134D35F9323FDDAD3D94
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/login.bd
-      mSize: 12889
-      mMd5: 4F2A820D6FD82777A90947063EAD58FD
+      mSize: 12989
+      mMd5: D38B038638A14537EFF56115F51A77B3
       mVersion: 1.1.0
       mRebuild: 0
     - mName: ui/update.bd
-      mSize: 10715
-      mMd5: 9E81806E7898B65F97B8F083DB55C7F5
+      mSize: 10726
+      mMd5: 63903FF0344C386CD8CBB5982D2A10E9
+      mVersion: 1.1.0
+      mRebuild: 0
+  - Foldout: 0
+    Name: writeplayer
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: writeplayer/player.bd
+      mSize: 626084
+      mMd5: AA562758968D2280065957DDA4E5CE02
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: writeplayer/index.bd
+      mSize: 21568
+      mMd5: 206C26D45C1C6C435582F62D7AA0ADB4
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: writeplayer/itemimport.bd
+      mSize: 10755
+      mMd5: CA35EFE3E9EAFF1BDAA819D176411389
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -160,23 +165,28 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: lua/com.bd
-      mSize: 43531
-      mMd5: AF81DC4218811781B742F564E13711AF
+      mSize: 42729
+      mMd5: 0F01BDCD302172E0FF7CB0D706200C16
+      mVersion: 1.1.0
+      mRebuild: 0
+    - mName: lua/lsqlite.bd
+      mSize: 9918
+      mMd5: B7B58946C6F4B480D2E040198557DB97
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/proto.bd
-      mSize: 1052
-      mMd5: 62E2759463C019A4EF8E23A5FACC48C6
+      mSize: 1012
+      mMd5: 8D10603C7E373F472014CF2F917522B3
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/table.bd
-      mSize: 1249
-      mMd5: 40148122D470C996604F856E72A2A068
+      mSize: 1209
+      mMd5: BA2D4860B4AEB658018BB2A468937C63
       mVersion: 1.1.0
       mRebuild: 0
     - mName: lua/utility.bd
-      mSize: 13644
-      mMd5: 5029A1A678D9C5C52577F136D1E572C6
+      mSize: 13096
+      mMd5: 0E3B6E3B2CADAE4CA9020B7D09DEFD09
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -185,18 +195,18 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: common/excel.bd
-      mSize: 8109
-      mMd5: 884D36652C1BD53219F575D1E51E8CC9
+      mSize: 7986
+      mMd5: 99218E7B0CA260D178FE69F7EB95C31D
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/global.bd
-      mSize: 1450
-      mMd5: E998F8A77DF34546EBE3F538CF020E26
+      mSize: 1407
+      mMd5: 94A2BA98CAA39735A6DFC0371C051076
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/manager.bd
-      mSize: 12407
-      mMd5: 639BDB59E3703451FCF2F3AD6F9B9867
+      mSize: 12123
+      mMd5: A5D940729F3215755F02D046DE988A92
       mVersion: 1.1.0
       mRebuild: 0
     - mName: common/ui.bd
@@ -210,8 +220,8 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: truth/index.bd
-      mSize: 20502
-      mMd5: 046BD9F443B912E61DBAAFA8D8F4C7B7
+      mSize: 17310
+      mMd5: 6F0E9B337BEA5A06B4DA23ED62E6A698
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -220,18 +230,18 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: config/config.bd
-      mSize: 2557
-      mMd5: 32DF3C682823E6CBBBEECCFE220B558D
+      mSize: 2683
+      mMd5: B64BECF3B65CA06620F1978F309AF739
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
-    Name: chapter_01
+    Name: video
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - mName: chapter_01/level_01.bd
-      mSize: 1279
-      mMd5: 262269D86CBD11C30C3CA1BC39925301
+    - mName: video/op.bd
+      mSize: 1402
+      mMd5: 5AA1C57C7BEF555C73C283754DAC9163
       mVersion: 1.1.0
       mRebuild: 0
   - Foldout: 0
@@ -240,8 +250,18 @@ MonoBehaviour:
     mRebuild: 0
     mBundles:
     - mName: chapter_02/level_01.bd
-      mSize: 1277
-      mMd5: 9F0CC4097D548A62E5992CA67727BBFE
+      mSize: 1235
+      mMd5: 9313D614CF9DB8BD5F399471BDB75979
+      mVersion: 1.1.0
+      mRebuild: 0
+  - Foldout: 0
+    Name: chapter_01
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - mName: chapter_01/level_01.bd
+      mSize: 1232
+      mMd5: 17F87AE450BC7D2A2C634CBD081B0979
       mVersion: 1.1.0
       mRebuild: 0
   BundleBuildOptions: 16
@@ -252,13 +272,13 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.komoe.a3ios
     PackageName: a3
-    BuildNum: 20
+    BuildNum: 24
     Version: 1.0.0
     DefineSymbols: 
     BuildType: 0
     BuildSystem: 0
     iOSSdkVersion: 988
-    OptionFlags: 66561
+    OptionFlags: 66593
     Channel: 7
     Emulator: 0
   - Name: Android:2

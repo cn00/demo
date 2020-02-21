@@ -114,12 +114,12 @@ function this.Awake()
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
         -- cellmono.luaTable.SetData(this.dataSource[row+1])
         cellmono.luaTable.SetExcelCellData(this.dataSource[row + 1], this.ColumnIdxA, this.ColumnPerPage)
-        print("CellAtRow", row)
+        -- print("CellAtRow", row)
         return cell
     end
     
     local subpath = "Streaming/Excel.tmp/StringDB-diff-1.10-2.2-zh.xlsx"
-    local assetPath = CS.AssetSys.CacheRoot .. "../" .. subpath
+    local assetPath = "/Users/cn/Documents/2-中级预言成就顺理.xlsx" -- CS.AssetSys.CacheRoot .. "../" .. subpath
     -- local assetPath = CS.UnityEngine.Application.streamingAssetsPath .. "/Excel.tmp/EtudeLessonInfo.xlsx"
     local book = CS.ExcelUtils.Open(assetPath);
     print("open", book)

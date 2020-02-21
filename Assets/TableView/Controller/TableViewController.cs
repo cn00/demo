@@ -54,7 +54,7 @@ namespace TableView
             }
             else
             {
-                var cellController = prefabCells[0].GetComponent<TableViewCellController>();
+                var cellController = prefabCells[0].GetComponent<TableViewCell>();
                 var cell = tableView.ReusableCellForRow(cellController.ReuseIdentifier, row);
                 cell.name = "Cell " + row;
                 return cell;

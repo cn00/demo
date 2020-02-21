@@ -14,7 +14,6 @@ using System.Reflection;
 using UnityEngine;
 using XLua;
 using System.Runtime;
-using SQLite;
 using TableView;
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
@@ -37,7 +36,6 @@ public static class XLuaGenConfig
         typeof(TableView.TableView),
         typeof(TableView.TableViewController),
         typeof(TableView.TableViewCell),
-        typeof(TableView.TableViewCellController),
                
         typeof(NPOI.SS.UserModel.ICell),
         typeof(NPOI.SS.UserModel.IRow),
@@ -60,7 +58,11 @@ public static class XLuaGenConfig
         //typeof(QRCodeDecodeController),
         //typeof(JavaUtil),
         typeof(AppLog),
-        typeof(SQLite3),
+        
+        // ios not ok
+        // typeof(Mono.Data.Sqlite.SqliteConnection),
+        // typeof(Mono.Data.Sqlite.SqliteCommand),
+        // typeof(Mono.Data.Sqlite.SqliteDataReader),
         #endregion customer types
 
         #region system
@@ -80,6 +82,8 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.GameObject),
         typeof(UnityEngine.Transform),
+        
+        typeof(UnityEngine.Animator),
 
         typeof(UnityEngine.Rigidbody),
         typeof(UnityEngine.Physics),
@@ -249,6 +253,8 @@ public static class XLuaGenConfig
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
         new List<string>(){"UnityEngine.AudioSettings", "GetSpatializerPluginNames","SetSpatializerPluginName"},
         new List<string>(){"UnityEngine.UI.Text", "OnRebuildRequested"},
-        new List<string>(){"UnityEngine.Texture", "imageContentsHash"}
+        new List<string>(){"UnityEngine.Texture", "imageContentsHash"},
+        
+        // new List<string>(){"Mono.Data.Sqlite.SqliteConnection", "EnlistTransaction"},
     };
 }

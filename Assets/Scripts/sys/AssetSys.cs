@@ -362,22 +362,7 @@ public class AssetSys : SingleMono<AssetSys>
             AppLog.d(Tag, "from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) =>
             {
-                // text
-                if (assetSubPath.IsText())
-                {
-                    var textPath = assetSubPath;
-                    if (textPath.EndsWith(".lua"))
-                        textPath += ".txt";
-                    resObj = bundle.LoadAsset<TextAsset>(BuildConfig.BundleResRoot + textPath) as T;
-                    if (resObj == null)
-                    {
-                        AppLog.e(Tag, textPath + " not found.");
-                    }
-                }
-                else
-                {
-                    resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
-                }
+                resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
             });
         }
 #if UNITY_EDITOR
@@ -552,7 +537,7 @@ public class AssetSys : SingleMono<AssetSys>
         AppLog.d(Tag, "skip:{0}, {1}", temfs.Length, startPos);
 
         HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
-        webRequest.Timeout = 1000*60*10;
+        webRequest.Timeout = TimeoutMillisecond	;
         //webRequest.AllowReadStreamBuffering = true;
         if (temfs.Length > 0)
         {
@@ -595,7 +580,7 @@ public class AssetSys : SingleMono<AssetSys>
     }
     
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
-
+    public static int TimeoutMillisecond = 1000 * 20;
     public static IEnumerator Www(string url, UnityAction<WWW> endCallback = null,
         UnityAction<float> progressCallback = null)
     {

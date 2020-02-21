@@ -2398,8 +2398,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114705616595676754}
   m_HandleRect: {fileID: 224015399062268458}
   m_Direction: 2
-  m_Value: 0.9999144
-  m_Size: 0.75033194
+  m_Value: 0.99965703
+  m_Size: 0.750332
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3581,9 +3581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaScript:
-    Path: ui/test/test
-    LuaText: {fileID: 4900000, guid: a29463bbe646941e48d3b8b6d75fdd49, type: 3}
+  LuaAsset: {fileID: 4900000, guid: 0ca91f50dbc214bd8b2e4052bf5af397, type: 3}
   injections:
   - obj: {fileID: 1740525978082266}
     exportComIdx: 3
@@ -4639,7 +4637,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.009981574}
+  m_AnchoredPosition: {x: 0, y: 0.039949834}
   m_SizeDelta: {x: 0, y: 466.86}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &114603001564773076
@@ -5444,8 +5442,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114730552324805376}
   m_HandleRect: {fileID: 224195913556179758}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

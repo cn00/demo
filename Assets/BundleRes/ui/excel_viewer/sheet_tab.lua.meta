@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: 56963e69aebc6410996c9cafa02bc10f
 ScriptedImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    4900000: main obj
   externalObjects: {}
   userData: 
   assetBundleName: ui/excel_viewer.bd

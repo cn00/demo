@@ -152,7 +152,7 @@ PlayerSettings:
     Standalone: com.bilibili.a3
     iOS: com.komoe.a3ios
   buildNumber:
-    iOS: 19
+    iOS: 23
   AndroidBundleVersionCode: 74
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0

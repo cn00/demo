@@ -74,6 +74,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         }
 
 
+        //luaopen_p7zip
         [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_p7zip(System.IntPtr L);
 
@@ -81,6 +82,15 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         public static int LoadP7zip(System.IntPtr L)
         {
             return luaopen_p7zip(L);
+        }
+        
+        // luaopen_bit32
+        [DllImport("lsqlite3", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int luaopen_lsqlite3(System.IntPtr L);
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        public static int LoadLSQLite3(System.IntPtr L)
+        {
+            return luaopen_lsqlite3(L);
         }
 
     }

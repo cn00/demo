@@ -1,4 +1,4 @@
-local util = require "xlua.util"
+local util = require "lua.utility.xlua.util"
 require("lua.utility.BridgingClass")
 local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
@@ -10,20 +10,21 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local UnityWebRequest = UnityEngine.Networking.UnityWebRequest
 
-local print = function ( ... )
-    _G.print("[boot]", ... )
+local print = function(...)
+    _G.print("[boot]", ...)
     -- _G.print("[boot]", debug.traceback())
 end
-
-local boot = {
-    G = _G,
-}
+local sqlite = require("lsqlite3")
+for k, v in pairs(sqlite) do
+    print("sqlite", k, v)
+end
+local boot = {}
 local this = boot
 
 local Game = _G.Game or {}
 _G.Game = Game
 
-local yield_return = util.async_to_sync(function (to_yield, callback)
+local yield_return = util.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
@@ -44,7 +45,7 @@ function boot.coroutine_boot(first, ...)
         -- yield_return(CS.AssetSys.Instance:GetBundle("lua/socket.bd", function ( bundle )
         --     print(bundle)
         -- end))
-        
+
         -- obj = nil
         -- yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
         --     obj = asset
@@ -69,18 +70,18 @@ function boot.coroutine_boot(first, ...)
         -- print("AddListener test001")
 
 
-		yield_return(CS.UpdateSys.Instance:CheckUpdate())
+        yield_return(CS.UpdateSys.Instance:CheckUpdate())
         print("UpdateSys.CheckUpdate 1")
 
-		-- yield_return(CS.NetSys.Instance:Init())
+        -- yield_return(CS.NetSys.Instance:Init())
         -- print("NetSys 1")
 
---	    obj = nil
---	    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---	        obj = asset;
---	    end))
---	    print("lua login 1", obj);
---	    local login = GameObject.Instantiate(obj);
+        --obj = nil
+        --yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+        --    obj = asset;
+        --end))
+        --print("lua login 1", obj);
+        --local login = GameObject.Instantiate(obj);
 
 
         -- yield_return(CS.AssetSys.Instance:GetAsset("video/op/op.prefab", function(asset)
@@ -89,11 +90,14 @@ function boot.coroutine_boot(first, ...)
         -- print(obj)
         -- local write_player = GameObject.Instantiate(obj)
 
-        yield_return(CS.AssetSys.Instance:GetAsset("write_player/player/player.prefab", function(asset)
+        obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/index/index.prefab", function(asset)
             obj = asset
+            print("get index", obj)
         end))
         print(obj)
-        local write_player = GameObject.Instantiate(obj)
+        local go = GameObject.Instantiate(obj)
+        print(go)
 
         -- yield_return(UnityEngine.WaitForSeconds(9))
         -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
@@ -107,7 +111,7 @@ end
 
 function boot.Awake()
     boot.AutoGenInit()
-    
+
 end
 
 -- function boot.OnEnable()
@@ -118,13 +122,13 @@ end
 function boot.Start()
     mobdebug.start("localhost", 8173)
     print("boot.Start mobdebug", mobdebug)
-    
+
     print("UnityEditor.EditorApplication.applicationContentsPath", CS.UnityEditor.EditorApplication.applicationContentsPath)
     print("UnityEditor.EditorApplication.applicationPath", CS.UnityEditor.EditorApplication.applicationPath)
 
     boot.mobdebug = mobdebug
 
-    boot.coroutine_boot(1,2,2,4)
+    boot.coroutine_boot(1, 2, 2, 4)
     -- boot.breakInfoFun,boot.xpcallFun = require("luadebug.LuaDebug")("localhost", 7003)
 end
 
@@ -150,5 +154,5 @@ end
 --     print("boot.OnDestroy")
 
 -- end
-    
+
 return boot

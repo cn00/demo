@@ -347,13 +347,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: ui/loading/loading
-  mAsset: {fileID: 5, guid: 64a340a8caa704015b50cccf831b6931, type: 3}
+  LuaAsset: {fileID: 4900000, guid: f317a1ffc92e5440ca3d7aabcace8353, type: 3}
   injections:
   - obj: {fileID: 1320277300347884}
     exportComIdx: 0
   - obj: {fileID: 1053650535271212}
     exportComIdx: 3
+  InjectValues: []
 --- !u!111 &111303667848293604
 Animation:
   m_ObjectHideFlags: 0

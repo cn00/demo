@@ -1,7 +1,8 @@
 fileFormatVersion: 2
 guid: 0e6c73cdbbb4046328377fda41211851
 ScriptedImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    4900000: main obj
   externalObjects: {}
   userData: 
   assetBundleName: ui/update.bd

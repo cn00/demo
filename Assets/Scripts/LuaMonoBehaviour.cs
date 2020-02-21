@@ -18,10 +18,7 @@ using System.Text.RegularExpressions;
 public class LuaMonoBehaviour : MonoBehaviour
 {
     [SerializeField]
-    public string luaPath = "";
-
-    [HideInInspector]
-    public UnityEngine.Object mAsset;
+    public UnityEngine.TextAsset LuaAsset;
 
     [Serializable]
     public class Injection
@@ -32,6 +29,14 @@ public class LuaMonoBehaviour : MonoBehaviour
     [HideInInspector]
     public Injection[] injections = new Injection[0];
 
+    [Serializable]
+    public class InjectValue
+    {
+        public string k;
+        public string v;
+    }
+    [HideInInspector]
+    public List<InjectValue> InjectValues;
 
     internal static float lastGCTime = 0;
     internal const float GCInterval = 1;//1 second 
@@ -66,13 +71,14 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void Init()
     {
-        byte[] textBytes = LuaSys.Instance.Require(luaPath) ?? Encoding.UTF8.GetBytes( "return {}");
+        if (LuaAsset is null) 
+            return;
         var luaInstance = LuaSys.Instance;
-        luaTable = luaInstance.GetLuaTable(textBytes, this, luaPath);
+        luaTable = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaAsset.name);
 
         if (luaTable == null)
         {
-            Debug.LogErrorFormat("error load lua:{0}", luaPath);
+            Debug.LogErrorFormat("error load lua:{0}", LuaAsset.name);
             return;
         }
 
@@ -266,7 +272,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaOnDestroy();
         }
-    //    luaTable.Dispose();
+        // luaTable.Dispose();
         luaTable = null;
         luaOnDestroy = null;
         luaUpdate = null;
@@ -274,11 +280,10 @@ public class LuaMonoBehaviour : MonoBehaviour
         injections = null;
     }
 
-    public void SetLua(string path)
+    public void SetLua(TextAsset asset)
     {
         CleanLua();
-
-        luaPath = path;
+        LuaAsset = asset;
         Init();
     }
 

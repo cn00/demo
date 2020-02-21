@@ -27,7 +27,7 @@ namespace TableView
 
         void Awake()
         {
-            this.gameObject.AddComponent<Selectable>();
+            this.gameObject.GetOrAddComponent<Selectable>();
         }
 
         #endregion

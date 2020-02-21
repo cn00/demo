@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: bba0288b178f148dbb9fad142bda5e65
+ScriptedImporter:
+  fileIDToRecycleName:
+    4900000: main obj
+  externalObjects: {}
+  userData: 
+  assetBundleName: writeplayer/index.bd
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

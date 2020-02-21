@@ -1002,8 +1002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: 
-  mAsset: {fileID: 0}
+  LuaAsset: {fileID: 4900000, guid: 0e6c73cdbbb4046328377fda41211851, type: 3}
   injections:
   - obj: {fileID: 1087025629562780}
     exportComIdx: 2

@@ -751,8 +751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: ui/excel_viewer/table_view_cell/table_view_cell
-  mAsset: {fileID: 5, guid: a43569410ac914dde8511f7148e2b965, type: 3}
+  LuaAsset: {fileID: 4900000, guid: a43569410ac914dde8511f7148e2b965, type: 3}
   injections:
   - obj: {fileID: 1931639233798544}
     exportComIdx: 1
@@ -774,6 +773,7 @@ MonoBehaviour:
     exportComIdx: 2
   - obj: {fileID: 1384317884272038}
     exportComIdx: 2
+  InjectValues: []
 --- !u!114 &114496860835141096
 MonoBehaviour:
   m_ObjectHideFlags: 0

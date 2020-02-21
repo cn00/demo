@@ -58,6 +58,13 @@ public class LuaSys : SingleMono<LuaSys>
                 luaTable.Set(injection.obj.name, injection.obj);
             }
         }
+        if(lb.InjectValues != null && lb.InjectValues.Count > 0)
+        {
+            foreach(var injection in lb.InjectValues.Where(i => i.v != null))
+            {
+                luaTable.Set(injection.k, injection.v);
+            }
+        }
         return luaTable;
     }
 
@@ -84,7 +91,7 @@ public class LuaSys : SingleMono<LuaSys>
         if(BuildConfig.Instance().UseBundle)
 #endif
         {
-            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName + ".txt");
+            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName);
             if(data!=null)
                 bytes = data.bytes;
         }
@@ -119,6 +126,8 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("nslua", XLua.LuaDLL.Lua.LoadNSLua);
         
         luaEnv.AddBuildin("p7zip", XLua.LuaDLL.Lua.LoadP7zip);
+        
+        luaEnv.AddBuildin("lsqlite3", XLua.LuaDLL.Lua.LoadLSQLite3);
 
         yield return base.Init();
     }
