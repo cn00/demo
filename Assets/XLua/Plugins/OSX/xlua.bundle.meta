@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 28a38d47a6dbc48a58d04e159d2641f2
+=======
+guid: 3dc7e4dd4dc8a4c7589d575db8337487
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
 folderAsset: yes
 PluginImporter:
   externalObjects: {}
@@ -18,12 +22,21 @@ PluginImporter:
       settings:
         Exclude Android: 1
         Exclude Editor: 0
+<<<<<<< HEAD
         Exclude Linux: 1
         Exclude Linux64: 1
         Exclude LinuxUniversal: 1
         Exclude OSXUniversal: 0
         Exclude Win: 1
         Exclude Win64: 1
+=======
+        Exclude Linux: 0
+        Exclude Linux64: 0
+        Exclude LinuxUniversal: 0
+        Exclude OSXUniversal: 0
+        Exclude Win: 0
+        Exclude Win64: 0
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
         Exclude iOS: 1
   - first:
       Android: Android
@@ -41,7 +54,11 @@ PluginImporter:
     second:
       enabled: 1
       settings:
+<<<<<<< HEAD
         CPU: AnyCPU
+=======
+        CPU: x86_64
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
         DefaultValueInitialized: true
         OS: OSX
   - first:
@@ -59,16 +76,32 @@ PluginImporter:
   - first:
       Standalone: Linux
     second:
+<<<<<<< HEAD
       enabled: 0
+=======
+      enabled: 1
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
       settings:
         CPU: x86
   - first:
       Standalone: Linux64
     second:
+<<<<<<< HEAD
       enabled: 0
       settings:
         CPU: x86_64
   - first:
+=======
+      enabled: 1
+      settings:
+        CPU: x86_64
+  - first:
+      Standalone: LinuxUniversal
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
       Standalone: OSXUniversal
     second:
       enabled: 1
@@ -77,13 +110,21 @@ PluginImporter:
   - first:
       Standalone: Win
     second:
+<<<<<<< HEAD
       enabled: 0
+=======
+      enabled: 1
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
       settings:
         CPU: AnyCPU
   - first:
       Standalone: Win64
     second:
+<<<<<<< HEAD
       enabled: 0
+=======
+      enabled: 1
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
       settings:
         CPU: AnyCPU
   - first:

@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 969b708c98f46496ead5246e0ab1511f
+=======
+<<<<<<< HEAD:Assets/BundleRes/writeplayer/index/cell.meta
+guid: a710422fc65804b0f9d0fa7ba1970174
+=======
+guid: 969b708c98f46496ead5246e0ab1511f
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc:Assets/XLua/Plugins/Android.meta
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

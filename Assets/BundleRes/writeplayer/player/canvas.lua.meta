@@ -5,6 +5,10 @@ ScriptedImporter:
     4900000: main obj
   externalObjects: {}
   userData: 
+<<<<<<< HEAD:Assets/BundleRes/writeplayer/player/canvas.lua.meta
   assetBundleName: writeplayer/player.bd
+=======
+  assetBundleName: write_player/player.bd
+>>>>>>> 14fa890f9951479e9bf014f9cec76b06cff37ddc:Assets/BundleRes/write_player/player/canvas.lua.meta
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}
