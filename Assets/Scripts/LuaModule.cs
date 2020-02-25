@@ -75,7 +75,12 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 
 
         //luaopen_p7zip
-        [DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)]
+        #if (UNITY_IPHONE || UNITY_WEBGL || UNITY_SWITCH) && !UNITY_EDITOR_OSX
+        public const string P7ZIP_DLL = "p7zip";
+        #else // UNITY_EDITOR_OSX
+        public const string P7ZIP_DLL = "Assets/XLua/Plugins/OSX/libp7zip.so"; // ok
+        #endif
+        [DllImport(P7ZIP_DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_p7zip(System.IntPtr L);
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
@@ -85,7 +90,12 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         }
         
         // luaopen_bit32
-        [DllImport("lsqlite3", CallingConvention = CallingConvention.Cdecl)]
+        #if (UNITY_IPHONE || UNITY_WEBGL || UNITY_SWITCH) && !UNITY_EDITOR_OSX
+        public const string LUASQLITE_DLL = "lsqlite3";
+        #else // UNITY_EDITOR_OSX
+        public const string LUASQLITE_DLL = "Assets/XLua/Plugins/OSX/liblsqlite3.so"; // ok
+        #endif
+        [DllImport(LUASQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_lsqlite3(System.IntPtr L);
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int LoadLSQLite3(System.IntPtr L)

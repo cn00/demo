@@ -680,18 +680,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPath: Assets/BundleRes/writeplayer/impoter/impoter.lua
   LuaAsset: {fileID: 4900000, guid: 81d40f59342ad4682a8988f65f251d76, type: 3}
-  mAsset: {fileID: 0}
-  Injections:
-  - obj: {fileID: 6390810317590874062}
-    exportComIdx: 3
+  LuaPath: Assets/BundleRes/writeplayer/impoter/impoter.lua
+  injections:
   - obj: {fileID: 1678676345661092}
     exportComIdx: 3
   - obj: {fileID: 4539303751438958213}
     exportComIdx: 3
   - obj: {fileID: 1563094278687416}
     exportComIdx: 3
+  - obj: {fileID: 6390810317590874062}
+    exportComIdx: 3
+  InjectValues: []
 --- !u!111 &111303667848293604
 Animation:
   m_ObjectHideFlags: 0

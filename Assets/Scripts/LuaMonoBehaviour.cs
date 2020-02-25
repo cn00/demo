@@ -13,21 +13,25 @@ using XLua;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine.Serialization;
 
 
 public class LuaMonoBehaviour : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField, HideInInspector]
     public UnityEngine.TextAsset LuaAsset;
 
+    [SerializeField]
+    public string LuaPath;
+    
     [Serializable]
     public class Injection
     {
         public GameObject obj;
         public int exportComIdx = -1;
     }
-    [HideInInspector]
-    public Injection[] injections = new Injection[0];
+    [FormerlySerializedAs("injections")] [HideInInspector]
+    public List<Injection> Injections;
 
     [Serializable]
     public class InjectValue
@@ -63,7 +67,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaLateUpdate;
     private Action luaOnDestroy;
 
-    public LuaTable luaTable
+    public LuaTable Lua
     {
         get;
         protected set;
@@ -74,33 +78,33 @@ public class LuaMonoBehaviour : MonoBehaviour
         if (LuaAsset is null) 
             return;
         var luaInstance = LuaSys.Instance;
-        luaTable = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaAsset.name);
+        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath);
 
-        if (luaTable == null)
+        if (Lua == null)
         {
-            Debug.LogErrorFormat("error load lua:{0}", LuaAsset.name);
+            Debug.LogErrorFormat("error load lua:{0}", LuaPath);
             return;
         }
 
-        luaTable.Get("Awake", out luaAwake);
-        luaTable.Get("OnEnable", out luaOnEnable);
-        luaTable.Get("Start", out luaStart);
-        luaTable.Get("FixedUpdate", out luaFixedUpdate);
+        Lua.Get("Awake", out luaAwake);
+        Lua.Get("OnEnable", out luaOnEnable);
+        Lua.Get("Start", out luaStart);
+        Lua.Get("FixedUpdate", out luaFixedUpdate);
         
         {
-            luaTable.Get("OnTriggerEnter", out luaOnTriggerEnter);
-            luaTable.Get("OnTriggerStay", out luaOnTriggerStay);
-            luaTable.Get("OnTriggerExit", out luaOnTriggerExit);
+            Lua.Get("OnTriggerEnter", out luaOnTriggerEnter);
+            Lua.Get("OnTriggerStay", out luaOnTriggerStay);
+            Lua.Get("OnTriggerExit", out luaOnTriggerExit);
 
-            luaTable.Get("OnCollisionEnter", out luaOnCollisionEnter);
+            Lua.Get("OnCollisionEnter", out luaOnCollisionEnter);
 
-            luaTable.Get("OnMouseDown", out luaOnMouseDown);
-            luaTable.Get("OnMouseDrag", out luaOnMouseDrag);
+            Lua.Get("OnMouseDown", out luaOnMouseDown);
+            Lua.Get("OnMouseDrag", out luaOnMouseDrag);
         }
 
-        luaTable.Get("Update", out luaUpdate);
-        luaTable.Get("LateUpdate", out luaLateUpdate);
-        luaTable.Get("OnDestroy", out luaOnDestroy);
+        Lua.Get("Update", out luaUpdate);
+        Lua.Get("LateUpdate", out luaLateUpdate);
+        Lua.Get("OnDestroy", out luaOnDestroy);
     }
 
     void Awake()
@@ -272,12 +276,12 @@ public class LuaMonoBehaviour : MonoBehaviour
         {
             luaOnDestroy();
         }
-        // luaTable.Dispose();
-        luaTable = null;
+        // Lua.Dispose();
+        Lua = null;
         luaOnDestroy = null;
         luaUpdate = null;
         luaStart = null;
-        injections = null;
+        Injections = null;
     }
 
     public void SetLua(TextAsset asset)

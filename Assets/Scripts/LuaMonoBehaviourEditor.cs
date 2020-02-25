@@ -42,7 +42,7 @@ namespace UnityEditor
             string luaname = "this"; //mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
             luaMemberValue = "--AutoGenInit Begin\n--DO NOT EDIT THIS FUNCTION MANUALLY.\nfunction " + luaname +
                              ".AutoGenInit()";
-            foreach (var i in mTarget.injections.Where(o => o != null && o.obj != null))
+            foreach (var i in mTarget.Injections.Where(o => o != null && o.obj != null))
             {
                 var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
                 var injectName = i.obj.name;
@@ -64,16 +64,28 @@ namespace UnityEditor
 
         public override void OnInspectorGUI()
         {
+            var newLuaAsset = EditorGUILayout.ObjectField("Lua", mTarget.LuaAsset, typeof(TextAsset), false) as TextAsset;
+            var assetPath = AssetDatabase.GetAssetPath(newLuaAsset.GetInstanceID());
+            if (Path.GetExtension(assetPath) == ".lua")
+            {
+                mTarget.LuaAsset = newLuaAsset;
+                mTarget.LuaPath = assetPath;
+            }
+            else
+            {
+                AppLog.d(Tag, "not a lua script");
+            }
+            
             base.OnInspectorGUI();
 
-            #region injections
+            #region Injections
             {
-                if (mTarget.injections == null)
+                if (mTarget.Injections == null)
                 {
-                    mTarget.injections = new LuaMonoBehaviour.Injection[0];
+                    mTarget.Injections = new List<LuaMonoBehaviour.Injection>();
                 }
 
-                var size = mTarget.injections.Length;
+                var size = mTarget.Injections.Count;
                 EditorGUILayout.BeginHorizontal();
                 {
                     mShowInjections = EditorGUILayout.Foldout(mShowInjections, "Injections", true);
@@ -81,21 +93,33 @@ namespace UnityEditor
                 }
                 EditorGUILayout.EndHorizontal();
 
-                if (size != mTarget.injections.Length)
+                if(mTarget.Injections.Count != size)
                 {
-                    var oldobjs = mTarget.injections;
-                    mTarget.injections = new LuaMonoBehaviour.Injection[size];
-                    for (int i = 0; i < Math.Min(size, oldobjs.Length); ++i)
+                    while (mTarget.Injections.Count < size)
                     {
-                        mTarget.injections[i] = oldobjs[i];
+                        mTarget.Injections.Add(new LuaMonoBehaviour.Injection());
                     }
+                    if (mTarget.Injections.Count > size)
+                    {
+                        mTarget.Injections.RemoveRange(size, mTarget.Injections.Count-size);
+                    }
+                    
+                    mTarget.Injections.Sort((a, b) =>
+                    {
+                        if (a.obj != null && b.obj != null)
+                            return a.obj.name.CompareTo(b.obj.name);
+                        else if (a.obj == null && b.obj != null)
+                            return 1;
+                        else
+                            return -1;
+                    });
                 }
 
                 if (mShowInjections)
                 {
-                    for (var i = 0; i < mTarget.injections.Length; ++i)
+                    for (var i = 0; i < mTarget.Injections.Count; ++i)
                     {
-                        var item = mTarget.injections[i] ?? new LuaMonoBehaviour.Injection();
+                        var item = mTarget.Injections[i] ?? new LuaMonoBehaviour.Injection();
                         EditorGUILayout.BeginHorizontal();
                         {
                             item.obj = (GameObject) EditorGUILayout.ObjectField(item.obj, typeof(GameObject), true);
@@ -147,6 +171,7 @@ namespace UnityEditor
                 }
                 EditorGUILayout.EndHorizontal();
 
+                if(mTarget.InjectValues.Count != size)
                 {
                     while (mTarget.InjectValues.Count < size)
                     {
@@ -156,6 +181,15 @@ namespace UnityEditor
                     {
                         mTarget.InjectValues.RemoveRange(size, mTarget.InjectValues.Count-size);
                     }
+                    mTarget.InjectValues.Sort((a, b) =>
+                    {
+                        if (a.k != null && b.k != null)
+                            return a.k.CompareTo(b.k);
+                        else if (a.k == null && b.k != null)
+                            return 1;
+                        else
+                            return -1;
+                    });
                 }
 
                 if (mShowInjectionValues)
@@ -194,9 +228,9 @@ namespace UnityEditor
                 GUILayout.TextArea(luaMemberValue);
 
             // lua debug
-            if (mTarget.luaTable != null)
+            if (mTarget.Lua != null)
             {
-                mTarget.luaTable.Draw();
+                mTarget.Lua.Draw();
             }
 
         }

@@ -63,7 +63,7 @@ function this.Awake()
 end
 
 function this.LoadData()
-    local dburl = "http://192.168.2.104:8000/res/iOS/db.db"
+    local dburl = "res/db.db"
     local cachePath = AssetSys.CacheRoot .. "db.db"
     if not File.Exists(cachePath) then
         yield_return(AssetSys.Download(dburl, cachePath))
@@ -74,10 +74,10 @@ function this.LoadData()
     local sql
     yield_return(AssetSys.Instance:GetAsset("writeplayer/index/init.sql", function(asset)
         sql = asset.text
+        print("init.sql", sql)
     end))
 
-    local dbpath = AssetSys.CacheRoot.."/db.db"
-    local db = sqlite3.open(dbpath);
+    local db = sqlite3.open(cachePath);
     db:exec(sql)
     
     yield_return(AssetSys.Instance:GetAsset("writeplayer/index/itemlist.sql", function(asset)
@@ -118,22 +118,8 @@ function this.LoadData()
     assert(r == sqlite3.DONE)
     assert(vm:finalize() == sqlite3.OK)
     print('====================================')
-
-    --while (reader:Read()) do
-    --    records[#records + 1] = {
-    --        id    = reader:GetInt32(0),
-    --        pid   = reader:GetInt32(1),
-    --        url   = reader:GetTextReader(2):ReadToEnd(),
-    --        cpath = reader:GetTextReader(3):ReadToEnd(),
-    --        tpath = reader:GetTextReader(4):ReadToEnd(),
-    --        tid   = reader:GetInt32(5),
-    --        text = reader:GetTextReader(6):ReadToEnd(),
-    --    }
-    --end
     this.DataSource = records
-    --reader:Dispose()
-    --
-    --cmd:Dispose()
+    
     db:close()
     
     this.InitTableViewData()
@@ -180,7 +166,7 @@ function this.InitTableViewData()
         local cell = tb:ReusableCellForRow(cellidentifier, row)
         cell.name = "lua-Cell-" ..(row)
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
-        local ct = cellmono.luaTable
+        local ct = cellmono.Lua
         ct.SetCellData(this.DataSource[row + 1], this.ColumnIdxA, this.ColumnPerPage)
         if(row%2 == 0)then ct.Image_Image.color = Color(0.3, 0.4, 0, 0.2) end
 

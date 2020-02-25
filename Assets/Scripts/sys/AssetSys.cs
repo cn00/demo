@@ -235,7 +235,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// http://ip:port/path/to/root/platform/
     /// </summary>
     /// <value>The http root.</value>
-    public static string HttpRoot;
+    public static string WebRoot;
 
     public static string PlatformName(RuntimePlatform platform)
     {
@@ -443,7 +443,7 @@ public class AssetSys : SingleMono<AssetSys>
         )
         {
             isLocal = false;
-            fileUrl = HttpRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
+            fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
 
         AppLog.d(Tag, fileUrl);
@@ -457,6 +457,7 @@ public class AssetSys : SingleMono<AssetSys>
                 if (string.IsNullOrEmpty(www.error))
                     mLoadedBundles[bundlePath] = www.assetBundle;
                 www.Dispose();
+                
             }
             else
             {
@@ -526,7 +527,10 @@ public class AssetSys : SingleMono<AssetSys>
 
     public static IEnumerator Download(string url, string path, Action<FileStream> cb)
     {
-        AppLog.d(Tag, "download:{0}", url);
+        if (!url.StartsWith("http"))
+        {
+            url = WebRoot + url;
+        }
         var tmpPath = path + ".tmp";
         var cachDir = tmpPath.Substring(0, tmpPath.LastIndexOf('/'));
         cachDir.CreateDir();
@@ -534,17 +538,17 @@ public class AssetSys : SingleMono<AssetSys>
         //打开上次下载的文件或新建文件 
         System.IO.FileStream temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
         var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
-        AppLog.d(Tag, "skip:{0}, {1}", temfs.Length, startPos);
+        AppLog.d(Tag, "download: {0} +{1}", url, temfs.Length);
 
         HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
-        webRequest.Timeout = TimeoutMillisecond	;
+        webRequest.Timeout = TimeoutMillisecond;
         //webRequest.AllowReadStreamBuffering = true;
         if (temfs.Length > 0)
         {
             webRequest.AddRange((int) temfs.Length); //设置Range值
         }
 
-        System.Net.WebResponse response = webRequest.GetResponse();
+        var response = webRequest.GetResponse() as HttpWebResponse;
         long contentLength = response.ContentLength;
 
         System.IO.Stream responseStream = response.GetResponseStream();
@@ -559,7 +563,7 @@ public class AssetSys : SingleMono<AssetSys>
             temfs.Write(buffer, 0, readSize);
             temfs.Flush(true);
             downloadedLength = temfs.Length ;
-            AppLog.d(Tag, string.Format(" {0:F}M / {1:F}M [{2}] {3}"
+            AppLog.d(Tag, string.Format(" {0:F}/{1:F}M [{2}] {3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
                 , contentLength * 1.0 / (1024 * 1024), readSize, url));
             
@@ -568,19 +572,32 @@ public class AssetSys : SingleMono<AssetSys>
         }
         AppLog.d(Tag, "download {0}:{1}",totalLength, downloadedLength);
 
-//        webRequest.BeginGetRequestStream( (IAsyncResult result) =>{
-//            FileStream stream = (FileStream) result.AsyncState;
-//            stream.EndWrite(result);
-//            stream.Close();
-//            stream.Dispose();
-//        },fs);
-        cb(temfs);
-        
+        // webRequest.BeginGetRequestStream( (IAsyncResult result) =>{
+        //     FileStream stream = (FileStream) result.AsyncState;
+        //     stream.EndWrite(result);
+        //     stream.Close();
+        //     stream.Dispose();
+        // },fs);
+        cb?.Invoke(temfs);
+
         yield return null;
+    }
+
+    public static bool UrlIsExist(string url)
+    {
+        var b = false;
+        var webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
+        webRequest.Timeout = TimeoutMillisecond;
+        var response = webRequest.GetResponse() as HttpWebResponse;
+        // var heads = response.Headers;
+        if (response.StatusCode == HttpStatusCode.OK)
+            b = true;
+
+        return b;
     }
     
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
-    public static int TimeoutMillisecond = 1000 * 20;
+    public static int TimeoutMillisecond = 1000 * 5;
     public static IEnumerator Www(string url, UnityAction<WWW> endCallback = null,
         UnityAction<float> progressCallback = null)
     {
@@ -619,12 +636,12 @@ public class AssetSys : SingleMono<AssetSys>
                 // 留给调用者选择是否存盘
                 //if(url.Substring(0, 7) == "http://")
                 //{
-                //    AsyncSave(url.Replace(HttpRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
+                //    AsyncSave(url.Replace(WebRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
                 //}
                 endCallback(www);
+                www.Dispose();
             }
         }
-//        www.Dispose();
 
         yield return null;
     }
@@ -638,18 +655,6 @@ public class AssetSys : SingleMono<AssetSys>
             mLoadedBundles.Remove(path);
             AppLog.d(Tag, "UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
-    }
-
-    // TODO: not complete
-    public static WWW WwwSync<T>(string url) where T : UnityEngine.Object
-    {
-        WWW www = new WWW(url);
-        while (!www.isDone && string.IsNullOrEmpty(www.error))
-        {
-            Thread.Sleep(1000);
-        }
-
-        return www;
     }
 
     /// <summary>

@@ -14,10 +14,9 @@ local print = function(...)
     _G.print("[boot]", ...)
     -- _G.print("[boot]", debug.traceback())
 end
+
 local sqlite = require("lsqlite3")
-for k, v in pairs(sqlite) do
-    print("sqlite", k, v)
-end
+
 local boot = {}
 local this = boot
 
@@ -97,7 +96,7 @@ function boot.coroutine_boot(first, ...)
         end))
         print(obj)
         local go = GameObject.Instantiate(obj)
-        print(go)
+        print("index", go)
 
         -- yield_return(UnityEngine.WaitForSeconds(9))
         -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})

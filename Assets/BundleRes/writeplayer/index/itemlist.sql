@@ -1,1 +1,1 @@
-select * from item_view;
+select * from item;

@@ -104,7 +104,7 @@ function cell.Play()
         end))
         local player = GameObject.Instantiate(obj)
         local playermono = player:GetComponent("LuaMonoBehaviour")
-        local ct = playermono.luaTable
+        local ct = playermono.Lua
         ct.SetData(this.data)
 
         GameObject.DestroyImmediate(loading.gameObject)

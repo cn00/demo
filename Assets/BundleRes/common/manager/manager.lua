@@ -57,10 +57,10 @@ end
 
 function this.Start()
     print("manager.Start")
-    this.network = this.network_LuaMonoBehaviour.luaTable
-    this.scene = this.scene_LuaMonoBehaviour.luaTable
-    this.message = this.message_LuaMonoBehaviour.luaTable
-    this.console = this.console_LuaMonoBehaviour.luaTable
+    this.network = this.network_LuaMonoBehaviour.Lua
+    this.scene = this.scene_LuaMonoBehaviour.Lua
+    this.message = this.message_LuaMonoBehaviour.Lua
+    this.console = this.console_LuaMonoBehaviour.Lua
     print("manager"
         ,this.network
         ,this.scene

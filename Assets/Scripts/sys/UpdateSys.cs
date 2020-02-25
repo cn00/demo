@@ -61,7 +61,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetRemoteVersion()
     {
-        var remoteVersionUrl = AssetSys.HttpRoot + "resversion.txt";
+        var remoteVersionUrl = AssetSys.WebRoot + "resversion.txt";
         AppLog.d(Tag, remoteVersionUrl);
         yield return AssetSys.Www(remoteVersionUrl, (WWW www) =>
         {
@@ -109,7 +109,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetRemoteManifest()
     {
-        var remoteManifestUrl = AssetSys.HttpRoot + mRemoteVersion + "/" + BuildConfig.ManifestName + BuildConfig.CompressedExtension;
+        var remoteManifestUrl = AssetSys.WebRoot + mRemoteVersion + "/" + BuildConfig.ManifestName + BuildConfig.CompressedExtension;
 
         byte[] bytes = null;
         bool err = false;
@@ -150,7 +150,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             var subPath = i.Name;
             var cachePath = AssetSys.CacheRoot + subPath;
             var cacheLzmaPath = AssetSys.CacheRoot + subPath + BuildConfig.CompressedExtension;
-            var diffFileUrl = AssetSys.HttpRoot +  mRemoteVersion + "/" + subPath + BuildConfig.CompressedExtension;
+            var diffFileUrl = AssetSys.WebRoot +  mRemoteVersion + "/" + subPath + BuildConfig.CompressedExtension;
             AppLog.d(Tag, diffFileUrl);
 
             //yield return AssetSys.Www(fileUrl, (WWW www) =>

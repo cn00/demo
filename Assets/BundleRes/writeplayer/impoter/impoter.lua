@@ -2,9 +2,9 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
-local sqlite = CS.SQLite.SQLite3
 
 local util = require "lua.utility.xlua.util"
+local sqlite3 = require("lsqlite3")
 
 local import = {
 }
@@ -62,10 +62,10 @@ end
 function import.Awake()
 	self.AutoGenInit()
 
-
-	--local dbpath = ""
-	--this.db = sqlite3.open(dbpath)
-
+	local dbpath = AssetSys.CacheRoot .. "db.db"
+	local db = sqlite3.open(dbpath)
+	this.db = db
+	
 	self.title_InputField.onEndEdit:AddListener(function(text)
 		print("title_InputField.onEndEdit:" .. text)
 		this.titlestr = text
@@ -74,27 +74,29 @@ function import.Awake()
 	end)
 	self.url_InputField.onEndEdit:AddListener(function(text)
 		print("url_InputField.onEndEdit:" .. text)
-		local exist = AssetSys.UrlIsExist(text)
+		--local exist = AssetSys.UrlIsExist(text)
 		this.urlstr = text
 		
 		self.content_InputField:Select()
 	end)
 	self.content_InputField.onEndEdit:AddListener(function(text)
 		print("content_InputField.onEndEdit:" .. text)
-		this.contentstr = text
+		this.contentstr = string.gsub(text, '"', '\\"')
 	end)
 
 	self.submit_Button.onClick:AddListener(function(...)
 		-- todo: check storaged name url content
-	
-		--assert(coroutine.resume(self.Submit()))
-		local sql = string.format([[
-			insert into item_view (title, url, content) 
-			value("%s","%s","%s")
-		]],this.titlestr, this.urlstr, this.contentstr)
-		print("submit sql:", sql)
 
---		this.db:exec(sql)
+		--util.coroutine_call(function()
+			local insert_stmt = assert( this.db:prepare("INSERT INTO item (url, name, text) values (?,?,?)") )
+			--yield_return(AssetSys.Instance:GetAsset("writeplayer/impoter/insert.sql", function (asset)
+			--	sqlformat = asset.text
+			--end))
+			insert_stmt:bind_values(this.urlstr, this.titlestr, this.contentstr)
+			local _, error = insert_stmt:step()
+			print("sql re:", _,  error)
+			insert_stmt:reset()
+		--end)
 	end)
 
 	-- -- test message center
@@ -113,6 +115,8 @@ end
 
 -- function import.LateUpdate()end
 
--- function import.OnDestroy()end
+ function import.OnDestroy()
+	 this.db:close()
+ end
 
 return import

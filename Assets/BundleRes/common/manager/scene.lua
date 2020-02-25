@@ -43,12 +43,10 @@ end
 
 function scene_manager.pop(callback)
     start_coroutine(function()
-        local last = loadstack[#loadstack]
-        table.remove(loadstack)
+        local last = table.remove(loadstack)
 
-        local secondlast = loadstack[#loadstack]
-        table.remove(loadstack)
-        yield_return(scene_manager.load(secondlast.path, function(obj)
+        local newlast = loadstack[#loadstack]
+        yield_return(scene_manager.load(newlast.path, function(obj)
             GameObject.DestroyImmediate(last.obj)
         end))
     end)

@@ -279,7 +279,7 @@ public static class LuaTableExtension
                         EditorGUILayout.EndHorizontal();
                         if (v is LuaMonoBehaviour)
                         {
-                            var t = (v as LuaMonoBehaviour).luaTable;
+                            var t = (v as LuaMonoBehaviour).Lua;
                             t.Draw("LuaMono", 1);
                         }
                     }
