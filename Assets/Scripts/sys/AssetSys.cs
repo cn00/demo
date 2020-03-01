@@ -513,19 +513,7 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
-    public static IEnumerator Download(string url, string path)
-    {
-        yield return Download(url, path, fs =>
-        {
-            fs.Close();
-                      
-            //下载完成重命名
-            File.Move(path + ".tmp", path);
-        });
-    }
-
-
-    public static IEnumerator Download(string url, string path, Action<FileStream> cb)
+    public static IEnumerator Download(string url, string path, Action<FileStream> cb = null)
     {
         if (!url.StartsWith("http"))
         {
@@ -579,6 +567,11 @@ public class AssetSys : SingleMono<AssetSys>
         //     stream.Dispose();
         // },fs);
         cb?.Invoke(temfs);
+        temfs.Close();
+        
+        //下载完成重命名
+        File.Move(path + ".tmp", path);
+        File.Delete((path + ".tmp"));
 
         yield return null;
     }
