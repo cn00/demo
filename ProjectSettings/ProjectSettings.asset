@@ -152,7 +152,7 @@ PlayerSettings:
     iOS: com.komoe.a3ios
   buildNumber:
     iOS: 24
-  AndroidBundleVersionCode: 80
+  AndroidBundleVersionCode: 82
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

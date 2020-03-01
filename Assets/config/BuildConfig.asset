@@ -262,7 +262,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.bili.a3.test
     PackageName: a3
-    BuildNum: 81
+    BuildNum: 83
     Version: 1.0.0
     DefineSymbols: HOTFIX_ENABLE;USE_XLUA;
     BuildType: 0

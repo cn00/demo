@@ -47,18 +47,6 @@ public class BuildScript
         {
             AppLog.e(Tag, "BuildPlayer failure: " + e);
         }
-
-        ProcessStartInfo pi = new ProcessStartInfo(
-#if UNITY_EDITOR_WIN
-            "explorer.exe",
-            TARGET_DIR.wpath()
-#elif UNITY_EDITOR_OSX
-            "open",
-            TARGET_DIR.upath()
-#endif
-        );
-        pi.WorkingDirectory = ".";
-        Process.Start(pi);
     }
 
     public static List<string> ExcludeExtensions = new List<string>()
