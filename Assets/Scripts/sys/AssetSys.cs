@@ -437,7 +437,7 @@ public class AssetSys : SingleMono<AssetSys>
         var fileUrl = "file://" + cachePath;        
 
         var isLocal = true;
-        var needUpdate = UpdateSys.Instance.NeedUpdate(bundlePath);
+        var needUpdate = false;// UpdateSys.Instance.NeedUpdate(bundlePath);
         if (!File.Exists(cachePath)
             || needUpdate
         )
@@ -447,55 +447,48 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         AppLog.d(Tag, fileUrl);
-        bool err = false;
 
+        FileStream outStream = null;
+        if (isLocal)
         {
-            if (isLocal)
-            {
-                WWW www = new WWW(fileUrl);
-                yield return www;
-                if (string.IsNullOrEmpty(www.error))
-                    mLoadedBundles[bundlePath] = www.assetBundle;
-                www.Dispose();
-                
-            }
-            else
-            {
-                
-                FileStream lzmaStream = null;
-                yield return Download(fileUrl, cachePath + BuildConfig.CompressedExtension, fs => {
-                    lzmaStream = fs;
-                });
-                var outStream = new FileStream(cachePath, FileMode.Create);
-                var thread = new Thread(() =>
-                {
-                    BundleHelper.DecompressFileLZMA(lzmaStream, outStream);
-    
-                    lock (mLoadedBundles)
-                    {
-                        if (IsLoaded(bundlePath))
-                        {
-                            UnloadBundle(bundlePath);
-                        }
-                    }
-                });
-                thread.Start();
-                while (thread.IsAlive)
-                {
-                    AppLog.d(Tag, "子线程解压中。。。{0}", fileUrl);
-                    yield return new WaitForSeconds(0.3f);
-                }
-                
-                mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
-                lzmaStream.Close();
-                outStream.Close();
-            }
+            outStream = new FileStream(cachePath, FileMode.Open);;
         }
+        else
+        {
+            var lzmapath = cachePath + BuildConfig.CompressedExtension;
+            yield return Download(fileUrl, lzmapath);
+            FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
+            outStream = new FileStream(cachePath, FileMode.Create);;
+            var thread = new Thread(() =>
+            {
+                BundleHelper.DecompressFileLZMA(lzmaStream, outStream);
 
-
-        if (err)
-            yield break;
-
+                lock (mLoadedBundles)
+                {
+                    if (IsLoaded(bundlePath))
+                    {
+                        UnloadBundle(bundlePath);
+                    }
+                }
+            });
+            thread.Start();
+            while (thread.IsAlive)
+            {
+                AppLog.d(Tag, "子线程解压中。。。{0}", fileUrl);
+                yield return new WaitForSeconds(0.3f);
+            }
+            lzmaStream.Close();
+        }
+        if(outStream != null)
+        {
+            mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
+            outStream.Close();
+        }
+        else
+        {
+            AppLog.e(Tag, "bundle load failed: {0}", fileUrl);
+        }
+        
         // Dependencies
         if (mManifest != null) // 加载 manifest 时本身为空
         {
@@ -513,7 +506,7 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
-    public static IEnumerator Download(string url, string path, Action<FileStream> cb = null)
+    public static IEnumerator Download(string url, string path, Action cb = null)
     {
         if (!url.StartsWith("http"))
         {
@@ -560,19 +553,18 @@ public class AssetSys : SingleMono<AssetSys>
         }
         AppLog.d(Tag, "download {0}:{1}",totalLength, downloadedLength);
 
-        // webRequest.BeginGetRequestStream( (IAsyncResult result) =>{
-        //     FileStream stream = (FileStream) result.AsyncState;
-        //     stream.EndWrite(result);
-        //     stream.Close();
-        //     stream.Dispose();
-        // },fs);
-        cb?.Invoke(temfs);
         temfs.Close();
-        
-        //下载完成重命名
-        File.Move(path + ".tmp", path);
-        File.Delete((path + ".tmp"));
 
+        //下载完成重命名
+        if(File.Exists(path))File.Delete(path);
+        File.Move(path + ".tmp", path);
+        File.Delete(path + ".tmp");
+        
+        if (cb != null)
+        {
+            cb.Invoke();
+        }
+        
         yield return null;
     }
 

@@ -75,20 +75,20 @@ function cell.Start()
 end
 
 function cell.Play()
-    if(this.data.text == nil)then
-        local dbpath = AssetSys.CacheRoot.."/db.db"
-        local db = sqlite3.open(dbpath);
-        local tid = this.data.tid
-        local sql = "select text from text where id = " .. tid .. ";";
-        print("select text:", sql)
-        db:exec(sql, function (ud, ncols, values, names)
-            print("ncols", unpack(ncols))
-            print("names", unpack(names))
-            print("values", unpack(values))
-            this.data.text = ""
-            return sqlite3.OK
-        end)
-    end
+    --if(this.data.text == nil)then
+    --    local dbpath = AssetSys.CacheRoot.."/db.db"
+    --    local db = sqlite3.open(dbpath);
+    --    local tid = this.data.tid
+    --    local sql = "select text from text where id = " .. tid .. ";";
+    --    print("select text:", sql)
+    --    db:exec(sql, function (ud, ncols, values, names)
+    --        print("ncols", unpack(ncols))
+    --        print("names", unpack(names))
+    --        print("values", unpack(values))
+    --        this.data.text = ""
+    --        return sqlite3.OK
+    --    end)
+    --end
 
     util.coroutine_call(function()
 
@@ -107,7 +107,7 @@ function cell.Play()
         local ct = playermono.Lua
         ct.SetData(this.data)
 
-        GameObject.DestroyImmediate(loading.gameObject)
+        GameObject.DestroyImmediate(loading)
     end)
 end
 

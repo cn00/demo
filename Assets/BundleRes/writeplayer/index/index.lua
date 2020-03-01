@@ -34,13 +34,13 @@ end)
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
-    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
-    this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.reset_Button = reset:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.back_Button = back:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.add_Button = add:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
     this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
+    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
 end
 --AutoGenInit End
 
@@ -55,15 +55,26 @@ function this.Awake()
     print("Awake-0")
     this.AutoGenInit()
     print("Awake-1")
-    
-    --xlua.private_accessible(CS.TableView.TableView)
+
+    this.add_Button.onClick:AddListener(this.AddBtnOnClick)
 
     util.coroutine_call(this.LoadData)
     
 end
 
+function this.AddBtnOnClick()
+    util.coroutine_call(function()
+        local obj = nil
+        yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/impoter/impoter.prefab", function(asset)
+            obj = asset
+        end))
+        local gameObj = GameObject.Instantiate(obj)
+            
+    end)
+end
+
 function this.LoadData()
-    local dburl = "res/db.db"
+    local dburl = "data/db.db"
     local cachePath = AssetSys.CacheRoot .. "db.db"
     if not File.Exists(cachePath) then
         yield_return(AssetSys.Download(dburl, cachePath))
@@ -105,12 +116,11 @@ function this.LoadData()
         local record = table.pack(vm:get_uvalues())
         records[#records + 1] = {
             id = record[1],
-            pid = record[2],
+            name = record[2],
             url = record[3],
             cpath = record[4],
             tpath = record[5],
-            tid = record[6],
-            text = record[7],
+            text = record[6],
         }
         --setmetatable(record,mt)
         r = vm:step()
@@ -176,16 +186,6 @@ function this.InitTableViewData()
     
     -- this.initData()
     -- this.tableview_TableViewController.tableView:ReloadData()
-    this.reset_Button.onClick:AddListener(function()
-        -- this.initData()
-        this.ColumnIdxA = this.ColumnIdxA + 1
-        if this.ColumnIdxA > 10 then
-            this.ColumnIdxA = 10
-        end
-        this.Slider_Slider.value = this.ColumnIdxA / 10
-        
-        this.tableview_TableViewController.tableView:ReloadData()
-    end)
     
     this.grep_Button.onClick:AddListener(function()
         -- this.grepData()
@@ -209,14 +209,14 @@ end
 
 function this.Back()
     assert(coroutine.resume(coroutine.create(function()
-        yield_return(UnityEngine.WaitForSeconds(0.3))
-        local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
-            obj = asset
-        end))
-        local gameObj = GameObject.Instantiate(obj)
-        
-        GameObject.DestroyImmediate(mono.gameObject)
+        --yield_return(UnityEngine.WaitForSeconds(0.3))
+        --local obj = nil
+        --yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+        --    obj = asset
+        --end))
+        --local gameObj = GameObject.Instantiate(obj)
+        --
+        --GameObject.DestroyImmediate(mono.gameObject)
     end)))
 end
 

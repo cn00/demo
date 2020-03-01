@@ -6,8 +6,7 @@ local AssetSys = CS.AssetSys
 local util = require "lua.utility.xlua.util"
 local sqlite3 = require("lsqlite3")
 
-local import = {
-}
+local import = {}
 
 local self = import
 local this = import
@@ -52,10 +51,12 @@ end
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
+    this.back_Button = back:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.content_InputField = content:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.localpath_InputField = localpath:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.submit_Button = submit:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.title_InputField = title:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.url_InputField = url:GetComponent(typeof(CS.UnityEngine.UI.InputField))
-    this.content_InputField = content:GetComponent(typeof(CS.UnityEngine.UI.InputField))
 end
 --AutoGenInit End
 
@@ -72,11 +73,18 @@ function import.Awake()
 		
 		self.url_InputField:Select()
 	end)
+	self.localpath_InputField.onEndEdit:AddListener(function(text)
+		print("localpath_InputField.onEndEdit:" .. text)
+		--local exist = AssetSys.UrlIsExist(text)
+		this.localpath = text
+		
+		self.content_InputField:Select()
+	end)
 	self.url_InputField.onEndEdit:AddListener(function(text)
 		print("url_InputField.onEndEdit:" .. text)
 		--local exist = AssetSys.UrlIsExist(text)
 		this.urlstr = text
-		
+
 		self.content_InputField:Select()
 	end)
 	self.content_InputField.onEndEdit:AddListener(function(text)
@@ -88,15 +96,19 @@ function import.Awake()
 		-- todo: check storaged name url content
 
 		--util.coroutine_call(function()
-			local insert_stmt = assert( this.db:prepare("INSERT INTO item (url, name, text) values (?,?,?)") )
+			local insert_stmt = assert( this.db:prepare("INSERT INTO item (url, name, text, cpath) values (?,?,?,?)") )
 			--yield_return(AssetSys.Instance:GetAsset("writeplayer/impoter/insert.sql", function (asset)
 			--	sqlformat = asset.text
 			--end))
-			insert_stmt:bind_values(this.urlstr, this.titlestr, this.contentstr)
+			insert_stmt:bind_values(this.urlstr, this.titlestr, this.contentstr, this.localpath)
 			local _, error = insert_stmt:step()
 			print("sql re:", _,  error)
 			insert_stmt:reset()
 		--end)
+	end)
+
+	self.back_Button.onClick:AddListener(function(...)
+		GameObject.DestroyImmediate(gameObject)
 	end)
 
 	-- -- test message center

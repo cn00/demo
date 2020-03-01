@@ -88,7 +88,7 @@ function this.init(data)
         end
 
 		this.videoname = videoname
-		this.timeline = AssetSys.CacheRoot .. data.tpath
+		this.timeline = AssetSys.CacheRoot .. data.cpath .. ".lua"
 		local tdir = this.timeline:sub(0, this.timeline:find("/[^/]*$"))
 		Directory.CreateDirectory(tdir)
 		this.op_movie_VideoPlayer.url = "file://" .. cachePath

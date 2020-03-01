@@ -5,6 +5,6 @@ ScriptedImporter:
     4900000: main obj
   externalObjects: {}
   userData: 
-  assetBundleName: write_player/player.bd
+  assetBundleName: writeplayer/player.bd
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}
