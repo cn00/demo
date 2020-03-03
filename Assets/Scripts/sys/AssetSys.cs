@@ -281,9 +281,7 @@ public class AssetSys : SingleMono<AssetSys>
         {
             Directory.CreateDirectory(CacheRoot);
         }
-#if UNITY_EDITOR
-        if (BuildConfig.Instance().UseBundle)
-#endif
+#if USE_BUNDLE
         {
             if (mManifest == null)
             {
@@ -303,6 +301,7 @@ public class AssetSys : SingleMono<AssetSys>
 
             yield return GetBundle("ui/boot.bd");
         }
+#endif
 
         yield return base.Init();
     }
@@ -461,11 +460,9 @@ public class AssetSys : SingleMono<AssetSys>
             }
             else
             {
-                
-                FileStream lzmaStream = null;
-                yield return Download(fileUrl, cachePath + BuildConfig.CompressedExtension, fs => {
-                    lzmaStream = fs;
-                });
+                var lzmapath = cachePath + BuildConfig.CompressedExtension;
+                yield return Download(fileUrl, lzmapath);
+                FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
                 var outStream = new FileStream(cachePath, FileMode.Create);
                 var thread = new Thread(() =>
                 {
@@ -591,10 +588,11 @@ public class AssetSys : SingleMono<AssetSys>
     
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
     public static int TimeoutMillisecond = 1000 * 5;
-    public static IEnumerator Www(string url, UnityAction<WWW> endCallback = null,
+    public static IEnumerator Downlod(string url, Action<byte[]> endCallback = null,
         UnityAction<float> progressCallback = null)
     {
-        WWW www = new WWW(url);
+        var www = UnityEngine.Networking.UnityWebRequest.Get(url);
+        www.SendWebRequest();
         DateTime timeout = DateTime.Now +
                            new TimeSpan(TimeOutSeconds / 3600, (TimeOutSeconds % 3600) / 60, TimeOutSeconds % 60);
         if (www != null)
@@ -604,8 +602,8 @@ public class AssetSys : SingleMono<AssetSys>
                 //yield return www;
                 if (progressCallback != null)
                 {
-                    progressCallback(www.progress);
-                    if (DateTime.Now > timeout && www.progress < 0.1f)
+                    progressCallback(www.downloadProgress);
+                    if (DateTime.Now > timeout && www.downloadProgress < 0.1f)
                     {
                         AppLog.d(Tag, "timeout: " + url);
                         break;
@@ -615,9 +613,9 @@ public class AssetSys : SingleMono<AssetSys>
                 yield return null;
             }
 
-            if (www.progress >= 1 && string.IsNullOrEmpty(www.error))
+            if (www.downloadProgress >= 1 && string.IsNullOrEmpty(www.error))
             {
-                AppLog.d(Tag, "loaded {0} OK {1}", url, www.progress);
+                AppLog.d(Tag, "loaded {0} OK {1}", url, www.downloadProgress);
             }
             else
             {
@@ -626,12 +624,7 @@ public class AssetSys : SingleMono<AssetSys>
 
             if (endCallback != null)
             {
-                // 留给调用者选择是否存盘
-                //if(url.Substring(0, 7) == "http://")
-                //{
-                //    AsyncSave(url.Replace(WebRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
-                //}
-                endCallback(www);
+                endCallback(www.downloadHandler.data);
                 www.Dispose();
             }
         }

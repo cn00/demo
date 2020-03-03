@@ -16,17 +16,15 @@ namespace UnityEditor
     {
         const string Tag = "LuaMonoBebaviourEdirot";
         LuaMonoBehaviour mTarget = null;
-        string LuaText = "";
-
-        UnityEngine.Object mSourceLua = null;
-
+        string mLuaText = "";
+        
         public void OnEnable()
         {
             mTarget = (LuaMonoBehaviour) target;
 
             if (mTarget.LuaAsset)
             {
-                LuaText = mTarget.LuaAsset.text;
+                mLuaText = mTarget.LuaAsset.text;
             }
 
             refreshAutoGen();
@@ -145,7 +143,7 @@ namespace UnityEditor
                                     var comName = comType.Substring(comType.LastIndexOf('.') + 1);
                                     var oldExp = item.obj.name + "_" + comName;
                                     string newExp = nname + "_" + comName;
-                                    LuaText = LuaText.Replace("." + oldExp, "." + newExp);
+                                    mLuaText = mLuaText.Replace("." + oldExp, "." + newExp);
                                     item.obj.name = nname;
                                 }
                             }
@@ -216,10 +214,10 @@ namespace UnityEditor
             if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
             {
                 var path = AssetDatabase.GetAssetPath(mTarget.LuaAsset);
-                var pattern = Regex.Match(LuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
+                var pattern = Regex.Match(mLuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
                     RegexOptions.Multiline).ToString();
-                LuaText = LuaText.Replace(pattern.ToString(), luaMemberValue);
-                File.WriteAllText(path, LuaText);
+                mLuaText = mLuaText.Replace(pattern.ToString(), luaMemberValue);
+                File.WriteAllText(path, mLuaText);
                 AppLog.d(Tag, path + " updated");
             }
 

@@ -110,7 +110,7 @@ public class ChannelConfig
     public string DefineSymbols = "";
 
     public int BuildType = (int)AndroidBuildType.Debug;
-    public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Internal;
+    public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Gradle;
 
     public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
 
@@ -162,7 +162,7 @@ public class ChannelConfig
         else if (Channel.isIOS())
         {
             target_path = "ios.proj";
-            if (Emulator)
+            if (this.iOSSdkVersion == iOSSdkVersion.SimulatorSDK)
             {
                 PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
                 target_path += ".sim";
@@ -188,6 +188,12 @@ public class ChannelConfig
     {
         BuildConfig.Instance().Channels.Remove(this);
     }
+
+    public void PatchXcodeBtn()
+    {
+        
+    }
+    
     public ChannelConfig copy()
     {
         var o = this;

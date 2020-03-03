@@ -10,7 +10,6 @@ using System.Net;
 #if UNITY_EDITOR
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 using GroupInfo = BuildConfig.GroupInfo;
-using BundleInfo = BuildConfig.BundleInfo;
 
 namespace UnityEditor
 {
@@ -74,10 +73,8 @@ namespace UnityEditor
                     var bundleInfo = groupInfo.Bundles.Find(i => i.Name == bundleName);
                     if (bundleInfo == null)
                     {
-                        bundleInfo = new BundleInfo()
-                        {
-                            Name = bundleName,
-                        };
+                        bundleInfo = new BundleInfo();
+                        bundleInfo.Name = bundleName;
                     }
 
                     foreach (var f in Directory.GetFiles(bundle, "*", SearchOption.AllDirectories)

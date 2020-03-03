@@ -53,7 +53,7 @@
     "userframeworks": [
     ],
     "headerpaths": [
-        "ios-patch/BLGameSdk/BlGameSdkLib/include",
+        // "ios-patch/BLGameSdk/BlGameSdkLib/include",
         "ios-patch/NSLua",
     ],
     "plist": {
@@ -77,7 +77,7 @@
     ],
 
     "folders": [// framework bundle and xcdatamodeld also support
-        "ios-patch:ios-patch/BLGameSdk",
+        // "ios-patch:ios-patch/BLGameSdk",
         "ios-patch:ios-patch/NSLua",
     ],
     "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$", "^*.md$"]

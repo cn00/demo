@@ -94,7 +94,6 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Vector4),
         typeof(UnityEngine.WaitForSeconds),
         typeof(UnityEngine.AssetBundle),
-        typeof(UnityEngine.WWW),
         
         typeof(UnityEngine.Networking.UnityWebRequest),
         typeof(UnityEngine.Networking.DownloadHandler),
@@ -204,7 +203,6 @@ public static class XLuaGenConfig
         typeof(System.Action<UnityEngine.GameObject>),
         typeof(System.Action<UnityEngine.AssetBundle>),
         typeof(System.Action<UnityEngine.Texture2D>),
-        typeof(System.Action<UnityEngine.WWW>),
         #endregion System
 
         #region UnityEngine
@@ -220,7 +218,6 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Events.UnityAction<string>),
         typeof(UnityEngine.Events.UnityAction<float>),
         typeof(UnityEngine.Events.UnityAction<int>),
-        typeof(UnityEngine.Events.UnityAction<UnityEngine.WWW>),
         typeof(UnityEngine.UI.InputField.OnValidateInput)
         #endregion UnityEngine
     };
@@ -243,14 +240,28 @@ public static class XLuaGenConfig
     #endif
         new List<string>(){"UnityEngine.GameObject", "networkView"}, //4.6.2 not support
         new List<string>(){"UnityEngine.Component", "networkView"},  //4.6.2 not support
-        new List<string>(){"System.IO.File", "GetAccessControl", "SetAccessControl", "System.Security.AccessControl.AccessControlSections", "System.Security.AccessControl.FileSecurity"},
+
+        new List<string>() {"System.IO.File", "GetAccessControl", typeof(string).FullName},
+        new List<string>() {"System.IO.File", "GetAccessControl", typeof(string).FullName, typeof(System.Security.AccessControl.AccessControlSections).FullName},
+        new List<string>() {"System.IO.File", "GetAccessControl", typeof(string).FullName, "System.Security.AccessControl.FileSecurity"},
+        new List<string>() {"System.IO.File", "GetAccessControl", typeof(string).FullName, "System.Security.AccessControl.AccessControlSections"},
+
+        new List<string>() {"System.IO.File", "SetAccessControl", typeof(string).FullName, "System.Security.AccessControl.FileSecurity"},
+        new List<string>() {"System.IO.File", "SetAccessControl", typeof(string).FullName, "System.Security.AccessControl.AccessControlSections"},
+        new List<string>() {"System.IO.File", "Create", typeof(string).FullName, typeof(int).FullName, typeof(FileOptions).FullName,"System.Security.AccessControl.FileSecurity"},
+
         new List<string>(){"System.IO.FileInfo", "GetAccessControl", "System.Security.AccessControl.AccessControlSections"},
         new List<string>(){"System.IO.FileInfo", "SetAccessControl", "System.Security.AccessControl.FileSecurity"},
+
         new List<string>(){"System.IO.DirectoryInfo", "GetAccessControl", "System.Security.AccessControl.AccessControlSections"},
         new List<string>(){"System.IO.DirectoryInfo", "SetAccessControl", "System.Security.AccessControl.DirectorySecurity"},
         new List<string>(){"System.IO.DirectoryInfo", "CreateSubdirectory", "System.String", "System.Security.AccessControl.DirectorySecurity"},
         new List<string>(){"System.IO.DirectoryInfo", "Create", "System.Security.AccessControl.DirectorySecurity"},
-        new List<string>(){"System.Text.Encoding", "GetCharCount", "GetByteCount", "GetBytes"},
+
+        new List<string>() {"System.Text.Encoding", "GetCharCount"},
+        new List<string>() {"System.Text.Encoding", "GetByteCount"},
+        new List<string>() {"System.Text.Encoding", "GetBytes"},
+        
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
         new List<string>(){"UnityEngine.AudioSettings", "GetSpatializerPluginNames","SetSpatializerPluginName"},
         new List<string>(){"UnityEngine.UI.Text", "OnRebuildRequested"},
