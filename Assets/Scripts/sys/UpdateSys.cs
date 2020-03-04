@@ -40,7 +40,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
         if(File.Exists(cachePath))
         {
-            yield return AssetSys.Downlod(localVersionUrl, (bytes) =>
+            yield return AssetSys.UnityWebRequest(localVersionUrl, (bytes) =>
             {
                 
             });
@@ -56,7 +56,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var remoteVersionUrl = AssetSys.WebRoot + "resversion.txt";
         AppLog.d(Tag, remoteVersionUrl);
-        yield return AssetSys.Downlod(remoteVersionUrl, (bytes) =>
+        yield return AssetSys.UnityWebRequest(remoteVersionUrl, (bytes) =>
         {
             mRemoteVersion = new Version(bytes.Utf8String().Trim());
             AppLog.d(Tag, "RemoteVersion {0}", mRemoteVersion.ToString());
@@ -70,7 +70,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         var remoteManifestUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + mRemoteVersion + "/" + "manifest.yaml.lzma";
 
         byte[] date = null;
-        yield return AssetSys.Downlod(remoteManifestUrl, (bytes) =>
+        yield return AssetSys.UnityWebRequest(remoteManifestUrl, (bytes) =>
         {
             date = bytes;
         });
@@ -109,7 +109,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 Directory.CreateDirectory(dir);
             }
             
-            var task = AssetSys.Downlod(diffFileUrl, (bytes) =>
+            var task = AssetSys.UnityWebRequest(diffFileUrl, (bytes) =>
             {
                 //// 异步存盘
                 //MemoryStream outStream = new MemoryStream();

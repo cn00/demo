@@ -2,7 +2,6 @@
  *  Log 过滤
  */
 
-#if UNITY_DLL
 
 using System;
 using System.Net;
@@ -51,6 +50,7 @@ public static class AppLog
     /// common log
     /// </summary>
     /// <param name="log"></param>
+    [Conditional("USE_LOG")]
     public static void d(string tag, string log)
     {
         if(LogLevel >= Level.Debug)
@@ -62,11 +62,14 @@ public static class AppLog
         }
     }
 
+    [Conditional("USE_LOG")]
     public static void d(string tag, string fmt, params object[] args)
     {
         if(LogLevel >= Level.Debug)
             d(tag, string.Format(fmt, args));
     }
+
+    [Conditional("USE_LOG")]
     public static void d(string tag, params object[] args)
     {
         if(LogLevel >= Level.Debug)
@@ -80,6 +83,7 @@ public static class AppLog
         }
     }
 
+    [Conditional("USE_LOG")]
     public static void w(string tag, string log)
     {
         if(LogLevel >= Level.Warning)
@@ -91,12 +95,14 @@ public static class AppLog
         }
     }
 
+    [Conditional("USE_LOG")]
     public static void w(string tag, string fmt, params object[] args)
     {
         if(LogLevel >= Level.Warning)
             w(tag, string.Format(fmt, args));
     }
 
+    // [Conditional("USE_LOG")]
     private static void e(string tag, string log)
     {
         if(LogLevel >= Level.Error)
@@ -108,6 +114,7 @@ public static class AppLog
         }
     }
 
+    // [Conditional("USE_LOG")]
     public static void e(string tag, string fmt, params object[] args)
     {
         if(LogLevel >= Level.Error)
@@ -133,5 +140,3 @@ public static class AppLog
     }
 
 }
-
-#endif //UNITY_DLL

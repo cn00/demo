@@ -622,11 +622,10 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         // var activeTarget = UnityEditor.EditorUserBuildSettings.SwitchActiveBuildTarget(config.Channel.BuildTargetGroup(), config.Channel.BuildTarget());
 
-        var DefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
+        var EnvDefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
         PlayerSettings.SetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()
-            , ""
-            + DefineSymbols + ";"
-            + config.DefineSymbols);
+            ,  EnvDefineSymbols + ";"
+            + string.Join(";", config.DefineSymbols.ToArray()));
 
         AssetDatabase.Refresh();
 

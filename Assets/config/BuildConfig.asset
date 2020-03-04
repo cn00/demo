@@ -73,7 +73,7 @@ MonoBehaviour:
   mUseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132277103196021930
+  LastBuildTime: 132277663909064890
   Version:
     Major: 1
     Minor: 1
@@ -272,15 +272,16 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.komoe.a3ios
     PackageName: a3
-    BuildNum: 35
+    BuildNum: 37
     Version: 1.0.0
-    DefineSymbols: 
+    DefineSymbols: []
+    USE_LOG: 0
+    USE_EMULATOR: 0
     BuildType: 0
     BuildSystem: 0
     iOSSdkVersion: 988
     OptionFlags: 590881
     Channel: 7
-    Emulator: 0
   - Name: Android:2
     BatchBuild: 0
     AddTime: 0
@@ -289,13 +290,37 @@ MonoBehaviour:
     PackageName: a3
     BuildNum: 79
     Version: 1.0.0
-    DefineSymbols: HOTFIX_ENABLE;USE_XLUA;
+    DefineSymbols:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    USE_LOG: 0
+    USE_EMULATOR: 0
     BuildType: 0
     BuildSystem: 1
     iOSSdkVersion: 989
     OptionFlags: 33
     Channel: 2
-    Emulator: 0
   BundleServer:
     Port: 8000
     BasePath: ./AssetBundle/

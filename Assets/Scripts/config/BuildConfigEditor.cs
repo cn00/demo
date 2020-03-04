@@ -357,6 +357,7 @@ namespace UnityEditor
                 {
                     i.Name = i.Channel + ":" + (int) i.Channel;
                 }
+                i.AfterDraw();
             });
 
             Inspector.DrawList("Configs", mTarget.Configs, ref showConfigs, false, null);
@@ -365,8 +366,6 @@ namespace UnityEditor
 
             // server
             Inspector.DrawComObj("BundleServer", mTarget.BundleServer);
-            // if(mTarget.BundleServer.thread != null)
-            //     mTarget.BundleServer.Runing = mTarget.BundleServer.thread.IsAlive;
 
             mTarget.DrawSaveButton();
 

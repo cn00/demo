@@ -16,6 +16,12 @@ CREATE TABLE IF NOT EXISTS "item"
     "text"           TEXT
 );
 
+CREATE TABLE IF NOT EXISTS "cache_info"
+(
+    path   text not null primary key,
+    etag   text,
+    length int
+);
 
 -- CREATE TABLE IF NOT EXISTS "text"
 -- (
