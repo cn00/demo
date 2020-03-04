@@ -167,7 +167,7 @@ PlayerSettings:
     Android: com.bili.a3.test
     iPhone: com.komoe.a3ios
   buildNumber:
-    iPhone: 36
+    iPhone: 37
   AndroidBundleVersionCode: 78
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
@@ -626,7 +626,7 @@ PlayerSettings:
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
     1: UNITY_POST_PROCESSING_STACK_V2
-    4: 
+    4: ENABLE_EMULATER;USE_LOG
     7: HOTFIX_ENABLE;USE_XLUA;UNITY_POST_PROCESSING_STACK_V2
     13: UNITY_POST_PROCESSING_STACK_V2
     19: UNITY_POST_PROCESSING_STACK_V2

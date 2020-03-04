@@ -441,43 +441,35 @@ public class AssetSys : SingleMono<AssetSys>
             isLocal = false;
             fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
-
         AppLog.d(Tag, fileUrl);
-        {
-            if (isLocal)
-            {
-                var www = UnityEngine.Networking.UnityWebRequest.Get(fileUrl);
-                yield return www;
-                if (string.IsNullOrEmpty(www.error))
-                    mLoadedBundles[bundlePath] = (www.downloadHandler as DownloadHandlerAssetBundle).assetBundle;
-                www.Dispose();
-            }
-            else
-            {
-                var lzmapath = cachePath + BuildConfig.CompressedExtension;
-                yield return Download(fileUrl, lzmapath);
-                FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
-                var outStream = new FileStream(cachePath, FileMode.Create);
-                var thread = new Thread(() =>
-                {
-                    BundleHelper.DecompressFileLZMA(lzmaStream, outStream);
-                });
-                thread.Start();
-                while (thread.IsAlive)
-                {
-                    AppLog.d(Tag, "解压中。。。{0}", fileUrl);
-                    yield return new WaitForSeconds(0.3f);
-                }
-                outStream.Close();
 
-                if (IsLoaded(bundlePath))
-                {
-                    UnloadBundle(bundlePath);
-                    mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
-                }
-                lzmaStream.Close();
+        var cachDir = cachePath.Substring(0, cachePath.LastIndexOf('/'));
+        cachDir.CreateDir();
+
+        var outStream = new FileStream(cachePath, FileMode.OpenOrCreate);
+        if (!isLocal)
+        {
+            var lzmapath = cachePath + BuildConfig.CompressedExtension;
+            yield return Download(fileUrl, lzmapath);
+            FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
+            var thread = new Thread(() => { BundleHelper.DecompressFileLZMA(lzmaStream, outStream); });
+            thread.Start();
+            while (thread.IsAlive)
+            {
+                AppLog.d(Tag, "解压中。。。{0}", fileUrl);
+                yield return new WaitForSeconds(0.3f);
             }
+            outStream.Close();
+
+            if (IsLoaded(bundlePath))
+            {
+                UnloadBundle(bundlePath);
+            }
+
+            lzmaStream.Close();
         }
+        mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
+
 
         // Dependencies
         if (mManifest != null) // 加载 manifest 时本身为空
@@ -504,9 +496,10 @@ public class AssetSys : SingleMono<AssetSys>
             url = WebRoot + url;
         }
 
-        var tmpPath = path + ".tmp";
-        var cachDir = tmpPath.Substring(0, tmpPath.LastIndexOf('/'));
+        var cachDir = path.Substring(0, path.LastIndexOf('/'));
         cachDir.CreateDir();
+
+        var tmpPath = path + ".tmp";
 
         HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
         webRequest.Timeout = TimeoutMillisecond;
@@ -556,7 +549,7 @@ public class AssetSys : SingleMono<AssetSys>
         File.Delete((path + ".tmp"));
 
         UpdateCachInfo(path, heads.Get("ETag"), contentLength);
-            
+
         yield return null;
     }
 
@@ -567,8 +560,8 @@ public class AssetSys : SingleMono<AssetSys>
         IntPtr db;
         var errno = SQLite.SQLite3.Open(dbPath, out db);
         AppLog.d(Tag, "open db: {0}", errno);
-        var sql = string.Format("insert into cache_info () set etag = {0}, content_length = {1} where path = {2} "
-            , etag, length, path);
+        var sql = string.Format("insert into cache_info (id, path, etag, length) VALUES ( last_insert_rowid(), '{0}',  '{1}' , '{2}' ) on conflict(path) do update set etag = excluded.etag, length=excluded.length;"
+            , path, etag, length);
         errno = SQLite.SQLite3.Exec(db, sql);
         AppLog.d(Tag, "{0}:{1}", errno, sql);
         SQLite.SQLite3.Close(db);

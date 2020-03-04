@@ -624,6 +624,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &376387970 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1272112130634118, guid: 1774198d5c652426bb994d8ca86de27f,
+    type: 3}
+  m_PrefabInstance: {fileID: 568771909}
+  m_PrefabAsset: {fileID: 0}
+--- !u!320 &376387976
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376387970}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 0}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &426033240
 GameObject:
   m_ObjectHideFlags: 0

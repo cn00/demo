@@ -70,7 +70,7 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  mUseBundle: 1
+  mUseBundle: 0
   LogLevel: 3
   runInBackground: 1
   LastBuildTime: 132277663909064890
@@ -274,9 +274,11 @@ MonoBehaviour:
     PackageName: a3
     BuildNum: 37
     Version: 1.0.0
-    DefineSymbols: []
-    USE_LOG: 0
-    USE_EMULATOR: 0
+    DefineSymbols:
+    - ENABLE_EMULATER
+    - USE_LOG
+    USE_LOG: 1
+    USE_EMULATOR: 1
     BuildType: 0
     BuildSystem: 0
     iOSSdkVersion: 988

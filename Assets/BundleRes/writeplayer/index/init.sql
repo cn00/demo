@@ -16,12 +16,34 @@ CREATE TABLE IF NOT EXISTS "item"
     "text"           TEXT
 );
 
+-- cache_info
 CREATE TABLE IF NOT EXISTS "cache_info"
 (
-    path   text not null primary key,
-    etag   text,
-    length int
+    "id"     INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    "path"   text    NOT NULL UNIQUE,
+    "etag"   text,
+    "length" int,
+    "utime"  TEXT CHECK (datetime())
 );
+-- DROP TRIGGER if EXISTS update_cache_info_utime;
+CREATE TRIGGER IF NOT EXISTS update_cache_info_utime
+    AFTER UPDATE
+    ON cache_info
+BEGIN
+    UPDATE cache_info
+    SET utime = datetime('now', 'localtime')
+    WHERE id = old.id;
+END;
+
+-- DROP TRIGGER if EXISTS insert_cache_info_utime;
+CREATE TRIGGER insert_cache_info_utime
+    AFTER INSERT
+    ON cache_info
+BEGIN
+    UPDATE cache_info
+    SET utime = datetime('now', 'localtime')
+    WHERE new.id = id;
+END;
 
 -- CREATE TABLE IF NOT EXISTS "text"
 -- (
@@ -49,3 +71,29 @@ CREATE TABLE IF NOT EXISTS "cache_info"
 -- ON 
 --     i.tid = t.id 
 --     and i.pid = p.id;
+
+-- -- update via view https://www.sqlitetutorial.net/sqlite-instead-of-triggers/
+-- 
+-- CREATE VIEW AlbumArtists(
+--                          AlbumTitle,
+--                          ArtistName
+--     ) AS
+-- SELECT Title,
+--        Name
+-- FROM Albums
+--          INNER JOIN Artists USING (ArtistId);
+-- 
+-- CREATE TRIGGER insert_artist_album_trg
+--     INSTEAD OF INSERT
+--     ON AlbumArtists
+-- BEGIN
+--     -- insert the new artist first
+--     INSERT INTO Artists(Name)
+--     VALUES (NEW.ArtistName);
+-- 
+--     -- use the artist id to insert a new album
+--     INSERT INTO Albums(Title, ArtistId)
+--     VALUES (NEW.AlbumTitle, last_insert_rowid());
+-- END;
+-- INSERT INTO AlbumArtists(AlbumTitle, ArtistName)
+-- VALUES ('Who Do You Trust?', 'Papa Roach');
