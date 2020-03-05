@@ -40,10 +40,7 @@ public class UpdateSys : SingleMono<UpdateSys>
 
         if(File.Exists(cachePath))
         {
-            yield return AssetSys.UnityWebRequest(localVersionUrl, (bytes) =>
-            {
-                
-            });
+            yield return AssetSys.Download(localVersionUrl);
         }
 
         // mLocalVersion = ;
@@ -56,11 +53,11 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var remoteVersionUrl = AssetSys.WebRoot + "resversion.txt";
         AppLog.d(Tag, remoteVersionUrl);
-        yield return AssetSys.UnityWebRequest(remoteVersionUrl, (bytes) =>
-        {
-            mRemoteVersion = new Version(bytes.Utf8String().Trim());
-            AppLog.d(Tag, "RemoteVersion {0}", mRemoteVersion.ToString());
-        });
+
+        var temp = Path.GetTempPath() + Path.GetTempFileName();
+        yield return AssetSys.Download(remoteVersionUrl, temp);
+        mRemoteVersion = new Version(File.ReadAllText(temp));
+        AppLog.d(Tag, "RemoteVersion {0}", mRemoteVersion.ToString());
         yield return null;
     }
 
@@ -69,14 +66,11 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var remoteManifestUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + mRemoteVersion + "/" + "manifest.yaml.lzma";
 
-        byte[] date = null;
-        yield return AssetSys.UnityWebRequest(remoteManifestUrl, (bytes) =>
-        {
-            date = bytes;
-        });
-
+        var temp = Path.GetTempPath() + Path.GetTempFileName();
+        yield return AssetSys.Download(remoteManifestUrl, temp);
+        
         var outStream = new MemoryStream();
-        BundleHelper.DecompressFileLZMA(new MemoryStream(date), outStream);
+        BundleHelper.DecompressFileLZMA(new FileStream(temp, FileMode.Open), outStream);
         //AssetSys.AsyncSave(cachePath, outStream.GetBuffer(), outStream.Length);
 
         var s = outStream.GetBuffer().Utf8String();
@@ -108,8 +102,11 @@ public class UpdateSys : SingleMono<UpdateSys>
             {
                 Directory.CreateDirectory(dir);
             }
-            
-            var task = AssetSys.UnityWebRequest(diffFileUrl, (bytes) =>
+
+            var temp = Path.GetTempPath() + Path.GetTempFileName();
+            yield return AssetSys.Download(diffFileUrl, temp);
+
+            var bytes = File.ReadAllBytes(temp);
             {
                 //// 异步存盘
                 //MemoryStream outStream = new MemoryStream();
@@ -126,16 +123,6 @@ public class UpdateSys : SingleMono<UpdateSys>
                 if (count == mDiffList.Count)
                     mAllDownloadOK = true;
                 Updated(subPath);
-            });
-
-            // TODO: fixed this task group
-            if(count % 10 == 0)
-            {
-                yield return StartCoroutine(task);
-            }
-            else
-            {
-                 StartCoroutine(task);
             }
         }
     }

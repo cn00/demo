@@ -101,16 +101,6 @@ namespace UnityEditor
                     {
                         mTarget.Injections.RemoveRange(size, mTarget.Injections.Count-size);
                     }
-                    
-                    mTarget.Injections.Sort((a, b) =>
-                    {
-                        if (a.obj != null && b.obj != null)
-                            return a.obj.name.CompareTo(b.obj.name);
-                        else if (a.obj == null && b.obj != null)
-                            return 1;
-                        else
-                            return -1;
-                    });
                 }
 
                 if (mShowInjections)
@@ -179,15 +169,6 @@ namespace UnityEditor
                     {
                         mTarget.InjectValues.RemoveRange(size, mTarget.InjectValues.Count-size);
                     }
-                    mTarget.InjectValues.Sort((a, b) =>
-                    {
-                        if (a.k != null && b.k != null)
-                            return a.k.CompareTo(b.k);
-                        else if (a.k == null && b.k != null)
-                            return 1;
-                        else
-                            return -1;
-                    });
                 }
 
                 if (mShowInjectionValues)
@@ -208,8 +189,28 @@ namespace UnityEditor
             
             // gen lua code
             if (GUI.changed)
-                refreshAutoGen();
+            {
+                mTarget.InjectValues.Sort((a, b) =>
+                {
+                    if (a.k != null && b.k != null)
+                        return a.k.CompareTo(b.k);
+                    else if (a.k == null && b.k != null)
+                        return 1;
+                    else
+                        return -1;
+                });
 
+                mTarget.Injections.Sort((a, b) =>
+                {
+                    if (a.obj != null && b.obj != null)
+                        return a.obj.name.CompareTo(b.obj.name);
+                    else if (a.obj == null && b.obj != null)
+                        return 1;
+                    else
+                        return -1;
+                });
+                refreshAutoGen();
+            }
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
             {

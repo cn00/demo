@@ -62,6 +62,7 @@ function this.Awake()
     
 end
 
+
 function this.LoadData()
     local dburl = "res/db.db"
     local cachePath = AssetSys.CacheRoot .. "db.db"
@@ -70,6 +71,8 @@ function this.LoadData()
     else
         print("use cache:", cachePath)
     end
+    
+    yield_return(AssetSys.Instance:GetBundle("font/fzxz.bd"))
 
     local sql
     yield_return(AssetSys.Instance:GetAsset("writeplayer/index/init.sql", function(asset)
@@ -90,7 +93,7 @@ function this.LoadData()
     print(vm:get_unames())
     print('------------------------------------')
     local head = table.pack(vm:get_unames())
-    for i = 1,#head do head[head[i]] = i end
+    --for i = 1,#head do head[head[i]] = i end
     local records = {head = head}
     --local mt = {
     --    __newindex = function(t, k, v)
@@ -105,12 +108,11 @@ function this.LoadData()
         local record = table.pack(vm:get_uvalues())
         records[#records + 1] = {
             id = record[1],
-            pid = record[2],
+            name = record[2],
             url = record[3],
             cpath = record[4],
             tpath = record[5],
-            tid = record[6],
-            text = record[7],
+            text = record[6],
         }
         --setmetatable(record,mt)
         r = vm:step()
@@ -187,15 +189,13 @@ function this.InitTableViewData()
         this.tableview_TableViewController.tableView:ReloadData()
     end)
     
-    this.grep_Button.onClick:AddListener(function()
-        -- this.grepData()
-        this.ColumnIdxA = this.ColumnIdxA - 1
-        if this.ColumnIdxA < 0 then
-            this.ColumnIdxA = 0
-        end
-        this.Slider_Slider.value = this.ColumnIdxA / 10
-        this.tableview_TableViewController.tableView:ReloadData()
-    end)
+    this.grep_Button.onClick:AddListener(util.coroutine_call(function()
+         local obj = nil
+         yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/itemimport/itemimport.prefab", function(asset)
+             obj = asset
+         end))
+         local gameObj = GameObject.Instantiate(obj)
+    end))
     this.SliderV_Slider.onValueChanged:AddListener(function(fval)
         -- print("SliderV_Slider.onValueChanged", fval, this.SliderV_Slider.value)
         this.SliderVText_Text.text = string.format("%.0f", fval * 100)

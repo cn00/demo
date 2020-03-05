@@ -70,10 +70,10 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  mUseBundle: 0
+  mUseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132277663909064890
+  LastBuildTime: 132278842488639280
   Version:
     Major: 1
     Minor: 1
@@ -81,7 +81,7 @@ MonoBehaviour:
     BtnPerRow: 3
   Ip: ::1
   Port: 8000
-  ForceRebuild: 1
+  ForceRebuild: 0
   BuildScene: 0
   mGroups:
   - Foldout: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.komoe.a3ios
     PackageName: a3
-    BuildNum: 37
+    BuildNum: 38
     Version: 1.0.0
     DefineSymbols:
     - ENABLE_EMULATER

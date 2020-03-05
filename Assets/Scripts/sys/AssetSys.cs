@@ -412,9 +412,8 @@ public class AssetSys : SingleMono<AssetSys>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundleName, Action<UnityEngine.AssetBundle> callBack = null)
+    public IEnumerator GetBundle(string bundlePath, Action<UnityEngine.AssetBundle> callBack = null)
     {
-        string bundlePath = bundleName;
         if (string.IsNullOrEmpty(bundlePath))
         {
             AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
@@ -459,7 +458,6 @@ public class AssetSys : SingleMono<AssetSys>
                 AppLog.d(Tag, "解压中。。。{0}", fileUrl);
                 yield return new WaitForSeconds(0.3f);
             }
-            outStream.Close();
 
             if (IsLoaded(bundlePath))
             {
@@ -469,6 +467,7 @@ public class AssetSys : SingleMono<AssetSys>
             lzmaStream.Close();
         }
         mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
+        outStream.Close();
 
 
         // Dependencies
@@ -489,8 +488,10 @@ public class AssetSys : SingleMono<AssetSys>
     }
 
 
-    public static IEnumerator Download(string url, string path, Action<FileStream> cb = null)
+    public static IEnumerator Download(string url, string path = null, Action<FileStream> cb = null)
     {
+        if (path == null)
+            path = Path.GetTempPath() + Path.GetTempFileName();
         if (!url.StartsWith("http"))
         {
             url = WebRoot + url;
@@ -582,50 +583,6 @@ public class AssetSys : SingleMono<AssetSys>
 
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
     public static int TimeoutMillisecond = 1000 * 5;
-
-    public static IEnumerator UnityWebRequest(string url, Action<byte[]> endCallback = null,
-        Action<float> progressCallback = null)
-    {
-        var www = UnityEngine.Networking.UnityWebRequest.Get(url);
-        www.SendWebRequest();
-        DateTime timeout = DateTime.Now +
-            new TimeSpan(TimeOutSeconds / 3600, (TimeOutSeconds % 3600) / 60, TimeOutSeconds % 60);
-        if (www != null)
-        {
-            while (!www.isDone && string.IsNullOrEmpty(www.error))
-            {
-                //yield return www;
-                if (progressCallback != null)
-                {
-                    progressCallback(www.downloadProgress);
-                    if (DateTime.Now > timeout && www.downloadProgress < 0.1f)
-                    {
-                        AppLog.d(Tag, "timeout: " + url);
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-
-            if (www.downloadProgress >= 1 && string.IsNullOrEmpty(www.error))
-            {
-                AppLog.d(Tag, "loaded {0} OK {1}", url, www.downloadProgress);
-            }
-            else
-            {
-                AppLog.e(Tag, "{0}: {1}", www.error, url);
-            }
-
-            if (endCallback != null)
-            {
-                endCallback(www.downloadHandler.data);
-                www.Dispose();
-            }
-        }
-
-        yield return null;
-    }
 
     public void UnloadBundle(string path, bool unloadAllLoadedObjects = false)
     {

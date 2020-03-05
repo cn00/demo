@@ -10,11 +10,23 @@ CREATE TABLE IF NOT EXISTS "item"
 (
     "id"             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     "name"           TEXT,
-    "url"            TEXT,
-    "cpath"          TEXT,
+    "url"            TEXT UNIQUE,
+    "cpath"          TEXT UNIQUE,
     "tpath"          TEXT,
     "text"           TEXT
 );
+INSERT OR IGNORE into "item" ("id", "name", "url", "cpath", "tpath", "text")
+VALUES ('1', '满开剧团', 'http://10.23.22.233/assets/305/iOS/1002141707/resource/movie/op_movie.mp4', 'movie/op_movie.mp4',
+        'tp', '下記の属性パラメーターが最も高い劇団員を\n自動で選択します(旬マークの劇団員優先)');
+-- CREATE TRIGGER insert_item
+--     BEFORE INSERT
+--     ON item
+-- BEGIN
+--     UPDATE cache_info
+--     SET utime = datetime('now', 'localtime')
+--     WHERE new.id = id;
+-- END;
+
 
 -- cache_info
 CREATE TABLE IF NOT EXISTS "cache_info"
