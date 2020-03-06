@@ -15,9 +15,15 @@ CREATE TABLE IF NOT EXISTS "item"
     "tpath"          TEXT,
     "text"           TEXT
 );
-INSERT OR IGNORE into "item" ("id", "name", "url", "cpath", "tpath", "text")
-VALUES ('1', '满开剧团', 'http://10.23.22.233/assets/305/iOS/1002141707/resource/movie/op_movie.mp4', 'movie/op_movie.mp4',
+INSERT OR IGNORE into "item" ("name", "url", "cpath", "tpath", "text")
+VALUES ('满开剧团', 'http://10.23.22.233/assets/305/iOS/1002141707/resource/movie/op_movie.mp4', 'movie/op_movie.mp4',
         'tp', '下記の属性パラメーターが最も高い劇団員を\n自動で選択します(旬マークの劇団員優先)');
+
+INSERT OR IGNORE into "item" ("name", "url", "cpath", "tpath", "text")
+VALUES ('twgx', 'https://a3-dev-patch-oss.oss-cn-hangzhou.aliyuncs.com/qa/master/iOS-910121306/resource/img/tem-9a6e0', 'movie/twgx-1.mp4',
+        'tp', '豫章故郡，洪都新府。星分翼轸，地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。物华天宝，龙光射牛斗之墟；人杰地灵，徐孺下陈蕃之榻。雄州雾列，俊采星驰。台隍枕夷夏之交，宾主尽东南之美。都督阎公之雅望，棨戟遥临；宇文新州之懿范，襜帷暂驻。十旬休假，胜友如云；千里逢迎，高朋满座。腾蛟起凤，孟学士之词宗；紫电青霜，王将军之武库。家君作宰，路出名区；童子何知，躬逢胜饯。');
+
+
 -- CREATE TRIGGER insert_item
 --     BEFORE INSERT
 --     ON item

@@ -35,7 +35,7 @@ end)
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.add_Button = add:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.BackBtn_Image = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
     this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
@@ -202,7 +202,7 @@ function this.InitTableViewData()
         this.tableview_TableViewController.tableView:SetPosition(fval * this.tableview_TableViewController.tableView.ContentSize)
     end)
     
-    this.back_Button.onClick:AddListener(function()
+    this.BackBtn_Button.onClick:AddListener(function()
         this.Back()
     end)
 end
