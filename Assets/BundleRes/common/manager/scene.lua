@@ -5,8 +5,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "xlua.util"
 
-local scene_manager = {}
-local this = scene_manager
+local this = {name="SceneManager"}
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -18,15 +17,13 @@ end)
 ]]
 local loadstack = {}
 
-function start_coroutine(func)
-    assert(coroutine.resume(coroutine.create(func)))
-end
 
-function scene_manager.load(prefabPath, callback)
-    start_coroutine(function()
-        print('scene_manager coroutine start!')
+function this.push(prefabPath, callback)
+    print('scene_manager push', prefabPath)
+    util.coroutine_call(function(cb)
+        print('scene_manager push -->', prefabPath)
 
-        -- open loading
+        -- todo: open loading
 
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset(prefabPath, function(asset)
@@ -35,40 +32,40 @@ function scene_manager.load(prefabPath, callback)
         local gameObj = GameObject.Instantiate(obj)
         table.insert(loadstack, {path = prefabPath, obj = gameObj})
 
-        if callback then
-        	callback(gameObj)
+        if cb then
+        	cb(gameObj)
         end
-    end)
+    end, callback)
 end
 
-function scene_manager.pop(callback)
-    start_coroutine(function()
+function this.pop(callback)
+    return util.coroutine_call(function()
         local last = table.remove(loadstack)
 
         local newlast = loadstack[#loadstack]
-        yield_return(scene_manager.load(newlast.path, function(obj)
+        yield_return(this.load(newlast.path, function(obj)
             GameObject.DestroyImmediate(last.obj)
         end))
     end)
 end
 
 --AutoGenInit Begin
-function scene_manager.AutoGenInit()
+function this.AutoGenInit()
 end
 --AutoGenInit End
 
--- function scene_manager.Awake()
+-- function this.Awake()
 -- 	this.AutoGenInit()
 -- end
 
--- function scene_manager.OnEnable()
---     print("scene_manager.OnEnable")
+-- function this.OnEnable()
+--     print("this.OnEnable")
 
 -- end
 
--- function scene_manager.OnDestroy()
---     print("scene_manager.OnDestroy")
+-- function this.OnDestroy()
+--     print("this.OnDestroy")
 
 -- end
     
-return scene_manager
+return this

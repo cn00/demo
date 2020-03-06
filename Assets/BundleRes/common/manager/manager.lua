@@ -36,11 +36,10 @@ G.manager = manager
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.message_LuaMonoBehaviour = message:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.scene_LuaMonoBehaviour = scene:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.network_LuaMonoBehaviour = network:GetComponent(typeof(CS.LuaMonoBehaviour))
     this.console_LuaMonoBehaviour = console:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.Button_Button = Button:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.message_LuaMonoBehaviour = message:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.network_LuaMonoBehaviour = network:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.scene_LuaMonoBehaviour = scene:GetComponent(typeof(CS.LuaMonoBehaviour))
 end
 --AutoGenInit End
 
@@ -57,16 +56,10 @@ end
 
 function this.Start()
     print("manager.Start")
-    this.network = this.network_LuaMonoBehaviour.Lua
-    this.scene = this.scene_LuaMonoBehaviour.Lua
-    this.message = this.message_LuaMonoBehaviour.Lua
-    this.console = this.console_LuaMonoBehaviour.Lua
-    print("manager"
-        ,this.network
-        ,this.scene
-        ,this.message
-        ,this.console
-    )
+    this.Network = this.network_LuaMonoBehaviour.Lua
+    this.Scene = this.scene_LuaMonoBehaviour.Lua
+    this.Message = this.message_LuaMonoBehaviour.Lua
+    this.Console = this.console_LuaMonoBehaviour.Lua
 
     --assert(coroutine.resume(manager.coroutine_demo()))
 

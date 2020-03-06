@@ -3,7 +3,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 
-require "init"
+--require "init"
 local util = require "xlua.util"
 local socket = require "socket.socket"
 local sprotoparser = require "sprotoparser"

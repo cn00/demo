@@ -69,10 +69,16 @@ function this.SetData(data)
 	this.init(data)
 end
 
+--local sync_get_asset = util.async_to_sync(AssetSys.Instance.GetAsset)
+--local get_asset = function(path)
+--	return sync_get_asset(AssetSys.Instance, path)
+--end
 function this.init(data)
     util.coroutine_call(function()
 
-		local obj = nil
+		local obj 
+		--= get_asset("ui/loading/loading.prefab")
+	    print("sync_get_asset", obj)
 		yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
 			obj = asset
 		end))

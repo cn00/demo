@@ -1,0 +1,1 @@
+insert into item (url, name, text) values ("%s","%s","%s");

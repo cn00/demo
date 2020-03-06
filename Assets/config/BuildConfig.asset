@@ -70,7 +70,7 @@ MonoBehaviour:
     AndroidBuildSystem: 1
     iOSSdkVersion: 988
     BuildOptionFlags: 0
-  mUseBundle: 1
+  mUseBundle: 0
   LogLevel: 3
   runInBackground: 1
   LastBuildTime: 132278842488639280
