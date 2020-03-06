@@ -15,7 +15,7 @@ local util = require "xlua.util"
 
 local cell = {
     id = nil,
-    pid = nil,
+    name = nil,
     url = nil,
     cpath = nil,
     tpath = nil,
@@ -129,13 +129,13 @@ function cell.SetCellData(data, columnidx, num)
     --[[
     {
         id    = reader:GetInt32(0),
-        pid   = reader:GetInt32(1),
+        name   = reader:GetInt32(1),
         url   = reader:GetTextReader(2):ReadToEnd(),
         cpath = reader:GetTextReader(3):ReadToEnd(),
         tpath = reader:GetTextReader(4):ReadToEnd()
     }
     ]]
-    self.Text_1_Text.text = data.pid
+    self.Text_1_Text.text = data.name
     self.Text_2_Text.text = data.url
     self.Text_3_Text.text = data.cpath
     self.Text_4_Text.text = data.tpath
