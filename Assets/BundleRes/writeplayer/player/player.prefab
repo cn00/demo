@@ -1531,7 +1531,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5281795484521608960}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.39052242
+  m_Size: 0.39052248
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2303,7 +2303,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7187564406700722875
 RectTransform:
   m_ObjectHideFlags: 0
