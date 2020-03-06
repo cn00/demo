@@ -181,6 +181,12 @@ function this.InitTableViewData()
             assert(db:exec("delete from item where id = " .. cdata.id .. ";"))
             table.remove(this.DataSource, row + 1)
             this.tableview_TableView:ReloadData()
+            
+            -- TODO remove cache files confirm
+            local cachePath = AssetSys.CacheRoot .. cdata.cpath
+            if(File.Exists(cachePath))then
+                File.Delete(cachePath)
+            end
         end)
 
         -- print("CellAtRow", row)

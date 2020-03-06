@@ -55,6 +55,7 @@
     "headerpaths": [
         // "ios-patch/BLGameSdk/BlGameSdkLib/include",
         "ios-patch/NSLua",
+        "Libraries/XLua/Plugins/iOS"
     ],
     "plist": {
         "NSAppTransportSecurity":{
@@ -78,7 +79,7 @@
 
     "folders": [// framework bundle and xcdatamodeld also support
         // "ios-patch:ios-patch/BLGameSdk",
-        "ios-patch:ios-patch/NSLua",
+        // "ios-patch:ios-patch/NSLua",
     ],
     "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$", "^*.md$"]
 }
