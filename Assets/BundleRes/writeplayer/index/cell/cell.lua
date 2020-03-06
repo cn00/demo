@@ -21,9 +21,10 @@ local cell = {
     tpath = nil,
     tid = nil
 }
+local this = cell
 local self = cell
-local this = self
- local yield_return = util.async_to_sync(function (to_yield, callback)
+
+local yield_return = util.async_to_sync(function (to_yield, callback)
      mono:YieldAndCallback(to_yield, callback)
  end)
 
@@ -43,21 +44,19 @@ local this = self
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.TableViewCell = gameObject:GetComponent(typeof(CS.TableView.TableViewCell))
+    this.Animator = gameObject:GetComponent(typeof(CS.UnityEngine.Animator))
+    this.DelBtn_Button = DelBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.Image_Image = Image:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.Text_Text = Text:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.Text_1_Text = Text_1:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.Text_2_Text = Text_2:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.Text_3_Text = Text_3:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.Text_4_Text = Text_4:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.Text_5_Text = Text_5:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.Text_6_Text = Text_6:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.Text_7_Text = Text_7:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.Animator = gameObject:GetComponent(typeof(CS.UnityEngine.Animator))
 end
 --AutoGenInit End
 
 function cell.Awake()
-    self.AutoGenInit()
+    this.AutoGenInit()
 end
 
 function cell.Start()
@@ -80,49 +79,13 @@ function cell.Start()
     end)
 end
 
-function cell.Play()
-    --if(this.data.text == nil)then
-    --    local dbpath = AssetSys.CacheRoot.."/db.db"
-    --    local db = sqlite3.open(dbpath);
-    --    local tid = this.data.tid
-    --    local sql = "select text from text where id = " .. tid .. ";";
-    --    print("select text:", sql)
-    --    db:exec(sql, function (ud, ncols, values, names)
-    --        print("ncols", unpack(ncols))
-    --        print("names", unpack(names))
-    --        print("values", unpack(values))
-    --        this.data.text = ""
-    --        return sqlite3.OK
-    --    end)
-    --end
-
-    util.coroutine_call(function()
-
-        local obj = nil
-        yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
-            obj = asset
-        end))
-        local loading = GameObject.Instantiate(obj)
-
-        local obj
-        yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/player/player.prefab", function(asset)
-            obj = asset
-        end))
-        local player = GameObject.Instantiate(obj)
-        local playermono = player:GetComponent("LuaMonoBehaviour")
-        local ct = playermono.Lua
-        ct.SetData(this.data)
-
-        GameObject.DestroyImmediate(loading)
-    end)
-end
 
 function cell.SetCellData(data, columnidx, num)
     if data == nil then
         return
     end
     --if num <= 0 then num = 1 end
-    self.data = data
+    this.data = data
     print("cell.SetCellData", data.id, data.url)
     
     self.Text_Text.text = data.id

@@ -2,50 +2,34 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "xlua.util"
 
-local loading = {}
-local this = loading
+--local LoadingValue = LoadingValue
+--local LoadingString = LoadingString
 
--- local yield_return = util.async_to_sync(function (to_yield, callback)
---     mono:YieldAndCallback(to_yield, callback)
--- end)
--- function this.coroutine_demo()
---     util.coroutine_call(function()
---         print('loading coroutine start!')
---         yield_return(UnityEngine.WaitForSeconds(1))
---         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---             obj = asset
---         end))
---         local gameObj = GameObject.Instantiate(obj)
---     end)
--- end
+-- loading
+
+local print = function ( ... )
+    _G.print("[loading]", ...)
+end
+
+local this = {}
 
 --AutoGenInit Begin
-function this.AutoGenInit() end
+--DO NOT EDIT THIS FUNCTION MANUALLY.
+function this.AutoGenInit()
+    this.Slider_Slider = Slider:GetComponent(typeof(CS.UnityEngine.UI.Slider))
+    this.Text_Text = Text:GetComponent(typeof(CS.UnityEngine.UI.Text))
+end
 --AutoGenInit End
 
 function this.Awake()
 	this.AutoGenInit()
 end
 
--- function this.OnEnable() end
-
-function this.Start()
-	--assert(coroutine.resume(this.coroutine_demo()))
+function this.Update()
+	if(type(LoadingValue) == "number")then this.Slider_Slider.value = LoadingValue end
+	if(type(LoadingString) == "string")then this.Text_Text.text = LoadingString end
 end
 
--- function this.FixedUpdate() end
-
--- function this.Update() end
-
--- function this.LateUpdate() end
-
--- function this.OnDestroy() end
-
-function this.Destroy()
-	GameObject.DestroyImmediate(mono.gameObject)
-end
-
-return loading
+return this

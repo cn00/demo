@@ -56,21 +56,15 @@ function this.Awake()
     this.AutoGenInit()
     print("Awake-1")
 
-    this.add_Button.onClick:AddListener(this.AddBtnOnClick)
+    this.add_Button.onClick:AddListener(function ()
+        manager.Scene.push("writeplayer/impoter/impoter.prefab")
+    end)
 
     util.coroutine_call(this.LoadData)
     
 end
 
 function this.AddBtnOnClick()
-    util.coroutine_call(function()
-        local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/impoter/impoter.prefab", function(asset)
-            obj = asset
-        end))
-        local gameObj = GameObject.Instantiate(obj)
-            
-    end)
 end
 
 function this.LoadData()
@@ -177,8 +171,17 @@ function this.InitTableViewData()
         cell.name = "lua-Cell-" ..(row)
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
         local ct = cellmono.Lua
-        ct.SetCellData(this.DataSource[row + 1], this.ColumnIdxA, this.ColumnPerPage)
+        local cdata = this.DataSource[row + 1]
+        ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage)
         if(row%2 == 0)then ct.Image_Image.color = Color(0.3, 0.4, 0, 0.2) end
+
+        ct.DelBtn_Button.onClick:AddListener(function()
+            local dbpath = AssetSys.CacheRoot .. "db.db"
+            local db = sqlite3.open(dbpath)
+            assert(db:exec("delete from item where id = " .. cdata.id .. ";"))
+            table.remove(this.DataSource, row + 1)
+            this.tableview_TableView:ReloadData()
+        end)
 
         -- print("CellAtRow", row)
         return cell
@@ -194,34 +197,14 @@ function this.InitTableViewData()
             this.ColumnIdxA = 0
         end
         this.Slider_Slider.value = this.ColumnIdxA / 10
-        this.tableview_TableViewController.tableView:ReloadData()
+        this.tableview_TableView:ReloadData()
     end)
     this.SliderV_Slider.onValueChanged:AddListener(function(fval)
         -- print("SliderV_Slider.onValueChanged", fval, this.SliderV_Slider.value)
         this.SliderVText_Text.text = string.format("%.0f", fval * 100)
         this.tableview_TableViewController.tableView:SetPosition(fval * this.tableview_TableViewController.tableView.ContentSize)
     end)
-    
-    this.BackBtn_Button.onClick:AddListener(function()
-        this.Back()
-    end)
 end
 
-function this.Back()
-    assert(coroutine.resume(coroutine.create(function()
-        --yield_return(UnityEngine.WaitForSeconds(0.3))
-        --local obj = nil
-        --yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
-        --    obj = asset
-        --end))
-        --local gameObj = GameObject.Instantiate(obj)
-        --
-        --GameObject.DestroyImmediate(mono.gameObject)
-    end)))
-end
-
-function this.Destroy()
-    GameObject.DestroyImmediate(mono.gameObject)
-end
 
 return excel_view

@@ -4,6 +4,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "xlua.util"
+local AssetSys = CS.AssetSys
 
 local this = {name="SceneManager"}
 
@@ -21,8 +22,24 @@ end
 local loadstack = {}
 this.loadstack = loadstack
 
+this.loading = nil
+function this.openloading()
+    if(this.loading ~= nil)then
+        this.loading.go:SetActive(true)
+    end
+end
+
+function this.closeloading()
+    if (this.loading ~= nil) then
+        this.loading.go:SetActive(false)
+        LoadingValue = 0
+        LoadingString = "..."
+    end
+end
+
 
 function this.push(prefabPath, callback)
+
     util.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
@@ -44,6 +61,7 @@ function this.push(prefabPath, callback)
         if callback then
             callback(gameObj)
         end
+
     end)
 end
 
@@ -63,13 +81,30 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
--- function this.Awake()
--- 	this.AutoGenInit()
--- end
+function this.Awake()
+    --this.AutoGenInit()
+    util.coroutine_call(function()
+        print('scene_manager push -->', prefabPath)
+
+        if this.loading == nil then
+            local obj
+            print("sync_get_asset", obj)
+            yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
+                obj = asset
+            end))
+            local go = GameObject.Instantiate(obj)
+            go:SetActive(false)
+            local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+            this.loading = {
+                go = go,
+                lua = lua
+            }
+        end
+    end)
+end
 
 -- function this.OnEnable()
 --     print("this.OnEnable")
-
 -- end
 
 -- function this.OnDestroy()

@@ -78,16 +78,9 @@ end
 --end
 function this.init(data)
     util.coroutine_call(function()
-
-		local obj 
-		--= get_asset("ui/loading/loading.prefab")
-	    print("sync_get_asset", obj)
-		yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
-			obj = asset
-		end))
-		local loading = GameObject.Instantiate(obj)
-
-		local videourl = data.url
+	    manager.Scene.openloading()
+	    
+	    local videourl = data.url
 		
         local cachePath = AssetSys.CacheRoot .. data.cpath
         if not File.Exists(cachePath) then
@@ -112,7 +105,6 @@ function this.init(data)
 		
 		yield_return(AssetSys.Instance:GetBundle("font/fzxz.bd"))
 
-		GameObject.DestroyImmediate(loading.gameObject)
 
 		local btns = {}
 		if(File.Exists(this.timeline))then
@@ -196,8 +188,8 @@ function this.init(data)
 
 		this.playbackSpeedText_Text.text = this.op_movie_VideoPlayer.playbackSpeed
 		this.SliderV_Slider.onValueChanged:AddListener(function(fval)
-			print("onValueChanged", fval, this.Slider_Slider.value, op_movie, this.op_movie_VideoPlayer)
-			this.op_movie_VideoPlayer.playbackSpeed = math.exp(this.Slider_Slider.value) - 1
+			--print("onValueChanged", fval, this.SliderV_Slider.value, op_movie, this.op_movie_VideoPlayer)
+			this.op_movie_VideoPlayer.playbackSpeed = math.exp(this.SliderV_Slider.value) - 1
 			this.playbackSpeedText_Text.text = string.format("%.2f", this.op_movie_VideoPlayer.playbackSpeed)
 		end)
 
@@ -208,6 +200,7 @@ function this.init(data)
 
 		this.proc = this.mUpdate
 
+	    manager.Scene.closeloading()
     end)
 end
 

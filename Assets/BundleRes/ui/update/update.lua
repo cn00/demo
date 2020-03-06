@@ -89,16 +89,9 @@ function update.CheckUpdate()
 	return coroutine.create(function()
 
 	    local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
-	        obj = asset;
-	    end))
-	    local loading = GameObject.Instantiate(obj)
-	    loading.name = "loading"
-	    local oldLoading = GameObject.Find("loading")
-	    GameObject.DestroyImmediate(oldLoading)
+
 	    
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
-	    GameObject.DestroyImmediate(loading)
 	    
 		update.name = "update"
 		

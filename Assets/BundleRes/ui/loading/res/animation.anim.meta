@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: a7e5db277617849c2851cecea315d447
+guid: da0b95d8b9b9c874b8bbca399a6aae4a
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 7400000
   userData: 
-  assetBundleName: ui/loading.bd
+  assetBundleName: common/loading.bd
   assetBundleVariant: 

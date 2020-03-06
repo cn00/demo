@@ -259,17 +259,6 @@ function this.CheckUpdate()
 	coroutine_call(function()
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
-		"ui/loading/loading.prefab", function(asset)
-			obj = asset
-		end))
-		
-		local loading = GameObject.Instantiate(obj)
-		loading.name = "loading"
-		local oldLoading = GameObject.Find("loading")
-		GameObject.DestroyImmediate(oldLoading)
-		
-		obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
 		"ui/update/update.prefab", function(asset)
 			obj = asset
 		end))
@@ -283,18 +272,6 @@ end
 function this.Qrcode()
 	coroutine_call(function()
 		local obj = nil
-		yield_return(
-		CS.AssetSys.Instance:GetAsset(
-		"ui/loading/loading.prefab",
-		function(asset)
-			obj = asset
-		end))
-		local loading = GameObject.Instantiate(obj)
-		loading.name = "loading"
-		local oldLoading = GameObject.Find("loading")
-		GameObject.DestroyImmediate(oldLoading)
-		
-		obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
 		"ui/qrcode/qrcode.prefab",
 		function(asset)
