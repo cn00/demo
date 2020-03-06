@@ -64,8 +64,8 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/index.bd
-    Size: 23934
-    Hash: 07bac90d4384b19048b9f2ba76e56bc4
+    Size: 23993
+    Hash: 7f6c6511ef1a5e3cd386ec24497a33f8
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/itemimport.bd
@@ -74,8 +74,8 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/player.bd
-    Size: 624949
-    Hash: 9d9fa2641cbb292a4fd95107c6bf8975
+    Size: 626700
+    Hash: e35472c1b47dd4cb5bb4914f5f1d98f9
     Version: 1.1.1
     Rebuild: 0
   - Name: lua/com.bd

@@ -545,8 +545,8 @@ public class AssetSys : SingleMono<AssetSys>
         {
             LuaSys.Instance.GlobalEnv.Global.Set("LoadingString", string.Format(" {0:F}/{1:F}M [{2}]\n{3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
-                , contentLength * 1.0 / (1024 * 1024), readSize, url));
-            LuaSys.Instance.GlobalEnv.Global.Set("LoadingValue", 1.0f*downloadedLength / contentLength);
+                , totalLength * 1.0 / (1024 * 1024), readSize, url));
+            LuaSys.Instance.GlobalEnv.Global.Set("LoadingValue", 1.0f*downloadedLength / totalLength);
             yield return new WaitForSeconds(0.3f);
         }
 
