@@ -210,6 +210,7 @@ namespace UnityEditor
                         return -1;
                 });
                 refreshAutoGen();
+                EditorUtility.SetDirty(mTarget);
             }
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
