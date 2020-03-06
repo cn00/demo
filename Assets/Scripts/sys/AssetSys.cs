@@ -516,6 +516,7 @@ public class AssetSys : SingleMono<AssetSys>
             webRequest.AddRange((int) temfs.Length); //设置Range值
         }
 
+        //https://blog.csdn.net/u011966339/article/details/72829891
         var response = webRequest.GetResponse() as HttpWebResponse;
         var heads = response.Headers;
         long contentLength = response.ContentLength;
@@ -527,18 +528,26 @@ public class AssetSys : SingleMono<AssetSys>
         byte[] buffer = new byte[bufsize];
         int readSize = responseStream.Read(buffer, 0, bufsize);
         double downloadedLength = temfs.Length;
-        while (totalLength > downloadedLength)
+        var thread = new Thread(() =>
         {
-            temfs.Write(buffer, 0, readSize);
-            temfs.Flush(true);
-            downloadedLength = temfs.Length;
+            while (totalLength > downloadedLength)
+            {
+                temfs.Write(buffer, 0, readSize);
+                downloadedLength = temfs.Length;
+
+                readSize = responseStream.Read(buffer, 0, bufsize);
+            }
+        });
+        thread.Start();
+        while (thread.IsAlive)
+        {
             AppLog.d(Tag, string.Format(" {0:F}/{1:F}M [{2}] {3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
                 , contentLength * 1.0 / (1024 * 1024), readSize, url));
-
-            readSize = responseStream.Read(buffer, 0, bufsize);
-            yield return null;
+            yield return new WaitForSeconds(0.3f);
         }
+
+        temfs.Flush(true);
 
         AppLog.d(Tag, "download ok {0}:{1}", url, totalLength);
 
