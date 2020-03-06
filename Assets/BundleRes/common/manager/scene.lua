@@ -11,18 +11,27 @@ local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
+local print = function(...)
+    _G.print("[manager/scene.lua]", ...)
+end
 
 --[[
     path = GameObject
 ]]
 local loadstack = {}
+this.loadstack = loadstack
 
 
 function this.push(prefabPath, callback)
-    print('scene_manager push', prefabPath)
-    util.coroutine_call(function(cb)
+    util.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
+        local last = loadstack[#loadstack]
+        if(last ~= nil and last.obj ~= nil)then
+            GameObject.DestroyImmediate(last.obj)
+            last.obj = nil
+        end
+        
         -- todo: open loading
 
         local obj = nil
@@ -32,20 +41,20 @@ function this.push(prefabPath, callback)
         local gameObj = GameObject.Instantiate(obj)
         table.insert(loadstack, {path = prefabPath, obj = gameObj})
 
-        if cb then
-        	cb(gameObj)
+        if callback then
+            callback(gameObj)
         end
-    end, callback)
+    end)
 end
 
 function this.pop(callback)
-    return util.coroutine_call(function()
-        local last = table.remove(loadstack)
-
-        local newlast = loadstack[#loadstack]
-        yield_return(this.load(newlast.path, function(obj)
-            GameObject.DestroyImmediate(last.obj)
-        end))
+    local last = table.remove(loadstack)
+    local newlast = table.remove(loadstack)
+    this.push(newlast.path, function (go)
+        GameObject.DestroyImmediate(last.obj)
+        if callback then
+            callback(gameObj)
+        end
     end)
 end
 

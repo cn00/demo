@@ -15,6 +15,10 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 local dump = require "lua.utility.dump"
 
+local print = function(...)
+	_G.print("[writeplayer/player]", ...)
+	-- _G.print("[boot]", debug.traceback())
+end
 local player = {}
 local this = player
 
@@ -36,17 +40,17 @@ end)
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.Slider_Slider = Slider:GetComponent(typeof(CS.UnityEngine.UI.Slider))
-    this.op_movie_VideoPlayer = op_movie:GetComponent(typeof(CS.UnityEngine.Video.VideoPlayer))
-    this.sv_item_tem_Button = sv_item_tem:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.Content_HorizontalLayoutGroup = Content:GetComponent(typeof(CS.UnityEngine.UI.HorizontalLayoutGroup))
-    this.ToggleEdit_Toggle = ToggleEdit:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
+    this.mi_Image = mi:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.op_movie_VideoPlayer = op_movie:GetComponent(typeof(CS.UnityEngine.Video.VideoPlayer))
     this.playbackSpeedText_Text = playbackSpeedText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.RawImage_RawImage = RawImage:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
     this.Save_Button = Save:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
+    this.sv_item_tem_Button = sv_item_tem:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.ToggleEdit_Toggle = ToggleEdit:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
     this.ToggleLoop_Toggle = ToggleLoop:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
     this.ToggleMi_Toggle = ToggleMi:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
-    this.mi_Image = mi:GetComponent(typeof(CS.UnityEngine.UI.Image))
 end
 --AutoGenInit End
 
@@ -57,7 +61,6 @@ end
 -- function this.OnEnable() end
 
 function this.Start()
-	print("player start")
 
 end
 
@@ -155,7 +158,7 @@ function this.init(data)
 			if not this.btns.old then
 				v.frame = math.ceil(1.0*(i-1)/wcount*this.op_movie_VideoPlayer.frameCount)
 			end
-			print(i, v.c, v.frame)
+			--print(i, v.c, v.frame)
 			if(v.btn)then
 				v.btn.onClick:AddListener(function()
 					if this.ToggleEdit_Toggle.isOn then
@@ -192,7 +195,7 @@ function this.init(data)
 		-- player.op_movie_VideoPlayer = op_movie:GetComponent(typeof(UnityEngine.Video.VideoPlayer)) -- 可以
 
 		this.playbackSpeedText_Text.text = this.op_movie_VideoPlayer.playbackSpeed
-		this.Slider_Slider.onValueChanged:AddListener(function(fval)
+		this.SliderV_Slider.onValueChanged:AddListener(function(fval)
 			print("onValueChanged", fval, this.Slider_Slider.value, op_movie, this.op_movie_VideoPlayer)
 			this.op_movie_VideoPlayer.playbackSpeed = math.exp(this.Slider_Slider.value) - 1
 			this.playbackSpeedText_Text.text = string.format("%.2f", this.op_movie_VideoPlayer.playbackSpeed)

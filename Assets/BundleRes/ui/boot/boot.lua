@@ -45,11 +45,12 @@ function boot.coroutine_boot(first, ...)
         --     print(bundle)
         -- end))
 
-        -- obj = nil
-        -- yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
-        --     obj = asset
-        -- end))
-        -- local manager = GameObject.Instantiate(obj)
+         obj = nil
+         yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
+             obj = asset
+         end))
+         GameObject.Instantiate(obj)
+        
         -- Game.manager = manager
         -- this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
 
@@ -89,14 +90,15 @@ function boot.coroutine_boot(first, ...)
         -- print(obj)
         -- local write_player = GameObject.Instantiate(obj)
 
-        obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/index/index.prefab", function(asset)
-            obj = asset
-            print("get index", obj)
-        end))
-        print(obj)
-        local go = GameObject.Instantiate(obj)
-        print("index", go)
+        manager.Scene.push("writeplayer/index/index.prefab")
+        --obj = nil
+        --yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/index/index.prefab", function(asset)
+        --    obj = asset
+        --    print("get index", obj)
+        --end))
+        --print(obj)
+        --local go = GameObject.Instantiate(obj)
+        --print("index", go)
 
         -- yield_return(UnityEngine.WaitForSeconds(9))
         -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})

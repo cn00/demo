@@ -41,7 +41,7 @@ public class AssetImporter : UnityEditor.AssetPostprocessor
 
         for (int i = 0; i < movedAssets.Length; i++)
         {
-            Debug.Log("Moved Asset: " + movedAssets[i] + " from: " + movedFromAssetPaths[i]);
+            Debug.Log(movedFromAssetPaths[i] + " => " + movedAssets[i]);
         }
     }
 }    

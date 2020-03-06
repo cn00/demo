@@ -5,6 +5,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 local sqlite3 = require("lsqlite3")
+local manager = manager
 
 local print = function ( ... )
     _G.print("[writeplayer.index.cell]", ... )
@@ -67,7 +68,12 @@ function cell.Start()
     ct.TableViewCell:DidPointClickEvent("+", function(row2)
         print("cellevent DidPointClickEvent", row2, ct.TableViewCell.RowNumber, ct.Animator, ct.Animator.Play)
         ct.Animator:Play("cell_scale", 0)
-        cell.Play()
+        --cell.Play()
+        manager.Scene.push("writeplayer/player/player.prefab",function(player)
+            local playermono = player:GetComponent(typeof(CS.LuaMonoBehaviour))
+            local ct = playermono.Lua
+            ct.SetData(this.data)
+        end)
     end)
     ct.TableViewCell:DidHighlightEvent("+", function(row2)
         print("cellevent DidHighlightEvent", row2, ct.TableViewCell.RowNumber)
