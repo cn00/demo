@@ -281,7 +281,9 @@ public class AssetSys : SingleMono<AssetSys>
         {
             Directory.CreateDirectory(CacheRoot);
         }
-        #if USE_BUNDLE
+        #if UNITY_EDITOR
+        if(BuildConfig.Instance().UseBundle)
+        #endif
         {
             if (mManifest == null)
             {
@@ -301,7 +303,6 @@ public class AssetSys : SingleMono<AssetSys>
 
             yield return GetBundle("ui/boot.bd");
         }
-        #endif
 
         yield return base.Init();
     }
@@ -420,6 +421,18 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
+        // Dependencies
+        if (mManifest != null) // 加载 manifest 时本身为空
+        {
+            AppLog.d(Tag, "GetAllDependencies for {0}", bundlePath);
+            var deps = mManifest.GetAllDependencies(bundlePath);
+            foreach (var i in deps)
+            {
+                AppLog.d(Tag, "Dependencies: {0} +> {1}", bundlePath, i);
+                yield return GetBundle(i);
+            }
+        }
+
         AssetBundle bundle = null;
         if (mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
@@ -469,17 +482,6 @@ public class AssetSys : SingleMono<AssetSys>
         mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
         outStream.Close();
 
-
-        // Dependencies
-        if (mManifest != null) // 加载 manifest 时本身为空
-        {
-            var deps = mManifest.GetAllDependencies(bundlePath);
-            foreach (var i in deps)
-            {
-                AppLog.d(Tag, "Dependencies: {0} +> {1}", bundlePath, i);
-                yield return GetBundle(i);
-            }
-        }
 
         if (callBack != null)
             callBack(mLoadedBundles[bundlePath]);

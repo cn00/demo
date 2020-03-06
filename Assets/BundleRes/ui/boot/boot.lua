@@ -45,11 +45,13 @@ function boot.coroutine_boot(first, ...)
         --     print(bundle)
         -- end))
 
-         obj = nil
+         local obj = nil
          yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
              obj = asset
          end))
          GameObject.Instantiate(obj)
+
+        yield_return(CS.AssetSys.Instance:GetBundle("font/fzxz.bd"))
         
         -- Game.manager = manager
         -- this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable

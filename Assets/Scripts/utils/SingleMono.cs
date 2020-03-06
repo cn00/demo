@@ -39,7 +39,7 @@ public class SingleMono<T> : MonoBehaviour where T: MonoBehaviour
     {
         enabled = false;
         Inited = false;
-        StartCoroutine(Init());
+        // StartCoroutine(Init());
     }
 
     public bool Inited

@@ -14,10 +14,11 @@ public class Boot : SingleMono<Boot>
         
         AppLog.isEditor = Application.isEditor;
         AppLog.d(Tag, "App.Awake 0");
-//        #if UNITY_EDITOR
-//        if(BuildConfig.Instance().UseBundle)
-//            BuildConfig.Instance().BundleServer.StartBtn();
-//        #endif
+        // #if UNITY_EDITOR
+        // if(BuildConfig.Instance().UseBundle)
+        //     BuildConfig.Instance().BundleServer.StartBtn();
+        // #endif
+        StartCoroutine(Init());
         base.Awake();
     }
 
@@ -40,13 +41,13 @@ public class Boot : SingleMono<Boot>
         AppLog.d(Tag, "[{0}]", luas);
         LuaSys.Instance.GlobalEnv.DoString(luas);
 
-        
-        while(!AssetSys.Instance.Inited)
-            yield return null;
-        while(!LuaSys.Instance.Inited)
-            yield return null;
 
-        yield return AssetSys.Instance.GetBundle("lua/utility.bd");
+        yield return AssetSys.Instance.Init();
+
+        yield return (LuaSys.Instance.Init()) ;
+
+        
+        yield return AssetSys.Instance.GetAsset<TextAsset>("lua/utility/xlua/util.lua");
 
         
         yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset =>

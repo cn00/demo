@@ -24,8 +24,8 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/loading.bd
-    Size: 68038
-    Hash: ca19ad24be7ff9aaefcb46908bedde38
+    Size: 69442
+    Hash: 7ab28ad8745412f716c38a5fb5c7e118
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/qrcode.bd
@@ -39,13 +39,13 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/boot.bd
-    Size: 20020
-    Hash: 2d76f89764a18ff9f21e20174323b3f1
+    Size: 20037
+    Hash: 863cf731be3abf9eb62ef7c6c6f657af
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/test.bd
-    Size: 19764
-    Hash: fc6a84cf9954dde26948e00933b03013
+    Size: 19759
+    Hash: 6b9677bef9e1c880a58547b1aa858cc7
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/login.bd
@@ -54,18 +54,18 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: ui/update.bd
-    Size: 10918
-    Hash: fe5881816fb79f364c0e3443953dc843
+    Size: 10866
+    Hash: d5ca0e78fb9829d8feeb7bb0fad08a4d
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/impoter.bd
-    Size: 13757
-    Hash: 548189893fb0e04cb7790f147010b2d0
+    Size: 13804
+    Hash: 47499886c5eaf61905bc4f87ef92b7ce
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/index.bd
-    Size: 23979
-    Hash: 5fd0bfc0090b783ea1a6c5be245b54cd
+    Size: 23934
+    Hash: 07bac90d4384b19048b9f2ba76e56bc4
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/itemimport.bd
@@ -74,8 +74,8 @@ MonoBehaviour:
     Version: 1.1.1
     Rebuild: 0
   - Name: writeplayer/player.bd
-    Size: 625022
-    Hash: f2cc71a2d3ff87ce79b0f20456c70a12
+    Size: 624949
+    Hash: 9d9fa2641cbb292a4fd95107c6bf8975
     Version: 1.1.1
     Rebuild: 0
   - Name: lua/com.bd
@@ -98,14 +98,19 @@ MonoBehaviour:
     Hash: d0b92681738db12e8e18b56ab7999678
     Version: 1.1.1
     Rebuild: 0
-  - Name: video/op.bd
-    Size: 8881
-    Hash: da9bcc893cf7ba12413a4f1691bdfdc3
+  - Name: common/ui.bd
+    Size: 12527
+    Hash: 21dfec255c17f3f1d1e32ca562d2ebb4
     Version: 1.1.1
     Rebuild: 0
   - Name: common/excel.bd
     Size: 8249
     Hash: fdab2b4812d38f976d77faa4bcf5ef1a
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: common/manager.bd
+    Size: 7406
+    Hash: 0dde382ec6766312c57734651135fadf
     Version: 1.1.1
     Rebuild: 0
   - Name: common/global.bd
@@ -118,19 +123,9 @@ MonoBehaviour:
     Hash: 
     Version: 
     Rebuild: 0
-  - Name: common/loading.bd
-    Size: 67578
-    Hash: bda1aee333c3b2dc1622b1c4bd06ad90
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: common/manager.bd
-    Size: 7246
-    Hash: 6b953e46f5db1c280d49cb18f1d0758e
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: common/ui.bd
-    Size: 12895
-    Hash: 2eb51e3e041b3eaf711e212f8d4c0491
+  - Name: video/op.bd
+    Size: 8881
+    Hash: da9bcc893cf7ba12413a4f1691bdfdc3
     Version: 1.1.1
     Rebuild: 0
   - Name: config/config.bd

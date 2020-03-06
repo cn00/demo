@@ -51,7 +51,7 @@ end
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.BackBtn_Image = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.content_InputField = content:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.localpath_InputField = localpath:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.submit_Button = submit:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -105,6 +105,10 @@ function import.Awake()
 			print("sql re:", _,  error)
 			insert_stmt:reset()
 		--end)
+	end)
+
+	this.BackBtn_Button.onClick:AddListener(function()
+		manager.Scene.pop();
 	end)
 
 	-- -- test message center

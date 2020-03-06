@@ -315,6 +315,8 @@ MonoBehaviour:
   LuaAsset: {fileID: 4900000, guid: b570dd6f01a9940af8fbcc5f6bf10e17, type: 3}
   LuaPath: Assets/BundleRes/writeplayer/player/player.lua
   Injections:
+  - obj: {fileID: 4901249408940929217}
+    exportComIdx: 4
   - obj: {fileID: -5034425324220159528}
     exportComIdx: 1
   - obj: {fileID: 5154449187482483414}
@@ -939,15 +941,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5882353, g: 0.39215687, b: 0.19607843, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5647059}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5ba7a81535b9a443a917852ef0ab7aef, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3268,6 +3270,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff50d7f6266044a4a8cf98b1abc247b3, type: 3}
+--- !u!1 &4901249408940929217 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 232831622548426119, guid: ff50d7f6266044a4a8cf98b1abc247b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 5133984270104034630}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7019094095169573347 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2762755623541124261, guid: ff50d7f6266044a4a8cf98b1abc247b3,

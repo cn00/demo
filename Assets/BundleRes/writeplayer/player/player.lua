@@ -40,6 +40,7 @@ end)
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
+    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.Content_HorizontalLayoutGroup = Content:GetComponent(typeof(CS.UnityEngine.UI.HorizontalLayoutGroup))
     this.mi_Image = mi:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.op_movie_VideoPlayer = op_movie:GetComponent(typeof(CS.UnityEngine.Video.VideoPlayer))
@@ -102,9 +103,6 @@ function this.init(data)
 		
 		this.op_movie_VideoPlayer.waitForFirstFrame = true
 		--this.op_movie_VideoPlayer:Play()
-		
-		yield_return(AssetSys.Instance:GetBundle("font/fzxz.bd"))
-
 
 		local btns = {}
 		if(File.Exists(this.timeline))then
@@ -126,6 +124,7 @@ function this.init(data)
 			t.text = i
 			item.name = i
 			count = count + 1
+			item:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0, 0, 0, 0)
 			-- if i:gmatch("[%z，。；？“”]") == nil then
 			if i ~= "，"
 			and i ~= "。" 
@@ -141,6 +140,7 @@ function this.init(data)
 				btns[wcount] = btni
 			end
 		end
+	    GameObject.DestroyImmediate(sv_item_tem)
 		this.count = count
 		this.wcount = wcount
 		this.btns = btns
@@ -197,6 +197,10 @@ function this.init(data)
 			local luas = "return " .. dump(this.btns)
 			File.WriteAllText(this.timeline, luas)
 		end)
+
+	    this.BackBtn_Button.onClick:AddListener(function()
+		    manager.Scene.pop();
+	    end)
 
 		this.proc = this.mUpdate
 

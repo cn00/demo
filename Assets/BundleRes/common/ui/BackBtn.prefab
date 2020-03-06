@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2762755623541124261}
-  - component: {fileID: 697298170245068926}
   - component: {fileID: 3289855322496196654}
   - component: {fileID: 4537867846727599849}
   - component: {fileID: 7095807955774422296}
@@ -41,25 +40,6 @@ RectTransform:
   m_AnchoredPosition: {x: 34, y: -25.73}
   m_SizeDelta: {x: 50, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &697298170245068926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 232831622548426119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 1042094116111776886, guid: 57ccbb5471f71491eb23627559f38f7a,
-    type: 3}
-  LuaPath: Assets/BundleRes/common/ui/BackBtn.lua
-  Injections:
-  - obj: {fileID: 232831622548426119}
-    exportComIdx: 4
-  InjectValues: []
 --- !u!222 &3289855322496196654
 CanvasRenderer:
   m_ObjectHideFlags: 0
