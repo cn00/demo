@@ -257,13 +257,6 @@ function this.Update()
 	end
 end
 
-
--- function this.FixedUpdate() end
-
--- function this.LateUpdate() end
-
--- function this.OnDestroy() end
-
 function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end

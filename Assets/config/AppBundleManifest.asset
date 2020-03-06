@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: AppBundleManifest
+  m_EditorClassIdentifier: Assembly-CSharp::AppBundleManifest
+  BundleInfos:
+  - Name: common/excel.bd
+    Size: 8249
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: common/global.bd
+    Size: 1411
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: common/hint.bd
+    Size: 0
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: common/loading.bd
+    Size: 67578
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: common/manager.bd
+    Size: 7246
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: common/ui.bd
+    Size: 12895
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: config/config.bd
+    Size: 1830
+    Hash: 4584d7b9cf2b18142bb28ac10064ea1e
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: font/fzxz.bd
+    Size: 2363466
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: lua/com.bd
+    Size: 42728
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: lua/proto.bd
+    Size: 1015
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: lua/table.bd
+    Size: 1211
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: lua/utility.bd
+    Size: 13107
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/bg.bd
+    Size: 1808390
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/boot.bd
+    Size: 20020
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/excel_viewer.bd
+    Size: 21261
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/loading.bd
+    Size: 68038
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/login.bd
+    Size: 13175
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/qrcode.bd
+    Size: 28918
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/test.bd
+    Size: 19764
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/update.bd
+    Size: 10918
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: video/op.bd
+    Size: 8881
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: writeplayer/impoter.bd
+    Size: 13757
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: writeplayer/index.bd
+    Size: 23453
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: writeplayer/itemimport.bd
+    Size: 10863
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: writeplayer/player.bd
+    Size: 625022
+    Hash: 
+    Version: 
+    Rebuild: 0

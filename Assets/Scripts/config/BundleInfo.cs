@@ -1,18 +1,25 @@
 
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class BundleInfo //: InspectorDraw
 {
-    [SerializeField] public string Name;
+    public string Name;
 
-    [SerializeField] public ulong Size;
+    public ulong Size;
 
-    [SerializeField] public string Md5;
+    public string Hash;
 
-    [SerializeField] public string Version;
+    public string Version;
 
-    public bool mRebuild = false;
+    public bool Rebuild;
+}
+
+public class AppBundleManifest : SingletonAsset<AppBundleManifest> 
+{
+    public List<BundleInfo> BundleInfos;
 }

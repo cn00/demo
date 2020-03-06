@@ -73,15 +73,15 @@ MonoBehaviour:
   mUseBundle: 0
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132278842488639280
+  LastBuildTime: 132279695774768610
   Version:
     Major: 1
     Minor: 1
-    Patch: 0
+    Patch: 1
     BtnPerRow: 3
-  Ip: ::1
+  Ip: 10.23.22.233
   Port: 8000
-  ForceRebuild: 0
+  ForceRebuild: 1
   BuildScene: 0
   mGroups:
   - Foldout: 0
@@ -89,181 +89,161 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: font/fzxz.bd
+      Size: 2363466
+      Hash: 
       Version: 
-      mRebuild: 0
+      Rebuild: 0
   - Foldout: 0
     Name: ui
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: ui/bg.bd
+      Size: 1808390
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/boot.bd
+      Size: 20020
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/excel_viewer.bd
+      Size: 21261
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/loading.bd
+      Size: 68038
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/login.bd
+      Size: 13175
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/qrcode.bd
+      Size: 28918
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/test.bd
+      Size: 19764
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: ui/update.bd
+      Size: 10918
+      Hash: 
       Version: 
-      mRebuild: 0
+      Rebuild: 0
   - Foldout: 0
     Name: writeplayer
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: writeplayer/impoter.bd
+      Size: 13757
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: writeplayer/index.bd
+      Size: 23453
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: writeplayer/itemimport.bd
+      Size: 10863
+      Hash: 
       Version: 
-      mRebuild: 0
+      Rebuild: 0
+    - Name: writeplayer/player.bd
+      Size: 625022
+      Hash: 
+      Version: 
+      Rebuild: 0
   - Foldout: 0
     Name: lua
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: lua/com.bd
+      Size: 42728
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: lua/proto.bd
+      Size: 1015
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: lua/table.bd
+      Size: 1211
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
+      Rebuild: 0
+    - Name: lua/utility.bd
+      Size: 13107
+      Hash: 
       Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-  - Foldout: 0
-    Name: common
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-  - Foldout: 0
-    Name: truth
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
-  - Foldout: 0
-    Name: config
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
+      Rebuild: 0
   - Foldout: 0
     Name: video
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: video/op.bd
+      Size: 8881
+      Hash: 
       Version: 
-      mRebuild: 0
+      Rebuild: 0
   - Foldout: 0
-    Name: chapter_02
+    Name: common
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
+    - Name: common/excel.bd
+      Size: 8249
+      Hash: 
       Version: 
-      mRebuild: 0
+      Rebuild: 0
+    - Name: common/global.bd
+      Size: 1411
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: common/hint.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: common/loading.bd
+      Size: 67578
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: common/manager.bd
+      Size: 7246
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: common/ui.bd
+      Size: 12895
+      Hash: 
+      Version: 
+      Rebuild: 0
   - Foldout: 0
-    Name: chapter_01
+    Name: config
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: 
-      Size: 0
-      Md5: 
-      Version: 
-      mRebuild: 0
+    - Name: config/config.bd
+      Size: 1830
+      Hash: 4584d7b9cf2b18142bb28ac10064ea1e
+      Version: 1.1.1
+      Rebuild: 0
   BundleBuildOptions: 16
   mChannels:
   - Name: ios

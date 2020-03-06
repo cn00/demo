@@ -103,27 +103,6 @@ public class BuildScript
             if (File.Exists(oldManifestPath))
                 File.Copy(oldManifestPath, oldManifestPath + ".old", true);
 
-            // // copy .lua|.sql to (.lua|.sql).txt
-            // var userTextPatterns = ".lua|.sql";
-            // foreach (var pt in userTextPatterns.Split('|'))
-            // {
-            //     var nn = 0;
-            //     var info = new DirectoryInfo(BuildConfig.BundleResRoot);
-            //     var res = info.GetFiles("*" + pt, SearchOption.AllDirectories)
-            //             .Where(p => (rebuild
-            //             // || p.LastWriteTimeUtc.ToFileTimeUtc() > BuildConfig.Instance().LastBuildTime
-            //             )
-            //         );
-            //     foreach (var f in res)
-            //     {
-            //         EditorUtility.DisplayCancelableProgressBar("copy +" + pt + "+ ...", f.FullName, (float)(++nn) / res.Count());
-
-            //         var ftxt = f.FullName.Replace(pt, pt + ".txt");
-            //         File.Copy(f.FullName, ftxt, true);
-            //         AssetDatabase.ImportAsset(ftxt, ImportAssetOptions.DontDownloadFromCacheServer);
-            //     }
-            // }
-
             BuildConfig.Instance().RefreshGroups();
             yield return null;
 
@@ -135,7 +114,7 @@ public class BuildScript
             // this is the right time to update LastBuildTime if i continue edit lua while BuildAssetBundle
             BuildConfig.Instance().LastBuildTime = DateTime.Now.ToFileTimeUtc();
 
-            var options = BuildConfig.Instance().BundleBuildOptions;
+            var options = (BuildAssetBundleOptions)BuildConfig.Instance().BundleBuildOptions;
 
             if (rebuild)
                 options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
@@ -143,8 +122,9 @@ public class BuildScript
             yield return null;
 
             // zip
+            var version = BuildConfig.Instance().Version.ToString();
             var outRoot = BundleOutDir + TargetName(targetPlatform)
-                + "/" + BuildConfig.Instance().Version;
+                + "/" + version;
             AssetBundleManifest oldManifest = null;
             if (File.Exists(oldManifestPath + ".old"))
                 oldManifest = AssetBundle.LoadFromFile(oldManifestPath + ".old").LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -156,13 +136,6 @@ public class BuildScript
             foreach (var i in allAssetBundles)
             {
                 var finfo = new FileInfo(outDir + "/" + i);
-                // size
-                var bundleInfo = BuildConfig.Instance().GetBundleInfo(i);
-                if (bundleInfo != null)
-                {
-                    bundleInfo.Size = (ulong)finfo.Length;
-                }
-
                 // compare hash
                 var hash = manifest.GetAssetBundleHash(i);
                 var oldhash = default(Hash128);
@@ -179,7 +152,13 @@ public class BuildScript
                     
                     BundleHelper.CompressFileLZMA(path, lzmaPath);
 
-
+                    var bundleInfo = BuildConfig.Instance().GetBundleInfo(i);
+                    if (bundleInfo != null)
+                    {
+                        bundleInfo.Size = (ulong)finfo.Length;
+                        bundleInfo.Hash = hash.ToString();
+                        bundleInfo.Version = version;
+                    }
                 }
 
                 // copy
@@ -193,10 +172,6 @@ public class BuildScript
         }
         finally
         {
-            // foreach (var f in Directory.GetFiles(BundleConfig.BundleResRoot, "*.lua.txt*", SearchOption.AllDirectories))
-            // {
-            //     File.Delete(f);
-            // }
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
@@ -245,159 +220,6 @@ public class BuildScript
 
     #endregion Common
 
-
-    #region 安卓安装包
-    [MenuItem("Build/AndroidApk")]
-    public static void BuildAndroidApk()
-    {
-        var version = BuildConfig.Instance().Version;
-        // TODO: open this when release
-        // version.Minor += 1;
-        version.Patch = 0;
-        PlayerSettings.bundleVersion = version.ToString();
-        PlayerSettings.Android.bundleVersionCode += 1;
-        var versionCode = PlayerSettings.Android.bundleVersionCode;
-
-        string target_dir = TARGET_DIR + APP_NAME + ".apk";
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-    }
-
-    #endregion 安卓打包
-
-    #region 🍎安装包
-
-    [MenuItem("Build/iOS (iL2cpp proj)")]
-    public static void BuildIosIL2cppProj()
-    {
-        var version = BuildConfig.Instance().Version;
-        //version.Minor += 1;
-        version.Patch = 0;
-        PlayerSettings.bundleVersion = version.ToString();
-        PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
-        string target_dir = Environment.GetEnvironmentVariable("IosProjDir");
-        if (string.IsNullOrEmpty(target_dir))
-        {
-            target_dir = "ios.proj";
-        }
-        var option = BuildOptions.EnableHeadlessMode
-            | BuildOptions.SymlinkLibraries
-            //| BuildOptions.Il2CPP
-            | BuildOptions.AcceptExternalModificationsToPlayer
-            ;
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
-        version.Patch = 0;
-        if (Environment.GetEnvironmentVariable("configuration") == "Release")
-        {
-            PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.None);
-        }
-        else
-        {
-            PlayerSettings.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
-            option |= BuildOptions.AllowDebugging;
-        }
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.iOS, BuildTarget.iOS, option);
-    }
-    [MenuItem("Build/iOS (iL2cpp proj sim)")]
-    public static void BuildIosIL2cppProjSim()
-    {
-        var version = BuildConfig.Instance().Version;
-        PlayerSettings.bundleVersion = version.ToString();
-        PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-        // PlayerSettings.iOS.buildNumber = (int.Parse(PlayerSettings.iOS.buildNumber) + 1).ToString();
-        // var versionCode = int.Parse(PlayerSettings.iOS.buildNumber);
-
-        string target_dir = Environment.GetEnvironmentVariable("IosProjDir");
-        if (string.IsNullOrEmpty(target_dir))
-        {
-            target_dir = "ios.proj.sim";
-        }
-
-        var option = BuildOptions.EnableHeadlessMode
-            | BuildOptions.SymlinkLibraries
-            // | BuildOptions.Il2CPP
-            // | BuildOptions.Development
-            | BuildOptions.AcceptExternalModificationsToPlayer
-            | BuildOptions.AllowDebugging
-        ;
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.iOS, ScriptingImplementation.IL2CPP);
-        version.Patch = 0;
-        if (Environment.GetEnvironmentVariable("configuration") == "Release")
-        {
-            PlayerSettings.SetStackTraceLogType(LogType.Error, StackTraceLogType.None);
-        }
-        else
-        {
-            PlayerSettings.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
-            option |= BuildOptions.AllowDebugging;
-        }
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.iOS, BuildTarget.iOS, option);
-    }
-
-    [MenuItem("Build/Mac OS X")]
-    public static void BuildMacOSX()
-    {
-        string target_dir = TARGET_DIR + APP_NAME + "-" + "mac.app";
-        target_dir.CreateDir();
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX, BuildOptions.None);
-    }
-
-
-    [MenuItem("Build/iOS/AssetBundle"), ExecuteInEditMode]
-    public static void BuildiOSAssetBundle()
-    {
-        AssetBundleBuildAll(BuildTarget.iOS);
-        //StreamingSceneBuild(BuildTarget.Android);
-
-        //// compress
-        //Compress(BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion, BuildTarget.Android);
-
-        GenBundleManifest(BuildTarget.iOS);
-
-        // version 
-        GenVersionFile(BuildTarget.iOS);
-
-        // TODO: upload to http server
-    }
-
-
-    [MenuItem("Build/iOS/Manifest")]
-    public static void BuildiOSManifest()
-    {
-        GenBundleManifest(BuildTarget.iOS);
-        EditorUtility.ClearProgressBar();
-    }
-    #endregion 🍎打包
-
-    #region Windows
-
-    [MenuItem("Build/Windows")]
-    public static void BuildWindows()
-    {
-        string target_dir = TARGET_DIR + "/" + DATETIME + "/" + APP_NAME + ".exe";
-        GenericBuild(SCENES, target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows, BuildOptions.None);
-    }
-
-    #endregion Windows
-
-    #region 安卓资源包
-
-    [MenuItem("Build/Android/AssetBundle"), ExecuteInEditMode]
-    public static void BuildAndroidAssetBundle()
-    {
-        AssetBundleBuildAll(BuildTarget.Android);
-        //StreamingSceneBuild(BuildTarget.Android);
-
-        //// compress
-        //Compress(BundleOutDir + TargetName(BuildTarget.Android) + "/" + PlayerSettings.bundleVersion, BuildTarget.Android);
-
-        GenBundleManifest(BuildTarget.Android);
-
-        // version 
-        GenVersionFile(BuildTarget.Android);
-
-        // TODO: upload to http server
-    }
-
     public static void GenVersionFile(BuildTarget buildTarget)
     {
         var versionUrl = BundleOutDir + TargetName(buildTarget) + "/resversion.txt";
@@ -407,14 +229,6 @@ public class BuildScript
         writer.Close();
         File.Copy(versionUrl, BundleOutDir + TargetName(buildTarget) + "/" + version + "/resversion.txt", true);
     }
-
-    [MenuItem("Build/Android/Manifest")]
-    public static void BuildAndroidManifest()
-    {
-        GenBundleManifest(BuildTarget.Android);
-        EditorUtility.ClearProgressBar();
-    }
-
     // TODO: replace to Build BundleConfig
     public static void GenBundleManifest(BuildTarget buildTarget)
     {
@@ -433,73 +247,26 @@ public class BuildScript
             {
                 File.Delete(manifestbf);
             }
-
-            var files = Directory.GetFiles(sourceDir, "*" + BuildConfig.CompressedExtension, SearchOption.AllDirectories);
-            float i = 0;
-            foreach (var f in files)
-            {
-                ++i;
-                var bf = f.upath().Replace(version.ToString() + "/", string.Empty).Replace(BuildConfig.CompressedExtension, string.Empty);
-                var md5 = BundleHelper.Md5(bf);
-                var subPath = bf.Replace(rootDir, string.Empty);
-                var bundleInfo = BuildConfig.Instance().GetBundleInfo(subPath);
-                if (bundleInfo != null)
-                {
-                    bundleInfo.Md5 = md5;
-                    bundleInfo.Version = version.ToString();
-                }
-                else
-                {
-                    bundleInfo = new BundleInfo()
-                    {
-                        Name = subPath,
-                        Md5 = md5,
-                        Version = version.ToString(),
-                    };
-                    BuildConfig.Instance().AllBundles.Add(bundleInfo);
-                }
-            }
-            BuildConfig.Instance().Save();
-
+            
             // generate md5 sheet
             var manifestPath = rootDir + BuildConfig.ManifestName;
             if (File.Exists(manifestPath))
             {
                 File.Copy(manifestPath, manifestPath + ".bak", true);
             }
-            YamlHelper.Serialize(BuildConfig.Instance().AllBundles, manifestPath);
-            BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
+            
+            // YamlHelper.Serialize(BuildConfig.Instance().AllBundles, manifestPath);
+            var manifest = AppBundleManifest.Instance();
+            manifest.BundleInfos = BuildConfig.Instance().AllBundles;
+            manifest.Save();
+            
+            // BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
         }
         finally
         {
             EditorUtility.ClearProgressBar();
         }
     }
-
-    public static void AssetBundleBuildAll(BuildTarget buildTarget)
-    {
-        try
-        {
-            var version = BuildConfig.Instance().Version;
-            // TODO: open this when release
-            // version.Patch += 1;
-            PlayerSettings.bundleVersion = version.ToString();
-            //AndroidAssetBundleDelete();
-            EditorCoroutine.StartCoroutine(BuildAssetBundle(buildTarget, true));
-        }
-        finally
-        {
-            EditorUtility.ClearProgressBar();
-        }
-    }
-
-    #region AndroidStreamingScene
-    [MenuItem("Build/Android/StreamingScene"), ExecuteInEditMode]
-    public static void BuildAndroidStreamingScene()
-    {
-        BuildStreamingScene(BuildTarget.Android);
-    }
-
     public static void BuildStreamingScene(BuildTarget buildTarget)
     {
         try
@@ -519,8 +286,5 @@ public class BuildScript
             EditorUtility.ClearProgressBar();
         }
     }
-    #endregion
-
-    #endregion 安卓资源包
 }
 #endif

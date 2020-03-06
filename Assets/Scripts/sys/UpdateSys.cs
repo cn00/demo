@@ -135,9 +135,9 @@ public class UpdateSys : SingleMono<UpdateSys>
          foreach(var r in mRemoteManifest)
         {
             var l = mLocalManifest.Find(i => i.Name == r.Name);
-            if(l == null || l.Md5 != r.Md5 )
+            if(l == null || l.Hash != r.Hash )
             {
-                AppLog.d(Tag, "diff: {0}:[{1} {2}]", r.Name, r.Md5, (l != null ? l.Md5 : ""));
+                AppLog.d(Tag, "diff: {0}:[{1} {2}]", r.Name, r.Hash, (l != null ? l.Hash : ""));
                 mDiffList.Add(r);
             }
         }
@@ -201,7 +201,7 @@ public class UpdateSys : SingleMono<UpdateSys>
                 SaveManifest(mLocalManifest, LocalManifestPath);
 
                 mDiffList.Remove(newi);
-                AppLog.d(Tag, "Updated: {0}={1}", newi.Name, newi.Md5);
+                AppLog.d(Tag, "Updated: {0}={1}", newi.Name, newi.Hash);
             }
             
             AssetSys.Instance.UnloadBundle(subPath, false);

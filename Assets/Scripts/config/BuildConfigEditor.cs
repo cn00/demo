@@ -287,7 +287,7 @@ namespace UnityEditor
 
                 if (GUI.Button(rect.Split(++idx, sn), "FixPrefabLuaPath"))
                 {
-                    EditorCoroutine.StartCoroutine(FixPrefabLuaPath());
+                    EditorCoroutine.Run(FixPrefabLuaPath());
                 }
             }
 
@@ -298,7 +298,7 @@ namespace UnityEditor
             mTarget.BuildScene = EditorGUILayout.Toggle("BuildScene", mTarget.BuildScene, guiOpts);
 
             mTarget.BundleBuildOptions =
-                (BuildAssetBundleOptions) EditorGUILayout.EnumFlagsField("BundleBuildOptions",
+                (BuildConfig.BuildAssetBundleOptions) EditorGUILayout.EnumFlagsField("BundleBuildOptions",
                     mTarget.BundleBuildOptions);
 
             ++EditorGUI.indentLevel;
@@ -380,7 +380,7 @@ namespace UnityEditor
         void BuildAB(BuildTarget target, bool rebuild)
         {
 
-            EditorCoroutine.StartCoroutine(BuildScript.BuildAssetBundle(target, rebuild, () =>
+            EditorCoroutine.Run(BuildScript.BuildAssetBundle(target, rebuild, () =>
             {
                 if (mTarget.BuildScene)
                     BuildScript.BuildStreamingScene(target);
@@ -389,11 +389,6 @@ namespace UnityEditor
                 BuildScript.GenVersionFile(target);
                 mTarget.Groups.Sort((a, b) => b.Size.CompareTo(a.Size));
             }));
-        }
-
-        private void OnDestroy()
-        {
-            //            AssetDatabase.SaveAssets();
         }
     }
 

@@ -77,10 +77,10 @@ public static class EditorCoroutine
     [MenuItem("Tools/==ClearDeveloperConsole")]
     public static void CallStartEditorCoroutineTest()
     {
-        EditorCoroutine.StartCoroutine(StartEditorCoroutineTest());
+        EditorCoroutine.Run(StartEditorCoroutineTest());
     }
 
-    public static IEnumerator StartCoroutine(IEnumerator iterator)
+    public static IEnumerator Run(IEnumerator iterator)
     {
         if (editorCoroutineList == null)
         {

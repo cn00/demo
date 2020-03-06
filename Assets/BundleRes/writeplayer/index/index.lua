@@ -34,9 +34,9 @@ end)
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.back_Button = back:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.add_Button = add:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.BackBtn_Image = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
     this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))

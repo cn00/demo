@@ -7,18 +7,17 @@ using System;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Diagnostics;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif //UNITY_EDITOR
-
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 
 public static class BundleManifestExtension
 {
     public static List<BundleInfo> AllBundles(this BundleManifest self)
     {
-        return self.SelectMany(i => i.Bundles).ToList();
+        return self.SelectMany(i => i.Bundles)
+            .ToList();
     }
 }
 
@@ -28,8 +27,7 @@ public class AppVersion
     public uint Major = 0; // 主版本
     public uint Minor = 0; // 次版本
     public uint Patch = 0; // 补丁版本
-    [NonSerialized]
-    public bool Foldout = false;
+    [NonSerialized] public bool Foldout = false;
 
     public uint BtnPerRow = 3;
     // public void MajorABtn(){++Major;}
@@ -46,6 +44,7 @@ public class AppVersion
         Minor = 0;
         Patch = 0;
     }
+
     public AppVersion(string v)
     {
         var vs = v.Split('.');
@@ -54,6 +53,7 @@ public class AppVersion
         if (vs.Length > 2)
             Patch = uint.Parse(vs[2]);
     }
+
     public AppVersion(uint major, uint minor, uint build)
     {
         Major = major;
@@ -68,78 +68,85 @@ public class AppVersion
 
     public Version V
     {
-        get { return new Version((int)Major, (int)Minor, (int)Patch); }
+        get { return new Version((int) Major, (int) Minor, (int) Patch); }
     }
 
     public static implicit operator AppVersion(Version v)
     {
-        return new AppVersion((uint)v.Major, (uint)v.Minor, (uint)v.Build);
+        return new AppVersion((uint) v.Major, (uint) v.Minor, (uint) v.Build);
     }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     public void Draw(int indent, GUILayoutOption[] option = null)
     {
         // Name = EditorGUILayout.TextField("Major", Name);
         EditorGUILayout.BeginHorizontal();
         {
-            Major = (uint)EditorGUILayout.IntField("Major", (int)Major);
+            Major = (uint) EditorGUILayout.IntField("Major", (int) Major);
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect.Split(0, 4), "+"))
             {
                 Major += 1;
             }
+
             if (GUI.Button(rect.Split(1, 4), "-"))
             {
                 Major -= 1;
             }
-            Major = (int)Major < 0 ? 0 : Major;
+
+            Major = (int) Major < 0 ? 0 : Major;
         }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         {
-            Minor = (uint)EditorGUILayout.IntField("Minor", (int)Minor);
+            Minor = (uint) EditorGUILayout.IntField("Minor", (int) Minor);
             var rect2 = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect2.Split(0, 4), "+"))
             {
                 Minor += 1;
             }
+
             if (GUI.Button(rect2.Split(1, 4), "-"))
             {
                 Minor -= 1;
             }
-            Minor = (int)Minor < 0 ? 0 : Minor;
+
+            Minor = (int) Minor < 0 ? 0 : Minor;
         }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         {
-            Patch = (uint)EditorGUILayout.IntField("Patch", (int)Patch);
+            Patch = (uint) EditorGUILayout.IntField("Patch", (int) Patch);
             var rect3 = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect3.Split(0, 4), "+"))
             {
                 Patch += 1;
             }
+
             if (GUI.Button(rect3.Split(1, 4), "-"))
             {
                 Patch -= 1;
             }
-            Patch = (int)Patch < 0 ? 0 : Patch;
+
+            Patch = (int) Patch < 0 ? 0 : Patch;
         }
         EditorGUILayout.EndHorizontal();
     }
-#endif
-
+    #endif
 }
 
 //[ExecuteInEditMode]
 public class BuildConfig : SingletonAsset<BuildConfig>
 {
-
     [Serializable]
-    public class Config{
+    public class Config
+    {
         public string Name = "name";
+
         public AppChannel Channel = AppChannel.and_bili;
+
         // public BuildTarget targetPlatform = BuildTarget.Android;
         public AppVersion version = new AppVersion("1.0.0");
 
@@ -149,23 +156,25 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public string ProductName = "A3! 满开剧团";
         public string BundleId = "com.bili.a3";
         public string PackageName = "a3";
-        public string BuildNum = "0"; 
+        public string BuildNum = "0";
         public List<string> DefineSymbols = new List<string>();
 
         #if UNITY_EDITOR
-        public int BuildType = (int)AndroidBuildType.Debug;
+        public int BuildType = (int) AndroidBuildType.Debug;
         public AndroidBuildSystem AndroidBuildSystem = AndroidBuildSystem.Gradle;
         public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
         public AppBuildOptions BuildOptionFlags = 0;
         #endif
 
-        [NonSerialized]
-        public bool Foldout = false;
+        [NonSerialized] public bool Foldout = false;
     }
+
     public List<Config> Configs = new List<Config>();
 
     const string Tag = "BuildConfig";
+
     #region const
+
     public const string BundleResDir = "BundleRes";
     public const string BundleResRoot = "Assets/" + BundleResDir + "/";
 
@@ -179,10 +188,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     public static string LocalManifestPath
     {
-        get
-        {
-            return AssetSys.CacheRoot + BuildConfig.ManifestName;
-        }
+        get { return AssetSys.CacheRoot + BuildConfig.ManifestName; }
     }
 
     public bool mUseBundle = false;
@@ -193,7 +199,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         {
             #if UNITY_EDITOR
             return mUseBundle;
-            #else 
+            #else
             return true;
             #endif
         }
@@ -202,20 +208,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public AppLog.Level LogLevel = AppLog.Level.Debug;
 
     //runInBackground
-    [HideInInspector, SerializeField]
-    public bool runInBackground = false;
+    [HideInInspector, SerializeField] public bool runInBackground = false;
 
-    [SerializeField, HideInInspector]
-    public long LastBuildTime = 0L;
+    [SerializeField, HideInInspector] public long LastBuildTime = 0L;
 
-    [SerializeField, HideInInspector]
-    public AppVersion Version = new AppVersion("1.0.0");
+    [SerializeField, HideInInspector] public AppVersion Version = new AppVersion("1.0.0");
 
-    [HideInInspector, SerializeField]
-    public string Ip = "http://10.23.114.141:8008/";
+    [HideInInspector, SerializeField] public string Ip = "http://10.23.114.141:8008/";
 
-    [HideInInspector, SerializeField]
-    public string Port = "8008";
+    [HideInInspector, SerializeField] public string Port = "8008";
 
     /// <summary>
     /// http://ip:port/path/to/root/
@@ -227,72 +228,81 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     }
 
     [Serializable]
-    public class BundleBuildConfig
+    public enum BuildAssetBundleOptions
     {
-        [Flags]
-        public enum BuildAssetBundleOptions
-        {
-            //
-            // Summary:
-            //     Build assetBundle without any special option.
-            None = 0,
-            //
-            // Summary:
-            //     Don't compress the data when creating the asset bundle.
-            UncompressedAssetBundle = 1,
-            //
-            // Summary:
-            //     Includes all dependencies.
-            CollectDependencies = 2,
-            //
-            // Summary:
-            //     Forces inclusion of the entire asset.
-            CompleteAssets = 4,
-            //
-            // Summary:
-            //     Do not include type information within the AssetBundle.
-            DisableWriteTypeTree = 8,
-            //
-            // Summary:
-            //     Builds an asset bundle using a hash for the id of the object stored in the asset
-            //     bundle.
-            DeterministicAssetBundle = 16,
-            //
-            // Summary:
-            //     Force rebuild the assetBundles.
-            ForceRebuildAssetBundle = 32,
-            //
-            // Summary:
-            //     Ignore the type tree changes when doing the incremental build check.
-            IgnoreTypeTreeChanges = 64,
-            //
-            // Summary:
-            //     Append the hash to the assetBundle name.
-            AppendHashToAssetBundleName = 128,
-            //
-            // Summary:
-            //     Use chunk-based LZ4 compression when creating the AssetBundle.
-            ChunkBasedCompression = 256,
-            //
-            // Summary:
-            //     Do not allow the build to succeed if any errors are reporting during it.
-            StrictMode = 512,
-            //
-            // Summary:
-            //     Do a dry run build.
-            DryRunBuild = 1024,
+        /// <summary>
+        ///   <para>Build assetBundle without any special option.</para>
+        /// </summary>
+        None = 0,
 
-            PlaceHolder2048 = 2048,
-            //
-            // Summary:
-            //     Disables Asset Bundle LoadAsset by file name.
-            DisableLoadAssetByFileName = 4096,
-            //
-            // Summary:
-            //     Disables Asset Bundle LoadAsset by file name with extension.
-            DisableLoadAssetByFileNameWithExtension = 8192
-        }
-        public BuildAssetBundleOptions Options;
+        /// <summary>
+        ///   <para>Don't compress the data when creating the asset bundle.</para>
+        /// </summary>
+        UncompressedAssetBundle = 1,
+
+        /// <summary>
+        ///   <para>Includes all dependencies.</para>
+        /// </summary>
+        [Obsolete("This has been made obsolete. It is always enabled in the new AssetBundle build system introduced in 5.0.")]
+        CollectDependencies = 2,
+
+        /// <summary>
+        ///   <para>Forces inclusion of the entire asset.</para>
+        /// </summary>
+        [Obsolete("This has been made obsolete. It is always enabled in the new AssetBundle build system introduced in 5.0.")]
+        CompleteAssets = 4,
+
+        /// <summary>
+        ///   <para>Do not include type information within the AssetBundle.</para>
+        /// </summary>
+        DisableWriteTypeTree = 8,
+
+        /// <summary>
+        ///   <para>Builds an asset bundle using a hash for the id of the object stored in the asset bundle.</para>
+        /// </summary>
+        DeterministicAssetBundle = 16, // 0x00000010
+
+        /// <summary>
+        ///   <para>Force rebuild the assetBundles.</para>
+        /// </summary>
+        ForceRebuildAssetBundle = 32, // 0x00000020
+
+        /// <summary>
+        ///   <para>Ignore the type tree changes when doing the incremental build check.</para>
+        /// </summary>
+        IgnoreTypeTreeChanges = 64, // 0x00000040
+
+        /// <summary>
+        ///   <para>Append the hash to the assetBundle name.</para>
+        /// </summary>
+        AppendHashToAssetBundleName = 128, // 0x00000080
+
+        /// <summary>
+        ///   <para>Use chunk-based LZ4 compression when creating the AssetBundle.</para>
+        /// </summary>
+        ChunkBasedCompression = 256, // 0x00000100
+
+        /// <summary>
+        ///   <para>Do not allow the build to succeed if any errors are reporting during it.</para>
+        /// </summary>
+        StrictMode = 512, // 0x00000200
+
+        /// <summary>
+        ///   <para>Do a dry run build.</para>
+        /// </summary>
+        DryRunBuild = 1024, // 0x00000400
+
+        PlaceHold_2048 = 2048,
+
+        /// <summary>
+        ///   <para>Disables Asset Bundle LoadAsset by file name.</para>
+        /// </summary>
+        DisableLoadAssetByFileName = 4096, // 0x00001000
+
+        /// <summary>
+        ///   <para>Disables Asset Bundle LoadAsset by file name with extension.</para>
+        /// </summary>
+        DisableLoadAssetByFileNameWithExtension = 8192, // 0x00002000
     }
 
 
@@ -304,58 +314,66 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public bool mInclude = false;
         public bool mRebuild = false;
 
-        [NonSerialized]
-        public ulong mSize = 0ul;
+        [NonSerialized] public ulong mSize = 0ul;
+
         public ulong Size
         {
             protected set { mSize = value; }
             get
             {
-                if(mSize == 0ul)
+                if (mSize == 0ul)
                     foreach (var i in Bundles)
                         mSize += i.Size;
                 return mSize;
             }
         }
 
-        [SerializeField]
-        List<BundleInfo> mBundles;
-        public List<BundleInfo> Bundles { get { return mBundles; } set { mBundles = value; } }
+        [SerializeField] List<BundleInfo> mBundles;
 
-        public BundleInfo Find(string name) { return Bundles.Find(i => name == i.Name); }
+        public List<BundleInfo> Bundles
+        {
+            get { return mBundles; }
+            set { mBundles = value; }
+        }
 
-#if UNITY_EDITOR
+        public BundleInfo Find(string name)
+        {
+            return Bundles.Find(i => name == i.Name);
+        }
+
+        #if UNITY_EDITOR
         public void Refresh()
         {
-            foreach(var i in mBundles)
+            foreach (var i in mBundles)
             {
-                if (i.mRebuild)
+                if (i.Rebuild)
                 {
-                    AssetDatabase.ImportAsset(BundleResRoot+i.Name.RReplace(".bd$", ""), ImportAssetOptions.ImportRecursive);
+                    AssetDatabase.ImportAsset(BundleResRoot + i.Name.RReplace(".bd$", ""), ImportAssetOptions.ImportRecursive);
                 }
             }
         }
+
         public void DrawGroup(int indent = 0, GUILayoutOption[] guiOpts = null)
         {
             EditorGUI.indentLevel += indent;
             EditorGUILayout.BeginHorizontal();
             {
                 Foldout = EditorGUILayout.Foldout(Foldout, Name, true);
-                if (Size < 1024)//B
+                if (Size < 1024) //B
                     EditorGUILayout.LabelField((Size).ToString(), guiOpts);
-                else if (Size < 1024 * 1024)//K
+                else if (Size < 1024 * 1024) //K
                     EditorGUILayout.LabelField((Size / 1024).ToString() + "K", guiOpts);
                 else
                     EditorGUILayout.LabelField((Size / 1024 / 1024).ToString() + "M", guiOpts);
                 EditorGUILayout.LabelField("", guiOpts);
 
                 var tmpRebuild = EditorGUILayout.Toggle(mRebuild);
-                if(mRebuild != tmpRebuild)
+                if (mRebuild != tmpRebuild)
                 {
                     mRebuild = tmpRebuild;
                     foreach (var f in Bundles)
                     {
-                        f.mRebuild = mRebuild;
+                        f.Rebuild = mRebuild;
                     }
                 }
             }
@@ -365,6 +383,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             {
                 DrawBundles(indent, guiOpts);
             }
+
             EditorGUI.indentLevel -= indent;
         }
 
@@ -386,32 +405,34 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     //     AppLog.d(Tag, "reimport {0}", path);
                     //     AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
                     // }
-                    if (f.Size < 1024)//B
+                    if (f.Size < 1024) //B
                         EditorGUILayout.LabelField((f.Size).ToString(), guiOpts);
-                    else if (f.Size < 1024 * 1024)//K
+                    else if (f.Size < 1024 * 1024) //K
                         EditorGUILayout.LabelField((f.Size / 1024).ToString() + "K", guiOpts);
                     else
                         EditorGUILayout.LabelField((f.Size / 1024 / 1024).ToString() + "M", guiOpts);
 
-                    f.mRebuild = EditorGUILayout.Toggle(f.mRebuild);
+                    f.Rebuild = EditorGUILayout.Toggle(f.Rebuild);
                 }
                 EditorGUILayout.EndHorizontal();
             }
-            mRebuild = !Bundles.Any(i => i.mRebuild == false);
+
+            mRebuild = !Bundles.Any(i => i.Rebuild == false);
         }
-#endif
+        #endif
     }
 
-    [HideInInspector]
-    public bool ForceRebuild = false;
+    [HideInInspector] public bool ForceRebuild = false;
 
-    [HideInInspector, SerializeField]
-    public bool BuildScene = false;
+    [HideInInspector, SerializeField] public bool BuildScene = false;
 
-    [HideInInspector, SerializeField]
-    BundleManifest mGroups = new BundleManifest();
-    
-    public BundleManifest Groups { get { return mGroups; } set { mGroups = value; } }
+    [HideInInspector, SerializeField] BundleManifest mGroups = new BundleManifest();
+
+    public BundleManifest Groups
+    {
+        get { return mGroups; }
+        set { mGroups = value; }
+    }
 
 
     public BundleInfo GetBundleInfo(string path)
@@ -424,6 +445,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             var bundle = group.Bundles.Find(i => i.Name == bundleName);
             return bundle;
         }
+
         return null;
     }
 
@@ -437,27 +459,31 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     public List<string> ABResGroups
     {
-        get { return Groups.Select((i) => i.Name).ToList(); }
+        get
+        {
+            return Groups.Select((i) => i.Name)
+                .ToList();
+        }
     }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     public void RefreshGroups()
     {
-        foreach(var i in mGroups)
+        foreach (var i in mGroups)
         {
             i.Refresh();
         }
     }
 
-    [HideInInspector, SerializeField]
-    public UnityEditor.BuildAssetBundleOptions BundleBuildOptions = (
-                BuildAssetBundleOptions.None
-            //   | BuildAssetBundleOptions.CompleteAssets
-              | BuildAssetBundleOptions.ChunkBasedCompression
-              | BuildAssetBundleOptions.DeterministicAssetBundle
-            //   | BuildAssetBundleOptions.DryRunBuild
-            //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
-            );
+    [HideInInspector, SerializeField] public BuildAssetBundleOptions BundleBuildOptions = (
+        BuildAssetBundleOptions.None
+        //   | BuildAssetBundleOptions.CompleteAssets
+        |
+        BuildAssetBundleOptions.ChunkBasedCompression |
+        BuildAssetBundleOptions.DeterministicAssetBundle
+        //   | BuildAssetBundleOptions.DryRunBuild
+        //   | BuildAssetBundleOptions.AppendHashToAssetBundleName
+    );
 
     public static void ClearLogs()
     {
@@ -466,8 +492,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         clearMethod.Invoke(null, null);
     }
 
-    [SerializeField, HideInInspector]
-    List<ChannelConfig> mChannels = null;
+    [SerializeField, HideInInspector] List<ChannelConfig> mChannels = null;
+
     public List<ChannelConfig> Channels
     {
         get { return mChannels == null ? (mChannels = new List<ChannelConfig>()) : mChannels; }
@@ -480,8 +506,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         return Instance();
     }
 
-    [HideInInspector, SerializeField]
-    public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server();
+    [HideInInspector, SerializeField] public AssetBundleServer.Server BundleServer = new AssetBundleServer.Server();
+
     public static string LocalIpAddress()
     {
         IPAddress ipAddress = NetSys.LocalIpAddress()[0];
@@ -489,7 +515,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         return strLocalIP;
     }
 
-    public static IEnumerator Execute(string exe, string prmt 
+    public static IEnumerator Execute(string exe, string prmt
         , DataReceivedEventHandler OutputDataReceived = null
         , Action end = null
         , float total = 0, string processingtag = "bash", string info = ""
@@ -509,13 +535,13 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             pi.UseShellExecute = false;
             pi.CreateNoWindow = true;
 
-            if(OutputDataReceived != null)
+            if (OutputDataReceived != null)
                 process.OutputDataReceived += OutputDataReceived;
             process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
             {
                 if (string.IsNullOrEmpty(e.Data))
                     return;
-                if(e.Data.StartsWith(processingtag))
+                if (e.Data.StartsWith(processingtag))
                     ++processing;
                 // UnityEngine.Debug.Log(e.Data);
             };
@@ -537,20 +563,22 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             process.BeginErrorReadLine();
             // process.WaitForExit();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             UnityEngine.Debug.LogError("catch: " + e);
         }
 
         while (!finished)
         {
-            if(total > 1)
+            if (total > 1)
             {
-                EditorUtility.DisplayCancelableProgressBar("processing ...", info + ": " + processing + "/" + total, processing/total);
+                EditorUtility.DisplayCancelableProgressBar("processing ...", info + ": " + processing + "/" + total, processing / total);
             }
+
             yield return null;
         }
-        if(end != null)
+
+        if (end != null)
             end();
 
         // UnityEngine.Debug.Log("finished: " + process.ExitCode);
@@ -567,13 +595,15 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public static void CopyBundleConfigAsset()
     {
         var resourcePath = BuildConfig.AssetPath.Replace("Assets/", "Assets/Resources/");
-        resourcePath.Dir().CreateDir();
+        resourcePath.Dir()
+            .CreateDir();
         File.Copy(BuildConfig.AssetPath, resourcePath, true);
         AssetDatabase.ImportAsset(resourcePath);
 
 
         var bundlePath = BuildConfig.AssetPath.Replace("Assets/", "Assets/BundleRes/config/");
-        bundlePath.Dir().CreateDir();
+        bundlePath.Dir()
+            .CreateDir();
         File.Copy(BuildConfig.AssetPath, bundlePath, true);
         AssetDatabase.ImportAsset(bundlePath);
     }
@@ -585,13 +615,14 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             AppLog.e(Tag, "workspace not in this config");
             return;
         }
+
         if (config.Channel.isAndroid())
         {
             // CopyAar(config);
 
             PlayerSettings.Android.bundleVersionCode = int.Parse(config.BuildNum);
             EditorUserBuildSettings.androidBuildSystem = config.BuildSystem;
-            EditorUserBuildSettings.androidBuildType = (AndroidBuildType)config.BuildType;
+            EditorUserBuildSettings.androidBuildType = (AndroidBuildType) config.BuildType;
 
             if (config.OptionFlags.HasFlag(AppBuildOptions.Development))
                 EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
@@ -600,13 +631,14 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         {
             PlayerSettings.iOS.sdkVersion = config.iOSSdkVersion;
             PlayerSettings.iOS.buildNumber = config.BuildNum;
-            EditorUserBuildSettings.iOSBuildConfigType = (iOSBuildType)config.BuildType;
+            EditorUserBuildSettings.iOSBuildConfigType = (iOSBuildType) config.BuildType;
             EditorUserBuildSettings.symlinkLibraries = true;
         }
         else
         {
             AppLog.e(Tag, "Unknow ChannelConfig: " + config.Channel);
         }
+
         PlayerSettings.SetApplicationIdentifier(config.Channel.BuildTargetGroup(), config.BundleId);
         PlayerSettings.productName = config.ProductName;
         PlayerSettings.bundleVersion = config.Version;
@@ -624,8 +656,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         var EnvDefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
         PlayerSettings.SetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()
-            ,  EnvDefineSymbols + ";"
-            + string.Join(";", config.DefineSymbols.ToArray()));
+            , EnvDefineSymbols + ";" + string.Join(";", config.DefineSymbols.ToArray()));
 
         AssetDatabase.Refresh();
 
@@ -647,9 +678,9 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         }
 
         string[] SCENES = BuildScript.FindEnabledEditorScenes();
-        var options = (UnityEditor.BuildOptions)config.OptionFlags;
+        var options = (UnityEditor.BuildOptions) config.OptionFlags;
         BuildScript.GenericBuild(SCENES, config.OutputPath(), config.Channel.BuildTargetGroup(), config.Channel.BuildTarget(), options);
     }
 
-#endif
+    #endif
 }
