@@ -178,12 +178,19 @@ function this.InitTableViewData()
         ct.DelBtn_Button.onClick:AddListener(function()
             local dbpath = AssetSys.CacheRoot .. "db.db"
             local db = sqlite3.open(dbpath)
-            assert(db:exec("delete from item where id = " .. cdata.id .. ";"))
-            table.remove(this.DataSource, row + 1)
+            assert(db:exec("delete from item where id = " .. ct.data.id .. ";"))
+            
+            -- row changed  after remove
+            for i, v in ipairs(this.DataSource) do
+                if v.id == ct.data.id then
+                    table.remove(this.DataSource, i)
+                end
+            end
             this.tableview_TableView:ReloadData()
+            --this.LoadData()
             
             -- TODO remove cache files confirm
-            local cachePath = AssetSys.CacheRoot .. cdata.cpath
+            local cachePath = AssetSys.CacheRoot .. ct.data.cpath
             if(File.Exists(cachePath))then
                 File.Delete(cachePath)
             end
