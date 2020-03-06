@@ -25,14 +25,14 @@ end)
 -- end
 
 --AutoGenInit Begin
-function qrcode.AutoGenInit()
-    qrcode.DeviceCamera_DeviceCameraController = DeviceCamera:GetComponent("DeviceCameraController")
-    qrcode.Decode_QRCodeDecodeController = Decode:GetComponent("QRCodeDecodeController")
-    qrcode.Back_Button = Back:GetComponent("UnityEngine.UI.Button")
-    qrcode.Encode_QRCodeEncodeController = Encode:GetComponent("QRCodeEncodeController")
-    qrcode.EncodeImage_RectTransform = EncodeImage:GetComponent("UnityEngine.RectTransform")
-    qrcode.EncodeImage_RawImage = EncodeImage:GetComponent("UnityEngine.UI.RawImage")
-    qrcode.DecodeResult_Text = DecodeResult:GetComponent("UnityEngine.UI.Text")
+--DO NOT EDIT THIS FUNCTION MANUALLY.
+function this.AutoGenInit()
+    this.Decode_QRCodeDecodeController = Decode:GetComponent(typeof(CS.QRCodeDecodeController))
+    this.DecodeResult_Text = DecodeResult:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.DeviceCamera_DeviceCameraController = DeviceCamera:GetComponent(typeof(CS.DeviceCameraController))
+    this.Encode_QRCodeEncodeController = Encode:GetComponent(typeof(CS.QRCodeEncodeController))
+    this.EncodeImage_RawImage = EncodeImage:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
+    this.EncodeImage_RectTransform = EncodeImage:GetComponent(typeof(CS.UnityEngine.RectTransform))
 end
 --AutoGenInit End
 

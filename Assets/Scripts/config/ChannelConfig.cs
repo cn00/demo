@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
-
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -107,33 +107,36 @@ public class ChannelConfig
     public string PackageName = "a3";
     public string BuildNum = "0"; 
     public string Version = "1.0.0";
-    public string DefineSymbols = "";
+    public List<string> DefineSymbols = new List<string>();
+
+    public bool USE_LOG = false;
+    public bool USE_EMULATOR = false;
 
     public int BuildType = (int)AndroidBuildType.Debug;
-    public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Internal;
+    public AndroidBuildSystem BuildSystem = AndroidBuildSystem.Gradle;
 
     public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
 
     public AppBuildOptions OptionFlags = 0;
     public AppChannel Channel = AppChannel.and_bili;
 
-    public bool Emulator = false;
     [NonSerialized]
     public bool Foldout = false;
 
     #endregion properties
 
+
     public bool ToggleSymbol(string symbol, bool toggle)
     {
         if (toggle && !DefineSymbols.Contains(symbol))
         {
-            if (!DefineSymbols.EndsWith("\n"))
-                DefineSymbols += "\n";
-            DefineSymbols += symbol;
+            // if (!DefineSymbols.EndsWith("\n"))
+            //     DefineSymbols += "\n";
+            DefineSymbols.Add(symbol);
         }
-        else
-        if (!toggle && DefineSymbols.Contains(symbol))
-            DefineSymbols = DefineSymbols.Replace(symbol, "");
+        else if (!toggle && DefineSymbols.Contains(symbol))
+            DefineSymbols.Remove(symbol);
+
         return toggle;
     }
 
@@ -162,7 +165,7 @@ public class ChannelConfig
         else if (Channel.isIOS())
         {
             target_path = "ios.proj";
-            if (Emulator)
+            if (this.iOSSdkVersion == iOSSdkVersion.SimulatorSDK)
             {
                 PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
                 target_path += ".sim";
@@ -188,53 +191,21 @@ public class ChannelConfig
     {
         BuildConfig.Instance().Channels.Remove(this);
     }
+
+    public void PatchXcodeBtn()
+    {
+        
+    }
+    
     public ChannelConfig copy()
     {
-        var o = this;
-        return new ChannelConfig()
-        {
-            ProductName = o.ProductName + "-copy",
-            BundleId = o.BundleId,
-            PackageName = o.PackageName,
-            BuildNum = o.BuildNum,
-            DefineSymbols = o.DefineSymbols,
-            BuildType = o.BuildType,
-            BuildSystem = o.BuildSystem,
-            OptionFlags = o.OptionFlags,
-            Channel = o.Channel,
-        };
+        return (ChannelConfig) this.MemberwiseClone();
     }
 
-    public void DrawInspector(int indent = 0, GUILayoutOption[] guiOpts = null)
+    public void AfterDraw()
     {
-        Name = Channel.ToString();
-        // base.DrawInspector(indent, guiOpts);
-        EditorGUILayout.BeginHorizontal();
-        {
-            var rect = EditorGUILayout.GetControlRect();
-            int sc = 4;
-            int idx = -1;
-            if (GUI.Button(rect.Split(++idx, sc), "Build"))
-            {
-                BuildConfig.BuildPkg(this);
-            }
-            if (GUI.Button(rect.Split(++idx, sc), "Active"))
-            {
-                BuildConfig.Active(this);
-            }
-            if (GUI.Button(rect.Split(++idx, sc), "Copy"))
-            {
-                var copy = this.copy();
-                BuildConfig.Instance().Channels.Insert(BuildConfig.Instance().Channels.IndexOf(this) + 1, copy);
-            }
-            if (GUI.Button(rect.Split(++idx, sc), "Delete"))
-            {
-                BuildConfig.Instance().Channels.Remove(this);
-            }
-
-            ToggleSymbol("ENABLE_EMULATER", Emulator);
-        }
-        EditorGUILayout.EndHorizontal();
+        ToggleSymbol("ENABLE_EMULATER", USE_EMULATOR);
+        ToggleSymbol("USE_LOG", USE_LOG);
     }
 
     public void CopyAar()

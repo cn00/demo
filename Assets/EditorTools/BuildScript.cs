@@ -245,69 +245,6 @@ public class BuildScript
 
     #endregion Common
 
-    #region 转表
-    [MenuItem("Tools/Open Xls Folder")]
-    static void OpenExcelDir()
-    {
-        ProcessStartInfo pi = new ProcessStartInfo(
-#if UNITY_EDITOR_WIN
-            "explorer.exe",
-#elif UNITY_EDITOR_OSX
-            "open",
-#endif
-            "..\\table"
-        );
-        pi.WorkingDirectory = ".";
-        Process.Start(pi);
-    }
-
-    [MenuItem("Tools/Open LuaTable Folder")]
-    static void OpenLuaDir()
-    {
-        ProcessStartInfo pi = new ProcessStartInfo(
-#if UNITY_EDITOR_WIN
-            "explorer.exe",
-            "Assets\\BundleRes\\lua\\table"
-#elif UNITY_EDITOR_OSX
-            "open",
-            "Assets/BundleRes/lua/table"
-#endif
-        );
-        pi.WorkingDirectory = ".";
-        Process.Start(pi);
-    }
-
-
-    [MenuItem("Tools/Auto Convert Xls to Lua")]
-    static void ConvertXlsToLua()
-    {
-        Console.WriteLine("");
-        ProcessStartInfo pi = new ProcessStartInfo(
-#if UNITY_EDITOR_WIN
-            "Convert.exe",
-            "../../table ../../client/Assets/BundleRes/Lua/Table"
-#elif UNITY_EDITOR_OSX
-            "mono",
-            "Convert.exe ../../table ../../client/Assets/BundleRes/lua/table"
-#endif
-        );
-        pi.WorkingDirectory = "../tools/table/";
-        Process.Start(pi);
-
-        //LuaHelper.Init();
-    }
-
-    [MenuItem("Tools/Open GUI Xls Convert Tool")]
-    static void ConvertXlsToLuaGUI()
-    {
-        Console.WriteLine("");
-        ProcessStartInfo pi = new ProcessStartInfo(
-            "GameManager.exe"
-        );
-        pi.WorkingDirectory = "../tools/table";
-        Process.Start(pi);
-    }
-    #endregion 转表
 
     #region 安卓安装包
     [MenuItem("Build/AndroidApk")]
@@ -513,12 +450,13 @@ public class BuildScript
                 }
                 else
                 {
-                    bundleInfo = new BuildConfig.BundleInfo()
+                    bundleInfo = new BundleInfo()
                     {
                         Name = subPath,
                         Md5 = md5,
                         Version = version.ToString(),
                     };
+                    BuildConfig.Instance().AllBundles.Add(bundleInfo);
                 }
             }
             BuildConfig.Instance().Save();

@@ -16,7 +16,7 @@ using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
 
 public static class BundleManifestExtension
 {
-    public static List<BuildConfig.BundleInfo> AllBundles(this BundleManifest self)
+    public static List<BundleInfo> AllBundles(this BundleManifest self)
     {
         return self.SelectMany(i => i.Bundles).ToList();
     }
@@ -161,15 +161,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         [NonSerialized]
         public bool Foldout = false;
-
-        public void BuildPkgBtn()
-        {
-
-        }
-        public void BuildABBtn()
-        {
-
-        }
     }
     public List<Config> Configs = new List<Config>();
 
@@ -185,21 +176,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     #endregion const
 
-    #region  test dictionary draw
-    [Serializable]
-    public class TestC1
-    {
-        public int _int = 0;
-        public string _string = "sss";
-
-    }
-    public Dictionary<string, TestC1> _testDic = new Dictionary<string, TestC1>(){
-        {"test_key1", new TestC1(){_int = 1, _string = "string_1"}},
-        {"test_key2", new TestC1(){_int = 1, _string = "string_2"}},
-        {"test_key3", new TestC1(){_int = 1, _string = "string_3"}},
-        {"test_key4", new TestC1(){_int = 1, _string = "string_4"}},
-    };
-    #endregion test
 
     public static string LocalManifestPath
     {
@@ -319,27 +295,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public BuildAssetBundleOptions Options;
     }
 
-    [Serializable]
-    public class BundleInfo //: InspectorDraw
-    {
-        [SerializeField]
-        string mName;
-        public string Name { get { return mName; } set { mName = value; } }
-
-        [SerializeField]
-        public ulong mSize = 0u;
-        public ulong Size { get { return mSize; } set { mSize = value; } }
-
-        [SerializeField]
-        string mMd5;
-        public string Md5 { get { return mMd5; } set { mMd5 = value; } }
-
-        [SerializeField]
-        string mVersion;
-        public string Version { get { return mVersion; } set { mVersion = value; } }
-
-        public bool mRebuild = false;
-    }
 
     [Serializable]
     public class GroupInfo
@@ -643,14 +598,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         }
         else if (config.Channel.isIOS())
         {
-            if (config.Emulator)
-            {
-                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
-            }
-            else
-            {
-                PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
-            }
+            PlayerSettings.iOS.sdkVersion = config.iOSSdkVersion;
             PlayerSettings.iOS.buildNumber = config.BuildNum;
             EditorUserBuildSettings.iOSBuildConfigType = (iOSBuildType)config.BuildType;
             EditorUserBuildSettings.symlinkLibraries = true;
@@ -674,11 +622,10 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         // var activeTarget = UnityEditor.EditorUserBuildSettings.SwitchActiveBuildTarget(config.Channel.BuildTargetGroup(), config.Channel.BuildTarget());
 
-        var DefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
+        var EnvDefineSymbols = Environment.GetEnvironmentVariable("DefineSymbols");
         PlayerSettings.SetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()
-            , ""
-            + DefineSymbols + ";"
-            + config.DefineSymbols);
+            ,  EnvDefineSymbols + ";"
+            + string.Join(";", config.DefineSymbols.ToArray()));
 
         AssetDatabase.Refresh();
 

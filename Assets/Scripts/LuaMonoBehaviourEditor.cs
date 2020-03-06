@@ -16,17 +16,15 @@ namespace UnityEditor
     {
         const string Tag = "LuaMonoBebaviourEdirot";
         LuaMonoBehaviour mTarget = null;
-        string LuaText = "";
-
-        UnityEngine.Object mSourceLua = null;
-
+        string mLuaText = "";
+        
         public void OnEnable()
         {
             mTarget = (LuaMonoBehaviour) target;
 
             if (mTarget.LuaAsset)
             {
-                LuaText = mTarget.LuaAsset.text;
+                mLuaText = mTarget.LuaAsset.text;
             }
 
             refreshAutoGen();
@@ -103,16 +101,6 @@ namespace UnityEditor
                     {
                         mTarget.Injections.RemoveRange(size, mTarget.Injections.Count-size);
                     }
-                    
-                    mTarget.Injections.Sort((a, b) =>
-                    {
-                        if (a.obj != null && b.obj != null)
-                            return a.obj.name.CompareTo(b.obj.name);
-                        else if (a.obj == null && b.obj != null)
-                            return 1;
-                        else
-                            return -1;
-                    });
                 }
 
                 if (mShowInjections)
@@ -145,7 +133,7 @@ namespace UnityEditor
                                     var comName = comType.Substring(comType.LastIndexOf('.') + 1);
                                     var oldExp = item.obj.name + "_" + comName;
                                     string newExp = nname + "_" + comName;
-                                    LuaText = LuaText.Replace("." + oldExp, "." + newExp);
+                                    mLuaText = mLuaText.Replace("." + oldExp, "." + newExp);
                                     item.obj.name = nname;
                                 }
                             }
@@ -181,15 +169,6 @@ namespace UnityEditor
                     {
                         mTarget.InjectValues.RemoveRange(size, mTarget.InjectValues.Count-size);
                     }
-                    mTarget.InjectValues.Sort((a, b) =>
-                    {
-                        if (a.k != null && b.k != null)
-                            return a.k.CompareTo(b.k);
-                        else if (a.k == null && b.k != null)
-                            return 1;
-                        else
-                            return -1;
-                    });
                 }
 
                 if (mShowInjectionValues)
@@ -210,16 +189,36 @@ namespace UnityEditor
             
             // gen lua code
             if (GUI.changed)
-                refreshAutoGen();
+            {
+                mTarget.InjectValues.Sort((a, b) =>
+                {
+                    if (a.k != null && b.k != null)
+                        return a.k.CompareTo(b.k);
+                    else if (a.k == null && b.k != null)
+                        return 1;
+                    else
+                        return -1;
+                });
 
+                mTarget.Injections.Sort((a, b) =>
+                {
+                    if (a.obj != null && b.obj != null)
+                        return a.obj.name.CompareTo(b.obj.name);
+                    else if (a.obj == null && b.obj != null)
+                        return 1;
+                    else
+                        return -1;
+                });
+                refreshAutoGen();
+            }
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
             {
                 var path = AssetDatabase.GetAssetPath(mTarget.LuaAsset);
-                var pattern = Regex.Match(LuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
+                var pattern = Regex.Match(mLuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
                     RegexOptions.Multiline).ToString();
-                LuaText = LuaText.Replace(pattern.ToString(), luaMemberValue);
-                File.WriteAllText(path, LuaText);
+                mLuaText = mLuaText.Replace(pattern.ToString(), luaMemberValue);
+                File.WriteAllText(path, mLuaText);
                 AppLog.d(Tag, path + " updated");
             }
 

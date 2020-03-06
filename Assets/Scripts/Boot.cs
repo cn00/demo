@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.Video;
 
 public class Boot : SingleMono<Boot>
@@ -18,43 +18,37 @@ public class Boot : SingleMono<Boot>
 //        if(BuildConfig.Instance().UseBundle)
 //            BuildConfig.Instance().BundleServer.StartBtn();
 //        #endif
-        
         base.Awake();
     }
 
     public override IEnumerator Init()
     {
-        {
-            string luas = null;
-            string path = Application.streamingAssetsPath + "/config.lua";
-            AppLog.d(Tag, "config: {0}", path);
-            #if UNITY_ANDROID && ! UNITY_EDITOR
-            var www = new WWW(path);
 
-            yield return www;
-            
-            luas = System.Text.Encoding.UTF8.GetString(www.bytes);
-            www.Dispose();
-            #else
-            luas = File.ReadAllText(path);
-            #endif
-            AppLog.d(Tag, "[{0}]", luas);
-            LuaSys.Instance.GlobalEnv.DoString(luas,path);
+        var conf = Application.streamingAssetsPath + "/config.lua";
+        string luas = "";
+        #if UNITY_ANDROID //&& !UNITY_EDITOR 
+        // var www0 = new WWW(conf);
+        var www = UnityEngine.Networking.UnityWebRequest.Get(conf);
+        yield return www.SendWebRequest();
+        luas = www.downloadHandler.text;
+        #else
+        if (File.Exists(conf))
+        {
+            luas = File.ReadAllText(conf);
         }
+        #endif
+        AppLog.d(Tag, "[{0}]", luas);
+        LuaSys.Instance.GlobalEnv.DoString(luas);
+
         
-        AppLog.d(Tag, "AssetSys.init");
         while(!AssetSys.Instance.Inited)
             yield return null;
-        AppLog.d(Tag, "LuaSys.init");
         while(!LuaSys.Instance.Inited)
             yield return null;
-        
-        AppLog.d(Tag, "utility.init");
-        if(BuildConfig.Instance().UseBundle)
-            yield return AssetSys.Instance.GetBundle("lua/utility.bd");
+
+        yield return AssetSys.Instance.GetBundle("lua/utility.bd");
 
         
-        AppLog.d(Tag, "boot.lua");
         yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset =>
         {
             var lua = gameObject.AddComponent<LuaMonoBehaviour>();

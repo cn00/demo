@@ -13,6 +13,7 @@ using UnityEngine.Events;
 using XLua;
 using XLua.LuaDLL;
 using System.Runtime.InteropServices;
+using UnityEngine.Networking;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -85,9 +86,9 @@ public static class BundleHelper
             return;
         }
 
-//        var cmd = "7z a \"" + outFile + ".7z\" \"" + inFile + "\" -p123456";
-//        AppLog.d("BundleHelper", cmd);
-//        p7zip_executeCommand(cmd);
+        //        var cmd = "7z a \"" + outFile + ".7z\" \"" + inFile + "\" -p123456";
+        //        AppLog.d("BundleHelper", cmd);
+        //        p7zip_executeCommand(cmd);
 
         // if(true)return;
 
@@ -200,17 +201,17 @@ public class AssetSys : SingleMono<AssetSys>
             if (string.IsNullOrEmpty(mCacheRoot))
             {
                 var cacheDirName = "ab/";
-#if UNITY_EDITOR
+                #if UNITY_EDITOR
                 cacheDirName += PlatformName() + "/";
-                
+
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
-#else //!UNITY_EDITOR
+                #else //!UNITY_EDITOR
 #   if UNITY_ANDROID || UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
 #   else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
 #   endif
-#endif
+                #endif
             }
 
             return mCacheRoot;
@@ -220,15 +221,14 @@ public class AssetSys : SingleMono<AssetSys>
     public static string PlatformName()
     {
         string name;
-# if UNITY_IOS
+        # if UNITY_IOS
         name = PlatformName(RuntimePlatform.IPhonePlayer);
-# elif UNITY_ANDROID
-        name= PlatformName(RuntimePlatform.Android);
-# else
-        name= PlatformName(Application.platform);
-# endif
+        # elif UNITY_ANDROID
+        name = PlatformName(RuntimePlatform.Android);
+        # else
+        name = PlatformName(Application.platform);
+        # endif
         return name;
-
     }
 
     /// <summary>
@@ -281,9 +281,7 @@ public class AssetSys : SingleMono<AssetSys>
         {
             Directory.CreateDirectory(CacheRoot);
         }
-#if UNITY_EDITOR
-        if (BuildConfig.Instance().UseBundle)
-#endif
+        #if USE_BUNDLE
         {
             if (mManifest == null)
             {
@@ -303,6 +301,7 @@ public class AssetSys : SingleMono<AssetSys>
 
             yield return GetBundle("ui/boot.bd");
         }
+        #endif
 
         yield return base.Init();
     }
@@ -354,24 +353,22 @@ public class AssetSys : SingleMono<AssetSys>
     public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
         T resObj = null; //default(T);
-#if UNITY_EDITOR
-        if (BuildConfig.Instance().UseBundle)
-#endif
+        #if UNITY_EDITOR
+        if (BuildConfig.Instance()
+                .UseBundle)
+            #endif
         {
             string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             AppLog.d(Tag, "from bundle: " + assetSubPath);
-            yield return GetBundle(bundleName, (bundle) =>
-            {
-                resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
-            });
+            yield return GetBundle(bundleName, (bundle) => { resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath); });
         }
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         // 编辑器从原始文件加载资源
         else
         {
             resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
-#endif
+        #endif
         AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj?.GetType());
         if (callBack != null)
             callBack(resObj);
@@ -415,9 +412,8 @@ public class AssetSys : SingleMono<AssetSys>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundleName, Action<UnityEngine.AssetBundle> callBack = null)
+    public IEnumerator GetBundle(string bundlePath, Action<UnityEngine.AssetBundle> callBack = null)
     {
-        string bundlePath = bundleName;
         if (string.IsNullOrEmpty(bundlePath))
         {
             AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
@@ -432,63 +428,48 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
-        var version = BuildConfig.Instance().Version.ToString();
+        var version = BuildConfig.Instance()
+            .Version.ToString();
         var cachePath = CacheRoot + bundlePath;
-        var fileUrl = "file://" + cachePath;        
+        var fileUrl = "file://" + cachePath;
 
         var isLocal = true;
-        var needUpdate = false;// UpdateSys.Instance.NeedUpdate(bundlePath);
-        if (!File.Exists(cachePath)
-            || needUpdate
-        )
+        var needUpdate = UpdateSys.Instance.NeedUpdate(bundlePath);
+        if (!File.Exists(cachePath) || needUpdate)
         {
             isLocal = false;
             fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
-
         AppLog.d(Tag, fileUrl);
 
-        FileStream outStream = null;
-        if (isLocal)
-        {
-            outStream = new FileStream(cachePath, FileMode.Open);;
-        }
-        else
+        var cachDir = cachePath.Substring(0, cachePath.LastIndexOf('/'));
+        cachDir.CreateDir();
+
+        var outStream = new FileStream(cachePath, FileMode.OpenOrCreate);
+        if (!isLocal)
         {
             var lzmapath = cachePath + BuildConfig.CompressedExtension;
             yield return Download(fileUrl, lzmapath);
             FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
-            outStream = new FileStream(cachePath, FileMode.Create);;
-            var thread = new Thread(() =>
-            {
-                BundleHelper.DecompressFileLZMA(lzmaStream, outStream);
-
-                lock (mLoadedBundles)
-                {
-                    if (IsLoaded(bundlePath))
-                    {
-                        UnloadBundle(bundlePath);
-                    }
-                }
-            });
+            var thread = new Thread(() => { BundleHelper.DecompressFileLZMA(lzmaStream, outStream); });
             thread.Start();
             while (thread.IsAlive)
             {
-                AppLog.d(Tag, "子线程解压中。。。{0}", fileUrl);
+                AppLog.d(Tag, "解压中。。。{0}", fileUrl);
                 yield return new WaitForSeconds(0.3f);
             }
+
+            if (IsLoaded(bundlePath))
+            {
+                UnloadBundle(bundlePath);
+            }
+
             lzmaStream.Close();
         }
-        if(outStream != null)
-        {
-            mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
-            outStream.Close();
-        }
-        else
-        {
-            AppLog.e(Tag, "bundle load failed: {0}", fileUrl);
-        }
-        
+        mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
+        outStream.Close();
+
+
         // Dependencies
         if (mManifest != null) // 加载 manifest 时本身为空
         {
@@ -506,30 +487,37 @@ public class AssetSys : SingleMono<AssetSys>
         yield return null;
     }
 
-    public static IEnumerator Download(string url, string path, Action cb = null)
+
+    public static IEnumerator Download(string url, string path = null, Action<FileStream> cb = null)
     {
+        if (path == null)
+            path = Path.GetTempPath() + Path.GetTempFileName();
         if (!url.StartsWith("http"))
         {
             url = WebRoot + url;
         }
-        var tmpPath = path + ".tmp";
-        var cachDir = tmpPath.Substring(0, tmpPath.LastIndexOf('/'));
+
+        var cachDir = path.Substring(0, path.LastIndexOf('/'));
         cachDir.CreateDir();
+
+        var tmpPath = path + ".tmp";
+
+        HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
+        webRequest.Timeout = TimeoutMillisecond;
+        // webRequest.KeepAlive = true; // default = true
 
         //打开上次下载的文件或新建文件 
         System.IO.FileStream temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
         var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
         AppLog.d(Tag, "download: {0} +{1}", url, temfs.Length);
-
-        HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
-        webRequest.Timeout = TimeoutMillisecond;
-        //webRequest.AllowReadStreamBuffering = true;
+        //webRequest.AllowReadStreamBuffering = true; // wrong
         if (temfs.Length > 0)
         {
             webRequest.AddRange((int) temfs.Length); //设置Range值
         }
 
         var response = webRequest.GetResponse() as HttpWebResponse;
+        var heads = response.Headers;
         long contentLength = response.ContentLength;
 
         System.IO.Stream responseStream = response.GetResponseStream();
@@ -543,29 +531,41 @@ public class AssetSys : SingleMono<AssetSys>
         {
             temfs.Write(buffer, 0, readSize);
             temfs.Flush(true);
-            downloadedLength = temfs.Length ;
+            downloadedLength = temfs.Length;
             AppLog.d(Tag, string.Format(" {0:F}/{1:F}M [{2}] {3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
                 , contentLength * 1.0 / (1024 * 1024), readSize, url));
-            
+
             readSize = responseStream.Read(buffer, 0, bufsize);
             yield return null;
         }
-        AppLog.d(Tag, "download {0}:{1}",totalLength, downloadedLength);
 
+        AppLog.d(Tag, "download ok {0}:{1}", url, totalLength);
+
+        cb?.Invoke(temfs);
         temfs.Close();
 
         //下载完成重命名
-        if(File.Exists(path))File.Delete(path);
         File.Move(path + ".tmp", path);
-        File.Delete(path + ".tmp");
-        
-        if (cb != null)
-        {
-            cb.Invoke();
-        }
-        
+        File.Delete((path + ".tmp"));
+
+        UpdateCachInfo(path, heads.Get("ETag"), contentLength);
+
         yield return null;
+    }
+
+    static void UpdateCachInfo(string path, string etag, long length)
+    {
+        // TODO: update download info: etag content-length
+        var dbPath = CacheRoot + "db.db";
+        IntPtr db;
+        var errno = SQLite.SQLite3.Open(dbPath, out db);
+        AppLog.d(Tag, "open db: {0}", errno);
+        var sql = string.Format("insert into cache_info (id, path, etag, length) VALUES ( last_insert_rowid(), '{0}',  '{1}' , '{2}' ) on conflict(path) do update set etag = excluded.etag, length=excluded.length;"
+            , path, etag, length);
+        errno = SQLite.SQLite3.Exec(db, sql);
+        AppLog.d(Tag, "{0}:{1}", errno, sql);
+        SQLite.SQLite3.Close(db);
     }
 
     public static bool UrlIsExist(string url)
@@ -580,56 +580,9 @@ public class AssetSys : SingleMono<AssetSys>
 
         return b;
     }
-    
+
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
     public static int TimeoutMillisecond = 1000 * 5;
-    public static IEnumerator Www(string url, UnityAction<WWW> endCallback = null,
-        UnityAction<float> progressCallback = null)
-    {
-        WWW www = new WWW(url);
-        DateTime timeout = DateTime.Now +
-                           new TimeSpan(TimeOutSeconds / 3600, (TimeOutSeconds % 3600) / 60, TimeOutSeconds % 60);
-        if (www != null)
-        {
-            while (!www.isDone && string.IsNullOrEmpty(www.error))
-            {
-                //yield return www;
-                if (progressCallback != null)
-                {
-                    progressCallback(www.progress);
-                    if (DateTime.Now > timeout && www.progress < 0.1f)
-                    {
-                        AppLog.d(Tag, "timeout: " + url);
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-
-            if (www.progress >= 1 && string.IsNullOrEmpty(www.error))
-            {
-                AppLog.d(Tag, "loaded {0} OK {1}", url, www.progress);
-            }
-            else
-            {
-                AppLog.e(Tag, "{0}: {1}", www.error, url);
-            }
-
-            if (endCallback != null)
-            {
-                // 留给调用者选择是否存盘
-                //if(url.Substring(0, 7) == "http://")
-                //{
-                //    AsyncSave(url.Replace(WebRoot + "/" + CGameRoot.Instance.Version, CacheRoot), www.bytes);
-                //}
-                endCallback(www);
-                www.Dispose();
-            }
-        }
-
-        yield return null;
-    }
 
     public void UnloadBundle(string path, bool unloadAllLoadedObjects = false)
     {
