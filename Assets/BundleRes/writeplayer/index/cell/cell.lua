@@ -28,7 +28,7 @@ local yield_return = util.async_to_sync(function (to_yield, callback)
      mono:YieldAndCallback(to_yield, callback)
  end)
 
--- function cell.coroutine_demo()
+-- function this.coroutine_demo()
 --     return coroutine.create(function()
 --         print('table_view_cell coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
@@ -55,19 +55,19 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
-function cell.Awake()
+function this.Awake()
     this.AutoGenInit()
 end
 
-function cell.Start()
+function this.Start()
     local ct = cell
     ct.TableViewCell:DidSelectEvent("+", function(row2)
-        print("cellevent DidSelectEvent", row2, ct.TableViewCell.RowNumber)
+        print("cellevent DidSelectEvent", row2, ct.TableViewthis.RowNumber)
     end)
     ct.TableViewCell:DidPointClickEvent("+", function(row2)
-        print("cellevent DidPointClickEvent", row2, ct.TableViewCell.RowNumber, ct.Animator, ct.Animator.Play)
+        print("cellevent DidPointClickEvent", row2, this.RowNumber, ct.Animator, ct.Animator.Play)
         ct.Animator:Play("cell_scale", 0)
-        --cell.Play()
+        --this.Play()
         manager.Scene.push("writeplayer/player/player.prefab",function(player)
             local playermono = player:GetComponent(typeof(CS.LuaMonoBehaviour))
             local ct = playermono.Lua
@@ -75,18 +75,18 @@ function cell.Start()
         end)
     end)
     ct.TableViewCell:DidHighlightEvent("+", function(row2)
-        print("cellevent DidHighlightEvent", row2, ct.TableViewCell.RowNumber)
+        print("cellevent DidHighlightEvent", row2, this.RowNumber)
     end)
 end
 
 
-function cell.SetCellData(data, columnidx, num)
+function this.SetCellData(data, columnidx, num)
     if data == nil then
         return
     end
     --if num <= 0 then num = 1 end
     this.data = data
-    print("cell.SetCellData", data.id, data.url)
+    print("this.SetCellData", data.id, data.url)
     
     self.Text_Text.text = data.id
     --[[
@@ -120,27 +120,5 @@ function cell.SetCellData(data, columnidx, num)
     --end
 end
 
--- end
-
--- function cell.FixedUpdate()
-
--- end
-
--- function cell.Update()
-
--- end
-
--- function cell.LateUpdate()
-
--- end
-
--- function cell.OnDestroy()
---     print("cell.OnDestroy")
-
--- end
-
-function cell.Destroy()
-    GameObject.DestroyImmediate(mono.gameObject)
-end
 
 return cell

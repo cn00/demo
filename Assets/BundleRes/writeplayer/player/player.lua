@@ -41,14 +41,14 @@ end)
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.Content_HorizontalLayoutGroup = Content:GetComponent(typeof(CS.UnityEngine.UI.HorizontalLayoutGroup))
     this.mi_Image = mi:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.op_movie_VideoPlayer = op_movie:GetComponent(typeof(CS.UnityEngine.Video.VideoPlayer))
     this.playbackSpeedText_Text = playbackSpeedText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.RawImage_RawImage = RawImage:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
     this.Save_Button = Save:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
-    this.sv_item_tem_Button = sv_item_tem:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
+    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
     this.ToggleEdit_Toggle = ToggleEdit:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
     this.ToggleLoop_Toggle = ToggleLoop:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
     this.ToggleMi_Toggle = ToggleMi:GetComponent(typeof(CS.UnityEngine.UI.Toggle))
@@ -104,83 +104,47 @@ function this.init(data)
 		this.op_movie_VideoPlayer.waitForFirstFrame = true
 		--this.op_movie_VideoPlayer:Play()
 
-		local btns = {}
+		local citems = {}
 		if(File.Exists(this.timeline))then
-			btns = dofile(this.timeline)
-			btns.old = true
+			citems = dofile(this.timeline)
+			citems.old = true
 			print("use cache:", this.timeline)
 		end
 
 		--assert(coroutine.resume(this.coroutine_demo()))
 		local text = data.text
-		local count = 0
 		local wcount = 0
 		-- for i in string.gmatch(text, "[%z\1-\127\194-\244][\128-\191]*") do
 		for i in string.gmatch(text, "[%z\194-\244][\128-\191]*") do
 			--print("拆字:", i)
-			local item = GameObject.Instantiate(sv_item_tem, Content.transform)
-			item:SetActive(true)
-			local t = item.transform:Find("Text"):GetComponent(typeof(CS.UnityEngine.UI.Text))
-			t.text = i
-			item.name = i
-			count = count + 1
-			item:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0, 0, 0, 0)
-			-- if i:gmatch("[%z，。；？“”]") == nil then
-			if i ~= "，"
-			and i ~= "。" 
-			and i ~= "；" 
-			and i ~= "？" 
-			and i ~= "“" 
-			and i ~= "”" 
-			then
+			---- if i:gmatch("[%z，。；？“”]") == nil then
+			--if i ~= "，"
+			--and i ~= "。" 
+			--and i ~= "；" 
+			--and i ~= "？" 
+			--and i ~= "“" 
+			--and i ~= "”" 
+			--then
 				wcount = wcount + 1
-				local btni = btns[wcount] or {frame = 0}
+				local btni = citems[wcount] or { frame = 0}
 				btni.c = i
-				btni.btn = item:GetComponent(typeof(CS.UnityEngine.UI.Button))
-				btns[wcount] = btni
-			end
+				citems[wcount] = btni
+			--end
 		end
-	    GameObject.DestroyImmediate(sv_item_tem)
-		this.count = count
 		this.wcount = wcount
-		this.btns = btns
+		this.DataSource = citems
 
-		local wcount = this.wcount
-		for i,v in ipairs(this.btns) do
-			if not this.btns.old then
+	    this.InitTableViewData()
+	    this.tableview_TableView:ReloadData()
+
+	    for i,v in ipairs(this.DataSource) do
+			if not this.DataSource.old then
 				v.frame = math.ceil(1.0*(i-1)/wcount*this.op_movie_VideoPlayer.frameCount)
 			end
 			--print(i, v.c, v.frame)
-			if(v.btn)then
-				v.btn.onClick:AddListener(function()
-					if this.ToggleEdit_Toggle.isOn then
-						local delta = this.op_movie_VideoPlayer.frame - v.frame
-						print("delta:", delta)
-						v.frame = this.op_movie_VideoPlayer.frame
-						v.modified = true
-						for ii = i + 1, #this.btns do
-							local bii = this.btns[ii]
-							if not bii.modified then
-								bii.frame = bii.frame + delta
-							end
-							if bii.frame > this.op_movie_VideoPlayer.frameCount then
-								bii.frame = this.op_movie_VideoPlayer.frameCount
-							end
-						end
-					else
-						-- print("op_movie_VideoPlayer.time", v.btn, v.frame, this.op_movie_VideoPlayer.frame, this.op_movie_VideoPlayer.frameCount)
-						-- this.op_movie_VideoPlayer:Pause()
-						this.op_movie_VideoPlayer.frame = v.frame
-						this.op_movie_VideoPlayer:Play()
-					end
-				end)
-			end
 		end
 		
-		btns[1+#btns] = {frame = this.op_movie_VideoPlayer.frameCount}
-
-		-- RectTransform 是 transform 的别名
-		Content.transform.sizeDelta = UnityEngine.Vector2(this.count * 67, 60)
+		citems[1+#citems] = { c="", frame = this.op_movie_VideoPlayer.frameCount}
 
 		-- -- UnityEngine.VideoPlayer ？？？ GetComponent("UnityEngine.Video.VideoPlayer") 取不到？
 		-- player.op_movie_VideoPlayer = op_movie:GetComponent("UnityEngine.Video.VideoPlayer") -- 不行
@@ -194,7 +158,7 @@ function this.init(data)
 		end)
 
 		this.Save_Button.onClick:AddListener(function()
-			local luas = "return " .. dump(this.btns)
+			local luas = "return " .. dump(this.DataSource)
 			File.WriteAllText(this.timeline, luas)
 		end)
 
@@ -206,6 +170,56 @@ function this.init(data)
 
 	    manager.Scene.closeloading()
     end)
+end
+
+function this.InitTableViewData()
+
+	this.tableview_TableViewController.GetDataCount = function(table)
+		return #this.DataSource
+	end
+	this.tableview_TableViewController.GetCellSize = function(table, row)
+		local size = 80;
+		return size
+	end
+	this.tableview_TableViewController.CellAtRow = function(tb, row)
+		local celltypenumber = this.tableview_TableViewController.prefabCells.Length
+		local cellidentifier = "cell" -- string.format("cell", 1 + (row % celltypenumber))
+		print("cellidentifier", cellidentifier, row, celltypenumber)
+		local cell = tb:ReusableCellForRow(cellidentifier, row)
+		cell.name = "lua-Cell-" .. (row)
+		local ct = cell:GetComponent("LuaMonoBehaviour").Lua
+		local cdata = this.DataSource[row + 1]
+		ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage) 
+		ct.Text_Text.text = cdata.c
+		ct.TableViewCell:DidPointClickEvent("+", function(row2)
+			local v = this.DataSource[row2+1]
+			if this.ToggleEdit_Toggle.isOn then
+				local delta = this.op_movie_VideoPlayer.frame - v.frame
+				print("delta:", delta)
+				v.frame = this.op_movie_VideoPlayer.frame
+				v.modified = true
+				for ii = row2 + 1, #this.DataSource do
+					local bii = this.DataSource[ii]
+					if not bii.modified then
+						bii.frame = bii.frame + delta
+					end
+					if bii.frame > this.op_movie_VideoPlayer.frameCount then
+						bii.frame = this.op_movie_VideoPlayer.frameCount
+					end
+				end
+			else
+				-- print("op_movie_VideoPlayer.time", v.btn, v.frame, this.op_movie_VideoPlayer.frame, this.op_movie_VideoPlayer.frameCount)
+				-- this.op_movie_VideoPlayer:Pause()
+				this.op_movie_VideoPlayer.frame = v.frame
+				this.op_movie_VideoPlayer:Play()
+			end
+
+		end)
+
+		-- print("CellAtRow", row)
+		return cell
+	end
+
 end
 
 local function findidx(t, frame)
@@ -235,16 +249,16 @@ function this.mUpdate()
 		if this.ToggleLoop_Toggle.isOn then
 			local cf = this.op_movie_VideoPlayer.frame
 			local nidx = 1+this.currentidx
-			if nidx <= #this.btns and cf > this.btns[nidx].frame or cf >= this.op_movie_VideoPlayer.frameCount - 1 then
-				this.op_movie_VideoPlayer.frame = this.btns[this.currentidx].frame
+			if nidx <= #this.DataSource and cf > this.DataSource[nidx].frame or cf >= this.op_movie_VideoPlayer.frameCount - 1 then
+				this.op_movie_VideoPlayer.frame = this.DataSource[this.currentidx].frame
 			end
 		end
 		local lastidx = this.currentidx
-		this.currentidx = findidx(this.btns, this.op_movie_VideoPlayer.frame)
+		this.currentidx = findidx(this.DataSource, this.op_movie_VideoPlayer.frame)
 		if(lastidx ~= this.currentidx)then
-			print("current:", this.btns[this.currentidx].c)
-			this.btns[lastidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0, 0, 0, 0)
-			this.btns[this.currentidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0.6, 0.4, 0.2, 0.5)
+			print("current:", this.DataSource[this.currentidx].c)
+			--this.DataSource[lastidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0, 0, 0, 0)
+			--this.DataSource[this.currentidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0.6, 0.4, 0.2, 0.5)
 		end
 	--end
 end

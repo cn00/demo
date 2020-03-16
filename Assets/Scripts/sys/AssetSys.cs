@@ -52,9 +52,7 @@ public static class BundleHelper
     public static string Tag = "BundleHelper";
 
     #region 压缩
-
     #region LZMA
-
     public const int kPropSize = SevenZip.Compression.Lzma.Encoder.kPropSize;
 
     public class CProgressInfo : SevenZip.ICodeProgress
@@ -180,9 +178,7 @@ public static class BundleHelper
 
         output.Seek(0, SeekOrigin.Begin);
     }
-
     #endregion LZMA
-
     #endregion 压缩
 }
 
@@ -282,17 +278,16 @@ public class AssetSys : SingleMono<AssetSys>
             Directory.CreateDirectory(CacheRoot);
         }
         #if UNITY_EDITOR
-        if(BuildConfig.Instance().UseBundle)
-        #endif
+        if (BuildConfig.Instance().UseBundle)
+            #endif
         {
             if (mManifest == null)
             {
-#if UNITY_EDITOR
-                string manifestBundleName =
-                    BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
-#else
+                #if UNITY_EDITOR
+                string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
+                #else
                 string manifestBundleName = PlatformName(Application.platform);
-#endif
+                #endif
                 yield return GetBundle(manifestBundleName, (bundle) =>
                 {
                     var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -339,6 +334,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         string bundleName = dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+
         // bundleName = mManifest.GetAllAssetBundles().First(i => i.StartsWith(bundleName));
         return bundleName;
     }
@@ -355,8 +351,7 @@ public class AssetSys : SingleMono<AssetSys>
     {
         T resObj = null; //default(T);
         #if UNITY_EDITOR
-        if (BuildConfig.Instance()
-                .UseBundle)
+        if (BuildConfig.Instance().UseBundle)
             #endif
         {
             string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
@@ -364,6 +359,7 @@ public class AssetSys : SingleMono<AssetSys>
             yield return GetBundle(bundleName, (bundle) => { resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath); });
         }
         #if UNITY_EDITOR
+
         // 编辑器从原始文件加载资源
         else
         {
@@ -373,6 +369,11 @@ public class AssetSys : SingleMono<AssetSys>
         AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj?.GetType());
         if (callBack != null)
             callBack(resObj);
+    }
+
+    public UnityEngine.Object GetAssetSync(string assetPath)
+    {
+        return GetAssetSync<UnityEngine.Object>(assetPath);
     }
 
     public AssetBundle GetBundleSync(string bundlePath)
@@ -401,11 +402,10 @@ public class AssetSys : SingleMono<AssetSys>
         {
             mLoadedBundles[bundlePath] = bundle;
         }
-
-        // else
-        // {
-        //     AppLog.w(Tag, "[{0}] did not download yet.", bundlePath);
-        // }
+        else
+        {
+            AppLog.e(Tag, "[{0}] did not download yet.", bundlePath);
+        }
         return bundle;
     }
 
@@ -441,24 +441,24 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
-        var version = BuildConfig.Instance()
-            .Version.ToString();
+        var version = BuildConfig.Instance().Version.ToString();
         var cachePath = CacheRoot + bundlePath;
         var fileUrl = "file://" + cachePath;
 
         var isLocal = true;
         var needUpdate = UpdateSys.Instance.NeedUpdate(bundlePath);
-        if (!File.Exists(cachePath) || needUpdate)
+        var outStream = new FileStream(cachePath, FileMode.OpenOrCreate);
+        if (!File.Exists(cachePath) || outStream.Length == 0 || needUpdate)
         {
             isLocal = false;
             fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
+
         AppLog.d(Tag, fileUrl);
 
         var cachDir = cachePath.Substring(0, cachePath.LastIndexOf('/'));
         cachDir.CreateDir();
 
-        var outStream = new FileStream(cachePath, FileMode.OpenOrCreate);
         if (!isLocal)
         {
             var lzmapath = cachePath + BuildConfig.CompressedExtension;
@@ -479,6 +479,7 @@ public class AssetSys : SingleMono<AssetSys>
 
             lzmaStream.Close();
         }
+
         mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
         outStream.Close();
 
@@ -504,26 +505,44 @@ public class AssetSys : SingleMono<AssetSys>
 
         var tmpPath = path + ".tmp";
 
-        HttpWebRequest webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
-        webRequest.Timeout = TimeoutMillisecond;
-        // webRequest.KeepAlive = true; // default = true
-
-        //打开上次下载的文件或新建文件 
-        System.IO.FileStream temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
-        var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
-        AppLog.d(Tag, "download: {0} +{1}", url, temfs.Length);
-        //webRequest.AllowReadStreamBuffering = true; // wrong
-        if (temfs.Length > 0)
+        System.IO.Stream responseStream = null;
+        System.Net.WebHeaderCollection heads = null;
+        System.IO.FileStream temfs = null;
+        long contentLength = 0;
+        try
         {
-            webRequest.AddRange((int) temfs.Length); //设置Range值
+            var webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
+            webRequest.Timeout = TimeoutMillisecond;
+
+            // webRequest.KeepAlive = true; // default = true
+
+            //打开上次下载的文件或新建文件 
+            temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
+            var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
+            AppLog.d(Tag, "download: {0} +{1}", url, temfs.Length);
+
+            //webRequest.AllowReadStreamBuffering = true; // wrong
+            if (temfs.Length > 0)
+            {
+                webRequest.AddRange((int) temfs.Length); //设置Range值
+            }
+
+            //https://blog.csdn.net/u011966339/article/details/72829891
+            var response = webRequest.GetResponse() as HttpWebResponse;
+            heads = response.Headers;
+            contentLength = response.ContentLength;
+
+            responseStream = response.GetResponseStream();
+        }
+        catch (WebException we)
+        {
+            AppLog.e(Tag, we.Dump());
+            DialogSys.Alert(we.Message, "Error");
+        }
+        catch (Exception e)
+        {
         }
 
-        //https://blog.csdn.net/u011966339/article/details/72829891
-        var response = webRequest.GetResponse() as HttpWebResponse;
-        var heads = response.Headers;
-        long contentLength = response.ContentLength;
-
-        System.IO.Stream responseStream = response.GetResponseStream();
         int bufsize = 10 * 1024 * 1024; // 10M
 
         var totalLength = temfs.Length + contentLength;
@@ -541,17 +560,17 @@ public class AssetSys : SingleMono<AssetSys>
             }
         });
         thread.Start();
+
         while (thread.IsAlive)
         {
             LuaSys.Instance.GlobalEnv.Global.Set("LoadingString", string.Format(" {0:F}/{1:F}M [{2}]\n{3}"
                 , downloadedLength * 1.0 / (1024 * 1024)
                 , totalLength * 1.0 / (1024 * 1024), readSize, url));
-            LuaSys.Instance.GlobalEnv.Global.Set("LoadingValue", 1.0f*downloadedLength / totalLength);
+            LuaSys.Instance.GlobalEnv.Global.Set("LoadingValue", 1.0f * downloadedLength / totalLength);
             yield return new WaitForSeconds(0.3f);
         }
 
         temfs.Flush(true);
-
         AppLog.d(Tag, "download ok {0}:{1}", url, totalLength);
 
         cb?.Invoke(temfs);
@@ -573,8 +592,7 @@ public class AssetSys : SingleMono<AssetSys>
         IntPtr db;
         var errno = SQLite.SQLite3.Open(dbPath, out db);
         AppLog.d(Tag, "open db: {0}", errno);
-        var sql = string.Format("insert into cache_info (id, path, etag, length) VALUES ( last_insert_rowid(), '{0}',  '{1}' , '{2}' ) on conflict(path) do update set etag = excluded.etag, length=excluded.length;"
-            , path, etag, length);
+        var sql = string.Format("insert into cache_info (id, path, etag, length) VALUES ( last_insert_rowid(), '{0}',  '{1}' , '{2}' ) on conflict(path) do update set etag = excluded.etag, length=excluded.length;", path, etag, length);
         errno = SQLite.SQLite3.Exec(db, sql);
         AppLog.d(Tag, "{0}:{1}", errno, sql);
         SQLite.SQLite3.Close(db);
@@ -586,6 +604,7 @@ public class AssetSys : SingleMono<AssetSys>
         var webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
         webRequest.Timeout = TimeoutMillisecond;
         var response = webRequest.GetResponse() as HttpWebResponse;
+
         // var heads = response.Headers;
         if (response.StatusCode == HttpStatusCode.OK)
             b = true;

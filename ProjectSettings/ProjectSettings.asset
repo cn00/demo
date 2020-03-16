@@ -168,7 +168,7 @@ PlayerSettings:
     Android: com.bili.a3.test
     iPhone: com.komoe.a3ios
   buildNumber:
-    iPhone: 40
+    iPhone: 41
   AndroidBundleVersionCode: 78
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0

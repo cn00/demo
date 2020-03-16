@@ -13,91 +13,6 @@ MonoBehaviour:
   m_Name: AppBundleManifest
   m_EditorClassIdentifier: Assembly-CSharp::AppBundleManifest
   BundleInfos:
-  - Name: font/fzxz.bd
-    Size: 2363466
-    Hash: 405ff577be03ae75f633312186754dbb
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/bg.bd
-    Size: 1808390
-    Hash: 6c205ecb24fc6d7f8ba52ea457f32955
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/loading.bd
-    Size: 69442
-    Hash: 7ab28ad8745412f716c38a5fb5c7e118
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/qrcode.bd
-    Size: 28918
-    Hash: 93c598699f1dcc4b2ac5538f1f59aa9b
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/excel_viewer.bd
-    Size: 21261
-    Hash: ddaca353669e781818d262cbb60bad7c
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/boot.bd
-    Size: 20037
-    Hash: 863cf731be3abf9eb62ef7c6c6f657af
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/test.bd
-    Size: 19759
-    Hash: 6b9677bef9e1c880a58547b1aa858cc7
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/login.bd
-    Size: 13175
-    Hash: 144c885ede309a48470737e20b7c7af5
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: ui/update.bd
-    Size: 10866
-    Hash: d5ca0e78fb9829d8feeb7bb0fad08a4d
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: writeplayer/impoter.bd
-    Size: 13804
-    Hash: 47499886c5eaf61905bc4f87ef92b7ce
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: writeplayer/index.bd
-    Size: 23993
-    Hash: 7f6c6511ef1a5e3cd386ec24497a33f8
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: writeplayer/itemimport.bd
-    Size: 10863
-    Hash: 1854ca4a6c5ef2e55fb3e275b9ab2892
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: writeplayer/player.bd
-    Size: 626700
-    Hash: e35472c1b47dd4cb5bb4914f5f1d98f9
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: lua/com.bd
-    Size: 42728
-    Hash: c71f4703750fc2cb454130b922614112
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: lua/proto.bd
-    Size: 1015
-    Hash: 4201d598418b89a5b4262c974fc1d83b
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: lua/table.bd
-    Size: 1211
-    Hash: 8bcef16d813863cccc5d77db7db57eee
-    Version: 1.1.1
-    Rebuild: 0
-  - Name: lua/utility.bd
-    Size: 13107
-    Hash: d0b92681738db12e8e18b56ab7999678
-    Version: 1.1.1
-    Rebuild: 0
   - Name: common/ui.bd
     Size: 12527
     Hash: 21dfec255c17f3f1d1e32ca562d2ebb4
@@ -123,13 +38,98 @@ MonoBehaviour:
     Hash: 
     Version: 
     Rebuild: 0
+  - Name: config/config.bd
+    Size: 1830
+    Hash: 4584d7b9cf2b18142bb28ac10064ea1e
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: font/fzxz.bd
+    Size: 2363466
+    Hash: 405ff577be03ae75f633312186754dbb
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: lua/com.bd
+    Size: 42728
+    Hash: c71f4703750fc2cb454130b922614112
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: lua/proto.bd
+    Size: 1015
+    Hash: 4201d598418b89a5b4262c974fc1d83b
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: lua/table.bd
+    Size: 1211
+    Hash: 8bcef16d813863cccc5d77db7db57eee
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: lua/utility.bd
+    Size: 13107
+    Hash: d0b92681738db12e8e18b56ab7999678
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/bg.bd
+    Size: 1808390
+    Hash: 6c205ecb24fc6d7f8ba52ea457f32955
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/boot.bd
+    Size: 20037
+    Hash: 863cf731be3abf9eb62ef7c6c6f657af
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/dialog.bd
+    Size: 0
+    Hash: 
+    Version: 
+    Rebuild: 0
+  - Name: ui/excel_viewer.bd
+    Size: 21261
+    Hash: ddaca353669e781818d262cbb60bad7c
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/loading.bd
+    Size: 69442
+    Hash: 7ab28ad8745412f716c38a5fb5c7e118
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/login.bd
+    Size: 13175
+    Hash: 144c885ede309a48470737e20b7c7af5
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/qrcode.bd
+    Size: 28918
+    Hash: 93c598699f1dcc4b2ac5538f1f59aa9b
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/test.bd
+    Size: 19759
+    Hash: 6b9677bef9e1c880a58547b1aa858cc7
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: ui/update.bd
+    Size: 10866
+    Hash: d5ca0e78fb9829d8feeb7bb0fad08a4d
+    Version: 1.1.1
+    Rebuild: 0
   - Name: video/op.bd
     Size: 8881
     Hash: da9bcc893cf7ba12413a4f1691bdfdc3
     Version: 1.1.1
     Rebuild: 0
-  - Name: config/config.bd
-    Size: 1830
-    Hash: 4584d7b9cf2b18142bb28ac10064ea1e
+  - Name: writeplayer/impoter.bd
+    Size: 13804
+    Hash: 47499886c5eaf61905bc4f87ef92b7ce
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: writeplayer/index.bd
+    Size: 23917
+    Hash: 050205ebcf528867214e027d062ca0d8
+    Version: 1.1.1
+    Rebuild: 0
+  - Name: writeplayer/player.bd
+    Size: 624929
+    Hash: d7f28aa26376cf5d6f6a5b5d774bf743
     Version: 1.1.1
     Rebuild: 0

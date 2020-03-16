@@ -63,6 +63,7 @@ namespace UnityEditor
         public override void OnInspectorGUI()
         {
             var newLuaAsset = EditorGUILayout.ObjectField("Lua", mTarget.LuaAsset, typeof(TextAsset), false) as TextAsset;
+            if(newLuaAsset == null) return;
             var assetPath = AssetDatabase.GetAssetPath(newLuaAsset.GetInstanceID());
             if (Path.GetExtension(assetPath) == ".lua")
             {

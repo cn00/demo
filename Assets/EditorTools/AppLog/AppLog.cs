@@ -44,6 +44,8 @@ public static class AppLog
         if(OnMessageReceived != null)
             OnMessageReceived(null, new OnMessageReceivedHandler(msg));
     }
+    
+    static StringBuilder logs = new StringBuilder(10240);
 
     //[Conditional("USE_LOG")]
     /// <summary>
@@ -62,24 +64,18 @@ public static class AppLog
         }
     }
 
-    [Conditional("USE_LOG")]
-    public static void d(string tag, string fmt, params object[] args)
-    {
-        if(LogLevel >= Level.Debug)
-            d(tag, string.Format(fmt, args));
-    }
 
     [Conditional("USE_LOG")]
     public static void d(string tag, params object[] args)
     {
         if(LogLevel >= Level.Debug)
         {
-            var msg = "";
+            logs.Clear();
             foreach(var i in args)
             {
-                msg += string.Format("{0};", i);
+                logs.Append(string.Format("{0};", i));
             }
-            d(tag, msg);
+            d(tag, logs.ToString());
         }
     }
 
@@ -96,10 +92,18 @@ public static class AppLog
     }
 
     [Conditional("USE_LOG")]
-    public static void w(string tag, string fmt, params object[] args)
+    public static void w(string tag, params object[] args)
     {
         if(LogLevel >= Level.Warning)
-            w(tag, string.Format(fmt, args));
+        {
+            logs.Clear();
+            foreach (var i in args)
+            {
+                logs.Append(string.Format("{0};", i));
+            }
+            w(tag, logs.ToString());
+            
+        }
     }
 
     // [Conditional("USE_LOG")]
@@ -114,22 +118,18 @@ public static class AppLog
         }
     }
 
-    // [Conditional("USE_LOG")]
-    public static void e(string tag, string fmt, params object[] args)
-    {
-        if(LogLevel >= Level.Error)
-            e(tag, string.Format(fmt, args));
-    }
+    
     public static void e(string tag, params object[] args)
     {
         if(LogLevel >= Level.Net)
         {
-            var msg = "";
-            foreach(var i in args)
+            logs.Clear();
+            foreach (var i in args)
             {
-                msg += string.Format("{0};", i);
+                logs.Append(string.Format("{0};", i));
             }
-            e(tag, msg);
+
+            e(tag, logs.ToString());
         }
     }
 

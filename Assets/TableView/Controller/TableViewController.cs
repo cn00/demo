@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace TableView
 {
+    [RequireComponent(typeof(TableView))]
     public class TableViewController : MonoBehaviour, ITableViewDataSource, ITableViewDelegate
     {
         public static string Tag = "TableViewController";
