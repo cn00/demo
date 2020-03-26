@@ -25,9 +25,9 @@ namespace UnityEditor
             if (mTarget.LuaAsset)
             {
                 mLuaText = mTarget.LuaAsset.text;
+                refreshAutoGen();
             }
 
-            refreshAutoGen();
         }
 
         static bool mShowInjections = true;

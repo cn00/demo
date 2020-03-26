@@ -73,7 +73,7 @@ MonoBehaviour:
   mUseBundle: 1
   LogLevel: 3
   runInBackground: 1
-  LastBuildTime: 132279940522167260
+  LastBuildTime: 132295163260747690
   Version:
     Major: 1
     Minor: 1
@@ -81,17 +81,102 @@ MonoBehaviour:
     BtnPerRow: 3
   Ip: 10.23.22.233
   Port: 8000
-  ForceRebuild: 0
+  ForceRebuild: 1
   BuildScene: 0
   mGroups:
+  - Foldout: 0
+    Name: font
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: font/fzxz.bd
+      Size: 2363466
+      Hash: 405ff577be03ae75f633312186754dbb
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: ui
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: ui/bg.bd
+      Size: 1808390
+      Hash: 6c205ecb24fc6d7f8ba52ea457f32955
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/boot.bd
+      Size: 20209
+      Hash: ba319b84243e62d13bc3d6e1ec930f03
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/dialog.bd
+      Size: 10193
+      Hash: fc29820c0215f2935482092fc650f1ad
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/excel_viewer.bd
+      Size: 21457
+      Hash: 02deab3b0dd9fc648ba3ea3fe8134ca5
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/loading.bd
+      Size: 69676
+      Hash: bf201e1defe89e62c1e89308aa8bef22
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/login.bd
+      Size: 13362
+      Hash: f79311b4a68d98d71ed27bd2e91dbe7e
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/qrcode.bd
+      Size: 28911
+      Hash: dfcbc9f7083a8070366ea5e839265a61
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/test.bd
+      Size: 19759
+      Hash: 6b9677bef9e1c880a58547b1aa858cc7
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/update.bd
+      Size: 10866
+      Hash: d5ca0e78fb9829d8feeb7bb0fad08a4d
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: writeplayer
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: writeplayer/impoter.bd
+      Size: 13804
+      Hash: 4096738628b88bfc9b8018fa4abacbf4
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: writeplayer/index.bd
+      Size: 23917
+      Hash: 38219a04c130b462805e4d94659cda25
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: writeplayer/player.bd
+      Size: 624971
+      Hash: f75196dd22b0761ab1922fa9c2722a89
+      Version: 1.1.1
+      Rebuild: 0
   - Foldout: 1
     Name: common
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: common/ui.bd
-      Size: 12527
-      Hash: 21dfec255c17f3f1d1e32ca562d2ebb4
+    - Name: common/ui-atlas.bd
+      Size: 364026
+      Hash: 2a87d562babee8f0f4a69d218172a8b9
+      Version: 1.1.1
+      Rebuild: 1
+    - Name: common/click.bd
+      Size: 48280
+      Hash: d5b4394a6be919a52dd847fce7a4e0a7
       Version: 1.1.1
       Rebuild: 0
     - Name: common/excel.bd
@@ -105,34 +190,14 @@ MonoBehaviour:
       Version: 1.1.1
       Rebuild: 0
     - Name: common/global.bd
-      Size: 1411
-      Hash: fbb7ca8bbeb81ed505595a9a5da20305
+      Size: 1770
+      Hash: 6793e8b3b2fe3f820be6a87a68737654
       Version: 1.1.1
       Rebuild: 0
     - Name: common/hint.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 0
-  - Foldout: 0
-    Name: config
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: config/config.bd
-      Size: 1830
-      Hash: 4584d7b9cf2b18142bb28ac10064ea1e
-      Version: 1.1.1
-      Rebuild: 0
-  - Foldout: 0
-    Name: font
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: font/fzxz.bd
-      Size: 2363466
-      Hash: 405ff577be03ae75f633312186754dbb
-      Version: 1.1.1
       Rebuild: 0
   - Foldout: 0
     Name: lua
@@ -142,6 +207,16 @@ MonoBehaviour:
     - Name: lua/com.bd
       Size: 42728
       Hash: c71f4703750fc2cb454130b922614112
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/excel.bd
+      Size: 2880
+      Hash: fb9d7b2e1e89d0ebd877467283232d69
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/lxp.bd
+      Size: 8970
+      Hash: 3e7049c8fdeae3b802bce7888d0fbbb4
       Version: 1.1.1
       Rebuild: 0
     - Name: lua/proto.bd
@@ -160,56 +235,6 @@ MonoBehaviour:
       Version: 1.1.1
       Rebuild: 0
   - Foldout: 0
-    Name: ui
-    mInclude: 0
-    mRebuild: 0
-    mBundles:
-    - Name: ui/bg.bd
-      Size: 1808390
-      Hash: 6c205ecb24fc6d7f8ba52ea457f32955
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/boot.bd
-      Size: 20037
-      Hash: 863cf731be3abf9eb62ef7c6c6f657af
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/dialog.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: ui/excel_viewer.bd
-      Size: 21261
-      Hash: ddaca353669e781818d262cbb60bad7c
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/loading.bd
-      Size: 69442
-      Hash: 7ab28ad8745412f716c38a5fb5c7e118
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/login.bd
-      Size: 13175
-      Hash: 144c885ede309a48470737e20b7c7af5
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/qrcode.bd
-      Size: 28918
-      Hash: 93c598699f1dcc4b2ac5538f1f59aa9b
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/test.bd
-      Size: 19759
-      Hash: 6b9677bef9e1c880a58547b1aa858cc7
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: ui/update.bd
-      Size: 10866
-      Hash: d5ca0e78fb9829d8feeb7bb0fad08a4d
-      Version: 1.1.1
-      Rebuild: 0
-  - Foldout: 0
     Name: video
     mInclude: 0
     mRebuild: 0
@@ -220,23 +245,13 @@ MonoBehaviour:
       Version: 1.1.1
       Rebuild: 0
   - Foldout: 0
-    Name: writeplayer
+    Name: config
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: writeplayer/impoter.bd
-      Size: 13804
-      Hash: 47499886c5eaf61905bc4f87ef92b7ce
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: writeplayer/index.bd
-      Size: 23993
-      Hash: 7f6c6511ef1a5e3cd386ec24497a33f8
-      Version: 1.1.1
-      Rebuild: 0
-    - Name: writeplayer/player.bd
-      Size: 626700
-      Hash: e35472c1b47dd4cb5bb4914f5f1d98f9
+    - Name: config/config.bd
+      Size: 1830
+      Hash: 4584d7b9cf2b18142bb28ac10064ea1e
       Version: 1.1.1
       Rebuild: 0
   BundleBuildOptions: 16
@@ -247,7 +262,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
     BundleId: com.komoe.a3ios
     PackageName: a3
-    BuildNum: 42
+    BuildNum: 44
     Version: 1.0.0
     DefineSymbols:
     - ENABLE_EMULATER

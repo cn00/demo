@@ -3,6 +3,26 @@ require("lua.utility.BridgingClass")
 local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
 
+local p7zip = require("p7zip")
+local stderr = io.open("/dev/stderr")
+local stdout = io.open("/Volumes/Data/unity_test/unity_test.sln")
+local r, e = p7zip.execute("7z x doc.7z -odoc2 -y")
+print("7z x doc.7z -odoc2 -y:", r, e)
+local lines = stdout:read("*all")
+print("7z lines", lines)
+--for l in lines() do
+--    print("7z stdout", l)
+--end
+--for l in io.stderr:lines()() do
+--    print("7z stderr", l)
+--end
+
+
+local lxp = require("lua.lxp.lom")
+for k, v in pairs(lxp) do
+    print("lxp", k,v)
+end
+
 local CS = CS
 local AssetSys = CS.AssetSys
 local File = CS.System.IO.File

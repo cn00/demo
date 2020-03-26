@@ -112,7 +112,7 @@ function this.init(data)
 		end
 
 		--assert(coroutine.resume(this.coroutine_demo()))
-		local text = data.text
+		local text = data.text or ""
 		local wcount = 0
 		-- for i in string.gmatch(text, "[%z\1-\127\194-\244][\128-\191]*") do
 		for i in string.gmatch(text, "[%z\194-\244][\128-\191]*") do

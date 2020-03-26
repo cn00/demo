@@ -126,8 +126,10 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("nslua", XLua.LuaDLL.Lua.LoadNSLua);
         
         luaEnv.AddBuildin("p7zip", XLua.LuaDLL.Lua.LoadP7zip);
-        
+
         luaEnv.AddBuildin("lsqlite3", XLua.LuaDLL.Lua.LoadLSQLite3);
+        
+        luaEnv.AddBuildin("lxp", XLua.LuaDLL.Lua.LoadLxp);
 
         yield return base.Init();
     }

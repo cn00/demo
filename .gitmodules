@@ -16,3 +16,6 @@
 [submodule "Assets/Plugins/iOS/NSLua"]
 	path = Assets/Plugins/iOS/NSLua
 	url = git@github.com:cn00/NSLua.git
+[submodule "ParticlePreview"]
+	path = ParticlePreview
+	url = git@github.com:cn00/ParticlePreview.git
