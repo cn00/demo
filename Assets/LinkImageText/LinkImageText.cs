@@ -79,7 +79,7 @@ public class LinkImageText : Text, IPointerClickHandler
     /// 超链接正则
     /// </summary>
     private static readonly Regex s_HrefRegex =
-        new Regex(@"<a href=([^>\n\s]+)>(.*?)</a>", RegexOptions.Singleline);
+        new Regex(@"([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]+)", RegexOptions.Singleline);
 
     /// <summary>
     /// 加载精灵图片方法
@@ -235,19 +235,19 @@ public class LinkImageText : Text, IPointerClickHandler
         {
             var sub = outputText.Substring(indexText, match.Index - indexText);
             s_TextBuilder.Append(sub);
-            s_TextBuilder.Append("<color=#00ff00>");  // 超链接颜色
+            s_TextBuilder.Append($"<a href=href{indexText}><color=#00ff00>");  // 超链接颜色
 
             var href = match.Groups[1];
             var hrefInfo = new HrefInfo
             {
                 startIndex =  s_TextBuilder.Length * 4, // 超链接里的文本起始顶点索引//match.Index*4, //
-                endIndex = (s_TextBuilder.Length + match.Groups[2].Length - 1) * 4 + 3,
+                endIndex = (s_TextBuilder.Length + match.Groups[1].Length - 1) * 4 + 3,
                 name = href.Value
             };
             m_HrefInfos.Add(hrefInfo);
 
-            s_TextBuilder.Append(match.Groups[2].Value);
-            s_TextBuilder.Append("</color>");
+            s_TextBuilder.Append(match.Groups[1].Value);
+            s_TextBuilder.Append("</color></a>");
             indexText = match.Index + match.Length;
         }
         s_TextBuilder.Append(outputText.Substring(indexText, outputText.Length - indexText));
