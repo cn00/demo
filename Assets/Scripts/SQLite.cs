@@ -133,7 +133,7 @@ namespace SQLite
 			Serialized = 3
 		}
 
-		const string LibraryPath = XLua.LuaDLL.Lua.LUADLL;
+		const string LibraryPath = XLua.LuaDLL.Lua.LUASQLITE_DLL;
 
 #if !USE_CSHARP_SQLITE && !USE_WP8_NATIVE_SQLITE && !USE_SQLITEPCL_RAW
 		[DllImport(LibraryPath, EntryPoint = "sqlite3_threadsafe", CallingConvention=CallingConvention.Cdecl)]

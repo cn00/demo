@@ -79,14 +79,12 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         public const string P7ZIP_DLL = "Assets/XLua/Plugins/OSX/libp7zip.dylib"; // ok
         public const string LUASQLITE_DLL = "Assets/XLua/Plugins/OSX/liblsqlite3.dylib"; // ok
         public const string LXP_DLL = "Assets/XLua/Plugins/OSX/liblxp.dylib"; // ok
-        #elif UNITY_IOS
+        // #elif UNITY_IOS
         // public const string P7ZIP_DLL = "@rpath/p7zip.framework/p7zip";
+        #else // if UNITY_ANDROID
         public const string P7ZIP_DLL = "p7zip";
         public const string LUASQLITE_DLL = "lsqlite3";
         public const string LXP_DLL = "lxp"; // ok
-        // #else // if UNITY_ANDROID
-        // public const string P7ZIP_DLL = "p7zip";
-        // public const string LUASQLITE_DLL = "lsqlite3";
         #endif
         [DllImport(P7ZIP_DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_p7zip(System.IntPtr L);
