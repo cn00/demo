@@ -1,21 +1,18 @@
 [submodule "Assets/Editor/VSCode"]
 	path = VSCode
 	url = git@github.com:cn00/VSCode.git
-[submodule "VSCode"]
-	path = Assets/Editor/VSCode
-	url = git@github.com:cn00/VSCode.git
 [submodule "Assets/UberLogger"]
 	path = Assets/UberLogger
 	url = git@github.com:bbbscarter/UberLogger.git
 [submodule "Assets/Editor/XUPorter"]
 	path = Assets/Editor/XUPorter
 	url = git@github.com:cn00/XUPorter.git
-[submodule "XLua-src"]
-	path = XLua-src
-	url = ../XLua
 [submodule "Assets/Plugins/iOS/NSLua"]
 	path = Assets/Plugins/iOS/NSLua
 	url = git@github.com:cn00/NSLua.git
 [submodule "ParticlePreview"]
 	path = ParticlePreview
 	url = git@github.com:cn00/ParticlePreview.git
+[submodule "xlua"]
+	path = xlua
+	url = /Volumes/Data/a3/tools/xlua
