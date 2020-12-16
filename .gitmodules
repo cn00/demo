@@ -15,4 +15,4 @@
 	url = git@github.com:cn00/ParticlePreview.git
 [submodule "xlua"]
 	path = xlua
-	url = /Volumes/Data/a3/tools/xlua
+	url = git@github.com:cn00/xLua.git
