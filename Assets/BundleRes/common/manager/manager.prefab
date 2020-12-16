@@ -43,7 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 4900000, guid: 032f4417da5c44999aad8dcaf2d5f95c, type: 3}
+  LuaAsset: {fileID: 1042094116111776886, guid: 032f4417da5c44999aad8dcaf2d5f95c,
+    type: 3}
   LuaPath: Assets/BundleRes/common/manager/message.lua
   Injections: []
   InjectValues: []
@@ -90,7 +91,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 4900000, guid: d70a523eca3254b12889a3d7f8ad66c3, type: 3}
+  LuaAsset: {fileID: 1042094116111776886, guid: d70a523eca3254b12889a3d7f8ad66c3,
+    type: 3}
   LuaPath: Assets/BundleRes/common/manager/scene.lua
   Injections: []
   InjectValues: []
@@ -141,7 +143,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 4900000, guid: f0c1c701890bb4dde9decf2bf2b6ab23, type: 3}
+  LuaAsset: {fileID: 1042094116111776886, guid: f0c1c701890bb4dde9decf2bf2b6ab23,
+    type: 3}
   LuaPath: Assets/BundleRes/common/manager/manager.lua
   Injections:
   - obj: {fileID: 1735686852872660}
@@ -196,7 +199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 4900000, guid: 96d5c1779bfa941bfa65c53a6166ef6c, type: 3}
+  LuaAsset: {fileID: 1042094116111776886, guid: 96d5c1779bfa941bfa65c53a6166ef6c,
+    type: 3}
   LuaPath: Assets/BundleRes/common/manager/console.lua
   Injections: []
   InjectValues: []
@@ -243,7 +247,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 4900000, guid: f52688cec68e547c9b4c5b63d905430e, type: 3}
+  LuaAsset: {fileID: 1042094116111776886, guid: f52688cec68e547c9b4c5b63d905430e,
+    type: 3}
   LuaPath: Assets/BundleRes/common/manager/network.lua
   Injections: []
   InjectValues: []

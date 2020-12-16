@@ -7,13 +7,12 @@ local AssetSys = CS.AssetSys
 local File = CS.System.IO.File
 local Directory = CS.System.IO.Directory
 
-local sqlite3 = require("lsqlite3")
-
 local print = function ( ... )
-    _G.print("[writeplayer.index]", ... )
+    _G.print("[writeplayer/index]", ... )
 end
 
-local util = require "lua.utility.xlua.util"
+local util = require "xlua.util"
+local sqlite3 = require("lsqlite3")
 
 local excel_view = {
     RowIdxA = 1,
@@ -35,7 +34,6 @@ end)
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.add_Button = add:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.grep_Button = grep:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
     this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
@@ -97,31 +95,37 @@ function this.LoadData()
     local head = table.pack(vm:get_unames())
     for i = 1,#head do head[head[i]] = i end
     local records = {head = head}
-    --local mt = {
-    --    __newindex = function(t, k, v)
-    --        print("__newindex", k, t[k], v)
-    --        if t[k] == nil then
-    --            return t[head[k]]
-    --        end
-    --    end,
-    --}
+    local mt = {
+        __index = function(t, k)
+            --print("__index", k)
+            if head[k] ~= nil then
+                local v = t[head[k]]
+                print("__index", k, v)
+                return v
+            end
+            return nil
+        end,
+    }
     r = vm:step()
     while (r == sqlite3.ROW) do
-        local record = table.pack(vm:get_uvalues())
-        records[#records + 1] = {
-            id = record[1],
-            name = record[2],
-            url = record[3],
-            cpath = record[4],
-            tpath = record[5],
-            text = record[6],
-        }
-        --setmetatable(record,mt)
+        local record = {vm:get_uvalues()}
+        setmetatable(record,mt)
+        records[#records + 1] = record
+        --{
+        --    id = record[1],
+        --    name = record[2],
+        --    url = record[3],
+        --    cpath = record[4],
+        --    tpath = record[5],
+        --    text = record[6],
+        --}
+        print(table.unpack(record))
+        print(record.cpath)
         r = vm:step()
     end
     assert(r == sqlite3.DONE)
     assert(vm:finalize() == sqlite3.OK)
-    print('====================================')
+    print('====================================', #records)
     this.DataSource = records
     
     db:close()

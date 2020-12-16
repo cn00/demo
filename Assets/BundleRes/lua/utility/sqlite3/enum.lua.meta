@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: a580fd8ab67242447b93fba670192b88
 ScriptedImporter:
-  fileIDToRecycleName:
-    4900000: main obj
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: lua/utility.bd
   assetBundleVariant: 

@@ -172,6 +172,10 @@ function this.init(data)
     end)
 end
 
+local function new(o)
+	return o
+end
+
 function this.InitTableViewData()
 
 	this.tableview_TableViewController.GetDataCount = function(table)
@@ -184,11 +188,24 @@ function this.InitTableViewData()
 	this.tableview_TableViewController.CellAtRow = function(tb, row)
 		local celltypenumber = this.tableview_TableViewController.prefabCells.Length
 		local cellidentifier = "cell" -- string.format("cell", 1 + (row % celltypenumber))
-		print("cellidentifier", cellidentifier, row, celltypenumber)
+		--print("cellidentifier", cellidentifier, row, celltypenumber)
 		local cell = tb:ReusableCellForRow(cellidentifier, row)
 		cell.name = "lua-Cell-" .. (row)
 		local ct = cell:GetComponent("LuaMonoBehaviour").Lua
 		local cdata = this.DataSource[row + 1]
+		cdata.resetui = function()
+			local cell = tb:CellForRow(row)
+			if cell == nil then return end
+			print("----resetui", row)
+			cell:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = new Color(1.0, 1.0, 1.0, 1.0)
+		end
+		cdata.resetui()
+		cdata.updateui = function()
+			local cell = tb:CellForRow(row)
+			if cell == nil then return end
+			print("----updateui", row)
+			cell:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = new Color(0.6, 0.4, 0.2, 0.5)
+		end
 		ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage) 
 		ct.Text_Text.text = cdata.c
 		ct.TableViewCell:DidPointClickEvent("+", function(row2)
@@ -257,6 +274,10 @@ function this.mUpdate()
 		this.currentidx = findidx(this.DataSource, this.op_movie_VideoPlayer.frame)
 		if(lastidx ~= this.currentidx)then
 			print("current:", this.DataSource[this.currentidx].c)
+			local last = this.DataSource[lastidx]
+			if last ~= nil then last.resetui();end
+			local current = this.DataSource[this.currentidx];
+			if current ~= nil then current.updateui();end
 			--this.DataSource[lastidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0, 0, 0, 0)
 			--this.DataSource[this.currentidx].btn:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = Color(0.6, 0.4, 0.2, 0.5)
 		end

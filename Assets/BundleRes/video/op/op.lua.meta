@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: 699f998ed25444d01b6d58ea6df4449b
 ScriptedImporter:
-  fileIDToRecycleName:
-    4900000: main obj
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: video/op.bd
   assetBundleVariant: 

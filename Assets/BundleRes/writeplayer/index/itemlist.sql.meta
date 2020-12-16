@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: 6682f5bb7e8b4ea992bd61fecf52739d
 ScriptedImporter:
-  fileIDToRecycleName:
-    4900000: main obj
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: writeplayer/index.bd
   assetBundleVariant: 

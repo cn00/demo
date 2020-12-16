@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: c32f0e1fc66ac4a38b253ec52e25369c
 ScriptedImporter:
-  fileIDToRecycleName:
-    4900000: main obj
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: ui/boot.bd
   assetBundleVariant: 

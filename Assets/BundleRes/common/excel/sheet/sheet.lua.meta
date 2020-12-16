@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: 94ee9ed48ef474adf8d7c24406d654aa
 ScriptedImporter:
-  fileIDToRecycleName:
-    4900000: main obj
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: common/excel.bd
   assetBundleVariant: 

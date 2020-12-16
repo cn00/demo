@@ -23,7 +23,10 @@ local function dump(obj, breakline)
             end
         else
             if type(val) == "string" then
-                return quoteStr(val) .. " = "
+                if string.match(val, "[%#%!@%s]") then -- 含有标点符号，空白字符
+                    return quoteStr(val) .. " = "
+                end
+                return val .. " = "
             else
                 return ""
             end

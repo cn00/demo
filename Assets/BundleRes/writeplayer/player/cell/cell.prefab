@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3507440205590913127}
   - component: {fileID: 8749086017614018584}
   - component: {fileID: 4756191475443913959}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,11 +60,10 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: e6782f6ee933d4c0e8dc41184cefb356, type: 3}
     m_FontSize: 51
@@ -90,7 +89,7 @@ GameObject:
   - component: {fileID: 2433869714689919671}
   - component: {fileID: 8893814953051711739}
   - component: {fileID: 1271925018958355461}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,11 +138,10 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.72156864}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 5ba7a81535b9a443a917852ef0ab7aef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -168,7 +166,7 @@ GameObject:
   - component: {fileID: 2460863406981436836}
   - component: {fileID: 1381383723445141261}
   - component: {fileID: 3719042277808429709}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,11 +240,10 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5647059}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -300,8 +297,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &3719042277808429709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,4 +309,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5c540ae7321a4609a87407ad8c2e985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ReuseIdentifier: item_01
+  ReuseIdentifier: cell

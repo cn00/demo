@@ -4,7 +4,12 @@ local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 local sqlite = CS.SQLite.SQLite3
 
-local p7zip = require "p7zip"
+
+
+local lxp = require("lua.lxp.lom")
+for k, v in pairs(lxp) do
+	print("lxp", k, v)
+end
 
 local ios = UnityEngine.RuntimePlatform.IPhonePlayer
 local os = UnityEngine.Application.platform --"iOS" --"OSX Editor"

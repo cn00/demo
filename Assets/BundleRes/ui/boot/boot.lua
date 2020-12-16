@@ -1,27 +1,10 @@
 local util = require "lua.utility.xlua.util"
 require("lua.utility.BridgingClass")
-local lpeg = require "lpeg"
+local dump = require("lua.utility.dump")
+--local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
 
-local p7zip = require("p7zip")
-local stderr = io.open("/dev/stderr")
-local stdout = io.open("/Volumes/Data/unity_test/unity_test.sln")
-local r, e = p7zip.execute("7z x doc.7z -odoc2 -y")
-print("7z x doc.7z -odoc2 -y:", r, e)
-local lines = stdout:read("*all")
-print("7z lines", lines)
---for l in lines() do
---    print("7z stdout", l)
---end
---for l in io.stderr:lines()() do
---    print("7z stderr", l)
---end
-
-
-local lxp = require("lua.lxp.lom")
-for k, v in pairs(lxp) do
-    print("lxp", k,v)
-end
+local luasql = require "luasql.mysql"
 
 local CS = CS
 local AssetSys = CS.AssetSys
@@ -35,7 +18,42 @@ local print = function(...)
     -- _G.print("[boot]", debug.traceback())
 end
 
+local function mysqlTest()
+    print("luasql=",luasql)
+    local mysql = luasql.mysql()
+    local db, err = mysql:connect("a3_m_305", "a3", "654123", "10.23.24.239")
+    if err ~= nil then print("mysql", err, debug.traceback()) return end
+    -- local sql = "show tables;"
+    local sql = "select s.jp_name, c.* from a3_m_305.m_card c left join a3_m_305.m_string_item s on c.card_name_id = s.string_id limit 20;"
+    local res, err = db:execute(sql)
+    if err ~= nil then print(err) return end
+    print("colnames", res:numrows(), dump(res:getcolnames(false)))
+    for i=0,res:numrows()-1 do
+        --local t = {res:fetch()}
+         local t = {}
+         res:fetch(t, "a")
+         print("mysql", i, dump(t, false))
+    end
+    db:close()
+end
+--mysqlTest()
+
+local function p7zipTest()
+    require ("p7zip")
+    local stderr = p7zip.g_StdErr:Open("luastderr.txt", "a")
+    local stdout = p7zip.g_StdOut:Open("luastdout.txt", "a")
+    p7zip.g_StdErr:Print("stderr from lua\n")
+    local r, e = p7zip.execute("7z l Assets/TitleInfo.xlsx -y")
+    print("7z a doc.7z doc -y:", r, e)
+    p7zip.g_StdErr:Flush()
+    p7zip.g_StdOut:Flush()
+end
+--p7zipTest()
+
 local sqlite = require("lsqlite3")
+package.cpath = package.cpath..";./Assets/XLua/Plugins/OSX/lib?.dylib"
+local lfs = require "lfs"
+print("lfs", lfs)
 
 local boot = {}
 local this = boot
@@ -71,7 +89,7 @@ function boot.coroutine_boot(first, ...)
          end))
          GameObject.Instantiate(obj)
 
-        yield_return(CS.AssetSys.Instance:GetBundle("font/fzxz.bd"))
+        yield_return(CS.AssetSys.Instance:GetAsset("font/fzxz/方正小篆体.ttf"))
         
         -- Game.manager = manager
         -- this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
@@ -112,7 +130,10 @@ function boot.coroutine_boot(first, ...)
         -- print(obj)
         -- local write_player = GameObject.Instantiate(obj)
 
-        manager.Scene.push("writeplayer/index/index.prefab")
+        manager.Scene.push("qread/qread.prefab")
+        --manager.Scene.push("don-quixote/index/index.prefab")
+        --manager.Scene.push("don-quixote/linkText/linkText.prefab")
+        
         --obj = nil
         --yield_return(CS.AssetSys.Instance:GetAsset("writeplayer/index/index.prefab", function(asset)
         --    obj = asset
