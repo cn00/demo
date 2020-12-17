@@ -75,10 +75,10 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     void Init()
     {
-        if (LuaAsset is null) 
+        if (LuaAsset == null) 
             return;
         var luaInstance = LuaSys.Instance;
-        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath);
+        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath.Replace("Assets/BundleRes/", ""));
 
         if (Lua == null)
         {
