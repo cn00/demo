@@ -9,8 +9,8 @@ public class DialogSys : SingleMono<AssetSys>
 {
     public static void Alert(string message, string title, Action onFinished = null)
     {
-        var asset = AssetSys.Instance.GetAssetSync<GameObject>("ui/dialog/dialog01.prefab");
-        var go = GameObject.Instantiate<GameObject>(asset);
+        var asset = AssetSys.GetAssetSync("ui/dialog/dialog01.prefab") as GameObject;
+        var go = Instantiate(asset);
         var lua = go.GetComponent<LuaMonoBehaviour>().Lua;
         var contentText = lua["ContentText_Text"] as Text;
         var titleText = lua["TitleText_Text"] as Text;
@@ -18,7 +18,7 @@ public class DialogSys : SingleMono<AssetSys>
         titleText.text = title;
         contentText.text = message;
 
-        var button = lua["TitleText_Text"] as Button;
+        var button = lua["ConfirmBtn_Button"] as Button;
         UnityAction onclick = () =>
         {
             if (onFinished != null)

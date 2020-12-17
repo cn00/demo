@@ -52,7 +52,7 @@ public class SingletonAsset<T> : AssetBase<T> where T : AssetBase<T>
         {
             // from bundle
             var assetSubPath = AssetPath.Replace("Assets/", "config/");
-            var cachePath = AssetSys.CacheRoot + AssetSys.Instance.GetBundlePath(assetSubPath);
+            var cachePath = AssetSys.CacheRoot + AssetSys.GetBundlePath(assetSubPath);
             if (File.Exists(cachePath))
             {
                 var bundle = AssetBundle.LoadFromFile(cachePath);
