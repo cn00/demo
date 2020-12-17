@@ -10,8 +10,8 @@ local print = function ( ... )
     _G.print("[#SCRIPTNAME#]", ...)
 end
 
-local this = {}
-
+local #SCRIPTNAME# = {}
+local this = #SCRIPTNAME#
 -- local yield_return = util.async_to_sync(function (to_yield, callback)
 --     mono:YieldAndCallback(to_yield, callback)
 -- end)
@@ -26,42 +26,42 @@ local this = {}
 -- end
 
 --AutoGenInit Begin
-function this.AutoGenInit() end
+function #SCRIPTNAME#.AutoGenInit() end
 --AutoGenInit End
 
-function this.Awake()
+function #SCRIPTNAME#.Awake()
 	this.AutoGenInit()
 end
 
--- function this.OnEnable() end
+-- function #SCRIPTNAME#.OnEnable() end
 
-function this.Start()
+function #SCRIPTNAME#.Start()
 	--util.coroutine_call(this.coroutine_demo)
 end
 
--- function this.FixedUpdate() end
+-- function #SCRIPTNAME#.FixedUpdate() end
 
--- function this.OnTriggerEnter(otherCollider) end
--- function this.OnTriggerStay(otherCollider) end
--- function this.OnTriggerExit(otherCollider) end
+-- function #SCRIPTNAME#.OnTriggerEnter(otherCollider) end
+-- function #SCRIPTNAME#.OnTriggerStay(otherCollider) end
+-- function #SCRIPTNAME#.OnTriggerExit(otherCollider) end
 
--- function this.OnCollisionEnter(otherCollision) end
+-- function #SCRIPTNAME#.OnCollisionEnter(otherCollision) end
 
--- function this.OnMouseOver() end
--- function this.OnMouseEnter() end
--- function this.OnMouseDown() end
--- function this.OnMouseDrag() end
--- function this.OnMouseUp() end
--- function this.OnMouseExit() end
+-- function #SCRIPTNAME#.OnMouseOver() end
+-- function #SCRIPTNAME#.OnMouseEnter() end
+-- function #SCRIPTNAME#.OnMouseDown() end
+-- function #SCRIPTNAME#.OnMouseDrag() end
+-- function #SCRIPTNAME#.OnMouseUp() end
+-- function #SCRIPTNAME#.OnMouseExit() end
 
--- function this.Update() end
+-- function #SCRIPTNAME#.Update() end
 
--- function this.LateUpdate() end
+-- function #SCRIPTNAME#.LateUpdate() end
 
--- function this.OnDestroy() end
+-- function #SCRIPTNAME#.OnDestroy() end
 
-function this.Destroy()
+function #SCRIPTNAME#.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return this
+return #SCRIPTNAME#

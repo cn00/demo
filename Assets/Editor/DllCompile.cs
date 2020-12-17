@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -155,7 +155,7 @@ public class DllCompile : SingletonAsset<DllCompile>
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
             {
                 // File.Copy("Assets/doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
-                var s = File.ReadAllText("Assets/doc/87-LuaScript-NewLuaScript.lua.txt");
+                var s = File.ReadAllText("Assets/doc/87-LuaScript-NewLuaScript.lua");
                 s = s.Replace("-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt", "");
                 File.WriteAllText(distDir, s);
             }
