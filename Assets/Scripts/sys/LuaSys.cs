@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -36,7 +36,17 @@ public class LuaSys : SingleMono<LuaSys>
     internal LuaEnv luaEnv = new LuaEnv();
     public LuaEnv GlobalEnv
     {
-        get { return luaEnv; }
+        get
+        {
+            if(luaEnv == null)
+                luaEnv = new LuaEnv();
+            return luaEnv;
+        }
+    }
+
+    public object[] DoString(string lua, string chunkName = "trunk")
+    {
+        return GlobalEnv.DoString(lua, chunkName);
     }
 
     public LuaTable Inject(LuaMonoBehaviour lb)
