@@ -42,7 +42,7 @@ end
 
 function qread.QuestOne(n, a, b)
     local q =  qread.question(n, a, b)
-    local x = -1000
+    local x = -1080
     for i, v in ipairs(q) do
         if(type(v) == "number")then
             v = num2zh(v)
@@ -63,33 +63,28 @@ function qread.QuestOne(n, a, b)
     c.name = s .. "=" .. v
     c.transform.localPosition = UnityEngine.Vector3(760, -450, 0)
     local l = c:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    l.text = s .. "=" .. v
+    l.text = s .. "=" .. string.format("%.2f", v)
     l.alignment = UnityEngine.TextAnchor.MiddleRight
     l.resizeTextForBestFit = true
     l.rectTransform.pivot = UnityEngine.Vector2(1, 0.5);
     l.rectTransform.sizeDelta = UnityEngine.Vector2(700, 180)
 end
 
+function qread.Refresh()
+    local children = this.contentRoot_Transform:GetComponentsInChildren(typeof(CS.UnityEngine.Transform))
+    for i = 0, children.Length - 1 do
+        if(children[i].gameObject ~= contentRoot)then GameObject.DestroyImmediate(children[i].gameObject)end
+    end
+    --this.StartBtnText_Text.text = "Refresh"
+    local n = math.random(3, 9)
+    qread.QuestOne(n, 3, 9)
+end
+
 local runing = false
 function qread.Awake()
 	this.AutoGenInit()
 
-    this.StartBtn_Button.onClick:AddListener(function()
-        --if runing then
-        --    runing = false
-        --    this.StartBtnText_Text.text = "Start"
-            local children = this.contentRoot_Transform:GetComponentsInChildren(typeof(CS.UnityEngine.Transform))
-            for i = 0, children.Length - 1 do
-                if(children[i].gameObject ~= contentRoot)then GameObject.DestroyImmediate(children[i].gameObject)end
-            end
-        --else
-            runing = true
-            --this.StartBtnText_Text.text = "Stop"
-            this.StartBtnText_Text.text = "Refresh"
-            local n = math.random(3, 9)
-            qread.QuestOne(n, 3, 9)
-        --end 
-    end)
+    this.StartBtn_Button.onClick:AddListener(qread.Refresh)
 end
 
 
