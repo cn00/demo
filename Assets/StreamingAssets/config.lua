@@ -1,4 +1,3 @@
-﻿
 local CS = CS
 local AssetSys = CS.AssetSys
 local UnityEngine = CS.UnityEngine
