@@ -190,7 +190,7 @@ namespace SQLite
 		public static extern Result Exec(IntPtr db, 
 			[MarshalAs(UnmanagedType.LPStr)] string sql, 
 			Func<IntPtr, int, string[], string[], int> callback = null, 
-			IntPtr cbArg0 = default,
+			IntPtr cbArg0 = default(IntPtr),
 			[MarshalAs(UnmanagedType.LPStr)] string[] errmsg = null);
 
 		// SQLITE_API int sqlite3_prepare_v2(
