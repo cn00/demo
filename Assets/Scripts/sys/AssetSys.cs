@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -311,15 +311,22 @@ public class AssetSys : SingleMono<AssetSys>
     /// </summary>
     public T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
     {
-        // var trim = new char[] { ' ', '.', '/' };
-        // assetSubPath = assetSubPath.upath().TrimStart(trim).TrimEnd(trim);
-        string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
-        var bundle = GetBundleSync(bundleName);
-        T asset = null;
-        if (bundle != null)
+        #if UNITY_EDITOR
+        var UseBundle = BuildConfig.Instance().UseBundle;
+        if (!UseBundle)
         {
-            asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
-        }
+            return AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
+        } 
+        else
+        #endif // UNITY_EDITOR
+        {
+            string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+            var bundle = GetBundleSync(bundleName);
+            T asset = null;
+            if (bundle != null)
+            {
+                asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
+            }
 
             // try streaming asset
             if (asset == null)
@@ -369,7 +376,7 @@ public class AssetSys : SingleMono<AssetSys>
         return null;
     }
 
-    public string GetBundlePath(string assetSubPath)
+    public static string GetBundlePath(string assetSubPath)
     {
         var dirs = assetSubPath.Split('/');
         if (dirs.Length < 2)
@@ -395,30 +402,28 @@ public class AssetSys : SingleMono<AssetSys>
     public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
         T resObj = null; //default(T);
+        
         #if UNITY_EDITOR
-        if (BuildConfig.Instance().UseBundle)
-            #endif
+        var UseBundle = BuildConfig.Instance().UseBundle;
+        if (!UseBundle)
+        {
+            resObj = AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
+        }
+        else
+        #endif // UNITY_EDITOR
         {
             string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             AppLog.d(Tag, "from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) => { resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath); });
         }
-        #if UNITY_EDITOR
-
-        // 编辑器从原始文件加载资源
-        else
-        {
-            resObj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
-        }
-        #endif
         AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj?.GetType());
         if (callBack != null)
             callBack(resObj);
     }
 
-    public UnityEngine.Object GetAssetSync(string assetPath)
+    public static UnityEngine.Object GetAssetSync(string assetPath)
     {
-        return GetAssetSync<UnityEngine.Object>(assetPath);
+        return Instance.GetAssetSync<UnityEngine.Object>(assetPath);
     }
 
     public AssetBundle GetBundleSync(string bundlePath)
@@ -582,10 +587,11 @@ public class AssetSys : SingleMono<AssetSys>
         catch (WebException we)
         {
             AppLog.e(Tag, we.Dump());
-            DialogSys.Alert(we.Message, "Error");
+            DialogSys.Alert(we.Message, "Error: " + url);
         }
         catch (Exception e)
         {
+            Debug.LogFormat(e.Message);
         }
 
         int bufsize = 10 * 1024 * 1024; // 10M
