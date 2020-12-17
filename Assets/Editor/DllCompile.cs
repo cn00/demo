@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -114,9 +114,9 @@ public class DllCompile : SingletonAsset<DllCompile>
         {
             AppLog.d(Tag, "CompileCSharp: " + msg);
         }
-        if(!info.KeepMdb)
-            File.Delete(info.OutPath + ".mdb");
         AssetDatabase.ImportAsset(info.OutPath);
+        if(!info.KeepMdb)
+            File.Delete(info.OutPath.Replace(".dll", ".pdb"));
     }
 
     [MenuItem("Tools/Create/DllCompile.asset")]
