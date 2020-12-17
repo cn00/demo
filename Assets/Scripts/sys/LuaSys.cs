@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -22,6 +22,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 using UnityEditor;
 #endif
 
+// [ExecuteInEditMode]
 public class LuaSys : SingleMono<LuaSys>
 {
     [SerializeField]
@@ -98,22 +99,21 @@ public class LuaSys : SingleMono<LuaSys>
         var assetName = search + luapath.Replace(".", "/") + LuaExtension;
         // AppLog.d(Tag, "require: " + assetName);
 #if UNITY_EDITOR
-        if(BuildConfig.Instance().UseBundle)
-#endif
-        {
-            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName);
-            if(data!=null)
-                bytes = data.bytes;
-        }
-#if UNITY_EDITOR
-        else
+        if(!BuildConfig.Instance().UseBundle)
         {
             if(File.Exists(BuildConfig.BundleResRoot + assetName))
             {
                 bytes = File.ReadAllBytes(BuildConfig.BundleResRoot + assetName);
             }
         }
+        else
 #endif
+        {
+            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName);
+            if(data!=null)
+                bytes = data.bytes;
+        }
+
         if(bytes == null && retry < PackagePath.Length)
         {
             bytes = Require(luapath, PackagePath[retry], 1+retry);
@@ -184,12 +184,7 @@ public class LuaSys : SingleMono<LuaSys>
     public LuaTable GetLuaTable(byte[] textBytes, LuaTable env, string name)
     {
         //sweep utf bom
-        if(textBytes[0] == 0xef)
-        {
-            textBytes[0] = (byte)' ';
-            textBytes[1] = (byte)' ';
-            textBytes[2] = (byte)' ';
-        }
+        AssetSys.TrimBom(ref textBytes);
 
         var table = luaEnv.DoString(Encoding.UTF8.GetString(textBytes), name, env);
         if(table != null && table.Length > 0)
