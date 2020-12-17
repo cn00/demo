@@ -24,22 +24,8 @@ public class Boot : SingleMono<Boot>
 
     public override IEnumerator Init()
     {
-
-        var conf = Application.streamingAssetsPath + "/config.lua";
-        string luas = "";
-        #if UNITY_ANDROID //&& !UNITY_EDITOR 
-        // var www0 = new WWW(conf);
-        var www = UnityEngine.Networking.UnityWebRequest.Get(conf);
-        yield return www.SendWebRequest();
-        luas = www.downloadHandler.text;
-        #else
-        if (File.Exists(conf))
-        {
-            luas = File.ReadAllText(conf);
-        }
-        #endif
-        AppLog.d(Tag, "[{0}]", luas);
-        LuaSys.Instance.GlobalEnv.DoString(luas);
+        string luas = AssetSys.GetStreamingAsset("config.lua") as string;
+        LuaSys.Instance.DoString(luas, "config");
 
 
         yield return AssetSys.Instance.Init();
@@ -53,6 +39,7 @@ public class Boot : SingleMono<Boot>
         yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset =>
         {
             var lua = gameObject.AddComponent<LuaMonoBehaviour>();
+            lua.LuaPath = "ui/boot/boot.lua";
             lua.SetLua(asset);
             lua.enabled = true;
         });
