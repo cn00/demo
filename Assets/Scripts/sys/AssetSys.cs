@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -317,11 +317,52 @@ public class AssetSys : SingleMono<AssetSys>
             asset = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath);
         }
 
-        // if(asset == null)
-        // {
-        //     AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
-        // }
-        return asset;
+            // try streaming asset
+            if (asset == null)
+            {
+                AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+            }
+
+            return asset;
+        }
+    }
+
+    public static object GetStreamingAsset(string assetSubPath, bool isAssetBundle = false)// where T : object
+    {
+        var tstart = DateTime.Now;
+        UnityWebRequest www;
+        if (isAssetBundle)
+        {
+            string bundleName = GetBundlePath(assetSubPath);
+            www = UnityWebRequestAssetBundle.GetAssetBundle("file://" + Application.streamingAssetsPath + "/" + bundleName);
+            www.SendWebRequest();
+            while (!www.isDone)
+            {
+                Thread.Sleep(100);
+            }
+            var bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
+            return bundle.LoadAsset<UnityEngine.Object>(assetSubPath);
+        }
+        
+        object asset;
+        #if UNITY_ANDROID && !UNITY_EDITOR 
+        var fullpath = "file://" + Application.streamingAssetsPath + "/" + assetSubPath;
+        www = UnityWebRequest.Get(fullpath);
+        www.timeout = 9;
+        www.SendWebRequest();
+        while (!www.isDone)// && !www.isNetworkError) //(DateTime.Now - tstart).Seconds > Math.Min(120, www.timeout))
+        {
+            Thread.Sleep(100);
+        }
+        asset = www.downloadHandler.text;
+        #else
+        if (File.Exists(Application.streamingAssetsPath + "/" + assetSubPath))
+        {
+            asset = File.ReadAllText(Application.streamingAssetsPath + "/" + assetSubPath);
+            return asset;
+        }
+        #endif
+        return null;
     }
 
     public string GetBundlePath(string assetSubPath)
@@ -647,6 +688,17 @@ public class AssetSys : SingleMono<AssetSys>
             stream.Dispose();
             AppLog.d(Tag, "Saved:" + fname);
         }, writer);
+    }
+
+    public static void TrimBom(ref byte[] textBytes)
+    {
+        if(textBytes[0] == 0xef)
+        {
+            textBytes[0] = (byte)' ';
+            textBytes[1] = (byte)' ';
+            textBytes[2] = (byte)' ';
+        }
+
     }
 }
 
