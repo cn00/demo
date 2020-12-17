@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Text;
 
 #if UNITY_EDITOR
 namespace UnityEditor
@@ -33,13 +34,15 @@ namespace UnityEditor
         static bool mShowInjections = true;
         static bool mShowInjectionValues = true;
         static bool mShowLuaAutogens = true;
-        string luaMemberValue;
+        StringBuilder luaMember = new StringBuilder(1024);
 
         void refreshAutoGen()
         {
             string luaname = "this"; //mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
-            luaMemberValue = "--AutoGenInit Begin\n--DO NOT EDIT THIS FUNCTION MANUALLY.\nfunction " + luaname +
-                             ".AutoGenInit()";
+            luaMember.Clear();
+            luaMember.Append("--AutoGenInit Begin\n--DO NOT EDIT THIS FUNCTION MANUALLY.\nfunction " + luaname +
+                             ".AutoGenInit()");
+            var btnListeners = new StringBuilder(512);
             foreach (var i in mTarget.Injections.Where(o => o != null && o.obj != null))
             {
                 var comType = i.obj.GetComponents<Component>()[i.exportComIdx].GetType().ToString();
@@ -51,13 +54,24 @@ namespace UnityEditor
                     luakey = comType.Substring(comType.LastIndexOf('.') + 1);
                 }
 
-                luaMemberValue += "\n    " + luaname + "." + luakey
+                luaMember.Append("\n    " + luaname + "." + luakey
                                   + " = " + injectName
                                   + ":GetComponent(typeof(CS."
-                                  + comType + "))";
+                                  + comType + "))");
+                if (comType.EndsWith("Button"))
+                {
+                    var funname = i.obj.name + "_OnClick";
+                    luaMember.Append("\n    " + luaname + "." + luakey + ".onClick:AddListener("+luaname + "."+ funname +")");
+                    var btnListener = "function " + luaname + "."+ funname + "()";
+                    if( !mLuaText.Contains(btnListener))
+                    {
+                        btnListeners.Append("\n\n" + btnListener + "\n    print('" + funname + "')\nend -- " + funname);
+                    }
+                }
             }
 
-            luaMemberValue += "\nend\n--AutoGenInit End";
+            luaMember.Append("\nend\n--AutoGenInit End");
+            luaMember.Append(btnListeners);
         }
 
         public override void OnInspectorGUI()
@@ -219,14 +233,14 @@ namespace UnityEditor
                 var path = AssetDatabase.GetAssetPath(mTarget.LuaAsset);
                 var pattern = Regex.Match(mLuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
                     RegexOptions.Multiline).ToString();
-                mLuaText = mLuaText.Replace(pattern.ToString(), luaMemberValue);
+                mLuaText = mLuaText.Replace(pattern.ToString(), luaMember.ToString());
                 File.WriteAllText(path, mLuaText);
                 AppLog.d(Tag, path + " updated");
             }
 
             mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);
             if (mShowLuaAutogens)
-                GUILayout.TextArea(luaMemberValue);
+                GUILayout.TextArea(luaMember.ToString());
 
             // lua debug
             if (mTarget.Lua != null)
