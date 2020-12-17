@@ -273,6 +273,10 @@ public class AssetSys : SingleMono<AssetSys>
 
     public override IEnumerator Init()
     {
+        var cfg = AudioSettings.GetConfiguration();
+        cfg.dspBufferSize = 0;
+        AudioSettings.Reset(cfg);
+        
         if (!Directory.Exists(CacheRoot))
         {
             Directory.CreateDirectory(CacheRoot);
