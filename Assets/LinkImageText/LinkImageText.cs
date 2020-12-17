@@ -54,9 +54,8 @@ public class LinkImageText : Text, IPointerClickHandler
     /// </summary>
     protected static readonly StringBuilder s_TextBuilder = new StringBuilder();
 
-    [Serializable]
-    public class HrefClickEvent : UnityEvent<string> { }
 
+    public class HrefClickEvent : UnityEvent<string> {}
     [SerializeField]
     private HrefClickEvent m_OnHrefClick = new HrefClickEvent();
 
@@ -254,7 +253,7 @@ public class LinkImageText : Text, IPointerClickHandler
         return s_TextBuilder.ToString();
     }
     /*
-    // not work
+    // not work, why ???
     protected virtual string CollectHref(string outputText)
     {
         m_HrefInfos.Clear();
@@ -293,11 +292,28 @@ public class LinkImageText : Text, IPointerClickHandler
             {
                 if (boxes[i].Contains(lp))
                 {
-                    m_OnHrefClick.Invoke(hrefInfo.name);
+                    onHrefClick.Invoke(hrefInfo.name);
                     return;
                 }
             }
         }
+    }
+
+    void OnEnable()
+    {
+        base.OnEnable();
+        onHrefClick.AddListener(OnHrefClick);
+    }
+
+    void OnDisable()
+    {
+        onHrefClick.RemoveAllListeners();
+        base.OnDisable();
+    }
+
+    private void OnHrefClick(string hrefName)
+    {
+        Debug.Log("点击了 " + hrefName);
     }
 
 }
