@@ -95,6 +95,14 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_p7zip(L);
         }
         
+        [DllImport("luasql", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int luaopen_luasql_mysql(System.IntPtr L);
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
+        public static int LoadLuasqlMysql(System.IntPtr L)
+        {
+            return luaopen_luasql_mysql(L);
+        }
+
         [DllImport(LUASQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_lsqlite3(System.IntPtr L);
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
