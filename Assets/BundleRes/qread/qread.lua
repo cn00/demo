@@ -40,6 +40,10 @@ function qread.AutoGenInit()
 end
 --AutoGenInit End
 
+---QuestOne make a arithmetic question 🧮
+---@param n number param number of the question 
+---@param a number 范围 A
+---@param b number 范围 B
 function qread.QuestOne(n, a, b)
     local q =  qread.question(n, a, b)
     local x = -1080
@@ -70,6 +74,7 @@ function qread.QuestOne(n, a, b)
     l.rectTransform.sizeDelta = UnityEngine.Vector2(700, 180)
 end
 
+---Refresh
 function qread.Refresh()
     local children = this.contentRoot_Transform:GetComponentsInChildren(typeof(CS.UnityEngine.Transform))
     for i = 0, children.Length - 1 do
@@ -77,7 +82,7 @@ function qread.Refresh()
     end
     --this.StartBtnText_Text.text = "Refresh"
     local n = math.random(3, 9)
-    qread.QuestOne(n, 3, 9)
+    qread.QuestOne(n, 1, 9)
 end
 
 local runing = false
@@ -150,10 +155,12 @@ function qread.question(n, rangeA, rangeB)
         table.insert(t, ')')
         kh = kh - 1
     end
-    
-    local s = table.concat(t)
-    print(s)
-    print(load("return " .. s)())
+
+    --if isdebug then
+    --    local s = table.concat(t)
+    --    print(s)
+    --    print(load("return " .. s)())
+    --end
     
     return t
 end
