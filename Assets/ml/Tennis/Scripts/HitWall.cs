@@ -75,9 +75,13 @@ public class HitWall : MonoBehaviour
                     AgentBWins();
                 }
                 // Agent B hits long
-                else
+                else if(lastAgentHit == AgentRole.B)
                 {
                     AgentAWins();
+                }
+                else
+                {
+                    Reset();
                 }
             }
             else if (collision.gameObject.name == "wallB")
@@ -88,19 +92,27 @@ public class HitWall : MonoBehaviour
                     AgentAWins();
                 }
                 // Agent A hits long
-                else
+                else if(lastAgentHit == AgentRole.A)
                 {
                     AgentBWins();
+                }
+                else
+                {
+                    Reset();
                 }
             }
             else if (collision.gameObject.name == "floorA")
             {
                 // Agent A hits into floor, double bounce or service
-                if (   lastAgentHit == AgentRole.A
-                    || lastFloorHit == FloorHit.FloorAHit
+                if (   lastFloorHit == FloorHit.FloorAHit
                     || lastFloorHit == FloorHit.Service)
                 {
-                    AgentBWins();
+                    if(lastAgentHit == AgentRole.A)
+                        AgentBWins();
+                    else
+                    {
+                        Reset();
+                    }
                 }
                 else
                 {
@@ -115,9 +127,15 @@ public class HitWall : MonoBehaviour
             else if (collision.gameObject.name == "floorB")
             {
                 // Agent B hits into floor, double bounce or service
-                if (lastAgentHit == AgentRole.B || lastFloorHit == FloorHit.FloorBHit || lastFloorHit == FloorHit.Service)
+                if (   lastFloorHit == FloorHit.FloorBHit 
+                    || lastFloorHit == FloorHit.Service)
                 {
-                    AgentAWins();
+                    if(lastAgentHit == AgentRole.B)
+                        AgentAWins();
+                    else
+                    {
+                        Reset();
+                    }
                 }
                 else
                 {

@@ -15,16 +15,16 @@ public class TennisAgentA : Agent
     [Header("Specific to Tennis")]
     public GameObject ball;
     public bool invertX;
-    // public int score;
-    public GameObject myArea;
+    public int hitBallcount = 0;
     public float angle;
     public float scale;
+    public float m_InvertMult;
 
     public Text m_TextComponent;
-    public Rigidbody m_AgentRb;
+    public TennisArea tennisArea;
     public Rigidbody m_BallRb;
+    public Rigidbody m_AgentRb;
     public BoxCollider m_Playground;
-    public float m_InvertMult;
     public EnvironmentParameters m_ResetParams;
 
     // Looks for the scoreboard based on the name of the gameObjects.
@@ -38,8 +38,6 @@ public class TennisAgentA : Agent
     public List<float> Observations;
     public override void Initialize()
     {
-        m_AgentRb = GetComponent<Rigidbody>();
-        m_BallRb = ball.GetComponent<Rigidbody>();
         var canvas = GameObject.Find(k_CanvasName);
         GameObject scoreBoard;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
@@ -137,9 +135,15 @@ public class TennisAgentA : Agent
 
         var p = transform.localPosition;
         transform.localPosition = new Vector3(
-            Mathf.Clamp(p.x, invertX ? 0f : -12f, invertX ? 12f : 0f ),
+            Mathf.Clamp(p.x, invertX ? 0f : tennisArea.minPosX, invertX ? tennisArea.maxPosX : 0f ),
             Mathf.Clamp(p.y, -8f, -4f),
-            Mathf.Clamp(p.z, -6f, 6f));
+            Mathf.Clamp(p.z, tennisArea.minPosZ, tennisArea.maxPosZ));
+
+        var bp = ball.transform.localPosition;
+        ball.transform.localPosition = new Vector3(
+            Mathf.Clamp(bp.x, tennisArea.minPosX, tennisArea.maxPosX),
+            Mathf.Clamp(bp.y, tennisArea.minPosY, tennisArea.maxPosY),
+            Mathf.Clamp(bp.z, tennisArea.minPosZ, tennisArea.maxPosZ));
 
         m_TextComponent.text = score.ToString();
     }
@@ -157,6 +161,16 @@ public class TennisAgentA : Agent
             continuousActionsOut[4] = Input.gyro.attitude.y; // rotateY
             continuousActionsOut[5] = Input.gyro.attitude.z; // rotateZ
             continuousActionsOut[6] = Input.gyro.attitude.w; // rotateW
+        }
+        else
+        {
+            continuousActionsOut[0] = Random.Range(-1f, 1f); // moveX Racket Movement
+            continuousActionsOut[1] = Random.Range(-1f, 1f); // moveY Racket Jumping
+            continuousActionsOut[2] = Random.Range(-1f, 1f); // moveZ
+            continuousActionsOut[3] = Random.Range(-1f, 1f); // rotateX
+            continuousActionsOut[4] = Random.Range(-1f, 1f); // rotateY
+            continuousActionsOut[5] = Random.Range(-1f, 1f); // rotateZ
+            continuousActionsOut[6] = Random.Range(-1f, 1f); // rotateW
         }
     }
 
@@ -177,9 +191,9 @@ public class TennisAgentA : Agent
     public void SetRacket()
     {
         angle = m_ResetParams.GetWithDefault("angle", 55);
-        gameObject.transform.eulerAngles = new Vector3(
-            gameObject.transform.eulerAngles.x,
-            gameObject.transform.eulerAngles.y,
+        transform.eulerAngles = new Vector3(
+            transform.eulerAngles.x,
+            transform.eulerAngles.y,
             m_InvertMult * angle
         );
     }
