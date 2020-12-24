@@ -157,6 +157,10 @@ public class HitWall : MonoBehaviour
                 {
                     AgentAWins();
                 }
+                else
+                {
+                    Reset();
+                }
             }
         }
         else if (collision.gameObject.name == "AgentA")
