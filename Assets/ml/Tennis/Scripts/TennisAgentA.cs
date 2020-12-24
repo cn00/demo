@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Sensors.Reflection;
+using Random = UnityEngine.Random;
 
 public class TennisAgentA : Agent
 {
@@ -130,17 +132,14 @@ public class TennisAgentA : Agent
 
         m_AgentRb.velocity = new Vector3(velocityX * k_velocityMax, velocityY * k_velocityMax, velocityZ * k_velocityMax);
 
-        m_AgentRb.transform.localRotation = new Quaternion(rotateX, rotateY, rotateZ, rotateW); // Quaternion.Euler(90f * rotateX, 90f * rotateY, 90f * rotateZ);
-        // m_AgentRb.transform.localEulerAngles = new Vector3(180f*rotateX, 180f*rotateY, 180f*rotateZ); // Quaternion.Euler(90f * rotateX, 90f * rotateY, 90f * rotateZ);
+        m_AgentRb.transform.localRotation = new Quaternion(rotateX, rotateY, rotateZ, rotateW); // the machine could handle this!!!
+        // m_AgentRb.transform.localEulerAngles = new Vector3(180f*rotateX, 180f*rotateY, 180f*rotateZ);// maybe this is easyer?
 
-        // var rect = new Rect(m_Playground.center, m_Playground.size);
-        // if (!rect.Contains(transform.localPosition))
-        // {
-        //     transform.localPosition = new Vector3(
-        //         -m_InvertMult * 7f,
-        //         -7f,
-        //         -1.8f);
-        // }
+        var p = transform.localPosition;
+        transform.localPosition = new Vector3(
+            Mathf.Clamp(p.x, invertX ? 0f : -12f, invertX ? 12f : 0f ),
+            Mathf.Clamp(p.y, -8f, -4f),
+            Mathf.Clamp(p.z, -6f, 6f));
 
         m_TextComponent.text = score.ToString();
     }

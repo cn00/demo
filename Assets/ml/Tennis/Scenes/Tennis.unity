@@ -1441,6 +1441,16 @@ PrefabInstance:
       propertyPath: lastAgentHit
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114965703901356864, guid: 812997c7bc2544b6f927ff684c03450f,
+        type: 3}
+      propertyPath: maxPosY
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114965703901356864, guid: 812997c7bc2544b6f927ff684c03450f,
+        type: 3}
+      propertyPath: minPosY
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 812997c7bc2544b6f927ff684c03450f, type: 3}
 --- !u!4 &1700151739 stripped
