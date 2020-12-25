@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,36 +7,46 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Sensors.Reflection;
 using Random = UnityEngine.Random;
 
 public class TennisAgentA : Agent
 {
-    [Header("Specific to Tennis")]
-    public GameObject ball;
+    public TennisPlayground playground;
+    public Rigidbody rigidbody;
+    public Text m_TextComponent;
+
     public bool invertX;
-    public int hitBallcount = 0;
     public float angle;
     public float scale;
     public float m_InvertMult;
+    public float m_velocityMax = 60f;
 
-    public Text m_TextComponent;
-    public TennisArea tennisArea;
-    public Rigidbody m_BallRb;
-    public Rigidbody m_AgentRb;
-    public BoxCollider m_Playground;
-    public EnvironmentParameters m_ResetParams;
+    public BehaviorParameters m_BehaviorParameters;
+    
+    public EnvironmentParameters m_ResetParams = null;
+    public EnvironmentParameters ResetParams
+    {
+        get
+        {
+            if (m_ResetParams == null)
+            {
+                m_ResetParams = Academy.Instance.EnvironmentParameters;
+            }
+            return m_ResetParams;
+        }
+    }
 
     // Looks for the scoreboard based on the name of the gameObjects.
     // Do not modify the names of the Score GameObjects
     const string k_CanvasName = "Canvas";
     const string k_ScoreBoardAName = "ScoreA";
     const string k_ScoreBoardBName = "ScoreB";
-    const float k_velocityMax = 30f;
 
-    [Header("i_1:p_3:r_4:v_3:l_1:lbr_4:bp_3")]
-    public List<float> Observations;
+    // [Header("i_1:p_3:r_4:v_3:l_1:lbr_4:bp_3")]
+    // public List<float> Observations;
     public override void Initialize()
     {
         var canvas = GameObject.Find(k_CanvasName);
@@ -73,21 +84,14 @@ public class TennisAgentA : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(m_InvertMult);               // 角色 x1
-        sensor.AddObservation(transform.localPosition);    // 位置 x3
+        
+        sensor.AddObservation(transform.localPosition);             // 位置 x3
+        sensor.AddObservation(transform.localRotation.eulerAngles); // 角度 x3
+        sensor.AddObservation(rigidbody.velocity);                  // 速度 x3
 
-        sensor.AddObservation(transform.localRotation);         // 角度 x4
-
-        sensor.AddObservation(m_AgentRb.velocity);         // 速度 x3
-        sensor.AddObservation((transform.localPosition - ball.transform.localPosition).magnitude); // 距离 x1
-
-        sensor.AddObservation(Quaternion.FromToRotation(transform.localPosition, ball.transform.localPosition)); // 相对角度 x4
-
-        // 球的位置和速度
-        sensor.AddObservation(ball.transform.localPosition);  // 球位置 x3
-        // sensor.AddObservation(ball.transform.localRotation ); // 球角度 x4
-        // sensor.AddObservation(m_BallRb.velocity);             // 球速 x3
-
-        Observations = GetObservations().ToList();
+        sensor.AddObservation(playground.ball.transform.localPosition); // 球位置 x3
+        sensor.AddObservation(playground.ball.rigidbody.velocity);            // 球速度 x3
+        sensor.AddObservation(playground.ball.rigidbody.angularVelocity );    // 角速度 x3
     }
 
     [Header("v_3:r_4")]
@@ -112,11 +116,12 @@ public class TennisAgentA : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var continuousActions = actionBuffers.ContinuousActions;
+        #if UNITY_EDITOR
         m_Actions = continuousActions.ToList();
+        #endif
         if (++actionCount % 10000 == 0)
         {
-            var s = string.Join(", ", m_Actions);
-            Debug.LogWarning($"action_{actionCount}:[{s}] invertX:{invertX} score:{score}");
+            Debug.LogWarning($"EpId:{m_EpisodeId} {name} cmlRw:{m_CumulativeReward} cmpldEps:{m_CompletedEpisodes} score:{score:0.000000} ac:{actionCount}");
         }
 
         int i = 0;
@@ -126,26 +131,20 @@ public class TennisAgentA : Agent
         var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
         var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
         var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
+        // var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
 
-        m_AgentRb.velocity = new Vector3(velocityX * k_velocityMax, velocityY * k_velocityMax, velocityZ * k_velocityMax);
+        rigidbody.velocity = new Vector3(velocityX * m_velocityMax, velocityY * m_velocityMax, velocityZ * m_velocityMax);
 
-        m_AgentRb.transform.localRotation = new Quaternion(rotateX, rotateY, rotateZ, rotateW); // the machine could handle this!!!
-        // m_AgentRb.transform.localEulerAngles = new Vector3(180f*rotateX, 180f*rotateY, 180f*rotateZ);// maybe this is easyer?
+        // rigidbody.transform.localRotation = new Quaternion(rotateX, rotateY, rotateZ, rotateW); // the machine could handle this!!!
+        rigidbody.transform.localEulerAngles = new Vector3(180f*rotateX, 180f*rotateY, 180f*rotateZ);// maybe this is easyer?
 
         var p = transform.localPosition;
         transform.localPosition = new Vector3(
-            Mathf.Clamp(p.x, invertX ? 0f : tennisArea.minPosX, invertX ? tennisArea.maxPosX : 0f ),
-            Mathf.Clamp(p.y, -8f, -4f),
-            Mathf.Clamp(p.z, tennisArea.minPosZ, tennisArea.maxPosZ));
+            Mathf.Clamp(p.x, invertX ? 0f : playground.ball.minPosX, invertX ? playground.ball.maxPosX : 0f ),
+            Mathf.Clamp(p.y, 0f, 4f),
+            Mathf.Clamp(p.z, playground.ball.minPosZ, playground.ball.maxPosZ));
 
-        var bp = ball.transform.localPosition;
-        ball.transform.localPosition = new Vector3(
-            Mathf.Clamp(bp.x, tennisArea.minPosX, tennisArea.maxPosX),
-            Mathf.Clamp(bp.y, tennisArea.minPosY, tennisArea.maxPosY),
-            Mathf.Clamp(bp.z, tennisArea.minPosZ, tennisArea.maxPosZ));
-
-        m_TextComponent.text = score.ToString();
+        m_TextComponent.text = score.ToString("0.000000");
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -160,7 +159,7 @@ public class TennisAgentA : Agent
             continuousActionsOut[3] = Input.gyro.attitude.x; // rotateX
             continuousActionsOut[4] = Input.gyro.attitude.y; // rotateY
             continuousActionsOut[5] = Input.gyro.attitude.z; // rotateZ
-            continuousActionsOut[6] = Input.gyro.attitude.w; // rotateW
+            // continuousActionsOut[6] = Input.gyro.attitude.w; // rotateW
         }
         else
         {
@@ -170,7 +169,7 @@ public class TennisAgentA : Agent
             continuousActionsOut[3] = Random.Range(-1f, 1f); // rotateX
             continuousActionsOut[4] = Random.Range(-1f, 1f); // rotateY
             continuousActionsOut[5] = Random.Range(-1f, 1f); // rotateZ
-            continuousActionsOut[6] = Random.Range(-1f, 1f); // rotateW
+            // continuousActionsOut[6] = Random.Range(-1f, 1f); // rotateW
         }
     }
 
@@ -180,33 +179,26 @@ public class TennisAgentA : Agent
 
         // transform.position = new Vector3(-m_InvertMult * Random.Range(6f, 8f), -1.5f, -1.8f) + transform.parent.transform.position;
         transform.localPosition = new Vector3(
-            -m_InvertMult * Random.Range(6f, 8f),
-            -1.5f,
-            -1.8f);
-        m_AgentRb.velocity = new Vector3(0f, 0f, 0f);
+            -m_InvertMult * 8,
+            2f,
+            -1.5f);
+        rigidbody.velocity = new Vector3(0f, 0f, 0f);
 
         SetResetParameters();
     }
 
     public void SetRacket()
     {
-        angle = m_ResetParams.GetWithDefault("angle", 55);
+        angle = ResetParams.GetWithDefault("angle", 55);
         transform.eulerAngles = new Vector3(
             transform.eulerAngles.x,
             transform.eulerAngles.y,
             m_InvertMult * angle
         );
     }
-
-    public void SetBall()
-    {
-        scale = m_ResetParams.GetWithDefault("scale", .5f);
-        ball.transform.localScale = new Vector3(scale, scale, scale);
-    }
-
+    
     public void SetResetParameters()
     {
         SetRacket();
-        SetBall();
     }
 }
