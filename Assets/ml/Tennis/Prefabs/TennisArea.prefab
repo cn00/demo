@@ -163,16 +163,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51a3fb0b3186433ea84fc1e0549cc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 0
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  m_Reward: 0
+  m_CumulativeReward: 0
+  m_RequestAction: 0
+  m_RequestDecision: 0
+  m_StepCount: 0
+  m_CompletedEpisodes: 0
+  m_EpisodeId: 0
+  collectObservationsSensor:
+    m_Name: 
+    m_Shape: 
+    m_Observations: []
   ball: {fileID: 1273406647218856}
   invertX: 0
   myArea: {fileID: 1541947554534326}
   angle: 0
   scale: 0
+  score: 0
   m_TextComponent: {fileID: 0}
   m_AgentRb: {fileID: 54815576193067388}
   m_BallRb: {fileID: 54551619567459642}
@@ -409,15 +420,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1273406647218856}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05eee2a5536934f5684a65f151efd304, type: 3}
+  m_Script: {fileID: 11500000, guid: 302843ef0d48f4479a22d896445cb57f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playground: {fileID: 0}
+  rigidbody: {fileID: 0}
+  minPosX: -12
+  maxPosX: 12
+  minPosY: 0
+  maxPosY: 12
+  minPosZ: -5.5
+  maxPosZ: 5.5
+  m_velocityMax: 60
   net: 0
   lastAgentHit: 2
   lastFloorHit: 0
-  m_Area: {fileID: 114965703901356864}
-  m_AgentA: {fileID: 114915946461826994}
-  m_AgentB: {fileID: 114800310164848628}
 --- !u!33 &33217327365863818
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -835,18 +852,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1541947554534326}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc15854a4efe14dceb84a3183ca4c896, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b44364b91fd4f0aac862dcb8cb63793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ball: {fileID: 1273406647218856}
-  agentA: {fileID: 114915946461826994}
-  agentB: {fileID: 114800310164848628}
-  minPosX: 6
-  maxPosX: 8
-  minPosY: 6
-  maxPosY: 6
-  minPosZ: 0
-  maxPosZ: 0
+  agentA: {fileID: 0}
+  agentB: {fileID: 0}
+  ball: {fileID: 0}
+  levelOne: 10
+  levelTwo: 20
 --- !u!1 &1573817391095622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,16 +1388,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51a3fb0b3186433ea84fc1e0549cc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 0
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  m_Reward: 0
+  m_CumulativeReward: 0
+  m_RequestAction: 0
+  m_RequestDecision: 0
+  m_StepCount: 0
+  m_CompletedEpisodes: 0
+  m_EpisodeId: 0
+  collectObservationsSensor:
+    m_Name: 
+    m_Shape: 
+    m_Observations: []
   ball: {fileID: 1273406647218856}
   invertX: 1
   myArea: {fileID: 1541947554534326}
   angle: 20
   scale: 0
+  score: 0
   m_TextComponent: {fileID: 0}
   m_AgentRb: {fileID: 54459681652844648}
   m_BallRb: {fileID: 54551619567459642}

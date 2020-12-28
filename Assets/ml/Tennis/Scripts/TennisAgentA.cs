@@ -25,30 +25,31 @@ public class TennisAgentA : Agent
     public float m_InvertMult;
     public float m_velocityMax = 9;
     public float m_rotateMax   = 180f;
-
-    public BehaviorParameters m_BehaviorParameters;
     
-    public EnvironmentParameters m_ResetParams = null;
-    public EnvironmentParameters ResetParams
+    public EnvironmentParameters m_EnvParams = null;
+    public EnvironmentParameters EnvParams
     {
         get
         {
-            if (m_ResetParams == null)
+            if (m_EnvParams == null)
             {
-                m_ResetParams = Academy.Instance.EnvironmentParameters;
+                m_EnvParams = Academy.Instance.EnvironmentParameters;
             }
-            return m_ResetParams;
+            return m_EnvParams;
         }
     }
 
     // [Header("i_1:p_3:r_4:v_3:l_1:lbr_4:bp_3")]
     // public List<float> Observations;
-    public override void Initialize()
+    public override void Initialize() // OnEnable
     {
-        m_ResetParams = Academy.Instance.EnvironmentParameters;
-        SetResetParameters();
+        m_EnvParams = Academy.Instance.EnvironmentParameters;
+        m_InvertMult = invertX ? -1f : 1f;
+
+        Reset();
     }
 
+    
     /// <summary>
     /// <br/>为了使代理学习，观察应包括代理完成其任务所需的所有信息。如果没有足够的相关信息，座席可能会学得不好或根本不会学。
     /// <br/>确定应包含哪些信息的合理方法是考虑计算该问题的分析解决方案所需的条件，或者您希望人类能够用来解决该问题的方法。<br/>
@@ -106,20 +107,21 @@ public class TennisAgentA : Agent
         #endif
         
         int i = 0;
-        var velocityX   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
-        var velocityY   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
-        var velocityZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
-        var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
-        var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
-        var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+        var velocityX = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var velocityY = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var velocityZ = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var rotateX   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+        var rotateY   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+        var rotateZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
         // var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
 
-        if (playground.agentA.score < playground.levelOne || playground.agentB.score < playground.levelOne)
-        {
-            rotateX = invertX ? 180f : 0f;
-            rotateY = 0f;
-            velocityZ = 0f;
-        }
+        // // 不干预决策，在 TennisBall 中限制球的运动范围来引导
+        // if (playground.agentA.score < playground.levelOne || playground.agentB.score < playground.levelOne)
+        // {
+        //     rotateX = invertX ? 180f : 0f;
+        //     rotateY = 0f;
+        //     velocityZ = 0f;
+        // }
 
         rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
         
@@ -168,31 +170,24 @@ public class TennisAgentA : Agent
     public Action episodeBeginAction;
     public override void OnEpisodeBegin()
     {
-        m_InvertMult = invertX ? -1f : 1f;
-
-        transform.localPosition = new Vector3(
-            -m_InvertMult * 8,
-            2f,
-            m_InvertMult * 1.5f);
-        rigidbody.velocity = new Vector3(0f, 0f, 0f);
-
-        SetResetParameters();
+        Reset();
         
         if(episodeBeginAction != null)
             episodeBeginAction();
     }
     
-    public void SetRacket()
+    public void Reset()
     {
+        transform.localPosition = new Vector3(
+            -m_InvertMult * 8,
+            2f,
+            m_InvertMult * 1.5f);
+
+        rigidbody.velocity = new Vector3(0f, 0f, 0f);
         transform.eulerAngles = new Vector3(
             0f,
             invertX ? 0f : 180f,
             -55f
         );
-    }
-    
-    public void SetResetParameters()
-    {
-        SetRacket();
     }
 }
