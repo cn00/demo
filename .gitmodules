@@ -16,3 +16,6 @@
 [submodule "xlua"]
 	path = xlua
 	url = git@github.com:cn00/xLua.git
+[submodule "ml"]
+	path = ml
+	url = git@github.com:cn00/ml-agents.git
