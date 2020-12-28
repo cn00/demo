@@ -153,7 +153,9 @@ MonoBehaviour:
   rigidbody: {fileID: 54815576193067388}
   m_TextComponent: {fileID: 0}
   invertX: 0
-  angle: 0
+  angleX: 0
+  angleY: 0
+  angleZ: 0
   scale: 0
   m_InvertMult: 0
   m_velocityMax: 60
@@ -181,7 +183,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: f90e8baabbfcb4d028f4b27da7ca83dd, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 2785d2488ea51438ab71880734bfd629, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: TennisA
@@ -1376,7 +1378,9 @@ MonoBehaviour:
   rigidbody: {fileID: 54459681652844648}
   m_TextComponent: {fileID: 0}
   invertX: 1
-  angle: 0
+  angleX: 0
+  angleY: 0
+  angleZ: 0
   scale: 0
   m_InvertMult: 0
   m_velocityMax: 60
@@ -1404,7 +1408,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: f90e8baabbfcb4d028f4b27da7ca83dd, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 2785d2488ea51438ab71880734bfd629, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: TennisA
