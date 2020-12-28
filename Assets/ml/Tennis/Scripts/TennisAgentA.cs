@@ -20,9 +20,6 @@ public class TennisAgentA : Agent
     public uint score;
     public uint hitCount;
 
-    public float angleX;
-    public float angleY;
-    public float angleZ;
     public float scale;
     public bool invertX;
     public float m_InvertMult;
@@ -100,40 +97,45 @@ public class TennisAgentA : Agent
      * 或者，您可以创建两个大小为2的分支（一个用于水平移动，一个用于垂直移动），并且Policy将创建一个包含两个元素的操作数组，其值的范围从零到一。
      * 请注意，在为代理编程动作时，使用代理Heuristic()方法测试动作逻辑通常会很有帮助，该方法可让您将键盘命令映射到动作。
      */
+    
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var continuousActions = actionBuffers.ContinuousActions;
         #if UNITY_EDITOR
         m_Actions = continuousActions.ToList();
         #endif
-        if (CompletedEpisodes % 10000 == 0 && score > 0)
-        {
-            Debug.LogWarning($"EpId:{m_EpisodeId} {name} cmlRw:{m_CumulativeReward} cmpldEps:{m_CompletedEpisodes} ce:{CompletedEpisodes} score:{score}/{hitCount}");
-        }
-
+        
         int i = 0;
         var velocityX   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
         var velocityY   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
         var velocityZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
-        var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
-        var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
-        var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
+        var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+        var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+        var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
         // var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        
-        if (score < playground.levelOne)
+
+        if (playground.agentA.score < playground.levelOne || playground.agentB.score < playground.levelOne)
         {
-            rotateX = 0f;
+            rotateX = invertX ? 180f : 0f;
             rotateY = 0f;
             velocityZ = 0f;
         }
 
         rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
-        rigidbody.transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);// maybe this is easyer?
+        
+        rigidbody.rotation = Quaternion.Euler(new Vector3(rotateX, rotateY, rotateZ));// 这比使用Transform.rotation更新旋转速度更快
+        // or 
+        // transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);
 
+    }
+
+    private void FixedUpdate()
+    {
         var p = transform.localPosition;
+        var rp = rigidbody.position;
         transform.localPosition = new Vector3(
             Mathf.Clamp(p.x, invertX ? 0f : playground.ball.minPosX, invertX ? playground.ball.maxPosX : 0f ),
-            Mathf.Clamp(p.y, 0f, 4f),
+            Mathf.Clamp(p.y, 0f, 3f),
             Mathf.Clamp(p.z, playground.ball.minPosZ, playground.ball.maxPosZ));
     }
 
@@ -163,29 +165,29 @@ public class TennisAgentA : Agent
         }
     }
 
+    public Action episodeBeginAction;
     public override void OnEpisodeBegin()
     {
         m_InvertMult = invertX ? -1f : 1f;
 
-        // transform.position = new Vector3(-m_InvertMult * Random.Range(6f, 8f), -1.5f, -1.8f) + transform.parent.transform.position;
         transform.localPosition = new Vector3(
             -m_InvertMult * 8,
             2f,
-            -1.5f);
+            m_InvertMult * 1.5f);
         rigidbody.velocity = new Vector3(0f, 0f, 0f);
 
         SetResetParameters();
+        
+        if(episodeBeginAction != null)
+            episodeBeginAction();
     }
-
+    
     public void SetRacket()
     {
-        angleX = ResetParams.GetWithDefault("angleX", 0f);
-        angleY = ResetParams.GetWithDefault("angleY", 0f);
-        angleZ = ResetParams.GetWithDefault("angleZ", 55f);
         transform.eulerAngles = new Vector3(
-            angleX,
-            angleY,
-            m_InvertMult * angleZ
+            0f,
+            invertX ? 0f : 180f,
+            -55f
         );
     }
     
