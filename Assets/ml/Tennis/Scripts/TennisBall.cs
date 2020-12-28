@@ -15,7 +15,7 @@ public class TennisBall : MonoBehaviour
     public float maxPosY =  12f;
     public float minPosZ = -5.5f;
     public float maxPosZ =  5.5f;
-    public float m_velocityMax = 160f;
+    public float m_velocityMax = 60f; // 216Km/h
 
     public bool net;
 

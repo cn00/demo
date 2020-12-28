@@ -112,15 +112,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1170495812642400}
-  m_LocalRotation: {x: -0.30070576, y: -0.953717, z: -0.000000056308206, w: -0.00000017858686}
-  m_LocalPosition: {x: -8, y: 2, z: -1.5}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -8, y: 2, z: 1.5}
   m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
   m_Children:
   - {fileID: 4370649305674928}
   - {fileID: 4715306824276108}
   m_Father: {fileID: 4172342666475122}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: 35}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!114 &114915946461826994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,7 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c3cdac8eac084234a4eb0085b0dcf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 0
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
@@ -151,14 +150,13 @@ MonoBehaviour:
     m_Observations: []
   playground: {fileID: 8621042555542754772}
   rigidbody: {fileID: 54815576193067388}
-  m_TextComponent: {fileID: 0}
-  invertX: 0
-  angleX: 0
-  angleY: 0
-  angleZ: 0
+  score: 0
+  hitCount: 0
   scale: 0
+  invertX: 0
   m_InvertMult: 0
-  m_velocityMax: 60
+  m_velocityMax: 9
+  m_rotateMax: 180
   m_BehaviorParameters: {fileID: 114176423636690854}
   m_Actions: []
 --- !u!114 &114176423636690854
@@ -183,7 +181,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 2785d2488ea51438ab71880734bfd629, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 066571571270443deb1ce6c4cb822a33, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: TennisA
@@ -248,14 +246,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1170495812642400}
   serializedVersion: 2
-  m_Mass: 4
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!65 &65276341973995358
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -267,8 +265,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 197.66124, y: 25.337835, z: 462.1056}
-  m_Center: {x: -0.000061035156, y: 5.2535323e-11, z: -231.0528}
+  m_Size: {x: 162.3, y: 25.337835, z: 228.7}
+  m_Center: {x: -0.000061035156, y: 5.2535323e-11, z: -337.8}
 --- !u!114 &2449890524009497851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +424,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playground: {fileID: 8621042555542754772}
   rigidbody: {fileID: 54551619567459642}
-  simpleLevelScore: 500
   minPosX: -12
   maxPosX: 12
   minPosY: 0
@@ -508,13 +505,13 @@ Rigidbody:
   m_GameObject: {fileID: 1273406647218856}
   serializedVersion: 2
   m_Mass: 0.75
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 0.001
+  m_AngularDrag: 0.001
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 2
+  m_CollisionDetection: 3
 --- !u!1 &1299636753784036
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,6 +856,8 @@ MonoBehaviour:
   agentA: {fileID: 114915946461826994}
   agentB: {fileID: 114800310164848628}
   ball: {fileID: 114864720926204124}
+  levelOne: 10
+  levelTwo: 20
 --- !u!1 &1573817391095622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1337,7 +1336,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882383181950958}
-  m_LocalRotation: {x: 0.30070576, y: -0.953717, z: 0.000000056308206, w: -0.00000017858686}
+  m_LocalRotation: {x: 0.7071068, y: -0.7071068, z: 0, w: 0}
   m_LocalPosition: {x: 8, y: 2, z: -1.5}
   m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
   m_Children:
@@ -1345,7 +1344,7 @@ Transform:
   - {fileID: 4937969699028734}
   m_Father: {fileID: 4172342666475122}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: -35}
+  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 90}
 --- !u!114 &114800310164848628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1358,7 +1357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c3cdac8eac084234a4eb0085b0dcf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 0
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
@@ -1376,14 +1374,13 @@ MonoBehaviour:
     m_Observations: []
   playground: {fileID: 8621042555542754772}
   rigidbody: {fileID: 54459681652844648}
-  m_TextComponent: {fileID: 0}
-  invertX: 1
-  angleX: 0
-  angleY: 0
-  angleZ: 0
+  score: 0
+  hitCount: 0
   scale: 0
+  invertX: 1
   m_InvertMult: 0
-  m_velocityMax: 60
+  m_velocityMax: 9
+  m_rotateMax: 180
   m_BehaviorParameters: {fileID: 114399072728845634}
   m_Actions: []
 --- !u!114 &114399072728845634
@@ -1473,14 +1470,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882383181950958}
   serializedVersion: 2
-  m_Mass: 4
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!65 &65280384434867516
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1492,8 +1489,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 197.66124, y: 25.337835, z: 462.1056}
-  m_Center: {x: -0.000061035156, y: 5.2535323e-11, z: -231.0528}
+  m_Size: {x: 162.3, y: 25.337835, z: 228.7}
+  m_Center: {x: -0.000061035156, y: 5.2535323e-11, z: -337.8}
 --- !u!114 &6598495797138489682
 MonoBehaviour:
   m_ObjectHideFlags: 0

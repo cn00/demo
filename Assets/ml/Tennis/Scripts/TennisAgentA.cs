@@ -26,7 +26,8 @@ public class TennisAgentA : Agent
     public float scale;
     public bool invertX;
     public float m_InvertMult;
-    public float m_velocityMax = 60f;
+    public float m_velocityMax = 9;
+    public float m_rotateMax   = 180f;
 
     public BehaviorParameters m_BehaviorParameters;
     
