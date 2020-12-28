@@ -9,7 +9,6 @@ public class TennisBall : MonoBehaviour
     public TennisPlayground playground;
     public Rigidbody rigidbody;
 
-    public int simpleLevelScore = 500;
     public float minPosX = -12f;
     public float maxPosX =  12f;
     public float minPosY = 0f;
@@ -78,7 +77,7 @@ public class TennisBall : MonoBehaviour
     {
         var z  = 0f;
         var vz = 0f;
-        if ((playground.agentA.score + playground.agentB.score) > simpleLevelScore)
+        if (playground.agentA.score > playground.levelOne || playground.agentB.score > playground.levelOne )
         {
             z = Random.Range(minPosZ, maxPosZ);
             vz = Random.Range(-0.1f, 0.1f);
@@ -217,13 +216,13 @@ public class TennisBall : MonoBehaviour
         else if (collision.gameObject.name == "AgentA")
         {
             playground.agentA.AddReward(0.6f);
-            playground.agentA.score += 0.000001f;
+            ++playground.agentA.hitCount;
             // Debug.LogWarning($"congratulations AgentA hit the ball. score:{playground.agentA.score:0.000000}:{playground.agentB.score:0.000000}");
             
             // Agent A double hit
             if (lastAgentHit == AgentRole.A)
             {
-                playground.agentB.score += 1f;
+                ++playground.agentB.score;
                 AgentBWins();
             }
             else
@@ -241,13 +240,13 @@ public class TennisBall : MonoBehaviour
         else if (collision.gameObject.name == "AgentB")
         {
             playground.agentB.AddReward(0.6f);
-            playground.agentB.score += 0.000001f;
+            ++playground.agentB.hitCount;
             // Debug.LogWarning($"congratulations AgentB hit the ball. score:{playground.agentA.score:0.000000}:{playground.agentB.score:0.000000}");
 
             // Agent B double hit
             if (lastAgentHit == AgentRole.B)
             {
-                playground.agentA.score += 1f;
+                ++playground.agentA.score;
                 AgentAWins();
             }
             else

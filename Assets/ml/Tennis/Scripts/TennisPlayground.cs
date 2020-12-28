@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class TennisPlayground : MonoBehaviour
 {
-    public Agent agentA;
-    public Agent agentB;
+    public TennisAgentA agentA;
+    public TennisAgentA agentB;
     public TennisBall ball;
+    
+    public int levelOne = 10;
+    public int levelTwo = 20;
+
 }

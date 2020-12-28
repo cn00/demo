@@ -16,11 +16,15 @@ public class TennisAgentA : Agent
 {
     public TennisPlayground playground;
     public Rigidbody rigidbody;
-    public Text m_TextComponent;
 
-    public bool invertX;
-    public float angle;
+    public uint score;
+    public uint hitCount;
+
+    public float angleX;
+    public float angleY;
+    public float angleZ;
     public float scale;
+    public bool invertX;
     public float m_InvertMult;
     public float m_velocityMax = 60f;
 
@@ -39,28 +43,11 @@ public class TennisAgentA : Agent
         }
     }
 
-    // Looks for the scoreboard based on the name of the gameObjects.
-    // Do not modify the names of the Score GameObjects
-    const string k_CanvasName = "Canvas";
-    const string k_ScoreBoardAName = "ScoreA";
-    const string k_ScoreBoardBName = "ScoreB";
-
     // [Header("i_1:p_3:r_4:v_3:l_1:lbr_4:bp_3")]
     // public List<float> Observations;
     public override void Initialize()
     {
-        var canvas = GameObject.Find(k_CanvasName);
-        GameObject scoreBoard;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
-        if (invertX)
-        {
-            scoreBoard = canvas.transform.Find(k_ScoreBoardBName).gameObject;
-        }
-        else
-        {
-            scoreBoard = canvas.transform.Find(k_ScoreBoardAName).gameObject;
-        }
-        m_TextComponent = scoreBoard.GetComponent<Text>();
         SetResetParameters();
     }
 
@@ -83,13 +70,13 @@ public class TennisAgentA : Agent
     /// <param name="sensor" type="VectorSensor"></param>
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(m_InvertMult);               // 角色 x1
+        sensor.AddObservation(m_InvertMult);                        // 角色 x1
         
         sensor.AddObservation(transform.localPosition);             // 位置 x3
         sensor.AddObservation(transform.localRotation.eulerAngles); // 角度 x3
         sensor.AddObservation(rigidbody.velocity);                  // 速度 x3
 
-        sensor.AddObservation(playground.ball.transform.localPosition); // 球位置 x3
+        sensor.AddObservation(playground.ball.transform.localPosition);       // 球位置 x3
         sensor.AddObservation(playground.ball.rigidbody.velocity);            // 球速度 x3
         sensor.AddObservation(playground.ball.rigidbody.angularVelocity );    // 角速度 x3
     }
@@ -97,7 +84,6 @@ public class TennisAgentA : Agent
     [Header("v_3:r_4")]
     public List<float> m_Actions;
 
-    private static int actionCount = 0;
     /**
      * 动作是代理执行的来自策略的指令。当学院调用代理的OnActionReceived()功能时，该操作将作为参数传递给代理。
      * 代理的动作可以采用两种形式之一，即Continuous或Discrete。
@@ -119,32 +105,35 @@ public class TennisAgentA : Agent
         #if UNITY_EDITOR
         m_Actions = continuousActions.ToList();
         #endif
-        if (++actionCount % 10000 == 0)
+        if (CompletedEpisodes % 10000 == 0 && score > 0)
         {
-            Debug.LogWarning($"EpId:{m_EpisodeId} {name} cmlRw:{m_CumulativeReward} cmpldEps:{m_CompletedEpisodes} score:{score:0.000000} ac:{actionCount}");
+            Debug.LogWarning($"EpId:{m_EpisodeId} {name} cmlRw:{m_CumulativeReward} cmpldEps:{m_CompletedEpisodes} ce:{CompletedEpisodes} score:{score}/{hitCount}");
         }
 
         int i = 0;
-        var velocityX   = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var velocityY   = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var velocityZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
-        var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
+        var velocityX   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var velocityY   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var velocityZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
+        var rotateX     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
+        var rotateY     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
+        var rotateZ     = Mathf.Clamp(continuousActions[i++], -1f, 1f) * 180f;
         // var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
+        
+        if (score < playground.levelOne)
+        {
+            rotateX = 0f;
+            rotateY = 0f;
+            velocityZ = 0f;
+        }
 
-        rigidbody.velocity = new Vector3(velocityX * m_velocityMax, velocityY * m_velocityMax, velocityZ * m_velocityMax);
-
-        // rigidbody.transform.localRotation = new Quaternion(rotateX, rotateY, rotateZ, rotateW); // the machine could handle this!!!
-        rigidbody.transform.localEulerAngles = new Vector3(180f*rotateX, 180f*rotateY, 180f*rotateZ);// maybe this is easyer?
+        rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
+        rigidbody.transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);// maybe this is easyer?
 
         var p = transform.localPosition;
         transform.localPosition = new Vector3(
             Mathf.Clamp(p.x, invertX ? 0f : playground.ball.minPosX, invertX ? playground.ball.maxPosX : 0f ),
             Mathf.Clamp(p.y, 0f, 4f),
             Mathf.Clamp(p.z, playground.ball.minPosZ, playground.ball.maxPosZ));
-
-        m_TextComponent.text = score.ToString("0.000000");
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -189,11 +178,13 @@ public class TennisAgentA : Agent
 
     public void SetRacket()
     {
-        angle = ResetParams.GetWithDefault("angle", 55);
+        angleX = ResetParams.GetWithDefault("angleX", 0f);
+        angleY = ResetParams.GetWithDefault("angleY", 0f);
+        angleZ = ResetParams.GetWithDefault("angleZ", 55f);
         transform.eulerAngles = new Vector3(
-            transform.eulerAngles.x,
-            transform.eulerAngles.y,
-            m_InvertMult * angle
+            angleX,
+            angleY,
+            m_InvertMult * angleZ
         );
     }
     

@@ -15,6 +15,7 @@ public class TennisAgent : Agent
     public GameObject myArea;
     public float angle;
     public float scale;
+    public uint score;
 
     public Text m_TextComponent;
     public Rigidbody m_AgentRb;
@@ -97,7 +98,7 @@ public class TennisAgent : Agent
                 transform.localPosition.z);
         }
 
-        m_TextComponent.text = score.ToString();
+        m_TextComponent.text = $"{score}";
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
