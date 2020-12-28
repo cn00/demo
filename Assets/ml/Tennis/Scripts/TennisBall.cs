@@ -61,16 +61,16 @@ public class TennisBall : MonoBehaviour
                 Mathf.Clamp(rgV.z, -m_velocityMax, m_velocityMax));
         }
 
-        var z = 0f;
+        var pz = -1.5f;
         var bp = transform.localPosition;
-        if ((playground.agentA.score + playground.agentB.score) > simpleLevelScore)
+        if (playground.agentA.score > playground.levelOne || playground.agentB.score > playground.levelOne )
         {
-            z = Mathf.Clamp(bp.z, minPosZ, maxPosZ);
+            pz = Mathf.Clamp(bp.z, minPosZ, maxPosZ);
         }
         transform.localPosition = new Vector3(
             Mathf.Clamp(bp.x, minPosX, maxPosX),
             Mathf.Clamp(bp.y, minPosY, maxPosY),
-            z);
+            pz);
 
     }
 
