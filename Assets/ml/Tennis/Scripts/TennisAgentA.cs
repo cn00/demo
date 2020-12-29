@@ -25,7 +25,125 @@ public class TennisAgentA : Agent
     public float m_InvertMult;
     public float m_velocityMax = 9;
     public float m_rotateMax   = 180f;
+
+    /// <summary>
+    /// 目标dian
+    /// </summary>
+    public Vector3 Pt;
+
+    /// <summary>
+    /// 网平面交点
+    /// </summary>
+    public Vector3 Intersect;
+    /// <summary>
+    /// - 击球点 P0, 球速 V0, 重力 G = 9.8 (N/kg), 空阻 F = kv^2
+    /// - 对方场地随机取一点 Pt
+    /// - 求得过网垂线 L
+    /// - L 上取一点 Pl
+    /// - 求得抛物线方程
+    /// - 求得反射速度 Vk(x,y,x)
+    /// - 求击球速度 Va, 球拍角度 ℷ
+    /// 空阻 f(V) = kv^2
+    /// Ax = Fx/M 
+    /// v(X, Y, Z) = {
+    ///    V(x) = Vx + tAx
+    ///    V(y) = Vy + tAy
+    ///    V(z) = Vz + tAz
+    /// } (m/s“)
+    /// </summary>
+    public Vector3 GetVelocity(Vector3 p0)
+    {
+        var G = -9.8f;
+        var ball = playground.ball;
+        
+        var tx = 0f;
+        if (ball.lastFloorHit == TennisBall.FloorHit.Service)
+            tx = Random.Range(invertX ? playground.minPosX/2f : 0f, invertX ? 0f: playground.maxPosX/2f); // 发球线
+        else
+            tx = Random.Range(invertX ? playground.minPosX    : 0f, invertX ? 0f: playground.maxPosX);
+        Pt = new Vector3(tx, 0f, Random.Range(playground.minPosZ, playground.maxPosZ));
+        
+        var s = Pt - p0;
+        Intersect = IntersectLineToPlane(p0, s, Vector3.right, Vector3.zero);
+        
+        var pl = new Vector3(0f, Random.Range(1.2f, playground.maxPosY), Intersect.z);
+        // FIXME: 
+        var a = new Vector3(
+            ball.rigidbody.drag*ball.rigidbody.velocity.x*ball.rigidbody.velocity.x/ball.rigidbody.mass,
+            (G - ball.rigidbody.drag*ball.rigidbody.velocity.x*ball.rigidbody.velocity.x)/ball.rigidbody.mass,
+            ball.rigidbody.drag*ball.rigidbody.velocity.z*ball.rigidbody.velocity.z/ball.rigidbody.mass);
+        var vk = new Vector3();
+        var v0 = ball.rigidbody.velocity;
+        var drag = ball.rigidbody.drag;
+        var f = new Vector3(drag*v0.x*v0.x, drag*v0.y*v0.y, drag*v0.z*v0.z);
+        return Vector3.zero;
+    }
     
+    // private void Update()
+    // {
+    //     GetVelocity(transform.localPosition);
+    // }
+
+    /// <summary>
+    /// 计算直线与平面的交点
+    /// </summary>
+    /// <param name="point">直线上某一点</param>
+    /// <param name="direct">直线的方向</param>
+    /// <param name="planeNormal">平面法向量</param>
+    /// <param name="planePoint">平面内任意点</param>
+    /// <returns></returns>
+    public static Vector3 IntersectLineToPlane(Vector3 point, Vector3 direct, Vector3 planeNormal, Vector3 planePoint)
+    {
+        float d = Vector3.Dot(planePoint - point, planeNormal) / Vector3.Dot(direct.normalized, planeNormal);
+        return d * direct.normalized + point;
+    }
+    /// <summary>
+    /// 确定坐标是否在平面内
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsVecPosPlane(Vector3[] vecs, Vector3 pos)
+    {
+        float RadianValue = 0;
+        Vector3 vecOld = Vector3.zero;
+        Vector3 vecNew = Vector3.zero;
+        for (int i = 0; i < vecs.Length; i++)
+        {
+            if (i == 0)
+            {
+                vecOld = vecs[i] - pos;
+            }
+            if (i == vecs.Length - 1)
+            {
+                vecNew = vecs[0] - pos;
+            }
+            else
+            {
+                vecNew = vecs[i + 1] - pos;
+            }
+            RadianValue += Mathf.Acos(Vector3.Dot(vecOld.normalized, vecNew.normalized)) * Mathf.Rad2Deg;
+            vecOld = vecNew;
+        }
+        if (Mathf.Abs(RadianValue - 360) < 0.1f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        //vecOld = vecs[0] - pos;
+        //vecNew = vecs[1] - pos;
+        //RadianValue += Mathf.Acos(Vector3.Dot(vecOld.normalized, vecNew.normalized)) * Mathf.Rad2Deg;
+        
+        //vecOld = vecs[1] - pos;
+        //vecNew = vecs[2] - pos;
+        //RadianValue += Mathf.Acos(Vector3.Dot(vecOld.normalized, vecNew.normalized)) * Mathf.Rad2Deg;
+        
+        //vecOld = vecs[2] - pos;
+        //vecNew = vecs[0] - pos;
+        //RadianValue += Mathf.Acos(Vector3.Dot(vecOld.normalized, vecNew.normalized)) * Mathf.Rad2Deg;
+    }
+
     public EnvironmentParameters m_EnvParams = null;
     public EnvironmentParameters EnvParams
     {
