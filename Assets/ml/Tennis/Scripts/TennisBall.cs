@@ -9,12 +9,6 @@ public class TennisBall : MonoBehaviour
     public TennisPlayground playground;
     public Rigidbody rigidbody;
 
-    public float minPosX = -12f;
-    public float maxPosX =  12f;
-    public float minPosY = 0f;
-    public float maxPosY =  12f;
-    public float minPosZ = -5.5f;
-    public float maxPosZ =  5.5f;
     public float m_velocityMax = 60f; // 216Km/h
 
     public bool net;
@@ -57,9 +51,9 @@ public class TennisBall : MonoBehaviour
 
         var bp = transform.localPosition;
         transform.localPosition = new Vector3(
-            Mathf.Clamp(bp.x, minPosX, maxPosX),
-            Mathf.Clamp(bp.y, minPosY, maxPosY),
-            Mathf.Clamp(bp.z, minPosZ, maxPosZ));
+            Mathf.Clamp(bp.x, playground.minPosX, playground.maxPosX),
+            Mathf.Clamp(bp.y, playground.minPosY, playground.maxPosY),
+            Mathf.Clamp(bp.z, playground.minPosZ, playground.maxPosZ));
 
     }
 
@@ -69,13 +63,13 @@ public class TennisBall : MonoBehaviour
         var vz = 0f;
         if (playground.agentA.score > playground.levelOne && playground.agentB.score > playground.levelOne )
         {
-            pz = Random.Range(minPosZ, maxPosZ);
+            pz = Random.Range(playground.minPosZ, playground.maxPosZ);
             vz = Random.Range(-1f, 1f);
         }
 
         transform.localPosition = new Vector3(
-            Random.Range(minPosX, maxPosX), 
-            Random.Range(4f, maxPosY), 
+            Random.Range(playground.minPosX, playground.maxPosX), 
+            Random.Range(4f, playground.maxPosY), 
             pz);
         rigidbody.velocity = new Vector3(
             Random.Range(0.01f, 0.2f), 
@@ -104,8 +98,42 @@ public class TennisBall : MonoBehaviour
         Reset();
     }
 
+    public Action<Collision> CollisionEnter;
+
+    /*
+    void OnTriggerEnter(Collision collision)
+    {
+        if (CollisionEnter!=null)
+        {
+            CollisionEnter(collision);
+        }
+        if (collision.gameObject.name == "over")
+        {
+            // agent can return serve in the air
+            if (lastFloorHit != FloorHit.FloorHitUnset && !net)
+            {
+                net = true;
+            }
+    
+            if (lastAgentHit == AgentRole.A)
+            {
+                playground.agentA.AddReward(0.6f);
+            }
+            else if (lastAgentHit == AgentRole.B)
+            {
+                playground.agentB.AddReward(0.6f);
+            }
+        }
+    }
+    */
+    
     void OnCollisionEnter(Collision collision)
     {
+        if (CollisionEnter!=null)
+        {
+            CollisionEnter(collision);
+        }
+
         if (collision.gameObject.CompareTag("iWall"))
         {
             if (collision.gameObject.name == "wallA")
@@ -116,14 +144,14 @@ public class TennisBall : MonoBehaviour
                     AgentBWins();
                 }
                 // Agent B hits long
-                else if (lastAgentHit == AgentRole.B)
+                else // if (lastAgentHit == AgentRole.B)
                 {
                     AgentAWins();
                 }
-                else
-                {
-                    Reset();
-                }
+                // else
+                // {
+                //     Reset();
+                // }
             }
             else if (collision.gameObject.name == "wallB")
             {
@@ -133,62 +161,42 @@ public class TennisBall : MonoBehaviour
                     AgentAWins();
                 }
                 // Agent A hits long
-                else if (lastAgentHit == AgentRole.A)
+                else // if (lastAgentHit == AgentRole.A)
+                {
+                    AgentBWins();
+                }
+                // else
+                // {
+                //     Reset();
+                // }
+            }
+            else if (collision.gameObject.name == "floorA")
+            {
+                // Agent A hits into floor, double bounce or service
+                if (    lastFloorHit == FloorHit.FloorAHit // double bounce
+                     || lastFloorHit == FloorHit.Service)
                 {
                     AgentBWins();
                 }
                 else
                 {
-                    Reset();
-                }
-            }
-            else if (collision.gameObject.name == "floorA")
-            {
-                // Agent A hits into floor, double bounce or service
-                if (lastFloorHit == FloorHit.FloorAHit
-                    || lastFloorHit == FloorHit.Service)
-                {
-                    if (lastAgentHit == AgentRole.A)
-                        AgentBWins();
-                    else
-                    {
-                        Reset();
-                    }
-                }
-                else
-                {
                     lastFloorHit = FloorHit.FloorAHit;
-                    //successful serve 过网？
-                    if (lastAgentHit == AgentRole.B && !net)
-                    {
-                        net = true;
-                    }
                 }
             }
             else if (collision.gameObject.name == "floorB")
             {
                 // Agent B hits into floor, double bounce or service
-                if (lastFloorHit == FloorHit.FloorBHit
+                if (   lastFloorHit == FloorHit.FloorBHit
                     || lastFloorHit == FloorHit.Service)
                 {
-                    if (lastAgentHit == AgentRole.B)
-                        AgentAWins();
-                    else
-                    {
-                        Reset();
-                    }
+                    AgentAWins();
                 }
                 else
                 {
                     lastFloorHit = FloorHit.FloorBHit;
-                    //successful serve
-                    if (lastAgentHit == AgentRole.A && !net)
-                    {
-                        net = true;
-                    }
                 }
             }
-            else if (collision.gameObject.name == "net" && !net)
+            else if (collision.gameObject.name == "net")
             {
                 if (lastAgentHit == AgentRole.A)
                 {
@@ -203,6 +211,23 @@ public class TennisBall : MonoBehaviour
                     Reset();
                 }
             }
+            // else if (collision.gameObject.name == "over")
+            // {
+            //     // agent can return serve in the air
+            //     if (lastFloorHit != FloorHit.FloorHitUnset && !net)
+            //     {
+            //         net = true;
+            //     }
+            //
+            //     if (lastAgentHit == AgentRole.A)
+            //     {
+            //         playground.agentA.AddReward(0.6f);
+            //     }
+            //     else if (lastAgentHit == AgentRole.B)
+            //     {
+            //         playground.agentB.AddReward(0.6f);
+            //     }
+            // }
         }
         else if (collision.gameObject.CompareTag("agent"))
         {
@@ -210,7 +235,6 @@ public class TennisBall : MonoBehaviour
             {
                 playground.agentA.AddReward(0.6f);
                 ++playground.agentA.hitCount;
-                // Debug.LogWarning($"congratulations AgentA hit the ball. score:{playground.agentA.score:0.000000}:{playground.agentB.score:0.000000}");
 
                 // Agent A double hit
                 if (lastAgentHit == AgentRole.A)
@@ -220,12 +244,6 @@ public class TennisBall : MonoBehaviour
                 }
                 else
                 {
-                    // agent can return serve in the air
-                    if (lastFloorHit != FloorHit.Service && !net)
-                    {
-                        net = true;
-                    }
-
                     lastAgentHit = AgentRole.A;
                     lastFloorHit = FloorHit.FloorHitUnset;
                 }
@@ -234,7 +252,6 @@ public class TennisBall : MonoBehaviour
             {
                 playground.agentB.AddReward(0.6f);
                 ++playground.agentB.hitCount;
-                // Debug.LogWarning($"congratulations AgentB hit the ball. score:{playground.agentA.score:0.000000}:{playground.agentB.score:0.000000}");
 
                 // Agent B double hit
                 if (lastAgentHit == AgentRole.B)
@@ -244,11 +261,6 @@ public class TennisBall : MonoBehaviour
                 }
                 else
                 {
-                    if (lastFloorHit != FloorHit.Service && !net)
-                    {
-                        net = true;
-                    }
-
                     lastAgentHit = AgentRole.B;
                     lastFloorHit = FloorHit.FloorHitUnset;
                 }
