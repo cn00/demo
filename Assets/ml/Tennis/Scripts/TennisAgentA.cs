@@ -254,9 +254,9 @@ public class TennisAgentA : Agent
         var p = transform.localPosition;
         var rp = rigidbody.position;
         transform.localPosition = new Vector3(
-            Mathf.Clamp(p.x, invertX ? 0f : playground.ball.minPosX, invertX ? playground.ball.maxPosX : 0f ),
+            Mathf.Clamp(p.x, invertX ? 0f : playground.minPosX, invertX ? playground.maxPosX : 0f ),
             Mathf.Clamp(p.y, 0f, 3f),
-            Mathf.Clamp(p.z, playground.ball.minPosZ, playground.ball.maxPosZ));
+            Mathf.Clamp(p.z, playground.minPosZ, playground.maxPosZ));
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
