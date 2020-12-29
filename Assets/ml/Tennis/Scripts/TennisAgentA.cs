@@ -196,6 +196,9 @@ public class TennisAgentA : Agent
         sensor.AddObservation(playground.ball.transform.localPosition);       // 球位置 x3
         sensor.AddObservation(playground.ball.rigidbody.velocity);            // 球速度 x3
         sensor.AddObservation(playground.ball.rigidbody.angularVelocity );    // 角速度 x3
+
+        sensor.AddObservation(playground.agentA.transform.localPosition );    // agentA 位置 x3
+        sensor.AddObservation(playground.agentB.transform.localPosition );    // agentA 位置 x3
     }
 
     [Header("v_3:r_4")]
@@ -243,10 +246,57 @@ public class TennisAgentA : Agent
 
         rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
         
+        // 
         rigidbody.rotation = Quaternion.Euler(new Vector3(rotateX, rotateY, rotateZ));// 这比使用Transform.rotation更新旋转速度更快
         // or 
         // transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);
 
+    }
+
+    
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var ball = playground.ball;
+        var p0 = transform.localPosition + transform.rotation.normalized * new Vector3(0f, 0f, -1.6f); // 拍心
+        GetVelocity(p0);
+        
+        var s = ball.transform.localPosition - p0;
+        var velocity = Vector3.Lerp(p0, ball.transform.localPosition, 0.5f);
+        var rotation = Quaternion.RotateTowards(
+            transform.localRotation.normalized,// 拍面 
+            Quaternion.FromToRotation(Vector3.down, ball.rigidbody.velocity), // 球运动方向
+            1f);
+        
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        continuousActionsOut[0] = velocity.x; // velocityX Racket Movement
+        continuousActionsOut[1] = velocity.y; // velocityY Racket Jumping
+        continuousActionsOut[2] = velocity.z; // velocityZ
+        continuousActionsOut[3] = rotation.x; // rotateX
+        continuousActionsOut[4] = rotation.y; // rotateY
+        continuousActionsOut[5] = rotation.z; // rotateZ
+
+        // continuousActionsOut[0] = Input.GetAxis("Horizontal");              // moveX Racket Movement
+        // continuousActionsOut[1] = Input.GetKey(KeyCode.Space) ? 1f : 0f;    // moveY Racket Jumping
+        // continuousActionsOut[2] = Input.GetAxis("Vertical");                // moveZ
+        // if(SystemInfo.supportsGyroscope)
+        // {
+        //     var ang = Input.gyro.attitude.eulerAngles;
+        //     continuousActionsOut[3] = Input.gyro.attitude.x; // rotateX
+        //     continuousActionsOut[4] = Input.gyro.attitude.y; // rotateY
+        //     continuousActionsOut[5] = Input.gyro.attitude.z; // rotateZ
+        //     // continuousActionsOut[6] = Input.gyro.attitude.w; // rotateW
+        // }
+        // else
+        // {
+        //     continuousActionsOut[0] = Random.Range(-1f, 1f); // moveX Racket Movement
+        //     continuousActionsOut[1] = Random.Range(-1f, 1f); // moveY Racket Jumping
+        //     continuousActionsOut[2] = Random.Range(-1f, 1f); // moveZ
+        //     continuousActionsOut[3] = Random.Range(-1f, 1f); // rotateX
+        //     continuousActionsOut[4] = Random.Range(-1f, 1f); // rotateY
+        //     continuousActionsOut[5] = Random.Range(-1f, 1f); // rotateZ
+        //     // continuousActionsOut[6] = Random.Range(-1f, 1f); // rotateW
+        // }
+        
     }
 
     private void FixedUpdate()
@@ -257,32 +307,6 @@ public class TennisAgentA : Agent
             Mathf.Clamp(p.x, invertX ? 0f : playground.minPosX, invertX ? playground.maxPosX : 0f ),
             Mathf.Clamp(p.y, 0f, 3f),
             Mathf.Clamp(p.z, playground.minPosZ, playground.maxPosZ));
-    }
-
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");              // moveX Racket Movement
-        continuousActionsOut[1] = Input.GetKey(KeyCode.Space) ? 1f : 0f;    // moveY Racket Jumping
-        continuousActionsOut[2] = Input.GetAxis("Vertical");                // moveZ
-        if(SystemInfo.supportsGyroscope)
-        {
-            var ang = Input.gyro.attitude.eulerAngles;
-            continuousActionsOut[3] = Input.gyro.attitude.x; // rotateX
-            continuousActionsOut[4] = Input.gyro.attitude.y; // rotateY
-            continuousActionsOut[5] = Input.gyro.attitude.z; // rotateZ
-            // continuousActionsOut[6] = Input.gyro.attitude.w; // rotateW
-        }
-        else
-        {
-            continuousActionsOut[0] = Random.Range(-1f, 1f); // moveX Racket Movement
-            continuousActionsOut[1] = Random.Range(-1f, 1f); // moveY Racket Jumping
-            continuousActionsOut[2] = Random.Range(-1f, 1f); // moveZ
-            continuousActionsOut[3] = Random.Range(-1f, 1f); // rotateX
-            continuousActionsOut[4] = Random.Range(-1f, 1f); // rotateY
-            continuousActionsOut[5] = Random.Range(-1f, 1f); // rotateZ
-            // continuousActionsOut[6] = Random.Range(-1f, 1f); // rotateW
-        }
     }
 
     public Action episodeBeginAction;
@@ -302,10 +326,10 @@ public class TennisAgentA : Agent
             m_InvertMult * 1.5f);
 
         rigidbody.velocity = new Vector3(0f, 0f, 0f);
-        transform.eulerAngles = new Vector3(
+        rigidbody.rotation = Quaternion.Euler(new Vector3(
+            invertX ? 180f : 0f,
             0f,
-            invertX ? 0f : 180f,
             -55f
-        );
+        ));
     }
 }
