@@ -31,15 +31,50 @@ namespace ml.Tennis
         public float m_rotateMax = 180f;
 
         /// <summary>
-        /// TODO: 目标点
+        /// 目标点
         /// </summary>
         public Vector3 Tp;
     
+        /// <summary>
+        /// 预判击球点
+        /// </summary>
+        public Vector3 Hp;
+
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public float Tt; 
+        
         [Header("v_3:r_4")] public List<float> m_Actions;
     
         public EnvironmentParameters EnvParams => Academy.Instance.EnvironmentParameters;
   
         public Action episodeBeginAction;
+        #endregion
+
+        #region MyRegion
+
+        public Vector3 GetTargetPos()
+        {
+            var ball = playground.ball;
+            var G = playground.G;
+            var s = ball.transform.localPosition;
+            if(s.y > 1) s.y -= 1f;
+            var v = ball.Velocity;
+            var ay = G - (ball.rigidbody.drag * v.y * v.y) / ball.rigidbody.mass;
+            // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
+            // at^2/2 + vt + (-s) = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
+            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * ay / 2f * (-s.y))) / (ay);
+            Tt = t;
+
+            var ax = -(ball.rigidbody.drag * v.x * v.x) / ball.rigidbody.mass;
+            var tpx = ax * t * t / 2f + v.x * t;
+            var az = -(ball.rigidbody.drag * v.z * v.z) / ball.rigidbody.mass;
+            var tpz = az * t * t / 2f + v.z * t;
+
+            Tp = new Vector3(s.x + tpx, 1f, s.z + tpz);
+            return Tp;
+        }
         #endregion
 
         #region Agent

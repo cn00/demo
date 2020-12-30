@@ -34,6 +34,11 @@ namespace ml.Tennis
 
         public FloorHit lastFloorHit;
 
+        public Vector3 Velocity
+            #if !UNITY_EDITOR
+            => rigidbody.velocity
+            #endif
+            ;
 
         /// <summary>
         /// 落地点
@@ -62,15 +67,15 @@ namespace ml.Tennis
         ///    V(z) = Vz + tAz
         /// } (m/s“)
         /// </summary>
-        public Vector3 GetTargetPos()
+        public Vector3 GetTargetPos(float y = 0f)
         {
-            var G = 9.8f;
-            var p = transform.localPosition;
-            var v = rigidbody.velocity;
-            var ay = G - (rigidbody.drag * v.y * v.y) / rigidbody.mass;
+            var s = transform.localPosition;
+            if(s.y > y) s.y -= y;
+            var v = Velocity;
+            var ay = playground.G - (rigidbody.drag * v.y * v.y) / rigidbody.mass;
             // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
             // at^2/2 + vt + y = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * ay / 2f * (-p.y))) / (ay);
+            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * ay / 2f * (-s.y))) / (ay);
             Tt = t;
 
             var ax = -(rigidbody.drag * v.x * v.x) / rigidbody.mass;
@@ -78,12 +83,13 @@ namespace ml.Tennis
             var az = -(rigidbody.drag * v.z * v.z) / rigidbody.mass;
             var tpz = az * t * t / 2f + v.z * t;
 
-            Tp = new Vector3(p.x + tpx, 0f, p.z + tpz);
+            Tp = new Vector3(s.x + tpx, y, s.z + tpz);
             return Tp;
         }
 
         private void FixedUpdate()
         {
+            
             // if(playground.agentA is TennisAgent)// 
             // {
             //     var rgV = rigidbody.velocity;
@@ -94,18 +100,21 @@ namespace ml.Tennis
             // }
             // else
             {
-                var rgV = rigidbody.velocity;
-                rigidbody.velocity = new Vector3(
-                    Mathf.Clamp(rgV.x, -m_velocityMax, m_velocityMax),
-                    Mathf.Clamp(rgV.y, -m_velocityMax, m_velocityMax),
-                    Mathf.Clamp(rgV.z, -m_velocityMax, m_velocityMax));
+                // var rgV = rigidbody.velocity;
+                // rigidbody.velocity = new Vector3(
+                //     Mathf.Clamp(rgV.x, -m_velocityMax, m_velocityMax),
+                //     Mathf.Clamp(rgV.y, -m_velocityMax/5f, m_velocityMax/5f),
+                //     Mathf.Clamp(rgV.z, -m_velocityMax/5f, m_velocityMax/5f));
             }
+            #if UNITY_EDITOR
+            Velocity = rigidbody.velocity;
+            #endif
 
-            var bp = transform.localPosition;
-            transform.localPosition = new Vector3(
-                Mathf.Clamp(bp.x, 2f * playground.minPosX, 2f * playground.maxPosX),
-                Mathf.Clamp(bp.y, playground.minPosY, 2f * playground.maxPosY),
-                Mathf.Clamp(bp.z, 2f * playground.minPosZ, 2f * playground.maxPosZ));
+            // var bp = transform.localPosition;
+            // transform.localPosition = new Vector3(
+            //     Mathf.Clamp(bp.x, 2f * playground.minPosX, 2f * playground.maxPosX),
+            //     Mathf.Clamp(bp.y, playground.minPosY, 2f * playground.maxPosY),
+            //     Mathf.Clamp(bp.z, 2f * playground.minPosZ, 2f * playground.maxPosZ));
 
         }
 
@@ -124,9 +133,9 @@ namespace ml.Tennis
                 Random.Range(4f, playground.maxPosY),
                 pz);
             rigidbody.velocity = new Vector3(
-                Random.Range(0.01f, 0.2f),
-                Random.Range(0.01f, 0.3f),
-                vz);
+                Random.Range(-3f, 3f),
+                Random.Range(-0.5f, 0.5f),
+                Random.Range(-0.1f, 0.1f));
             transform.localScale = new Vector3(.5f, .5f, .5f);
 
             playground.agentA.EndEpisode();

@@ -10,6 +10,8 @@ namespace ml.Tennis
         public TennisAgentA agentB;
         public TennisBall ball;
 
+        public float G = -9.8f;
+
         public int levelOne = 10;
 
         public float minPosX = -12f;
