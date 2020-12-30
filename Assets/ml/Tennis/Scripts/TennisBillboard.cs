@@ -49,8 +49,8 @@ public class TennisBillboard : MonoBehaviour
             var delta = agent.transform.localRotation.normalized * new Vector3(0f, 0f, -1.6f);
             var lp0 = agent.transform.localPosition + delta;
             // agent.GetVelocity(agent.transform.localPosition);
-            var s = agent.Pt - lp0;
-            agent.Intersect = TennisAgentA.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
+            var s = btp - lp0;
+            ball.Intersect = Util.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
 
             var p0 = agent.transform.position + delta;
             Gizmos.color = Color.green;
