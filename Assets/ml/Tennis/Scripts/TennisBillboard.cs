@@ -1,4 +1,5 @@
 using System;
+using ml.Tennis;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -46,6 +47,12 @@ public class TennisBillboard : MonoBehaviour
         var ball = playground.ball;
         Action<TennisAgentA> draw = (agent) =>
         {
+            if(agent.invertX)
+                Gizmos.color = Color.magenta;
+            else
+                Gizmos.color = Color.blue;
+            
+            var btp = ball.GetTargetPos();
             var delta = agent.transform.localRotation.normalized * new Vector3(0f, 0f, -1.6f);
             var lp0 = agent.transform.localPosition + delta;
             // agent.GetVelocity(agent.transform.localPosition);
@@ -53,21 +60,20 @@ public class TennisBillboard : MonoBehaviour
             ball.Intersect = Util.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
 
             var p0 = agent.transform.position + delta;
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(p0, playground.transform.position + agent.Pt);
+            Gizmos.DrawLine(p0, playground.transform.position + ball.Tp);
             
             Gizmos.DrawLine(ball.transform.position, p0);
             
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawSphere(playground.transform.position + agent.Intersect, 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + ball.Intersect, 0.1f);
 
-            // Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(playground.transform.position + agent.Pt, 0.1f);
-
-            var po = playground.transform.position + (new Vector3(0f, 0f, agent.Intersect.z) );
-            var dir = new Vector3(0f, 100f, agent.Intersect.z);
+            var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
+            var dir = new Vector3(0f, 20f, ball.Intersect.z);
             Gizmos.DrawRay(po, dir);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(playground.transform.position + btp, 0.1f);
         };
+        
         draw(playground.agentA);
         draw(playground.agentB);
     }
