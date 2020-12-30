@@ -9,7 +9,7 @@ public class TennisBillboard : MonoBehaviour
     public TennisPlayground playground;
 
     [Range(0.01f, 2f)]
-    public float Dt = Time.fixedDeltaTime;
+    public float Dt = 0.02f;
     
     [Range(0.5f, 10f)]
     public float DTime = 3f;
@@ -67,13 +67,6 @@ public class TennisBillboard : MonoBehaviour
         {
             
             var tpy = tp.y;
-            
-            // // 不考虑空阻
-            // tp.Set(
-            //     p0.x + a.x * t * t / 2f + v.x * t, 
-            //     p0.y + a.y * t * t / 2f + v.y * t, 
-            //     p0.z + a.z * t * t / 2f + v.z * t);
-            
             tp.Set(
                 pp.x + v.x * dt,
                 pp.y + v.y * dt,
@@ -82,52 +75,24 @@ public class TennisBillboard : MonoBehaviour
             if (tpy * tp.y < 0f) // 反弹
             {
                 v.y = -v.y;
-                v *= 0.8f;
+                // v *= 0.8f;
                 tp.y = 0f;
             }
             
-            a.Set(
-                (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
-                (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
-                (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
             v.Set(
                 v.x + a.x * dt,
                 v.y + a.y * dt,
                 v.z + a.z * dt);
+            a.Set(
+                (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
+                (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
+                (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
 
             Gizmos.DrawLine(pp, tp);
             pp = tp;
         }
     }
-
-
-    void GizmDraw2()
-    {
-        var G = playground.G;
-        var ball = playground.ball;
-        var pp = ball.transform.position;
-        var v = ball.Velocity;
-        if(v.x > 0)
-            Gizmos.color = Color.cyan;
-        else 
-            Gizmos.color = Color.red;
-
-        var drag = ball.rigidbody.drag;
-        var mass = ball.rigidbody.mass;
-        var a  = new Vector3(
-            -(drag * v.x * v.x) / mass,
-            G + (drag * v.y * v.y) / mass,
-            -(drag * v.z * v.z) / mass);
-        // var ps = Dweiss.RigidbodyExtension.CalculateMovement(pp, ball.Velocity, a, 100, 0.03f, Vector3.zero, Vector3.zero, mass, drag);
-        var ps = Dweiss.RigidbodyExtension.CalculateMovement(ball.rigidbody, 100, 0.01f);
-        pp = ps[0];
-        foreach (var p in ps)
-        {
-            Gizmos.DrawLine(pp, p);
-            pp = p;
-        }
-
-    }
+    
     private void OnDrawGizmos()
     {
         var ball = playground.ball;
@@ -137,9 +102,9 @@ public class TennisBillboard : MonoBehaviour
             var pp = ball.transform.position;
             var v = ball.Velocity;
             if(v.x > 0)
-                Gizmos.color = Color.cyan;
+                Gizmos.color = Color.blue;
             else 
-                Gizmos.color = Color.red;
+                Gizmos.color = Color.magenta;
 
             var drag = ball.rigidbody.drag;
             var mass = ball.rigidbody.mass;
@@ -180,20 +145,20 @@ public class TennisBillboard : MonoBehaviour
             ball.Intersect = Util.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
 
             var p0 = agent.transform.position + delta;
-            Gizmos.DrawLine(p0, playground.transform.position + ball.Tp);
-            Gizmos.DrawLine(p0, ball.transform.position);
-            Gizmos.DrawLine(p0, playground.transform.position + atp);
+            // Gizmos.DrawLine(p0, playground.transform.position + ball.Tp);
+            // Gizmos.DrawLine(p0, ball.transform.position);
+            // Gizmos.DrawLine(p0, playground.transform.position + atp);
             
             Gizmos.DrawSphere(playground.transform.position + ball.Intersect, 0.1f);
 
-            var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
-            var dir = new Vector3(0f, 20f, ball.Intersect.z);
-            Gizmos.DrawRay(po, dir);
+            // var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
+            // var dir = new Vector3(0f, 20f, ball.Intersect.z);
+            // Gizmos.DrawRay(po, dir);
 
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(playground.transform.position + btp, 0.1f);
 
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(playground.transform.position + atp, 0.1f);
         };
         

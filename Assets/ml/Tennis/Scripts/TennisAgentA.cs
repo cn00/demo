@@ -27,7 +27,7 @@ namespace ml.Tennis
         public float scale;
         public bool invertX;
         public float m_InvertMult;
-        public float m_velocityMax = 9;
+        public float m_velocityMax = 9; // 百米世界纪录不到 10m/s
         public float m_rotateMax = 180f;
 
         /// <summary>
@@ -54,25 +54,16 @@ namespace ml.Tennis
 
         #region MyRegion
 
-        public Vector3 GetTargetPos()
+        /// <summary>
+        /// 获取第 idx 个击球点
+        /// </summary>
+        /// <param name="i">0,1,2: 落地前, 第一次弹起后, 第二次落地前</param>
+        /// <returns></returns>
+        public Vector3 GetTargetPos(int i = 0)
         {
             var ball = playground.ball;
             var G = playground.G;
-            var s = ball.transform.localPosition;
-            if(s.y > 1) s.y -= 1f;
-            var v = ball.Velocity;
-            var ay = G - (ball.rigidbody.drag * v.y * v.y) / ball.rigidbody.mass;
-            // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
-            // at^2/2 + vt + (-s) = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * ay / 2f * (-s.y))) / (ay);
-            Tt = t;
-
-            var ax = -(ball.rigidbody.drag * v.x * v.x) / ball.rigidbody.mass;
-            var tpx = ax * t * t / 2f + v.x * t;
-            var az = -(ball.rigidbody.drag * v.z * v.z) / ball.rigidbody.mass;
-            var tpz = az * t * t / 2f + v.z * t;
-
-            Tp = new Vector3(s.x + tpx, 1f, s.z + tpz);
+            Tp = ball.GetTargetPos(0.6f);
             return Tp;
         }
         #endregion
@@ -252,9 +243,9 @@ namespace ml.Tennis
             var p = transform.localPosition; // GetBallTargetP(); //
             // var rp = rigidbody.position;
             transform.localPosition = new Vector3(
-                Mathf.Clamp(p.x, 2f * (invertX ? 0f : playground.minPosX), 2f * (invertX ? playground.maxPosX : 0f)),
+                Mathf.Clamp(p.x, 2f * (invertX ? 0f : -playground.Size.x), 2f * (invertX ? playground.Size.x : 0f)),
                 Mathf.Clamp(p.y, 0.1f, 3f),
-                Mathf.Clamp(p.z, 2f * playground.minPosZ, 2f * playground.maxPosZ));
+                Mathf.Clamp(p.z, -2f * playground.Size.z, 2f * playground.Size.z));
             // rigidbody.rotation = Quaternion.Euler(new Vector3(
             //     invertX ? 180f : 0f,
             //     0f,

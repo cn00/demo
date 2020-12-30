@@ -34,6 +34,7 @@ namespace ml.Tennis
 
         public FloorHit lastFloorHit;
 
+        public Vector3 maxVelocity = new Vector3(60f, 10f, 10f); // 世界记录 196Km/h = 54m/s
         public Vector3 Velocity
             #if !UNITY_EDITOR
             => rigidbody.velocity
@@ -41,14 +42,14 @@ namespace ml.Tennis
             ;
 
         /// <summary>
-        /// 落地点
-        /// </summary>
-        public Vector3 Tp;
-
-        /// <summary>
         /// 网平面交点
         /// </summary>
         public Vector3 Intersect;
+
+        /// <summary>
+        /// 落地点
+        /// </summary>
+        public Vector3 Tp;
 
         public float Tt = 0f;
 
@@ -71,20 +72,29 @@ namespace ml.Tennis
         {
             var s = transform.localPosition;
             if(s.y > y) s.y -= y;
+            var G = playground.G;
             var v = Velocity;
-            var ay = playground.G - (rigidbody.drag * v.y * v.y) / rigidbody.mass;
+            var drag = rigidbody.drag;
+            var mass = rigidbody.mass;
+
+            var a = new Vector3(
+                (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
+                (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
+                (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
+            
             // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
             // at^2/2 + vt + y = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * ay / 2f * (-s.y))) / (ay);
+            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a.y / 2f * (-s.y))) / (a.y);
             Tt = t;
+            
+            var tp = new Vector3(
+                s.x + a.x * t * t / 2f + v.x * t,
+                y,
+                s.z + a.z * t * t / 2f + v.z * t);
+            var tpx = a.x * t * t / 2f + v.x * t;
+            var tpz = a.z * t * t / 2f + v.z * t;
 
-            var ax = -(rigidbody.drag * v.x * v.x) / rigidbody.mass;
-            var tpx = ax * t * t / 2f + v.x * t;
-            var az = -(rigidbody.drag * v.z * v.z) / rigidbody.mass;
-            var tpz = az * t * t / 2f + v.z * t;
-
-            Tp = new Vector3(s.x + tpx, y, s.z + tpz);
-            return Tp;
+            return tp;
         }
 
         private void FixedUpdate()
@@ -99,22 +109,23 @@ namespace ml.Tennis
             //         Mathf.Clamp(rgV.z, -9f, 9f));
             // }
             // else
-            {
-                // var rgV = rigidbody.velocity;
-                // rigidbody.velocity = new Vector3(
-                //     Mathf.Clamp(rgV.x, -m_velocityMax, m_velocityMax),
-                //     Mathf.Clamp(rgV.y, -m_velocityMax/5f, m_velocityMax/5f),
-                //     Mathf.Clamp(rgV.z, -m_velocityMax/5f, m_velocityMax/5f));
-            }
+
+            var rgV = rigidbody.velocity;
+            rigidbody.velocity = new Vector3(
+                Mathf.Clamp(rgV.x, -maxVelocity.x, maxVelocity.z),
+                Mathf.Clamp(rgV.y, -maxVelocity.y, maxVelocity.y),
+                Mathf.Clamp(rgV.z, -maxVelocity.z, maxVelocity.z));
+            
             #if UNITY_EDITOR
             Velocity = rigidbody.velocity;
             #endif
 
+            // //
             // var bp = transform.localPosition;
             // transform.localPosition = new Vector3(
-            //     Mathf.Clamp(bp.x, 2f * playground.minPosX, 2f * playground.maxPosX),
-            //     Mathf.Clamp(bp.y, playground.minPosY, 2f * playground.maxPosY),
-            //     Mathf.Clamp(bp.z, 2f * playground.minPosZ, 2f * playground.maxPosZ));
+            //     Mathf.Clamp(bp.x, -4f * playground.Size.x, 4f * playground.Size.x),
+            //     Mathf.Clamp(bp.y, 0, 10f * playground.Size.y),
+            //     Mathf.Clamp(bp.z, -4f * playground.Size.z, 4f * playground.Size.z));
 
         }
 
@@ -124,18 +135,18 @@ namespace ml.Tennis
             var vz = 0f;
             if (playground.agentA.score > playground.levelOne && playground.agentB.score > playground.levelOne)
             {
-                pz = Random.Range(playground.minPosZ, playground.maxPosZ);
+                pz = Random.Range(-playground.Size.z, playground.Size.z);
                 vz = Random.Range(-1f, 1f);
             }
 
-            transform.localPosition = new Vector3(
-                Random.Range(playground.minPosX, playground.maxPosX),
-                Random.Range(4f, playground.maxPosY),
-                pz);
-            rigidbody.velocity = new Vector3(
-                Random.Range(-3f, 3f),
-                Random.Range(-0.5f, 0.5f),
-                Random.Range(-0.1f, 0.1f));
+            var px = Random.Range(-playground.Size.x, playground.Size.x);
+            var py = Random.Range(4f, playground.Size.y);
+            transform.localPosition = new Vector3(px, py, pz);
+            
+            var vx = Random.Range(0, maxVelocity.x) * (px > 0f ? -1f:1f);
+            var vy = Random.Range(-maxVelocity.y, maxVelocity.y);
+            rigidbody.velocity = new Vector3(vx, vy,vz);
+            
             transform.localScale = new Vector3(.5f, .5f, .5f);
 
             playground.agentA.EndEpisode();
