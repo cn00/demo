@@ -58,16 +58,17 @@ namespace ml.Tennis
         #region MyRegion
 
         /// <summary>
-        /// 最佳击球点
+        /// 
         /// </summary>
-        /// <returns>[0,1,2]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</returns>
-        public Vector3[] GetTargetPos()
+        /// <param name="p"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public bool CanIReachPoint(Vector3 p, float t)
         {
-            // var ball = playground.ball;
-            // var G = playground.G;
-            // Tp = ball.GetTargetPos(0.6f);
-            
-            return new []{Vector3.back};
+            var yes = false;
+            var s = (p - transform.localPosition).magnitude;
+            var mt = s / m_velocityMax;
+            return yes;
         }
         #endregion
 
@@ -176,10 +177,36 @@ namespace ml.Tennis
             var offset = transform.rotation.normalized * new Vector3(0f, 0f, -1.6f);
             var p0 = transform.localPosition + offset; // 拍心
 
-            // transform.localPosition = ball.GetTargetPos() - offset;
-            var velocity = (ball.GetTargetPos() - p0) / ball.Tt;
-            rb.velocity = velocity;
+            float[] outTime;
+            Vector3[] btps;
+            if(!ball.GetTarget(out btps, out outTime)) return;
+            
+            Intersect = Util.IntersectLineToPlane(
+                transform.localPosition, 
+                btps[1] - transform.localPosition, 
+                Vector3.right, Vector3.zero);
 
+            var velocity = Vector3.zero;
+            if(CanIReachPoint(btps[3], outTime[3]))
+            {
+                velocity = (btps[3] - p0) / outTime[3];
+                rb.velocity = velocity;
+            }
+            else if(CanIReachPoint(btps[2], outTime[2]))
+            {
+                velocity = (btps[2] - p0) / outTime[2];
+                rb.velocity = velocity;
+            }
+            else // if (CanIReachPoint(btps[0], outTime[0]))
+            {
+                velocity = (btps[0] - p0) / outTime[0];
+                rb.velocity = velocity;
+            }
+            // else
+            // {
+            //     // TODO: find where i can reach to
+            // }
+            
             var rotation = Quaternion.LookRotation(velocity, Vector3.right);
             transform.rotation = rotation;
             // rigidbody.rotation = rotation;
