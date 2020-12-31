@@ -31,6 +31,8 @@ namespace ml.Tennis
         public float m_velocityMax = 9; // 百米世界纪录不到 10m/s
         public float m_rotateMax = 180f;
 
+        [Tooltip("最佳击球高度")]
+        public float BestTargetY = 0.9f;
         /// <summary>
         /// 目标点
         /// </summary>
@@ -56,16 +58,16 @@ namespace ml.Tennis
         #region MyRegion
 
         /// <summary>
-        /// 获取第 idx 个击球点
+        /// 最佳击球点
         /// </summary>
-        /// <param name="i">0,1,2: 落地前, 第一次弹起后, 第二次落地前</param>
-        /// <returns></returns>
-        public Vector3 GetTargetPos(int i = 0)
+        /// <returns>[0,1,2]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</returns>
+        public Vector3[] GetTargetPos()
         {
-            var ball = playground.ball;
-            var G = playground.G;
-            Tp = ball.GetTargetPos(0.6f);
-            return Tp;
+            // var ball = playground.ball;
+            // var G = playground.G;
+            // Tp = ball.GetTargetPos(0.6f);
+            
+            return new []{Vector3.back};
         }
         #endregion
 
@@ -101,17 +103,20 @@ namespace ml.Tennis
         public override void CollectObservations(VectorSensor sensor)
         {
             sensor.AddObservation(m_InvertMult); // 角色 x1
-
-            sensor.AddObservation(transform.localPosition); // 位置 x3
-            sensor.AddObservation(transform.localRotation.eulerAngles); // 角度 x3
-            sensor.AddObservation(rb.velocity); // 速度 x3
+            
+            sensor.AddObservation(playground.Size); // x3
 
             sensor.AddObservation(playground.ball.transform.localPosition); // 球位置 x3
             sensor.AddObservation(playground.ball.rb.velocity); // 球速度 x3
-            sensor.AddObservation(playground.ball.rb.angularVelocity); // 角速度 x3
-
-            sensor.AddObservation(playground.agentA.transform.localPosition); // agentA 位置 x3
-            sensor.AddObservation(playground.agentB.transform.localPosition); // agentA 位置 x3
+            // sensor.AddObservation(playground.ball.rb.angularVelocity); // 角速度 x3
+            
+            // agentA
+            sensor.AddObservation(playground.agentA.transform.localPosition);
+            sensor.AddObservation(playground.agentA.rb.velocity);
+            
+            // agentB
+            sensor.AddObservation(playground.agentB.transform.localPosition);
+            sensor.AddObservation(playground.agentB.rb.velocity);
         }
 
         /**

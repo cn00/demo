@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -68,6 +69,7 @@ namespace ml.Tennis
         /// <br/>    V(z) = Vz + tAz
         /// <br/> } (m/s“)
         /// <br/> Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
+        /// FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
         /// <br/> Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
         public Vector3 GetTargetPos(float y = 0f)
         {
@@ -79,7 +81,6 @@ namespace ml.Tennis
 
             var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
             
-            // FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
             var a1 = G + ad;
             var a2 = G - ad;
 
@@ -114,50 +115,79 @@ namespace ml.Tennis
                     y,
                     s.z + a1.z * t * t / 2f + v.z * t);
             }
-            Tt = t;
             
             return tp;
         }
 
-        /*
-        public float GetTargetT(float y)
+
+        public Vector3[] TargetPos;
+        /// <summary>
+        /// 最佳击球点
+        /// </summary>
+        /// <out>[0,1,2,3]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</out>
+        /// <returns type="System.Boolean"></returns>
+        public bool GetTarget(out Vector3[] outp, out float outt)
         {
-            var G = playground.G;
+            var G = playground.G.y;
             var v = Velocity;
-            var drag = rigidbody.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
-            var m = rigidbody.mass;
-            var s = transform.localPosition;
+            var d = rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
+            var m = rb.mass;
 
-            var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
-            
-            // FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
-            var a1 = G + ad;
+            // var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
 
-            var a2 = G - ad;
-            var t = 0f;
-            if (v.y > 0f)
+            var ops = new List<Vector3>(4);
+            var pp = transform.localPosition; // rb.position;
+            var a = new Vector3();
+            var tp = pp;
+            var time = 5f;
+            var dt = 0.009f;//Time.deltaTime;
+            // if (dt < 0.01f || dt > 0.3f) dt = 0.01f;
+            var totalt = 0f;
+            var bouncec = 0;
+            for (float t = 0f; t < time && bouncec < 2; t += dt )
             {
-                t = v.y / a1.y;
-                var s1 = - a1.y * t * t / 2f;
-                var s2 = s1 + s.y;
-                if (s2 > y) s2 -= y;
-                var t2 = Mathf.Sqrt(-2f * s2 / a2.y);
-                t += t2;
-            }
-            else
-            {
-                if(s.y > y) s.y -= y;
-                // att/2 + vt - s = 0 ==> t = [-v ± √(vv+2as)]/a
-                // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
-                // at^2/2 + vt - sy = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-                // t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a1.y / 2f * (-s.y))) / (a1.y);
+                totalt += dt;
+                var ppy = tp.y;
+                tp = new Vector3(v.x * dt,v.y * dt,v.z * dt) + pp;
+
+                if (ppy * tp.y < 0f) // 反弹
+                {
+                    ++ bouncec;
+                    if(bouncec == 1)outt = totalt;
+                    tp.y = 0f;
+                    ops.Add(tp);
+                    
+                    v.y = -v.y;
+                    // v *= 0.8f;
+                }
+                pp = tp;
                 
-                t = (v.y + Mathf.Sqrt(v.y * v.y + 2f * (-a2.y) * (s.y))) / (-a2.y);
-            }
+                a.Set(
+                    (d * v.x * v.x) / m * (v.x > 0f ? -1f : 1f),
+                    (d * v.y * v.y) / m * (v.y > 0f ? -1f : 1f) + G,
+                    (d * v.z * v.z) / m * (v.z > 0f ? -1f : 1f));
 
-            return t;
+                var pvy = v.y;
+                v.Set(
+                    v.x + a.x * dt,
+                    v.y + a.y * dt,
+                    v.z + a.z * dt);
+                
+                // 标记最佳击球点
+                var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
+                if (   tp.y >= bestHitY && Mathf.Abs(tp.y - bestHitY) < Mathf.Abs(v.y * dt)*1f 
+                    || tp.y <  bestHitY && pvy * v.y < 0f) // 顶点
+                {
+                    ops.Add(tp);
+                    if (pvy * v.y < 0f) v.y = 0f; 
+                }
+            }
+            
+            TargetPos = outp = ops.ToArray();
+            outt = totalt;
+            Tt = totalt;
+            return outp.Length > 3;
         }
-        */
 
         private void FixedUpdate()
         {

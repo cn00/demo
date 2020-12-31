@@ -61,10 +61,10 @@ ModelImporter:
       name: rep_Net
     second: {fileID: 2100000, guid: daad6e777b6e99a46bbcded7cf6816ee, type: 2}
   materials:
-    materialImportMode: 0
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

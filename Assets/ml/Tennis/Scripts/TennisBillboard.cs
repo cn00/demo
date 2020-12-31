@@ -42,17 +42,18 @@ public class TennisBillboard : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// 预测运动轨迹
     /// </summary>
-    /// <param name="p0"></param>
-    /// <param name="v"></param>
-    /// <param name="mass"></param>
-    /// <param name="drag"></param>
-    /// <param name="dmt"></param>
-    public static void GizmosDrawParabola(Vector3 p0, Vector3 v, float drag, float mass, float dt = 0.02f, float time = 3f)
+    /// <param name="p0">当前位置</param>
+    /// <param name="v">当前速度</param>
+    /// <param name="mass">质量</param>
+    /// <param name="drag">空气阻力系数</param>
+    /// <param name="dt">每步时长</param>
+    public void GizmosDrawParabola(Vector3 p0, Vector3 v, float drag, float mass, float dt = 0.02f, float time = 3f)
     {
-        if (dt < 0.01) dt = 0.01f;
-        if (time < 0.5) time = 0.5f;
+        if (dt < 0.01f) dt = 0.01f;
+        if (time < 0.5f) time = 0.5f;
+        if (time > 5f) time = 5f;
         
         var G = -9.81f;
         if(v.x > 0)
@@ -64,7 +65,8 @@ public class TennisBillboard : MonoBehaviour
         var a = new Vector3();
         var p = new Vector3();
         var tp = new Vector3();
-        for (float t = 0f; t < time; t += dt)
+        var bouncec = 0;
+        for (float t = 0f; t < time && bouncec < 2; t += dt)
         {
             
             var tpy = tp.y;
@@ -75,6 +77,7 @@ public class TennisBillboard : MonoBehaviour
             
             if (tpy * tp.y < 0f) // 反弹
             {
+                ++bouncec;
                 v.y = -v.y;
                 // v *= 0.8f;
                 tp.y = 0f;
@@ -84,12 +87,23 @@ public class TennisBillboard : MonoBehaviour
                 (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
                 (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
                 (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
+            var pvy = v.y;
             v.Set(
                 v.x + a.x * dt,
                 v.y + a.y * dt,
                 v.z + a.z * dt);
-
+            
             Gizmos.DrawLine(pp, tp);
+            
+            // 标记最佳击球点
+            var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
+            if (   tp.y >= bestHitY &&  (tp.y - bestHitY) <= Mathf.Abs(v.y * dt) / 2f 
+                   || tp.y <  bestHitY &&  pvy * v.y < 0f) // 顶点
+            {
+                // Gizmos.color = Color.green;
+                Gizmos.DrawSphere(tp, 0.1f);
+            }
+            
             pp = tp;
         }
     }
@@ -110,42 +124,28 @@ public class TennisBillboard : MonoBehaviour
             var drag = ball.rb.drag;
             var mass = ball.rb.mass;
             GizmosDrawParabola(pp, v, drag, mass, Dt, DTime );
-
-            // var dt = 0.1f;
-            // for (float t = 0f; t < ball.Tt + dt/2f; t += dt)
-            // {
-            //     var tp = new Vector3(
-            //         a.x * t * t / 2f + v.x * t,
-            //         a.y * t * t / 2f + v.y * t,
-            //         a.z * t * t / 2f + v.z * t);
-            //     var p = ball.transform.position + tp;
-            //     Gizmos.color = Color.yellow;
-            //     Gizmos.DrawLine(pp, p);
-            //     pp = p;
-            //     // v += a * dt;
-            // }
         };
         
         Action<TennisAgentA> draw = (agent) =>
         {
-            if(agent.invertX)
-                Gizmos.color = Color.magenta;
-            else
-                Gizmos.color = Color.blue;
+            if(agent.invertX) Gizmos.color = Color.magenta;
+            else Gizmos.color = Color.blue;
             
-            var btp = ball.GetTargetPos();
-            var atp = ball.GetTargetPos(0.5f);
-            var delta = agent.transform.localRotation.normalized * new Vector3(0f, 0f, -1.6f);
-            var lp0 = agent.transform.localPosition + delta;
-            // agent.GetVelocity(agent.transform.localPosition);
+            Vector3[] btps;
+            float outt;
+            if(!ball.GetTarget(out btps, out outt)) return;
+            var atp = btps[0];
+            var lp0 = agent.transform.localPosition;
+            Vector3 btp = btps[1];
             var s = btp - lp0;
             ball.Intersect = Util.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
 
-            var p0 = agent.transform.position + delta;
-            // Gizmos.DrawLine(p0, playground.transform.position + ball.Tp);
-            // Gizmos.DrawLine(p0, ball.transform.position);
-            // Gizmos.DrawLine(p0, playground.transform.position + atp);
+            var p0 = agent.transform.position;
+            Gizmos.DrawLine(p0, playground.transform.position + btp);
+            Gizmos.DrawLine(p0, ball.transform.position);
+            Gizmos.DrawLine(p0, playground.transform.position + atp);
             
+            Gizmos.DrawSphere(lp0, 0.1f);
             Gizmos.DrawSphere(playground.transform.position + ball.Intersect, 0.1f);
 
             // var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
@@ -159,8 +159,10 @@ public class TennisBillboard : MonoBehaviour
             Gizmos.DrawSphere(playground.transform.position + atp, 0.1f);
         };
         
-        draw(playground.agentA);
-        draw(playground.agentB);
+        if(ball.Velocity.x < 0f)
+            draw(playground.agentA);
+        else
+            draw(playground.agentB);
         drawParabola();
         // GizmDraw2();
     }
