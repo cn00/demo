@@ -42,92 +42,26 @@ namespace ml.Tennis
             #endif
             ;
 
-        /// <summary>
-        /// 网平面交点
-        /// </summary>
-        public Vector3 Intersect;
+        public float[] Tt;
 
         /// <summary>
-        /// 落地点
+        /// Inspector 调试用，缓存最佳击球点
         /// </summary>
-        // public Vector3 Tp;
-
-        public float Tt = 0f;
-
-        /// <br/> - 击球点 P0, 球速 V0, 重力 G = 9.8 (N/kg), 空阻 F = kv^2
-        /// <br/> - 对方场地随机取一点 Pt
-        /// <br/> - 求得过网垂线 L
-        /// <br/> - L 上取一点 Pl
-        /// <br/> - 求得抛物线方程
-        /// <br/> - 求得反射速度 Vk(x,y,x)
-        /// <br/> - 求击球速度 Va, 球拍角度 ℷ
-        /// <br/> 空阻 f(V) = kv^2 // https://www.zhihu.com/question/68565717
-        /// <br/> Ax = Fx/M 
-        /// <br/> v(X, Y, Z) = {
-        /// <br/>    V(x) = Vx + tAx
-        /// <br/>    V(y) = Vy + tAy
-        /// <br/>    V(z) = Vz + tAz
-        /// <br/> } (m/s“)
-        /// <br/> Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
-        /// FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
-        /// <br/> Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
-        public Vector3 GetTargetPos(float y = 0f)
-        {
-            //
-            var G = playground.G;
-            var v = Velocity;
-            var drag = rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
-            var m = rb.mass;
-
-            var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
-            
-            var a1 = G + ad;
-            var a2 = G - ad;
-
-            var tp = new Vector3();
-            // transform.localPosition.Set(0,0,0);
-            var s = transform.localPosition;
-            var t = 0f;
-            if (v.y > 0f)
-            {
-                t = v.y / a1.y;
-                var s1 = - a1.y * t * t / 2f;
-                var s2 = s1 + s.y;
-                if (s2 > y) s2 -= y;
-                var t2 = Mathf.Sqrt(-2f * s2 / a2.y);
-                t += t2;
-                tp.Set(
-                    s.x + a2.x * t * t / 2f + v.x * t,
-                    y,
-                    s.z + a2.z * t * t / 2f + v.z * t);
-            }
-            else
-            {
-                if(s.y > y) s.y -= y;
-                // att/2 + vt - s = 0 ==> t = [-v ± √(vv+2as)]/a
-                // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
-                // at^2/2 + vt - sy = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-                // t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a1.y / 2f * (-s.y))) / (a1.y);
-                
-                t = (v.y + Mathf.Sqrt(v.y * v.y + 2f * (-a2.y) * (s.y))) / (-a2.y);
-                tp.Set(
-                    s.x + a1.x * t * t / 2f + v.x * t,
-                    y,
-                    s.z + a1.z * t * t / 2f + v.z * t);
-            }
-            
-            return tp;
-        }
-
-
         public Vector3[] TargetPos;
+        
         /// <summary>
-        /// 最佳击球点
+        /// 计算最佳击球点
         /// </summary>
         /// <out>[0,1,2,3]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</out>
         /// <returns type="System.Boolean"></returns>
-        public bool GetTarget(out Vector3[] outp, out float outt)
+        /// Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
+        /// Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
+        /// FIXIT: 求解微积分方程获取精确路径 https://www.zhihu.com/question/68565717
+        public bool GetTarget(out Vector3[] outPos, out float[] outTimes)
         {
+            // List<Quaternion> tq = new List<Quaternion>();
+            // var q = new Quaternion(Vector3.back, Single.Epsilon, );
+            
             var G = playground.G.y;
             var v = Velocity;
             var d = rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
@@ -136,29 +70,29 @@ namespace ml.Tennis
             // var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
 
             var ops = new List<Vector3>(4);
+            var ots = new List<float>(4);
             var pp = transform.localPosition; // rb.position;
             var a = new Vector3();
             var tp = pp;
             var time = 5f;
             var dt = 0.009f;//Time.deltaTime;
             // if (dt < 0.01f || dt > 0.3f) dt = 0.01f;
-            var totalt = 0f;
+            var timeCount = 0f;
             var bouncec = 0;
             for (float t = 0f; t < time && bouncec < 2; t += dt )
             {
-                totalt += dt;
+                timeCount += dt;
                 var ppy = tp.y;
                 tp = new Vector3(v.x * dt,v.y * dt,v.z * dt) + pp;
 
                 if (ppy * tp.y < 0f) // 反弹
                 {
                     ++ bouncec;
-                    if(bouncec == 1)outt = totalt;
                     tp.y = 0f;
                     ops.Add(tp);
-                    
+                    ots.Add(timeCount);
                     v.y = -v.y;
-                    // v *= 0.8f;
+                    // v *= 0.8f; // 非刚性反弹？
                 }
                 pp = tp;
                 
@@ -173,20 +107,24 @@ namespace ml.Tennis
                     v.y + a.y * dt,
                     v.z + a.z * dt);
                 
-                // 标记最佳击球点
+                // 最佳击球点
                 var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
                 if (   tp.y >= bestHitY && Mathf.Abs(tp.y - bestHitY) < Mathf.Abs(v.y * dt)*1f 
                     || tp.y <  bestHitY && pvy * v.y < 0f) // 顶点
                 {
                     ops.Add(tp);
+                    ots.Add(timeCount);
                     if (pvy * v.y < 0f) v.y = 0f; 
                 }
             }
             
-            TargetPos = outp = ops.ToArray();
-            outt = totalt;
-            Tt = totalt;
-            return outp.Length > 3;
+            outTimes = ots.ToArray();
+            outPos = ops.ToArray();
+            
+            TargetPos = outPos;
+            Tt = outTimes;
+            
+            return outPos.Length > 3;
         }
 
         private void FixedUpdate()
@@ -226,16 +164,16 @@ namespace ml.Tennis
             var vz = 0f;
             if (playground.agentA.score > playground.levelOne && playground.agentB.score > playground.levelOne)
             {
-                pz = Random.Range(-playground.Size.z, playground.Size.z);
+                pz = Random.Range(-playground.HalfSize.z, playground.HalfSize.z);
                 vz = Random.Range(-1f, 1f);
             }
 
-            var px = Random.Range(-playground.Size.x, playground.Size.x);
-            var py = Random.Range(4f, playground.Size.y);
+            var px = Random.Range(-playground.HalfSize.x, playground.HalfSize.x);
+            var py = Random.Range(4f, playground.HalfSize.y);
             transform.localPosition = new Vector3(px, py, pz);
-            
-            var vx = Random.Range(0, maxVelocity.x) * (px > 0f ? -1f:1f);
-            var vy = Random.Range(-maxVelocity.y, maxVelocity.y);
+
+            var vx = Random.Range(0, maxVelocity.x) * (px > 0f ? -1f:1f)/10f;
+            var vy = Random.Range(-maxVelocity.y, maxVelocity.y)/10f;
             rb.velocity = new Vector3(vx, vy,vz);
             
             transform.localScale = new Vector3(.5f, .5f, .5f);
@@ -245,8 +183,6 @@ namespace ml.Tennis
             lastFloorHit = FloorHit.Service;
             lastAgentHit = AgentRole.O;
             net = false;
-            
-            GetTargetPos();
         }
 
         void AgentAWins(float reward = 1)

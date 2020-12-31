@@ -37,7 +37,7 @@ public class TennisBillboard : MonoBehaviour
         {
             var time = DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss");
             if(ball.lastAgentHit != TennisBall.AgentRole.O)
-                Debug.Log($"{time} {ball.lastAgentHit} -> {c.gameObject.name} <- {ball.lastFloorHit} {ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount}");
+                Debug.Log($"{time} Agent{ball.lastAgentHit} -> {c.gameObject.name} <- {ball.lastFloorHit} {ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount}");
         };
     }
 
@@ -95,15 +95,6 @@ public class TennisBillboard : MonoBehaviour
             
             Gizmos.DrawLine(pp, tp);
             
-            // 标记最佳击球点
-            var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
-            if (   tp.y >= bestHitY &&  (tp.y - bestHitY) <= Mathf.Abs(v.y * dt) / 2f 
-                   || tp.y <  bestHitY &&  pvy * v.y < 0f) // 顶点
-            {
-                // Gizmos.color = Color.green;
-                Gizmos.DrawSphere(tp, 0.1f);
-            }
-            
             pp = tp;
         }
     }
@@ -131,32 +122,34 @@ public class TennisBillboard : MonoBehaviour
             if(agent.invertX) Gizmos.color = Color.magenta;
             else Gizmos.color = Color.blue;
             
+            float[] outt;
             Vector3[] btps;
-            float outt;
             if(!ball.GetTarget(out btps, out outt)) return;
+            
             var atp = btps[0];
             var lp0 = agent.transform.localPosition;
             Vector3 btp = btps[1];
             var s = btp - lp0;
-            ball.Intersect = Util.IntersectLineToPlane(lp0, s, Vector3.right, Vector3.zero);
 
             var p0 = agent.transform.position;
-            Gizmos.DrawLine(p0, playground.transform.position + btp);
-            Gizmos.DrawLine(p0, ball.transform.position);
-            Gizmos.DrawLine(p0, playground.transform.position + atp);
+            // Gizmos.DrawLine(p0, playground.transform.position + btp);
+            // Gizmos.DrawLine(p0, ball.transform.position);
+            Gizmos.DrawLine(p0, playground.transform.position + btps[0]);
+            Gizmos.DrawLine(p0, playground.transform.position + btps[2]);
             
-            Gizmos.DrawSphere(lp0, 0.1f);
-            Gizmos.DrawSphere(playground.transform.position + ball.Intersect, 0.1f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(playground.transform.position + btps[0], 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + btps[1], 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + btps[2], 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + btps[3], 0.1f);
 
+            Gizmos.DrawSphere(lp0, 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + agent.Intersect, 0.1f);
+
+            // // 过网垂线
             // var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
             // var dir = new Vector3(0f, 20f, ball.Intersect.z);
             // Gizmos.DrawRay(po, dir);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(playground.transform.position + btp, 0.1f);
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(playground.transform.position + atp, 0.1f);
         };
         
         if(ball.Velocity.x < 0f)

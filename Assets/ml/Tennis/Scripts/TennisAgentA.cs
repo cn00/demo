@@ -33,6 +33,7 @@ namespace ml.Tennis
 
         [Tooltip("最佳击球高度")]
         public float BestTargetY = 0.9f;
+ 
         /// <summary>
         /// 网平面交点
         /// </summary>
@@ -110,7 +111,7 @@ namespace ml.Tennis
         {
             sensor.AddObservation(m_InvertMult); // 角色 x1
             
-            sensor.AddObservation(playground.Size); // x3
+            sensor.AddObservation(playground.HalfSize); // x3
 
             sensor.AddObservation(playground.ball.transform.localPosition); // 球位置 x3
             sensor.AddObservation(playground.ball.rb.velocity); // 球速度 x3
@@ -188,6 +189,7 @@ namespace ml.Tennis
         public override void Heuristic(in ActionBuffers actionsOut)
         {
             var ball = playground.ball;
+            
             var offset = transform.rotation.normalized * new Vector3(0f, 0f, -1.6f);
             var p0 = transform.localPosition + offset; // 拍心
 

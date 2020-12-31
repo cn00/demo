@@ -10,7 +10,7 @@ namespace ml.Tennis
         public TennisAgentA agentB;
         public TennisBall ball;
 
-        public Vector3 Size = new Vector3(12f, 11f, 5.5f);
+        public Vector3 HalfSize = new Vector3(12f, 11f, 5.5f);
         
         public Vector3 G = new Vector3(0f, -9.81f, 0f);
 
