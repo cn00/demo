@@ -52,7 +52,12 @@ namespace ml.Tennis
         /// <summary>
         /// 时间
         /// </summary>
-        public float Tt; 
+        public float[] Tt;
+
+        /// <summary>
+        /// Inspector 调试用，缓存最佳击球点
+        /// </summary>
+        public Vector3[] TargetPos;
         
         [Header("v_3:r_4")] public List<float> m_Actions;
     
@@ -64,6 +69,105 @@ namespace ml.Tennis
         #region MyRegion
 
         /// <summary>
+        /// 计算最佳击球点
+        /// </summary>
+        /// <out>[0,1,2,3]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</out>
+        /// <returns type="System.Boolean"></returns>
+        /// Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
+        /// Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
+        /// FIXIT: 求解微积分方程获取精确路径 https://www.zhihu.com/question/68565717
+        public bool GetTarget(out Vector3[] outPos, out float[] outTimes)
+        {
+            // if (lastFloorHit == FloorHit.FloorAHit || lastFloorHit == FloorHit.FloorBHit)
+            // {
+            //     outPos = TargetPos;
+            //     outTimes =Tt;
+            //     return outPos.Length > 3;
+            // }
+            
+            // List<Quaternion> tq = new List<Quaternion>();
+            // var q = new Quaternion(Vector3.back, Single.Epsilon, );
+            var ball = playground.ball;
+            var G = playground.G.y;
+            var v = ball.Velocity;
+            var d = ball.rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
+            var m = ball.rb.mass;
+
+            // var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
+
+            var ops = new List<Vector3>(4);
+            var ots = new List<float>(4);
+            var pp = ball.transform.localPosition; // rb.position;
+            var a = new Vector3();
+            var tp = pp;
+            var time = 5f;
+            var dt = 0.009f;//Time.deltaTime;
+            // if (dt < 0.01f || dt > 0.3f) dt = 0.01f;
+            var timeCount = 0f;
+            var bouncec = 0;
+            Vector3 minP = pp;
+            float minl = float.MaxValue;
+            float minPt = 0f;
+            for (float t = 0f; t < time && bouncec < 2; t += dt )
+            {
+                timeCount += dt;
+                var ppy = tp.y;
+                tp = new Vector3(v.x * dt,v.y * dt,v.z * dt) + pp;
+
+                var l = (tp - transform.localPosition).sqrMagnitude;
+                if (l < minl)
+                {
+                    minl = l;
+                    minP = tp;
+                    minPt = timeCount;
+                }
+
+                if (ppy * tp.y < 0f) // 反弹
+                {
+                    ++ bouncec;
+                    tp.y = 0f;
+                    ops.Add(tp);
+                    ots.Add(timeCount);
+                    v.y = -v.y;
+                    // v *= 0.8f; // 非刚性反弹？
+                }
+                pp = tp;
+                
+                a.Set(
+                    (d * v.x * v.x) / m * (v.x > 0f ? -1f : 1f),
+                    (d * v.y * v.y) / m * (v.y > 0f ? -1f : 1f) + G,
+                    (d * v.z * v.z) / m * (v.z > 0f ? -1f : 1f));
+
+                var pvy = v.y;
+                v.Set(
+                    v.x + a.x * dt,
+                    v.y + a.y * dt,
+                    v.z + a.z * dt);
+                
+                // 最佳击球点
+                var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
+                if (   tp.y >= bestHitY && Mathf.Abs(tp.y - bestHitY) < Mathf.Abs(v.y * dt)*1f 
+                    || tp.y <  bestHitY && pvy * v.y < 0f) // 顶点
+                {
+                    ops.Add(tp);
+                    ots.Add(timeCount);
+                    if (pvy * v.y < 0f) v.y = 0f; 
+                }
+            }
+            
+            ops.Add(minP);
+            ots.Add(minPt);
+            
+            outTimes = ots.ToArray();
+            outPos = ops.ToArray();
+            
+            TargetPos = outPos;
+            Tt = outTimes;
+            
+            return outPos.Length > 3;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="p"></param>
@@ -71,10 +175,15 @@ namespace ml.Tennis
         /// <returns></returns>
         public bool CanIReachPoint(Vector3 p, float t)
         {
-            var yes = false;
+            if (p.x < 0 && invertX || p.x > 0 && !invertX) 
+                return false;
+            
             var s = (p - transform.localPosition).magnitude;
-            var mt = s / m_velocityMax;
-            return yes;
+            var mt = Mathf.Abs(s) / m_velocityMax;
+            
+            // TODO: the ball is passed the point now?
+            
+            return mt <= t;
         }
         #endregion
 
@@ -147,7 +256,7 @@ namespace ml.Tennis
             var ball = playground.ball;
             float[] outt;
             Vector3[] btps;
-            if(!ball.GetTarget(out btps, out outt)) return;
+            if(!GetTarget(out btps, out outt)) return;
             Intersect = Util.IntersectLineToPlane(
                 transform.localPosition, 
                 btps[1] - transform.localPosition, 
@@ -175,13 +284,11 @@ namespace ml.Tennis
             //     velocityZ = 0f;
             // }
 
-            rb.velocity = new Vector3(velocityX, velocityY, velocityZ);
+            // rb.velocity = new Vector3(velocityX, velocityY, velocityZ);
 
-            // 
-            rb.rotation =
-                Quaternion.Euler(new Vector3(rotateX, rotateY, rotateZ)); // 这比使用Transform.rotation更新旋转速度更快
-            // or 
-            // transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);
+            // rb.rotation = Quaternion.Euler(new Vector3(rotateX, rotateY, rotateZ)); // 这比使用Transform.rotation更新旋转速度更快
+            // // or 
+            // // transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);
 
         }
 
@@ -190,42 +297,34 @@ namespace ml.Tennis
         {
             var ball = playground.ball;
             
-            var offset = transform.rotation.normalized * new Vector3(0f, 0f, -1.6f);
-            var p0 = transform.localPosition + offset; // 拍心
+            // var offset = transform.rotation.normalized * new Vector3(0.5f, 0f, 0f);
+            var p0 = transform.localPosition; // 拍心
 
             float[] outTime;
             Vector3[] btps;
-            if(!ball.GetTarget(out btps, out outTime)) return;
+            if(!GetTarget(out btps, out outTime)) return;
             
-            Intersect = Util.IntersectLineToPlane(
-                transform.localPosition, 
-                btps[1] - transform.localPosition, 
-                Vector3.right, Vector3.zero);
+            // Intersect = Util.IntersectLineToPlane(
+            //     transform.localPosition, 
+            //     btps[1] - transform.localPosition, 
+            //     Vector3.right, Vector3.zero);
 
             var velocity = Vector3.zero;
-            if(CanIReachPoint(btps[3], outTime[3]))
+            for (int i = 0; i < btps.Length; i++)
             {
-                velocity = (btps[3] - p0) / outTime[3];
-                rb.velocity = velocity;
+                if (btps[i].y > 0 && CanIReachPoint(btps[i], outTime[i]))
+                {
+                    velocity = (btps[i] - p0) / outTime[i];
+                    break;
+                }
             }
-            else if(CanIReachPoint(btps[2], outTime[2]))
-            {
-                velocity = (btps[2] - p0) / outTime[2];
-                rb.velocity = velocity;
-            }
-            else // if (CanIReachPoint(btps[0], outTime[0]))
-            {
-                velocity = (btps[0] - p0) / outTime[0];
-                rb.velocity = velocity;
-            }
-            // else
-            // {
-            //     // TODO: find where i can reach to
-            // }
+            // TODO: find something else todo?
             
-            var rotation = Quaternion.LookRotation(velocity, Vector3.right);
-            transform.rotation = rotation;
-            // rigidbody.rotation = rotation;
+            rb.velocity = velocity*3f;
+
+            var rotation = velocity == Vector3.zero  ? Quaternion.identity : Quaternion.LookRotation(velocity.normalized, Vector3.right);
+            // transform.rotation = rotation;
+            // rb.rotation = rotation;
 
             var continuousActionsOut = actionsOut.ContinuousActions;
             continuousActionsOut[0] = velocity.x; // velocityX Racket Movement
@@ -271,15 +370,15 @@ namespace ml.Tennis
         public void Reset()
         {
             transform.localPosition = new Vector3(
-                -m_InvertMult * 8,
-                2f,
-                m_InvertMult * 1.5f);
+                -m_InvertMult * 9f,
+                1f,
+                m_InvertMult * 2f);
 
             rb.velocity = new Vector3(0f, 0f, 0f);
             rb.rotation = Quaternion.Euler(new Vector3(
                 invertX ? 180f : 0f,
                 0f,
-                -55f
+                -70f
             ));
         }
 

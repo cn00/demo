@@ -12,8 +12,6 @@ namespace ml.Tennis
         public TennisPlayground playground;
         public Rigidbody rb;
 
-        public float m_velocityMax = 60f; // 216Km/h
-
         public bool net;
 
         public enum AgentRole
@@ -35,98 +33,15 @@ namespace ml.Tennis
 
         public FloorHit lastFloorHit;
 
-        public Vector3 maxVelocity = new Vector3(60f, 10f, 10f); // 世界记录 196Km/h = 54m/s
+
+        public Vector3 velocityMinInit = new Vector3(60f, 5f, 3f);
+        public Vector3 velocityMax = new Vector3(60f, 10f, 10f); // 世界记录 196Km/h = 54m/s
         public Vector3 Velocity
             #if !UNITY_EDITOR
             => rb.velocity
             #endif
             ;
-
-        public float[] Tt;
-
-        /// <summary>
-        /// Inspector 调试用，缓存最佳击球点
-        /// </summary>
-        public Vector3[] TargetPos;
         
-        /// <summary>
-        /// 计算最佳击球点
-        /// </summary>
-        /// <out>[0,1,2,3]: 落地前, 第一次落地点, 第一次弹起后, 第二次落地前</out>
-        /// <returns type="System.Boolean"></returns>
-        /// Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
-        /// Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
-        /// FIXIT: 求解微积分方程获取精确路径 https://www.zhihu.com/question/68565717
-        public bool GetTarget(out Vector3[] outPos, out float[] outTimes)
-        {
-            // List<Quaternion> tq = new List<Quaternion>();
-            // var q = new Quaternion(Vector3.back, Single.Epsilon, );
-            
-            var G = playground.G.y;
-            var v = Velocity;
-            var d = rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
-            var m = rb.mass;
-
-            // var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
-
-            var ops = new List<Vector3>(4);
-            var ots = new List<float>(4);
-            var pp = transform.localPosition; // rb.position;
-            var a = new Vector3();
-            var tp = pp;
-            var time = 5f;
-            var dt = 0.009f;//Time.deltaTime;
-            // if (dt < 0.01f || dt > 0.3f) dt = 0.01f;
-            var timeCount = 0f;
-            var bouncec = 0;
-            for (float t = 0f; t < time && bouncec < 2; t += dt )
-            {
-                timeCount += dt;
-                var ppy = tp.y;
-                tp = new Vector3(v.x * dt,v.y * dt,v.z * dt) + pp;
-
-                if (ppy * tp.y < 0f) // 反弹
-                {
-                    ++ bouncec;
-                    tp.y = 0f;
-                    ops.Add(tp);
-                    ots.Add(timeCount);
-                    v.y = -v.y;
-                    // v *= 0.8f; // 非刚性反弹？
-                }
-                pp = tp;
-                
-                a.Set(
-                    (d * v.x * v.x) / m * (v.x > 0f ? -1f : 1f),
-                    (d * v.y * v.y) / m * (v.y > 0f ? -1f : 1f) + G,
-                    (d * v.z * v.z) / m * (v.z > 0f ? -1f : 1f));
-
-                var pvy = v.y;
-                v.Set(
-                    v.x + a.x * dt,
-                    v.y + a.y * dt,
-                    v.z + a.z * dt);
-                
-                // 最佳击球点
-                var bestHitY = v.x > 0f ? playground.agentA.BestTargetY : playground.agentB.BestTargetY;
-                if (   tp.y >= bestHitY && Mathf.Abs(tp.y - bestHitY) < Mathf.Abs(v.y * dt)*1f 
-                    || tp.y <  bestHitY && pvy * v.y < 0f) // 顶点
-                {
-                    ops.Add(tp);
-                    ots.Add(timeCount);
-                    if (pvy * v.y < 0f) v.y = 0f; 
-                }
-            }
-            
-            outTimes = ots.ToArray();
-            outPos = ops.ToArray();
-            
-            TargetPos = outPos;
-            Tt = outTimes;
-            
-            return outPos.Length > 3;
-        }
-
         private void FixedUpdate()
         {
             // if(playground.agentA is TennisAgent)// 
@@ -160,20 +75,23 @@ namespace ml.Tennis
 
         void Reset()
         {
-            var pz = 0f;
-            var vz = 0f;
+            if (CollisionEnter != null)
+            {
+                CollisionEnter(currentCollision);
+            }
+            
             if (playground.agentA.score > playground.levelOne && playground.agentB.score > playground.levelOne)
             {
-                pz = Random.Range(-playground.HalfSize.z, playground.HalfSize.z);
-                vz = Random.Range(-1f, 1f);
             }
 
-            var px = Random.Range(-playground.HalfSize.x, playground.HalfSize.x);
-            var py = Random.Range(4f, playground.HalfSize.y);
+            var px = Random.Range(-playground.HalfSize.x, playground.HalfSize.x) > 0 ? 8f : -8f;
+            var py = 1f;//Random.Range(4f, playground.HalfSize.y);//
+            var pz = 0f;// Random.Range(-playground.HalfSize.z, playground.HalfSize.z);
             transform.localPosition = new Vector3(px, py, pz);
 
-            var vx = Random.Range(0, maxVelocity.x) * (px > 0f ? -1f:1f)/10f;
-            var vy = Random.Range(-maxVelocity.y, maxVelocity.y)/10f;
+            var vx = (px > 0f ? -1f:1f) * Random.Range(velocityMinInit.x, velocityMax.x); // * 14f; // 
+            var vy = Random.Range(velocityMinInit.y, velocityMax.y); // 3.5f;//
+            var vz = Random.Range(velocityMinInit.z, velocityMax.z);
             rb.velocity = new Vector3(vx, vy,vz);
             
             transform.localScale = new Vector3(.5f, .5f, .5f);
@@ -228,12 +146,16 @@ namespace ml.Tennis
         }
         */
 
+        private Collision currentCollision;
+
+
         void OnCollisionEnter(Collision collision)
         {
-            if (CollisionEnter != null)
-            {
-                CollisionEnter(collision);
-            }
+            currentCollision = collision;
+            // if (CollisionEnter != null)
+            // {
+            //     CollisionEnter(collision);
+            // }
 
             if (collision.gameObject.CompareTag("iWall"))
             {
