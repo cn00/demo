@@ -34,6 +34,11 @@ namespace ml.Tennis
         [Tooltip("最佳击球高度")]
         public float BestTargetY = 0.9f;
         /// <summary>
+        /// 网平面交点
+        /// </summary>
+        public Vector3 Intersect;
+
+        /// <summary>
         /// 目标点
         /// </summary>
         public Vector3 Tp;
@@ -138,6 +143,15 @@ namespace ml.Tennis
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
+            var ball = playground.ball;
+            float[] outt;
+            Vector3[] btps;
+            if(!ball.GetTarget(out btps, out outt)) return;
+            Intersect = Util.IntersectLineToPlane(
+                transform.localPosition, 
+                btps[1] - transform.localPosition, 
+                Vector3.right, Vector3.zero);
+
             var continuousActions = actionBuffers.ContinuousActions;
             #if UNITY_EDITOR
             m_Actions = continuousActions.ToList();
