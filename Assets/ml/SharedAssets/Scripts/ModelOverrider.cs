@@ -30,33 +30,33 @@ namespace Unity.MLAgentsExamples
         const string k_CommandLineQuitAfterEpisodesFlag = "--mlagents-quit-after-episodes";
         const string k_CommandLineQuitOnLoadFailure = "--mlagents-quit-on-load-failure";
 
-        // The attached Agent
-        Agent m_Agent;
-
-        string m_BehaviorNameOverrideDirectory;
-
-        private List<string> m_OverrideExtensions = new List<string>();
-
-        // Cached loaded NNModels, with the behavior name as the key.
-        Dictionary<string, NNModel> m_CachedModels = new Dictionary<string, NNModel>();
-
-
-        // Max episodes to run. Only used if > 0
-        // Will default to 1 if override models are specified, otherwise 0.
-        int m_MaxEpisodes;
-
-        int m_NumSteps;
-        int m_PreviousNumSteps;
-        int m_PreviousAgentCompletedEpisodes;
-
-        bool m_QuitOnLoadFailure;
-        [Tooltip("Debug values to be used in place of the command line for overriding models.")]
-        public string debugCommandLineOverride;
-
         // Static values to keep track of completed episodes and steps across resets
         // These are updated in OnDisable.
         static int s_PreviousAgentCompletedEpisodes;
         static int s_PreviousNumSteps;
+
+        // The attached Agent
+        public Agent m_Agent;
+
+        public string m_BehaviorNameOverrideDirectory;
+
+        public List<string> m_OverrideExtensions = new List<string>();
+
+        // Cached loaded NNModels, with the behavior name as the key.
+        public Dictionary<string, NNModel> m_CachedModels = new Dictionary<string, NNModel>();
+
+
+        // Max episodes to run. Only used if > 0
+        // Will default to 1 if override models are specified, otherwise 0.
+        public int m_MaxEpisodes;
+
+        public int m_NumSteps;
+        public int m_PreviousNumSteps;
+        public int m_PreviousAgentCompletedEpisodes;
+
+        public bool m_QuitOnLoadFailure;
+        [Tooltip("Debug values to be used in place of the command line for overriding models.")]
+        public string debugCommandLineOverride;
 
         int TotalCompletedEpisodes
         {
