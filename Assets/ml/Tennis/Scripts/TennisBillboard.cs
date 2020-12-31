@@ -49,18 +49,19 @@ public class TennisBillboard : MonoBehaviour
     /// <param name="mass"></param>
     /// <param name="drag"></param>
     /// <param name="dmt"></param>
-    public static void GizmosDrawParabola(Vector3 p0, Vector3 v, Vector3 a, float drag, float mass, float dt = 0.02f, float time = 3f)
+    public static void GizmosDrawParabola(Vector3 p0, Vector3 v, float drag, float mass, float dt = 0.02f, float time = 3f)
     {
         if (dt < 0.01) dt = 0.01f;
         if (time < 0.5) time = 0.5f;
         
-        var G = -9.8f;
+        var G = -9.81f;
         if(v.x > 0)
             Gizmos.color = Color.cyan;
         else 
             Gizmos.color = Color.red;
 
         var pp = p0;
+        var a = new Vector3();
         var p = new Vector3();
         var tp = new Vector3();
         for (float t = 0f; t < time; t += dt)
@@ -79,14 +80,14 @@ public class TennisBillboard : MonoBehaviour
                 tp.y = 0f;
             }
             
-            v.Set(
-                v.x + a.x * dt,
-                v.y + a.y * dt,
-                v.z + a.z * dt);
             a.Set(
                 (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
                 (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
                 (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
+            v.Set(
+                v.x + a.x * dt,
+                v.y + a.y * dt,
+                v.z + a.z * dt);
 
             Gizmos.DrawLine(pp, tp);
             pp = tp;
@@ -106,13 +107,9 @@ public class TennisBillboard : MonoBehaviour
             else 
                 Gizmos.color = Color.magenta;
 
-            var drag = ball.rigidbody.drag;
-            var mass = ball.rigidbody.mass;
-            var a  = new Vector3(
-                   -(drag * v.x * v.x) / mass,
-                G + (drag * v.y * v.y) / mass,
-                   -(drag * v.z * v.z) / mass);
-            GizmosDrawParabola(pp, v, a, drag, mass, Dt, DTime );
+            var drag = ball.rb.drag;
+            var mass = ball.rb.mass;
+            GizmosDrawParabola(pp, v, drag, mass, Dt, DTime );
 
             // var dt = 0.1f;
             // for (float t = 0f; t < ball.Tt + dt/2f; t += dt)

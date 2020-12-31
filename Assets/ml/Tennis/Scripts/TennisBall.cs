@@ -9,7 +9,7 @@ namespace ml.Tennis
     public class TennisBall : MonoBehaviour
     {
         public TennisPlayground playground;
-        public Rigidbody rigidbody;
+        public Rigidbody rb;
 
         public float m_velocityMax = 60f; // 216Km/h
 
@@ -37,7 +37,7 @@ namespace ml.Tennis
         public Vector3 maxVelocity = new Vector3(60f, 10f, 10f); // 世界记录 196Km/h = 54m/s
         public Vector3 Velocity
             #if !UNITY_EDITOR
-            => rigidbody.velocity
+            => rb.velocity
             #endif
             ;
 
@@ -49,57 +49,118 @@ namespace ml.Tennis
         /// <summary>
         /// 落地点
         /// </summary>
-        public Vector3 Tp;
+        // public Vector3 Tp;
 
         public float Tt = 0f;
 
-        /// - 击球点 P0, 球速 V0, 重力 G = 9.8 (N/kg), 空阻 F = kv^2
-        /// - 对方场地随机取一点 Pt
-        /// - 求得过网垂线 L
-        /// - L 上取一点 Pl
-        /// - 求得抛物线方程
-        /// - 求得反射速度 Vk(x,y,x)
-        /// - 求击球速度 Va, 球拍角度 ℷ
-        /// 空阻 f(V) = kv^2
-        /// Ax = Fx/M 
-        /// v(X, Y, Z) = {
-        ///    V(x) = Vx + tAx
-        ///    V(y) = Vy + tAy
-        ///    V(z) = Vz + tAz
-        /// } (m/s“)
-        /// </summary>
+        /// <br/> - 击球点 P0, 球速 V0, 重力 G = 9.8 (N/kg), 空阻 F = kv^2
+        /// <br/> - 对方场地随机取一点 Pt
+        /// <br/> - 求得过网垂线 L
+        /// <br/> - L 上取一点 Pl
+        /// <br/> - 求得抛物线方程
+        /// <br/> - 求得反射速度 Vk(x,y,x)
+        /// <br/> - 求击球速度 Va, 球拍角度 ℷ
+        /// <br/> 空阻 f(V) = kv^2 // https://www.zhihu.com/question/68565717
+        /// <br/> Ax = Fx/M 
+        /// <br/> v(X, Y, Z) = {
+        /// <br/>    V(x) = Vx + tAx
+        /// <br/>    V(y) = Vy + tAy
+        /// <br/>    V(z) = Vz + tAz
+        /// <br/> } (m/s“)
+        /// <br/> Unity3D中常用的物理学公式 https://www.cnblogs.com/msxh/p/6128851.html
+        /// <br/> Unity 如何计算阻力？ https://www.leadwerks.com/community/topic/4385-physics-how-does-unity-calculate-drag/
         public Vector3 GetTargetPos(float y = 0f)
         {
-            var s = transform.localPosition;
-            if(s.y > y) s.y -= y;
+            //
             var G = playground.G;
             var v = Velocity;
-            var drag = rigidbody.drag;
-            var mass = rigidbody.mass;
+            var drag = rb.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
+            var m = rb.mass;
 
-            var a = new Vector3(
-                (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
-                (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
-                (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
+            var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
             
-            // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
-            // at^2/2 + vt + y = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
-            var t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a.y / 2f * (-s.y))) / (a.y);
+            // FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
+            var a1 = G + ad;
+            var a2 = G - ad;
+
+            var tp = new Vector3();
+            // transform.localPosition.Set(0,0,0);
+            var s = transform.localPosition;
+            var t = 0f;
+            if (v.y > 0f)
+            {
+                t = v.y / a1.y;
+                var s1 = - a1.y * t * t / 2f;
+                var s2 = s1 + s.y;
+                if (s2 > y) s2 -= y;
+                var t2 = Mathf.Sqrt(-2f * s2 / a2.y);
+                t += t2;
+                tp.Set(
+                    s.x + a2.x * t * t / 2f + v.x * t,
+                    y,
+                    s.z + a2.z * t * t / 2f + v.z * t);
+            }
+            else
+            {
+                if(s.y > y) s.y -= y;
+                // att/2 + vt - s = 0 ==> t = [-v ± √(vv+2as)]/a
+                // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
+                // at^2/2 + vt - sy = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
+                // t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a1.y / 2f * (-s.y))) / (a1.y);
+                
+                t = (v.y + Mathf.Sqrt(v.y * v.y + 2f * (-a2.y) * (s.y))) / (-a2.y);
+                tp.Set(
+                    s.x + a1.x * t * t / 2f + v.x * t,
+                    y,
+                    s.z + a1.z * t * t / 2f + v.z * t);
+            }
             Tt = t;
             
-            var tp = new Vector3(
-                s.x + a.x * t * t / 2f + v.x * t,
-                y,
-                s.z + a.z * t * t / 2f + v.z * t);
-            var tpx = a.x * t * t / 2f + v.x * t;
-            var tpz = a.z * t * t / 2f + v.z * t;
-
             return tp;
         }
 
+        /*
+        public float GetTargetT(float y)
+        {
+            var G = playground.G;
+            var v = Velocity;
+            var drag = rigidbody.drag; // 0.47 https://www.jianshu.com/p/9da46cf6d5f5
+            var m = rigidbody.mass;
+            var s = transform.localPosition;
+
+            var ad = - Mathf.Pow(v.magnitude, 2) * drag * v.normalized;
+            
+            // FIXIT: 微积分方程求解更精确 https://www.zhihu.com/question/68565717
+            var a1 = G + ad;
+
+            var a2 = G - ad;
+            var t = 0f;
+            if (v.y > 0f)
+            {
+                t = v.y / a1.y;
+                var s1 = - a1.y * t * t / 2f;
+                var s2 = s1 + s.y;
+                if (s2 > y) s2 -= y;
+                var t2 = Mathf.Sqrt(-2f * s2 / a2.y);
+                t += t2;
+            }
+            else
+            {
+                if(s.y > y) s.y -= y;
+                // att/2 + vt - s = 0 ==> t = [-v ± √(vv+2as)]/a
+                // ax^2 + bx + c = 0 ==> x = [-b ± √(b^2-4ac)]/(2a)
+                // at^2/2 + vt - sy = 0 => t = (sqrt(v^2 -4*a/2*y)-v)/(2*a/2)
+                // t = (v.y + Mathf.Sqrt(v.y * v.y - 4f * a1.y / 2f * (-s.y))) / (a1.y);
+                
+                t = (v.y + Mathf.Sqrt(v.y * v.y + 2f * (-a2.y) * (s.y))) / (-a2.y);
+            }
+
+            return t;
+        }
+        */
+
         private void FixedUpdate()
         {
-            
             // if(playground.agentA is TennisAgent)// 
             // {
             //     var rgV = rigidbody.velocity;
@@ -110,17 +171,17 @@ namespace ml.Tennis
             // }
             // else
 
-            var rgV = rigidbody.velocity;
-            rigidbody.velocity = new Vector3(
-                Mathf.Clamp(rgV.x, -maxVelocity.x, maxVelocity.z),
-                Mathf.Clamp(rgV.y, -maxVelocity.y, maxVelocity.y),
-                Mathf.Clamp(rgV.z, -maxVelocity.z, maxVelocity.z));
+            // var rgV = rigidbody.velocity;
+            // rigidbody.velocity = new Vector3(
+            //     Mathf.Clamp(rgV.x, -maxVelocity.x, maxVelocity.z),
+            //     Mathf.Clamp(rgV.y, -maxVelocity.y, maxVelocity.y),
+            //     Mathf.Clamp(rgV.z, -maxVelocity.z, maxVelocity.z));
             
             #if UNITY_EDITOR
-            Velocity = rigidbody.velocity;
+            Velocity = rb.velocity;
             #endif
 
-            // //
+            // // 无法预计算轨迹
             // var bp = transform.localPosition;
             // transform.localPosition = new Vector3(
             //     Mathf.Clamp(bp.x, -4f * playground.Size.x, 4f * playground.Size.x),
@@ -145,7 +206,7 @@ namespace ml.Tennis
             
             var vx = Random.Range(0, maxVelocity.x) * (px > 0f ? -1f:1f);
             var vy = Random.Range(-maxVelocity.y, maxVelocity.y);
-            rigidbody.velocity = new Vector3(vx, vy,vz);
+            rb.velocity = new Vector3(vx, vy,vz);
             
             transform.localScale = new Vector3(.5f, .5f, .5f);
 
@@ -154,6 +215,8 @@ namespace ml.Tennis
             lastFloorHit = FloorHit.Service;
             lastAgentHit = AgentRole.O;
             net = false;
+            
+            GetTargetPos();
         }
 
         void AgentAWins(float reward = 1)

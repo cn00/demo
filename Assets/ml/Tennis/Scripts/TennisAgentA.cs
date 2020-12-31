@@ -10,6 +10,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Sensors.Reflection;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace ml.Tennis
@@ -19,7 +20,7 @@ namespace ml.Tennis
         #region Properties
 
         public TennisPlayground playground;
-        public Rigidbody rigidbody;
+        public Rigidbody rb;
 
         public uint score;
         public uint hitCount;
@@ -103,11 +104,11 @@ namespace ml.Tennis
 
             sensor.AddObservation(transform.localPosition); // 位置 x3
             sensor.AddObservation(transform.localRotation.eulerAngles); // 角度 x3
-            sensor.AddObservation(rigidbody.velocity); // 速度 x3
+            sensor.AddObservation(rb.velocity); // 速度 x3
 
             sensor.AddObservation(playground.ball.transform.localPosition); // 球位置 x3
-            sensor.AddObservation(playground.ball.rigidbody.velocity); // 球速度 x3
-            sensor.AddObservation(playground.ball.rigidbody.angularVelocity); // 角速度 x3
+            sensor.AddObservation(playground.ball.rb.velocity); // 球速度 x3
+            sensor.AddObservation(playground.ball.rb.angularVelocity); // 角速度 x3
 
             sensor.AddObservation(playground.agentA.transform.localPosition); // agentA 位置 x3
             sensor.AddObservation(playground.agentB.transform.localPosition); // agentA 位置 x3
@@ -140,9 +141,9 @@ namespace ml.Tennis
             var velocityX = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
             var velocityY = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
             var velocityZ = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_velocityMax;
-            var rotateX = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
-            var rotateY = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
-            var rotateZ = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+            var rotateX   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+            var rotateY   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
+            var rotateZ   = Mathf.Clamp(continuousActions[i++], -1f, 1f) * m_rotateMax;
             // var rotateW     = Mathf.Clamp(continuousActions[i++], -1f, 1f);
 
             // // 不干预决策，在 TennisBall 中限制球的运动范围来引导
@@ -153,10 +154,10 @@ namespace ml.Tennis
             //     velocityZ = 0f;
             // }
 
-            rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
+            rb.velocity = new Vector3(velocityX, velocityY, velocityZ);
 
             // 
-            rigidbody.rotation =
+            rb.rotation =
                 Quaternion.Euler(new Vector3(rotateX, rotateY, rotateZ)); // 这比使用Transform.rotation更新旋转速度更快
             // or 
             // transform.localEulerAngles = new Vector3(rotateX, rotateY, rotateZ);
@@ -171,8 +172,8 @@ namespace ml.Tennis
             var p0 = transform.localPosition + offset; // 拍心
 
             // transform.localPosition = ball.GetTargetPos() - offset;
-            var velocity = (ball.Tp - p0) / ball.Tt;
-            rigidbody.velocity = velocity;
+            var velocity = (ball.GetTargetPos() - p0) / ball.Tt;
+            rb.velocity = velocity;
 
             var rotation = Quaternion.LookRotation(velocity, Vector3.right);
             transform.rotation = rotation;
@@ -226,8 +227,8 @@ namespace ml.Tennis
                 2f,
                 m_InvertMult * 1.5f);
 
-            rigidbody.velocity = new Vector3(0f, 0f, 0f);
-            rigidbody.rotation = Quaternion.Euler(new Vector3(
+            rb.velocity = new Vector3(0f, 0f, 0f);
+            rb.rotation = Quaternion.Euler(new Vector3(
                 invertX ? 180f : 0f,
                 0f,
                 -55f
@@ -238,20 +239,21 @@ namespace ml.Tennis
 
         #region MonoBehaviour
 
-        private void FixedUpdate()
-        {
-            var p = transform.localPosition; // GetBallTargetP(); //
-            // var rp = rigidbody.position;
-            transform.localPosition = new Vector3(
-                Mathf.Clamp(p.x, 2f * (invertX ? 0f : -playground.Size.x), 2f * (invertX ? playground.Size.x : 0f)),
-                Mathf.Clamp(p.y, 0.1f, 3f),
-                Mathf.Clamp(p.z, -2f * playground.Size.z, 2f * playground.Size.z));
-            // rigidbody.rotation = Quaternion.Euler(new Vector3(
-            //     invertX ? 180f : 0f,
-            //     0f,
-            //     -55f
-            // ));
-        }
+        // private void FixedUpdate()
+        // {
+        //     var p = transform.localPosition; // GetBallTargetP(); //
+        //     // var rp = rigidbody.position;
+        //     transform.localPosition = new Vector3(
+        //         Mathf.Clamp(p.x, 2f * (invertX ? 0f : -playground.Size.x), 2f * (invertX ? playground.Size.x : 0f)),
+        //         Mathf.Clamp(p.y, 0.1f, 3f),
+        //         Mathf.Clamp(p.z, -2f * playground.Size.z, 2f * playground.Size.z));
+        //     
+        //     // rigidbody.rotation = Quaternion.Euler(new Vector3(
+        //     //     invertX ? 180f : 0f,
+        //     //     0f,
+        //     //     -55f
+        //     // ));
+        // }
 
         #endregion //MonoBehaviour
     }
