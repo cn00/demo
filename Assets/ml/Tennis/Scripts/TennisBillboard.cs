@@ -119,12 +119,9 @@ public class TennisBillboard : MonoBehaviour
         
         Action<TennisAgentA> draw = (agent) =>
         {
-            if(agent.invertX) Gizmos.color = Color.magenta;
-            else Gizmos.color = Color.blue;
-            
             float[] outt;
             Vector3[] btps;
-            if(!ball.GetTarget(out btps, out outt)) return;
+            if(!agent.GetTarget(out btps, out outt)) return;
             
             var atp = btps[0];
             var lp0 = agent.transform.localPosition;
@@ -132,19 +129,27 @@ public class TennisBillboard : MonoBehaviour
             var s = btp - lp0;
 
             var p0 = agent.transform.position;
+            for (int i = 0; i < btps.Length; i++)
+            {
+                if (agent.CanIReachPoint(btps[i], outt[i]))
+                {
+                    Gizmos.color = Color.yellow;
+                    if(btps[i].y > 0)
+                        Gizmos.DrawLine(p0, playground.transform.position + btps[i]);
+                }
+                else
+                    Gizmos.color = Color.green;
+                Gizmos.DrawSphere(playground.transform.position + btps[i], 0.1f);
+            }
+
+            if(agent.invertX) Gizmos.color = Color.magenta;
+            else Gizmos.color = Color.blue;
+            
             // Gizmos.DrawLine(p0, playground.transform.position + btp);
             // Gizmos.DrawLine(p0, ball.transform.position);
-            Gizmos.DrawLine(p0, playground.transform.position + btps[0]);
-            Gizmos.DrawLine(p0, playground.transform.position + btps[2]);
-            
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(playground.transform.position + btps[0], 0.1f);
-            Gizmos.DrawSphere(playground.transform.position + btps[1], 0.1f);
-            Gizmos.DrawSphere(playground.transform.position + btps[2], 0.1f);
-            Gizmos.DrawSphere(playground.transform.position + btps[3], 0.1f);
 
-            Gizmos.DrawSphere(lp0, 0.1f);
-            Gizmos.DrawSphere(playground.transform.position + agent.Intersect, 0.1f);
+            Gizmos.DrawSphere(playground.transform.position + lp0, 0.1f);
+            // Gizmos.DrawSphere(playground.transform.position + agent.Intersect, 0.1f);
 
             // // 过网垂线
             // var po = playground.transform.position + (new Vector3(0f, 0f, ball.Intersect.z) );
