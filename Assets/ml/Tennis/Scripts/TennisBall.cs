@@ -305,13 +305,9 @@ namespace ml.Tennis
                     {
                         AgentBWins();
                     }
-                    else if (lastAgentHit == AgentRole.B)
+                    else // if (lastAgentHit == AgentRole.B)
                     {
                         AgentAWins();
-                    }
-                    else
-                    {
-                        Reset();
                     }
                 }
 
