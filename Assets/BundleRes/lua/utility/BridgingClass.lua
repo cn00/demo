@@ -1,3 +1,7 @@
+local CS = CS
+local UnityEngine = CS.UnityEngine
+local GameObject = UnityEngine.GameObject
+
 BridgingClass = {}
 
 function BridgingClass.GetMetaTable( tab )
@@ -26,13 +30,17 @@ end
 
 local EditorGUI = CS.UnityEditor.EditorGUI
 local EditorGUILayout = CS.UnityEditor.EditorGUILayout
+---Draw
+---@param self table
+---@param opt table
 local function Draw(self, opt)
 	opt = opt or {ltname = "t", indent = 0}
 	if self == nil then
 		return;
-	elseif(type(self) ~= "table")then
-
+	--elseif(type(self) ~= "table")then
 	end
+	
+	local grep = opt.grep
 
 	if (EditorGUI.indentLevel > 5) then
 		return;
@@ -60,8 +68,8 @@ local function Draw(self, opt)
 			elseif (typev == "function") then
 				EditorGUILayout.TextField(GetFuncId(v));
 			elseif (typev == "userdata") then
-				local vs = tostring(v)
-				if string.match( vs,"UnityEngine" ) or string.match( vs,"LuaMonoBehaviour" ) then
+				local ct = v:GetType()
+				if ct and CS.XLua.TypeExtensions.IsSubclassOf( v:GetType(), typeof(UnityEngine.Object) ) then
 					EditorGUILayout.ObjectField(v.gameObject, typeof(CS.UnityEngine.Object), true);
 				else
 					EditorGUILayout.LabelField(tostring(v));
@@ -101,17 +109,26 @@ local function Draw(self, opt)
 					-- local Drawed = t["Drawed"] or false;
 					-- if(not Drawed) then
 						--  t.RawSet("Drawed", true);
-						Draw(t , {ltname = kk, indent = 1});
+						opt.ltname = kk
+						opt.indent = 1
+						Draw(t , opt);
 					-- else
 					-- 	EditorGUILayout.LabelField(kk .. "->" .. tostring(t));
 					-- end
-				else -- number string boolean
-					if (kk == "Foldout" or kk == "Name") then
+				else -- number string boolean function userdata
+					if (kk == "Foldout" or kk == "Name") or (grep ~= nil and kk:find(grep) == nil and tostring(v):find(grep) == nil) then
 						goto continue;
 					end
 					EditorGUILayout.BeginHorizontal()
 					do
-						EditorGUILayout.LabelField(kk .. ":" .. vtype);
+						local svtype = vtype
+						if vtype == "userdata" then
+							local ct = v:GetType()
+							if ct then
+								svtype = tostring(ct):gsub('.*%.(.*):.*', '<%1>')
+							end
+						end
+						EditorGUILayout.LabelField(kk .. ":" .. svtype); -- draw key
 						drawv(k,v);
 					end
 					EditorGUILayout.EndHorizontal()
@@ -119,11 +136,17 @@ local function Draw(self, opt)
 				if (vtype == "userdata") then
 					local umeta = getmetatable(v)
 					if (string.match(tostring(v), "LuaMonoBehaviour")) then
-						local t = v.luaTable;
-						Draw(t, {ltname = "LuaMono", indent = 1});
+						local t = v.Lua;
+						opt.ltname = ""
+						opt.indent = 1
+						Draw(t , opt);
 					else
 						if umeta ~= nil then
-							if type(umeta) == "table" then Draw(umeta, {ltname = "_ud_meta", indent = 1})end
+							if type(umeta) == "table" then 
+								opt.ltname = "_ud_meta"
+								opt.indent = 1
+								Draw(t , opt);
+							end
 						else
 							EditorGUILayout.BeginHorizontal()
 							do
@@ -140,8 +163,10 @@ local function Draw(self, opt)
 			-- metatable
 			local meta = getmetatable(self);
 			if (meta ~= nil) then
-				if type(meta) == "table" then 
-					Draw(meta, {ltname = "__meta", indent = 1})
+				if type(meta) == "table" then
+					opt.ltname = "__meta"
+					opt.indent = 1
+					Draw(t , opt);
 				else
 					EditorGUILayout.BeginHorizontal()
 					do
