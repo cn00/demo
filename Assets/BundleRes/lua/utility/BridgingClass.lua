@@ -69,8 +69,12 @@ local function Draw(self, opt)
 				EditorGUILayout.TextField(GetFuncId(v));
 			elseif (typev == "userdata") then
 				local ct = v:GetType()
-				if ct and CS.XLua.TypeExtensions.IsSubclassOf( v:GetType(), typeof(UnityEngine.Object) ) then
-					EditorGUILayout.ObjectField(v.gameObject, typeof(CS.UnityEngine.Object), true);
+				if ct and ct:IsSubclassOf(typeof(UnityEngine.Object)) then
+					local o = EditorGUILayout.ObjectField(v, typeof(CS.UnityEngine.Object), true);
+					--local com = o:GetComponent(ct)
+					--if o.gameObject ~= v.gameObject  and com ~= nil then
+					--	rawset(self, k, com) -- useless?
+					--end
 				else
 					EditorGUILayout.LabelField(tostring(v));
 				end
