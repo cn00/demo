@@ -149,15 +149,19 @@ public class DllCompile : SingletonAsset<DllCompile>
                 var tmpDir = AssetDatabase.GetAssetPath(Instance().PathGetterObj.GetInstanceID());
                 EditorGUILayout.SelectableLabel(tmpDir);
             }
+
+            var tempLua = "Assets/doc/lua-template.lua";
             var distDir = UnityEditor.EditorApplication.applicationContentsPath + "/Resources/ScriptTemplates/89-LuaScript-NewLuaScript.lua.txt";
             EditorGUILayout.SelectableLabel(distDir);
             var rect = EditorGUILayout.GetControlRect();
             if (GUI.Button(rect, "Copy/Update Lua Script Template to Editor"))
             {
-                // File.Copy("Assets/doc/87-LuaScript-NewLuaScript.lua.txt", distDir, true);
-                var s = File.ReadAllText("Assets/doc/87-LuaScript-NewLuaScript.lua");
-                s = s.Replace("-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt", "");
+                var s = File.ReadAllText(tempLua);
+                // s = Regex.Replace(s, "--\\[\\[ example-begin(.|\r|\n)*?\\]\\]-- example-end", "", RegexOptions.Multiline)
+                s = Regex.Replace(s, "-- example-begin(.|\r|\n)*?-- example-end", "", RegexOptions.Multiline)
+                    .Replace("-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt", "");
                 File.WriteAllText(distDir, s);
+                Debug.Log($"{tempLua} ==> {distDir}");
             }
 
             // //BaseDirectory: /Applications/Unity-2017.4.1f1
