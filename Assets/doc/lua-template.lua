@@ -7,19 +7,21 @@
 
 ]]
 
+local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 
--- #SCRIPTNAME#
+-- ___SCRIPTNAME___
 
 local print = function ( ... )
-    _G.print("[#SCRIPTNAME#]", ...)
+    _G.print("[___SCRIPTNAME___]", ...)
+    -- _G.print("[___SCRIPTNAME___]", debug.traceback())
 end
 
-local #SCRIPTNAME# = {}
-local this = #SCRIPTNAME#
+local ___SCRIPTNAME___ = {}
+local this = ___SCRIPTNAME___
 
 -- example-begin
 local yield_return = util.async_to_sync(function (to_yield, callback)
@@ -37,44 +39,44 @@ end
 -- example-end
 
 --AutoGenInit Begin
-function #SCRIPTNAME#.AutoGenInit() end
+function ___SCRIPTNAME___.AutoGenInit() end
 --AutoGenInit End
 
-function #SCRIPTNAME#.Awake()
+function ___SCRIPTNAME___.Awake()
 	this.AutoGenInit()
 end
 
--- function #SCRIPTNAME#.OnEnable() end
+-- function ___SCRIPTNAME___.OnEnable() end
 
-function #SCRIPTNAME#.Start()
+function ___SCRIPTNAME___.Start()
 	--util.coroutine_call(this.coroutine_demo)
 end
 
 -- example-begin
-function #SCRIPTNAME#.FixedUpdate() end
+function ___SCRIPTNAME___.FixedUpdate() end
 
-function #SCRIPTNAME#.OnTriggerEnter(otherCollider) end
-function #SCRIPTNAME#.OnTriggerStay(otherCollider) end
-function #SCRIPTNAME#.OnTriggerExit(otherCollider) end
+function ___SCRIPTNAME___.OnTriggerEnter(otherCollider) end
+function ___SCRIPTNAME___.OnTriggerStay(otherCollider) end
+function ___SCRIPTNAME___.OnTriggerExit(otherCollider) end
 
-function #SCRIPTNAME#.OnCollisionEnter(otherCollision) end
+function ___SCRIPTNAME___.OnCollisionEnter(otherCollision) end
 
-function #SCRIPTNAME#.OnMouseOver() end
-function #SCRIPTNAME#.OnMouseEnter() end
-function #SCRIPTNAME#.OnMouseDown() end
-function #SCRIPTNAME#.OnMouseDrag() end
-function #SCRIPTNAME#.OnMouseUp() end
-function #SCRIPTNAME#.OnMouseExit() end
+function ___SCRIPTNAME___.OnMouseOver() end
+function ___SCRIPTNAME___.OnMouseEnter() end
+function ___SCRIPTNAME___.OnMouseDown() end
+function ___SCRIPTNAME___.OnMouseDrag() end
+function ___SCRIPTNAME___.OnMouseUp() end
+function ___SCRIPTNAME___.OnMouseExit() end
 
-function #SCRIPTNAME#.Update() end
+function ___SCRIPTNAME___.Update() end
 
-function #SCRIPTNAME#.LateUpdate() end
+function ___SCRIPTNAME___.LateUpdate() end
 
-function #SCRIPTNAME#.OnDestroy() end
+function ___SCRIPTNAME___.OnDestroy() end
 -- example-end
 
-function #SCRIPTNAME#.Destroy()
+function ___SCRIPTNAME___.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return #SCRIPTNAME#
+return ___SCRIPTNAME___

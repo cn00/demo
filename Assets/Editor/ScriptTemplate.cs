@@ -8,7 +8,6 @@ namespace AppEditor
     {
         private const string AuthorName="cn";
         private const string AuthorEmail = "cool_navy@qq.com";
-
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static void OnWillCreateAsset(string path)
         {
@@ -16,7 +15,10 @@ namespace AppEditor
             if (path.EndsWith(".lua")
             ||  path.EndsWith(".cs"))
             {
+                var split = path.Split(new[] {'/', '.'});
+                var name = split[split.Length - 2];
                 string allText = File.ReadAllText(path);
+                allText = allText.Replace("___SCRIPTNAME___", name);
                 allText = allText.Replace("#AuthorName#", AuthorName);
                 allText = allText.Replace("#AuthorEmail#", AuthorEmail);
                 allText = allText.Replace("#CreateTime#", System.DateTime.Now.ToString(DateFormat));
