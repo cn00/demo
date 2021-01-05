@@ -21,7 +21,7 @@ namespace ml.Tennis
             O,
         }
 
-        public AgentRole lastAgentHit = AgentRole.O;
+        public TennisAgentA lastHitAgent = null;
 
         public enum FloorHit
         {
@@ -75,17 +75,12 @@ namespace ml.Tennis
 
         void Reset()
         {
-            if (CollisionEnter != null)
-            {
-                CollisionEnter(currentCollision);
-            }
-            
             if (playground.agentA.score > playground.levelOne && playground.agentB.score > playground.levelOne)
             {
             }
 
             var px = Random.Range(-playground.HalfSize.x, playground.HalfSize.x) > 0 ? 8f : -8f;
-            var py = 1f;//Random.Range(4f, playground.HalfSize.y);//
+            var py = 2f;//Random.Range(4f, playground.HalfSize.y);//
             var pz = 0f;// Random.Range(-playground.HalfSize.z, playground.HalfSize.z);
             transform.localPosition = new Vector3(px, py, pz);
 
@@ -94,30 +89,32 @@ namespace ml.Tennis
             var vz = Random.Range(velocityMinInit.z, velocityMax.z);
             rb.velocity = new Vector3(vx, vy,vz);
             
-            transform.localScale = new Vector3(.5f, .5f, .5f);
-
             playground.agentA.EndEpisode();
             playground.agentB.EndEpisode();
+            playground.agentA2.EndEpisode();
+            playground.agentB2.EndEpisode();
             lastFloorHit = FloorHit.Service;
-            lastAgentHit = AgentRole.O;
+            lastHitAgent = null;
             net = false;
         }
 
         void AgentAWins(float reward = 1)
         {
-            playground.agentA.SetReward(reward);
-            playground.agentB.SetReward(-reward);
-            Reset();
+            playground.agentA. SetReward( reward/2f);
+            playground.agentB. SetReward(-reward/2f);
+            playground.agentA2.SetReward( reward/2f);
+            playground.agentB2.SetReward(-reward/2f);
         }
 
         void AgentBWins(float reward = 1)
         {
-            playground.agentA.SetReward(-reward);
-            playground.agentB.SetReward(reward);
-            Reset();
+            playground.agentA. SetReward(-reward/2f);
+            playground.agentB. SetReward( reward/2f);
+            playground.agentA2.SetReward(-reward/2f);
+            playground.agentB2.SetReward( reward/2f);
         }
 
-        public Action<Collision> CollisionEnter;
+        public Action<Collision, string> CollisionEnter;
 
         /*
         void OnTriggerEnter(Collision collision)
@@ -152,56 +149,67 @@ namespace ml.Tennis
         void OnCollisionEnter(Collision collision)
         {
             currentCollision = collision;
-            // if (CollisionEnter != null)
-            // {
-            //     CollisionEnter(collision);
-            // }
+            if (CollisionEnter != null)
+            {
+                CollisionEnter(collision, "Enter");
+            }
 
             if (collision.gameObject.CompareTag("iWall"))
             {
                 if (collision.gameObject.name == "wallA")
                 {
                     // Agent A hits into wall or agent B hit a winner
-                    if (lastAgentHit == AgentRole.A || lastFloorHit == FloorHit.FloorAHit)
+                    if ((lastHitAgent && !lastHitAgent.invertX) 
+                        || lastFloorHit == FloorHit.FloorAHit)
                     {
-                        AgentBWins();
+                        if (lastHitAgent && lastHitAgent.invertX) // agent B hit a winner
+                        {
+                            lastHitAgent.Wins();
+                        }
+                        else                      // Agent A hits into wall
+                            AgentBWins();
                     }
                     // Agent B hits long
                     else // if (lastAgentHit == AgentRole.B)
                     {
                         AgentAWins();
                     }
-
-                    // else
-                    // {
-                    //     Reset();
-                    // }
+                    Reset();
                 }
                 else if (collision.gameObject.name == "wallB")
                 {
                     // Agent B hits into wall or agent A hit a winner
-                    if (lastAgentHit == AgentRole.B || lastFloorHit == FloorHit.FloorBHit)
+                    if ((lastHitAgent && lastHitAgent.invertX) 
+                        || lastFloorHit == FloorHit.FloorBHit)
                     {
-                        AgentAWins();
+                        if (lastHitAgent && !lastHitAgent.invertX) // agent A hit a winner
+                        {
+                            lastHitAgent.Wins();
+                        }
+                        else                      // Agent B hits into wall
+                            AgentAWins();
                     }
                     // Agent A hits long
                     else // if (lastAgentHit == AgentRole.A)
                     {
                         AgentBWins();
                     }
-
-                    // else
-                    // {
-                    //     Reset();
-                    // }
+                    Reset();
                 }
                 else if (collision.gameObject.name == "floorA")
                 {
                     // Agent A hits into floor, double bounce or service
-                    if (lastFloorHit == FloorHit.FloorAHit // double bounce
-                        || lastFloorHit == FloorHit.Service)
+                    if (   lastFloorHit == FloorHit.FloorAHit // double bounce
+                        // || lastFloorHit == FloorHit.Service
+                        )
                     {
-                        AgentBWins();
+                        if (lastHitAgent && lastHitAgent.invertX) // agent B hit a winner
+                        {
+                            lastHitAgent.Wins();
+                        }
+                        else                      // Agent A hits into floor
+                            AgentBWins();
+                        Reset();
                     }
                     else
                     {
@@ -212,9 +220,16 @@ namespace ml.Tennis
                 {
                     // Agent B hits into floor, double bounce or service
                     if (lastFloorHit == FloorHit.FloorBHit
-                        || lastFloorHit == FloorHit.Service)
+                        // || lastFloorHit == FloorHit.Service
+                        )
                     {
-                        AgentAWins();
+                        if (lastHitAgent && !lastHitAgent.invertX) // agent A hit a winner
+                        {
+                            lastHitAgent.Wins();
+                        }
+                        else                      // Agent B hits into floor
+                            AgentAWins();
+                        Reset();
                     }
                     else
                     {
@@ -223,7 +238,7 @@ namespace ml.Tennis
                 }
                 else if (collision.gameObject.name == "net")
                 {
-                    if (lastAgentHit == AgentRole.A)
+                    if (lastHitAgent && !lastHitAgent.invertX)
                     {
                         AgentBWins();
                     }
@@ -232,61 +247,46 @@ namespace ml.Tennis
                         AgentAWins();
                     }
                 }
-
-                // else if (collision.gameObject.name == "over")
-                // {
-                //     // agent can return serve in the air
-                //     if (lastFloorHit != FloorHit.FloorHitUnset && !net)
-                //     {
-                //         net = true;
-                //     }
-                //
-                //     if (lastAgentHit == AgentRole.A)
-                //     {
-                //         playground.agentA.AddReward(0.6f);
-                //     }
-                //     else if (lastAgentHit == AgentRole.B)
-                //     {
-                //         playground.agentB.AddReward(0.6f);
-                //     }
-                // }
             }
             else if (collision.gameObject.CompareTag("agent"))
             {
-                if (collision.gameObject.name == "AgentA")
+                var agent = collision.gameObject.GetComponent<TennisAgentA>();
+                agent.AddReward(0.6f);
+                ++agent.hitCount;
+                if (!agent.invertX) // A
                 {
-                    playground.agentA.AddReward(0.6f);
-                    ++playground.agentA.hitCount;
-
                     // Agent A double hit
-                    if (lastAgentHit == AgentRole.A)
+                    if (lastHitAgent && !lastHitAgent.invertX)
                     {
-                        ++playground.agentB.score;
                         AgentBWins();
                     }
                     else
                     {
-                        lastAgentHit = AgentRole.A;
                         lastFloorHit = FloorHit.FloorHitUnset;
                     }
                 }
-                else if (collision.gameObject.name == "AgentB")
+                else // if (collision.gameObject.name == "AgentB")
                 {
-                    playground.agentB.AddReward(0.6f);
-                    ++playground.agentB.hitCount;
-
                     // Agent B double hit
-                    if (lastAgentHit == AgentRole.B)
+                    if (lastHitAgent && lastHitAgent.invertX)
                     {
-                        ++playground.agentA.score;
                         AgentAWins();
                     }
                     else
                     {
-                        lastAgentHit = AgentRole.B;
                         lastFloorHit = FloorHit.FloorHitUnset;
                     }
                 }
+                lastHitAgent = agent;
+            }
+        }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            currentCollision = collision;
+            if (CollisionEnter != null)
+            {
+                CollisionEnter(collision, "Exit");
             }
         }
     }

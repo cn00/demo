@@ -1,12 +1,16 @@
 using System;
 using ml.Tennis;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class TennisBillboard : MonoBehaviour
 {
     public Text labelA, labelB;
-    public TennisPlayground playground;
+    [FormerlySerializedAs("playground")] public TennisPlayground pg;
+
+    [Range(0.1f, 2f)]
+    public float ReflectRate = 1.0f;
 
     [Range(0.01f, 2f)]
     public float Dt = 0.02f;
@@ -17,12 +21,12 @@ public class TennisBillboard : MonoBehaviour
     private void Start()
     {
         Dt = Time.fixedDeltaTime;
-        var ag = playground.agentA;
-        var agb = playground.agentB;
-        playground.agentA.episodeBeginAction += ()=>
+        var ag = pg.agentA;
+        var agb = pg.agentB;
+        pg.agentA.episodeBeginAction += ()=>
         {
             labelA.text = $"{ag.score}/{ag.hitCount}";
-            labelB.text = $"{playground.agentB.score}/{playground.agentB.hitCount}";
+            labelB.text = $"{pg.agentB.score}/{pg.agentB.hitCount}";
 
             if (    ag.hitCount < 100 && ag.CompletedEpisodes % 10 == 0  
                  || ag.hitCount > 100 && ag.CompletedEpisodes % 10000 == 0)
@@ -32,12 +36,12 @@ public class TennisBillboard : MonoBehaviour
             }
         };
 
-        var ball = playground.ball;
-        ball.CollisionEnter += (c) =>
+        var ball = pg.ball;
+        ball.CollisionEnter += (c, tag) =>
         {
             var time = DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss");
-            if(ball.lastAgentHit != TennisBall.AgentRole.O)
-                Debug.Log($"{time} Agent{ball.lastAgentHit} -> {c.gameObject.name} <- {ball.lastFloorHit} {ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount}");
+            // if(ball.lastAgentHit != TennisBall.AgentRole.O)
+                Debug.Log($"{time} {tag} {ball.lastHitAgent?.name} -> {c.gameObject.name} <- {ball.lastFloorHit} {ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount} c:{ball.rb.velocity} p:{ball.transform.localPosition}");
         };
     }
 
@@ -78,8 +82,8 @@ public class TennisBillboard : MonoBehaviour
             if (tpy * tp.y < 0f) // 反弹
             {
                 ++bouncec;
-                v.y = -v.y;
-                // v *= 0.8f;
+                v.y = -v.y * ReflectRate;
+                // v *= ReflectRate;
                 tp.y = 0f;
             }
             
@@ -101,10 +105,10 @@ public class TennisBillboard : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        var ball = playground.ball;
+        var ball = pg.ball;
         Action drawParabola = () =>
         {
-            var G = playground.G;
+            var G = pg.G;
             var pp = ball.transform.position;
             var v = ball.Velocity;
             if(v.x > 0)
@@ -135,11 +139,11 @@ public class TennisBillboard : MonoBehaviour
                 {
                     Gizmos.color = Color.yellow;
                     if(btps[i].y > 0)
-                        Gizmos.DrawLine(p0, playground.transform.position + btps[i]);
+                        Gizmos.DrawLine(p0, pg.transform.position + btps[i]);
                 }
                 else
                     Gizmos.color = Color.green;
-                Gizmos.DrawSphere(playground.transform.position + btps[i], 0.1f);
+                Gizmos.DrawSphere(pg.transform.position + btps[i], 0.1f);
             }
 
             if(agent.invertX) Gizmos.color = Color.magenta;
@@ -148,7 +152,7 @@ public class TennisBillboard : MonoBehaviour
             // Gizmos.DrawLine(p0, playground.transform.position + btp);
             // Gizmos.DrawLine(p0, ball.transform.position);
 
-            Gizmos.DrawSphere(playground.transform.position + lp0, 0.1f);
+            Gizmos.DrawSphere(pg.transform.position + lp0, 0.1f);
             // Gizmos.DrawSphere(playground.transform.position + agent.Intersect, 0.1f);
 
             // // 过网垂线
@@ -158,9 +162,15 @@ public class TennisBillboard : MonoBehaviour
         };
         
         if(ball.Velocity.x < 0f)
-            draw(playground.agentA);
+        {
+            draw(pg.agentA);
+            if(pg.agentA2!= null)draw(pg.agentA2);
+        }
         else
-            draw(playground.agentB);
+        {
+            draw(pg.agentB);
+            if(pg.agentB2!= null)draw(pg.agentB2);
+        }
         drawParabola();
         // GizmDraw2();
     }
