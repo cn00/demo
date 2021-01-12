@@ -1,0 +1,416 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a39724384b7a04cd4b62f9b5e687812a, type: 3}
+  m_Name: BuildConfig
+  m_EditorClassIdentifier: 
+  Configs:
+  - Name: and
+    Channel: 2
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 4
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 989
+    BuildOptionFlags: 0
+  - Name: and-bili
+    Channel: 2
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 3
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 988
+    BuildOptionFlags: 0
+  - Name: osx
+    Channel: 7
+    version:
+      Major: 1
+      Minor: 0
+      Patch: 0
+      BtnPerRow: 3
+    BtnPerRow: 3
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: zzq
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    DefineSymbols: []
+    BuildType: 0
+    AndroidBuildSystem: 1
+    iOSSdkVersion: 988
+    BuildOptionFlags: 0
+  mUseBundle: 0
+  LogLevel: 3
+  runInBackground: 1
+  LastBuildTime: 132346029217406750
+  Version:
+    Major: 1
+    Minor: 1
+    Patch: 1
+    BtnPerRow: 3
+  Ip: 10.23.22.233
+  Port: 8000
+  BuildScene: 0
+  mGroups:
+  - Foldout: 1
+    Name: blender
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: blender/blender2.04-ipaq.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: blender/bot.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: blender/cat.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: blender/fish.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: blender/fishy_cat.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+  - Foldout: 0
+    Name: common
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: common/click.bd
+      Size: 40485
+      Hash: 25cad3e473b4f326ccd10854ca38aa66
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: common/excel.bd
+      Size: 8242
+      Hash: 16cd3d540680a5baa6b04bbfa79bbb8b
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: common/global.bd
+      Size: 1772
+      Hash: ea2868a66569858da429d59652b1d38a
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: common/hint.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: common/manager.bd
+      Size: 7406
+      Hash: f0e1a5294452d9271f28caa5966ac5dc
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: common/ui.bd
+      Size: 10184
+      Hash: 18cc83f1200b88f335b574ded6f9c327
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: config
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: config/config.bd
+      Size: 1830
+      Hash: ebb9f17069d8d058dec86442c061d8d2
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: don-quixote
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: don-quixote/index.bd
+      Size: 15285
+      Hash: 96fced9113750433568d25f16c231aaa
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: font
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: font/fzxz.bd
+      Size: 2363875
+      Hash: 4259fb3b1f5c1d0cdea3961921811eef
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: lua
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: lua/com.bd
+      Size: 42747
+      Hash: 1eaf3d4c007d672f22c209160516db0d
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/excel.bd
+      Size: 2884
+      Hash: 32829d8f65d66c828a229d9302a85e04
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/lxp.bd
+      Size: 8979
+      Hash: 9263f7f2dd3acfccbcfd183389cd3e04
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/proto.bd
+      Size: 1014
+      Hash: 0c766534019fb331130a5f6df95734e7
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/table.bd
+      Size: 1213
+      Hash: be1bbf956dfa2a49466570cd16eaea7d
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: lua/utility.bd
+      Size: 13105
+      Hash: 4177e025ba6e92dff7af3d836264d2d1
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: spine
+    mInclude: 0
+    mRebuild: 1
+    mBundles:
+    - Name: spine/Dragon.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Eyes.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/FootSoldier.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Gauge.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Goblins.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Hero.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Raggedy Spineboy.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Raptor.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Spineunitygirl.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/Stretchyman.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/raptor-pro-and-mask.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/spineboy-pro.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/spineboy-unity.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: spine/whirlyblendmodes.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+  - Foldout: 0
+    Name: ui
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: ui/bg.bd
+      Size: 1808391
+      Hash: 1dba56e40c80aa13bfef0acdc6e01f84
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/boot.bd
+      Size: 20200
+      Hash: 7bb7e96d4f1a746d655e1cdf38c3b245
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/dialog.bd
+      Size: 10213
+      Hash: 6be95ecb6ad8960c49aa2f10ad19e871
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/excel_viewer.bd
+      Size: 21183
+      Hash: b229b61345c3741d9163608b4789bfc9
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/linktext.bd
+      Size: 5074
+      Hash: bcb5927fc5c6703bd2951220b47d5da9
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/loading.bd
+      Size: 71694
+      Hash: 956655f3214e94439b2c37b309fffe2b
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/login.bd
+      Size: 13102
+      Hash: 55054dffde9d68761efe9a9963dac9d2
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/qrcode.bd
+      Size: 25146
+      Hash: 429fbf8f1e629b3b42847a6405119eb2
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/test.bd
+      Size: 19761
+      Hash: 28b0349b40ee6da1d08d7255b5a48c15
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: ui/update.bd
+      Size: 10866
+      Hash: a206c7c3e88e73e88b8109a0f37ca23c
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: video
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: video/op.bd
+      Size: 8881
+      Hash: cfa099ab5cbf6ef3e79ec5391bbde3d0
+      Version: 1.1.1
+      Rebuild: 0
+  - Foldout: 0
+    Name: writeplayer
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: writeplayer/impoter.bd
+      Size: 13698
+      Hash: 834bf64ef413ef4d3242c26b9c5cfbae
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: writeplayer/index.bd
+      Size: 23909
+      Hash: e7cf53760609e99637c4d5f3b2e75526
+      Version: 1.1.1
+      Rebuild: 0
+    - Name: writeplayer/player.bd
+      Size: 624890
+      Hash: 48533ca3e574339e23e1a5b5c928e885
+      Version: 1.1.1
+      Rebuild: 0
+  BundleBuildOptions: 16
+  mChannels:
+  - Name: ios
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.komoe.a3ios
+    PackageName: a3
+    BuildNum: 54
+    Version: 1.0.0
+    DefineSymbols:
+    - ENABLE_EMULATER
+    - USE_LOG
+    USE_LOG: 1
+    USE_EMULATOR: 1
+    BuildType: 0
+    BuildSystem: 0
+    iOSSdkVersion: 988
+    OptionFlags: 589824
+    Channel: 7
+  - Name: Android:2
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: a3
+    BundleId: com.bili.a3.test
+    PackageName: a3
+    BuildNum: 86
+    Version: 1.0.0
+    DefineSymbols:
+    - USE_LOG
+    - ENABLE_EMULATER
+    USE_LOG: 1
+    USE_EMULATOR: 1
+    BuildType: 0
+    BuildSystem: 1
+    iOSSdkVersion: 989
+    OptionFlags: 33
+    Channel: 2
+  BundleServer:
+    Port: 8000
+    BasePath: ./AssetBundle/
