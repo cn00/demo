@@ -22,10 +22,16 @@ end
 local match = {}
 local this = match
 
-
+function match.init(info)
+	
+end
 
 --AutoGenInit Begin
-function match.AutoGenInit() end
+--DO NOT EDIT THIS FUNCTION MANUALLY.
+function this.AutoGenInit()
+    this.playerA_LuaMonoBehaviour = playerA:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.playerB_LuaMonoBehaviour = playerB:GetComponent(typeof(CS.LuaMonoBehaviour))
+end
 --AutoGenInit End
 
 function match.Awake()
@@ -39,9 +45,9 @@ function match.Start()
 end
 
 
-
-function match.Destroy()
-	GameObject.DestroyImmediate(mono.gameObject)
+function match.OnMouseDown()
+    print("OnMouseDown", mouseDeltaWorld)
 end
+
 
 return match

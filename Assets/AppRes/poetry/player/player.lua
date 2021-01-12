@@ -12,7 +12,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
-
+local Vector3 = UnityEngine.Vector3
 -- player
 
 local print = function ( ... )
@@ -25,10 +25,19 @@ local player = {
 }
 local this = player
 
-
+function player.cardAutoLayout()
+	local allcards = cardArea:GetComponentsInChildren(typeof(CS.LuaMonoBehaviour))
+	for i = 0, allcards.Length - 1 do
+		local c = allcards[i]
+		c.transform.localPosition = Vector3()
+	end
+end
 
 --AutoGenInit Begin
-function player.AutoGenInit() end
+--DO NOT EDIT THIS FUNCTION MANUALLY.
+function this.AutoGenInit()
+    this.cardArea_RectTransform = cardArea:GetComponent(typeof(CS.UnityEngine.RectTransform))
+end
 --AutoGenInit End
 
 function player.Awake()
