@@ -71,6 +71,7 @@ function match.ServerStart()
         match.ServerStartReceiveLoop()
         print("StartServer ok, listen on:", port)
 
+        -- local test
         match.ClientConnectToServer("10.23.24.239", port)
     else
         print("StartServer failed.", err)
@@ -106,6 +107,7 @@ function match.ServerStartReceiveLoop()
                 print("receive", c, #line, line:gsub("[\0-\13]",""), err)
 
                 if not err then
+                    -- TODO: pass msg here
                     for i, v in ipairs(this.clients) do
                         if v ~= c then
                             v:send(line.."\n")
@@ -170,10 +172,10 @@ function match.ClientStartReceiveLoop()
         for _, c in ipairs(canread) do
             c:settimeout(0.1)
              local line, err = c:receive("*l")
-             print("client receive", #line, line:gsub("[\0-\13]",""), err)
+             print("<color=red>client receive</color>", #line, line:gsub("[\0-\13]",""), err)
 
             if not err then
-                --print()
+                -- TODO: pass msg here
             elseif(err == "closed")then
                 this.connect_stat = conn_stat.offline
                 c:close()
