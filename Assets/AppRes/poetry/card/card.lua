@@ -40,10 +40,27 @@ end
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.Image = gameObject:GetComponent(typeof(CS.UnityEngine.UI.Image))
+    this.AnswerBtn_Button = AnswerBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.AnswerBtn_Button.onClick:AddListener(this.AnswerBtn_OnClick)
     this.Text_TextVirtical = Text:GetComponent(typeof(CS.TextVirtical))
 end
 --AutoGenInit End
+
+function this.AnswerBtn_OnClick()
+    print('AnswerBtn_OnClick')
+    local answer
+    if card.qt == "ab" then
+        answer = string.format("%s\n<color=red>%s</color>", card.q, card.a)
+    else
+        answer = string.format("<color=red>%s</color>\n%s", card.a, card.q)
+    end
+    answer = string.gsub(answer, "(,)%s*", "%1\n")
+    answer = string.gsub(answer, "(，)%s*", "%1\n")
+    answer = string.gsub(answer, "(%.)%s*", "%1\n")
+    answer = string.gsub(answer, "(。)%s*", "%1\n")
+    
+    this.Text_TextVirtical.text = answer
+end -- ShowAnswerBtn_OnClick
 
 function card.Awake()
 	this.AutoGenInit()
