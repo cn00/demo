@@ -13,7 +13,8 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.xlua.util"
 local Vector3 = UnityEngine.Vector3
-
+local EventTrigger= UnityEngine.EventSystems.EventTrigger
+local EventTriggerType = UnityEngine.EventSystems.EventTriggerType
 -- card
 
 local print = function ( ... )
@@ -21,21 +22,24 @@ local print = function ( ... )
 end
 
 local card = {
+    lock = 0,
     id = "", -- question id
     qt = "", -- question type: ab/ba
-    q = "", -- question string
-    a = "", -- answer string
+    q = "云想衣裳花想容,春风拂槛露华浓.", -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>
+    a = "若非群玉山头见,会向瑶台月下逢.", -- info.a
 }
 local this = card
 
 ---init
 ---@param info table
 function card.init(info)
+    card.lock = 0 -- 0:free, 1:owner free 2:all lock
     card.id = info.id
     card.qt = info.qt
-    card.q = info.q
-    card.a = info.a
+    card.q = "云想衣裳花想容,春风拂槛露华浓." -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>解决，。
+    card.a = "若非群玉山头见,会向瑶台月下逢." -- info.a
 end
+
 
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
@@ -67,31 +71,93 @@ function card.Awake()
 end
 
 local mousePreviousWorld, mouseCurrentWorld, mouseDeltaWorld;
-local mainCamera;
 function card.Start()
-    mainCamera = UnityEngine.Camera.current;
-    card.camera = mainCamera
-    print("mainCamera", mainCamera)
+    local tr = gameObject:GetComponent(typeof(EventTrigger)) 
+    if tr == nil then tr = gameObject:AddComponent(typeof(EventTrigger)) end
+    local et = EventTrigger.Entry()
+    et.eventID = EventTriggerType.Drop,
+    et.callback:AddListener(this.OnDrop);
+    tr.triggers:Add(et);
+
+    local mainCamera= UnityEngine.Camera.main;
+    print("mainCamera", mainCamera, transform, tr, et)
+    this.camera = mainCamera
 end
 
-function card.Update()
-    local mouseCurrent = UnityEngine.Input.mousePosition;
-    this.mouseCurrent = mouseCurrent
-    this.mouseCurrentWorld = mainCamera:ScreenToWorldPoint(Vector3(mouseCurrent.x, mouseCurrent.y, -mainCamera.transform.position.z));
+--[[ evendData:UnityEngine.EventSystems.PointerEventData: 1832248400
+    Position: (252.0, 377.0)
+    delta: (0.0, 0.0)
+    eligibleForClick: True
+    pointerEnter: Text (UnityEngine.GameObject)
+    pointerPress: card (UnityEngine.GameObject)
+    lastPointerPress: 
+    pointerDrag: card (UnityEngine.GameObject)
+    Use Drag Threshold: True
+    Current Raycast:
+    Name: Text (UnityEngine.GameObject)
+    module: Name: match(Clone) (UnityEngine.GameObject)
+    eventCamera: 
+    sortOrderPriority: 0
+    renderOrderPriority: 1
+    distance: 0
+    index: 0
+    depth: 17
+    worldNormal: (0.0, 0.0, -1.0)
+    worldPosition: (0.0, 0.0, 0.0)
+    screenPosition: (252.0, 377.0)
+    module.sortOrderPriority: 0
+    module.renderOrderPriority: 1
+    sortingLayer: 0
+    sortingOrder: 0
+    Press Raycast:
+    Name: Text (UnityEngine.GameObject)
+    module: Name: match(Clone) (UnityEngine.GameObject)
+    eventCamera: 
+    sortOrderPriority: 0
+    renderOrderPriority: 1
+    distance: 0
+    index: 0
+    depth: 13
+    worldNormal: (0.0, 0.0, -1.0)
+    worldPosition: (0.0, 0.0, 0.0)
+    screenPosition: (84.0, 377.0)
+    module.sortOrderPriority: 0
+    module.renderOrderPriority: 1
+    sortingLayer: 0
+    sortingOrder: 0
+    : -595727872
+]]
+function card.OnDrop(evendData)
+    print("OnDrop", evendData:GetType(), evendData)
+    local dropObj = evendData.pointerDrag
+end
 
-    this.mouseDeltaWorld = this.mouseCurrentWorld - this.mousePreviousWorld;
-    this.mousePreviousWorld = this.mouseCurrentWorld;
+local isDraging = false
+function card.Update()
+    if isDraging and this.camera then
+        local mouseCurrent = UnityEngine.Input.mousePosition;
+        this.mouseCurrent = mouseCurrent
+        this.mouseCurrentWorld = this.camera:ScreenToWorldPoint(Vector3(mouseCurrent.x, mouseCurrent.y, -this.camera.transform.position.z));
+
+        this.mouseDeltaWorld = this.mouseCurrentWorld - this.mousePreviousWorld;
+        this.mousePreviousWorld = this.mouseCurrentWorld;
+    end
 end
 
 function card.OnMouseDrag()
-    local d = this.mouseDeltaWorld * 120
-    gameObject.transform.localPosition = gameObject.transform.localPosition + d
-    --gameObject.transform:Translate(d);
-    print("OnMouseDrag", gameObject.name, this.mouseDeltaWorld, gameObject.transform.localPosition, d)
+    if isDraging then
+        local d = this.mouseDeltaWorld * 120
+        --gameObject.transform.localPosition = gameObject.transform.localPosition + d
+        transform.position = this.mouseCurrentWorld
+        --gameObject.transform:Translate(d);
+        --print("OnMouseDrag", gameObject.name, this.mouseDeltaWorld, gameObject.transform.localPosition, d)
+    end
+    isDraging = true
 end
 
 function card.OnMouseUp()
-    local x0 = -384.1555 --40  -- local px = 1   w = 182*0.4 = 73,    xi =  40+(1+73)*i
+    isDraging = false
+    local x0 = -458.1555 --40  -- local px = 1   w = 182*0.4 = 73,    xi =  40+(1+73)*i
     local y0 = 180 -- -57 --  p = 16, h = 256*0.4 = 102.4, yi = -57+(16+102)*i
     local p = gameObject.transform.localPosition
     local ix = math.ceil(((p.x-x0 - 37)/74))
