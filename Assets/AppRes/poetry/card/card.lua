@@ -56,17 +56,23 @@ end
 
 function this.AnswerBtn_OnClick()
     print('AnswerBtn_OnClick')
+    local info = card.info
     local answer
-    if card.qt == "ab" then
-        answer = string.format("%s\n<color=red>%s</color>", card.q, card.a)
+    if info.qi > info.ai then
+        answer = string.format("%s<color=red>%s</color>", info.content[info.qi], info.content[info.ai])
     else
-        answer = string.format("<color=red>%s</color>\n%s", card.a, card.q)
+        answer = string.format("<color=red>%s</color>%s", info.content[info.ai], info.content[info.qi])
     end
-    answer = string.gsub(answer, "(,)%s*", "%1\n")
-    answer = string.gsub(answer, "(，)%s*", "%1\n")
-    answer = string.gsub(answer, "(%.)%s*", "%1\n")
-    answer = string.gsub(answer, "(。)%s*", "%1\n")
-    
+    answer = string.gsub(answer,"(,)%s*", "%1\n")
+    :gsub("(%.)%s*", "%1\n")
+            :gsub("(%?)%s*", "%1\n")
+            :gsub("(!)%s*", "%1\n")
+    :gsub("(，)%s*", "%1\n")
+    :gsub("(。)%s*", "%1\n")
+    :gsub("(？)%s*", "%1\n")
+    :gsub("(！)%s*", "%1\n")
+    :trim()
+
     this.Text_TextVirtical.text = answer
 end -- ShowAnswerBtn_OnClick
 

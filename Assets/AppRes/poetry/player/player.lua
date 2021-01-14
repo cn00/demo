@@ -4,7 +4,8 @@
 --- Date: 2021/01/08 19:20:28
 --- Description: 
 --[[
-
+对局双方本地为 playerA，对手为 playerB
+观战以房主为 playerA
 ]]
 
 local G = _G
@@ -19,11 +20,32 @@ local print = function ( ... )
     _G.print("[player]", ...)
 end
 
+local function getIdx()
+	local i = 0
+	return function()
+		i = i + 1
+		return i
+	end
+end
+local stateIdx = getIdx()
+local state = {
+	locked        = 0,
+	idle          = stateIdx(),
+	cardPreparing = stateIdx(), 
+	cardPrepared  = stateIdx(), -- 布战
+	remberCard    = stateIdx(), -- 记忆时间
+}
+
 local cards = {}
 local player = {
-	cards = cards
+	cards = cards,
+	state = state.locked,
 }
 local this = player
+
+function player.swepCard(x0, y0, x1, y1)
+	
+end
 
 function player.cardAutoLayout()
 	local allcards = cardArea:GetComponentsInChildren(typeof(CS.LuaMonoBehaviour))
@@ -36,7 +58,6 @@ end
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.cardArea_RectTransform = cardArea:GetComponent(typeof(CS.UnityEngine.RectTransform))
 end
 --AutoGenInit End
 
@@ -48,6 +69,12 @@ end
 
 function player.Start()
 	--util.coroutine_call(this.coroutine_demo)
+end
+
+---receiveMsg
+---@param msg table {type, {args}}
+function player.receiveMsg(msg)
+	
 end
 
 ---AddCard
