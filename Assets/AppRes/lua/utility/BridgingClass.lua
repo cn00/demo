@@ -67,7 +67,7 @@ local function Draw(self, opt)
 				self[k] = tmp;
 			elseif (typev == "function") then
 				EditorGUILayout.TextField(GetFuncId(v));
-			elseif (typev == "userdata") then
+			elseif (typev == "userdata") and type(v.GetType) == "function" then
 				local ct = v:GetType()
 				if ct and ct:IsSubclassOf(typeof(UnityEngine.Object)) then
 					local o = EditorGUILayout.ObjectField(v, typeof(CS.UnityEngine.Object), true);
@@ -126,7 +126,7 @@ local function Draw(self, opt)
 					EditorGUILayout.BeginHorizontal()
 					do
 						local svtype = vtype
-						if vtype == "userdata" then
+						if vtype == "userdata" and type(v.GetType) == "function" then
 							local ct = v:GetType()
 							if ct then
 								svtype = tostring(ct):gsub('.*%.(.*):.*', '<%1>')
