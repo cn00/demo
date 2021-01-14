@@ -1,4 +1,15 @@
 
+
+local util = {}
+function util.newIdx(start)
+    start = start or 0
+    local i = start
+    return function()
+        i = i + 1
+        return i
+    end
+end
+
 local table = table or {}
 function table.copy(tab, filter)
     local ntab = {}
@@ -15,18 +26,18 @@ end
 
 ---dump
 ---@param obj table
----@param breakline boolean
+---@param pretty boolean
 ---@param prefix string
 ---@return string
-local function dump(obj, breakline, prefix)
-    breakline = breakline == nil or breakline == true
+function util.dump(obj, pretty, prefix)
+    --breakline = breakline or false
     if type(prefix) ~= "string" then
         prefix = ""
     end
 
     local getIndent, quoteStr, wrapKey, wrapVal, dumpObj,cleanWrap
     getIndent = function(level)
-        if breakline then
+        if pretty then
             return prefix .. string.rep("\t", level)
         else
             return ""
@@ -36,7 +47,7 @@ local function dump(obj, breakline, prefix)
         return '"' .. string.gsub(str, '"', '\"') .. '"'
     end
     wrapKey = function(val)
-        if breakline then
+        if pretty then
             if type(val) == "number" then
                 return "[" .. val .. "] = "
             elseif type(val) == "string" then
@@ -74,14 +85,14 @@ local function dump(obj, breakline, prefix)
 
         local tokens = {}
         tokens[#tokens + 1] = "{"
-        if level < 5 then 
+        if level < 5 then
             for k, v in pairs(obj) do
                 if type(v) ~= "function" then
                     tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
                 else
                     if type(v) == "table" then
                         if v["__wraped__"] == true then goto continue end
-                        v["__wraped__"] = true 
+                        v["__wraped__"] = true
                     end
                     tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
                 end
@@ -93,10 +104,10 @@ local function dump(obj, breakline, prefix)
             tokens[#tokens + 1] = getIndent(level) .. "..."
         end
         tokens[#tokens + 1] = getIndent(level - 1) .. "}"
-        if breakline then
+        if pretty then
             return table.concat(tokens, "\n")
         else
-            return table.concat(tokens, " ")
+            return table.concat(tokens, "")
         end
     end
     cleanWrap = function(obj)
@@ -110,10 +121,10 @@ local function dump(obj, breakline, prefix)
     cleanWrap(obj)
     return res
 end
-table.dump = dump
+table.dump = util.dump
 
 -- function table:dump( breakline, prefix )
 --     dump(self, breakline, prefix)
 -- end
 
-return table
+return util

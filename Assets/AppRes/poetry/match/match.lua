@@ -14,9 +14,9 @@ local GameObject = UnityEngine.GameObject
 
 local stringx = require("stringx") -- split
 local xutil = require "xlua.util"
+local util = require "util"
 local socket = require("socket.socket")
 local sqlite = require("lsqlite3")
-require("table")
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)

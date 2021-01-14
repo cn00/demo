@@ -12,7 +12,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "util"
+local xutil = require "xlua.util"
 local Vector3 = UnityEngine.Vector3
 -- player
 
@@ -20,14 +21,7 @@ local print = function ( ... )
     _G.print("[player]", ...)
 end
 
-local function getIdx()
-	local i = 0
-	return function()
-		i = i + 1
-		return i
-	end
-end
-local stateIdx = getIdx()
+local stateIdx = util.newIdx()
 local state = {
 	locked        = 0,
 	idle          = stateIdx(),
