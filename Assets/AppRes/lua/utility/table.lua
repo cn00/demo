@@ -13,13 +13,18 @@ function table.copy(tab, filter)
 end
 
 
+---dump
+---@param obj table
+---@param breakline boolean
+---@param prefix string
+---@return string
 local function dump(obj, breakline, prefix)
     breakline = breakline == nil or breakline == true
     if type(prefix) ~= "string" then
         prefix = ""
     end
 
-    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
+    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj,cleanWrap
     getIndent = function(level)
         if breakline then
             return prefix .. string.rep("\t", level)
@@ -48,14 +53,17 @@ local function dump(obj, breakline, prefix)
         end
     end
     wrapVal = function(val, level)
-        if type(val) == "table" then
+        local tv = type(val)
+        if tv == "table" then
             return dumpObj(val, level)
-        elseif type(val) == "number" then
+        elseif tv == "number" then
             return val
-        elseif type(val) == "string" then
+        elseif tv == "string" then
             return quoteStr(val:gsub("[\0-\15]", ""):gsub("\n", "\\n"):gsub("\r", "\\r"))
+        elseif tv == "string" then
+            return quoteStr(string.dump(val))
         else
-            return tostring(val)
+            return quoteStr(tostring(val))
         end
     end
     dumpObj = function(obj, level)
@@ -68,7 +76,16 @@ local function dump(obj, breakline, prefix)
         tokens[#tokens + 1] = "{"
         if level < 5 then 
             for k, v in pairs(obj) do
-                tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+                if type(v) ~= "function" then
+                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+                else
+                    if type(v) == "table" then
+                        if v["__wraped__"] == true then goto continue end
+                        v["__wraped__"] = true 
+                    end
+                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
+                end
+                ::continue::
             end
             local meta = getmetatable(obj)
             if meta ~= nil then tokens[#tokens + 1] = getIndent(level) .. "__meta = " .. wrapVal(meta, level) .. "," end
@@ -82,7 +99,16 @@ local function dump(obj, breakline, prefix)
             return table.concat(tokens, " ")
         end
     end
-    return dumpObj(obj, 0)
+    cleanWrap = function(obj)
+        if type(obj) ~= "table" then return end
+        if obj["__wraped__"] == true then obj["__wraped__"] = undef end
+        for k, v in pairs(obj) do
+            cleanWrap(v)
+        end
+    end
+    local res = dumpObj(obj, 0)
+    cleanWrap(obj)
+    return res
 end
 table.dump = dump
 
