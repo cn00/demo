@@ -13,6 +13,9 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local UnityWebRequest = UnityEngine.Networking.UnityWebRequest
 
+local AppGlobal = _G.Game or {}
+_G.AppGlobal = AppGlobal
+
 local print = function(...)
     _G.print("[boot]", ...)
     -- _G.print("[boot]", debug.traceback())
@@ -58,9 +61,6 @@ print("lfs", lfs)
 local boot = {}
 local this = boot
 
-local Game = _G.Game or {}
-_G.Game = Game
-
 local yield_return = util.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
@@ -87,12 +87,11 @@ function boot.coroutine_boot(first, ...)
          yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
              obj = asset
          end))
-         GameObject.Instantiate(obj)
+         obj = GameObject.Instantiate(obj)
+         this.manager = obj:GetComponent("LuaMonoBehaviour").Lua
+         AppGlobal.manager = this.manager
 
         yield_return(CS.AssetSys.Instance:GetAsset("font/fzxz/方正小篆体.ttf"))
-        
-        -- Game.manager = manager
-        -- this.manager = manager:GetComponent("LuaMonoBehaviour").luaTable
 
         -- yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
 
