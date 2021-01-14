@@ -53,6 +53,7 @@ local match = {
     cqi = -1, -- current question idx [1 - #cqs]
     clients = {}, -- tcp clients
     clientsInfo = {}, -- clients info: client = {status = 0}
+    cinfo = nil, -- client info 
 }
 local this = match
 
@@ -61,7 +62,15 @@ local this = match
 function match.myAnswer(idx)
     local card = match.poetryList[idx]
     card.die = true
-    local msg = {tp = match.tp, idx = idx, id = card.id, owner = card.owner}
+    local msg = {
+        type = "card_action",
+        body = {
+            idx = idx,
+            id = card.id,
+            tp = match.tp,
+            owner = card.owner 
+        }
+    }
     match.ClientSend(msg)
 end
 
@@ -142,7 +151,6 @@ end
 
 function match.Update()
     match.roundCountdown = match.roundCountdown + UnityEngine.Time.deltaTime
-    print("match.roundCountdown", match.roundCountdown)
 end
 
 --[[{
@@ -170,8 +178,7 @@ end
 --}]]
 --- 发牌
 function match.distributeCard(poetryList)
-    local dump = require("dump")
-    print(dump(poetryList[1]))
+    --print(util.dump(poetryList[1]))
     local cardRoot = this.playerA_RectTransform
     for i, v in ipairs(poetryList)do
         v.owner = 1
@@ -209,6 +216,7 @@ function match.ServerStart()
 end
 
 function match.ServerStartAcceptLoop()
+    local clientIdx = util.newIdx(1)
     xutil.coroutine_call(function()
         print("waiting for client")
         local errmsg = nil
@@ -219,9 +227,16 @@ function match.ServerStartAcceptLoop()
                 match.clients = match.clients or {}
                 match.clientsInfo = match.clientsInfo or {}
                 match.clients[1+#match.clients] = client
-                match.clientsInfo[client] = {status = 0}
+                local cinfo =  {
+                    status = 0,
+                    id = clientIdx()
+                }
+                match.clientsInfo[client] = cinfo
                 print("accept client", client, #match.clients)
                 client:send("wellcom "..tostring(client).."\n")
+                client:send("return ")
+                client:send(util.dump({type="login", body = cinfo }))
+                client:send("\n")
             else
                 if errmsg ~= err then
                     errmsg = err
@@ -244,15 +259,7 @@ function match.ServerStartReceiveLoop()
                 --print("receive", c, line and line:gsub("[\0-\13]",""), err)
 
                 if not err then
-                    -- TODO: pass msg here
-                    for i, v in ipairs(this.clients) do
-                        if v ~= c then
-                            v:send(line)
-                            v:send("\n")
-                        else
-                            print("self msg, skip")
-                        end
-                    end
+                    match.ServerOnReceiveMsg(c, line)
                 elseif(err == "closed")then
                     this.connect_stat = conn_stat.offline
                     c:close()
@@ -266,6 +273,21 @@ function match.ServerStartReceiveLoop()
             yield_return(UnityEngine.WaitForSeconds(0.3))
         end
     end)
+end
+
+---ServerOnReceiveMsg
+---@param c tcpclient
+---@param msgs string
+function match.ServerOnReceiveMsg(c, msgs)
+    -- TODO: pass msg here
+    for i, v in ipairs(this.clients) do
+        if v ~= c then
+            v:send(msgs)
+            v:send("\n")
+        else
+            print("self msg, skip")
+        end
+    end
 end
 
 ---------------------server end-------------------}}}}
@@ -312,7 +334,7 @@ function match.ClientStartReceiveLoop()
         for _, c in ipairs(canread) do
             c:settimeout(0.1)
              local line, err = c:receive("*l")
-             print("<color=red>client receive</color>", #line, line:gsub("[\0-\13]",""), err)
+             --print("<color=red>client receive</color>", #line, line:gsub("[\0-\13]",""), err)
 
             if not err then
                 match.ClientOnReceiveMsg(line)
@@ -333,10 +355,19 @@ function match.ClientOnReceiveMsg(msgs)
     local f = load(msgs)
     if f then
         local msgt = f()
-        print("ClientOnReceiveMsg", msgt)
-        local card = match.poetryList[msgt.idx]
-        card.dir = true
-        card.cc.OnClick()
+        local type = msgt.type
+        local body = msgt.body
+        print("ClientOnReceiveMsg", type)
+        if type then
+            if type == "login" then
+                local cinfo = msgt.body
+                match.cinfo = cinfo
+            elseif type == "card_action" then
+                local card = match.poetryList[body.idx]
+                card.dir = true
+                card.cc.OnClick()
+            end
+        end
     end
 end
 
@@ -344,7 +375,7 @@ end
 ---@param msg table
 function match.ClientSend(msg)
     if this.conn ~= nil and type(msg) then
-        local msgs = table.dump(msg,false)
+        local msgs = util.dump(msg,false)
         print("ClientSend", msgs)
         this.conn:send("return ")
         this.conn:send(msgs)
