@@ -71,4 +71,32 @@ function string:from_hex()
   end))
 end
 
+--- split string to sub-strings table, work with multi-byte char string you can use str:gsub('(多字节分隔符)', '%1|'):split('|') -- keep delimiter
+--- or str:gsub('(多字节分隔符)', '|'):split('|') -- strip delimiter
+---@param delimiter string only single byte chars availble, like `, %. %- | [,%.%-|]`
+---@param keepdelimiter boolean
+function string.split(self, delimiter, keepemptyline, keepdelimiter)
+  keepdelimiter = keepdelimiter == nil and false or keepdelimiter
+  keepemptyline = keepemptyline == nil and false or keepemptyline
+  local pattern = keepdelimiter and "(.-" .. delimiter .. ")" or "(.-)"..delimiter
+  local result = {};
+  for match in (self..delimiter):gmatch(pattern) do
+    if #match < 1 and not keepemptyline then
+      -- skip
+    else
+      table.insert(result, match);
+    end 
+  end
+  return result;
+end
+
+function string.trim(self, t )
+  t = t or {"^%s+", "^//*", "^\"", "^'", "%s+$", "'$", "\"$", "\n$"}
+  for i,v in ipairs(t) do
+    self = self:gsub(v, "")
+    self = self:gsub("^%s+", "")
+    self = self:gsub("%s+$", "")
+  end
+  return self
+end
 return string
