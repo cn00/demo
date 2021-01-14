@@ -45,6 +45,7 @@ local network = {
 	--Ip = "10.23.22.233",
 	--Port = "8001",
 	socket = socket,
+	proto = {proto = proto, ptid = ptid, bfbs_names = bfbs_names}
 }
 local this = network
 local coroutine_call = util.coroutine_call
@@ -58,10 +59,6 @@ local conn_stat = {
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
-function this.coroutine_demo()
-	print('network coroutine start!')
-	
-end
 
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
@@ -224,14 +221,13 @@ function this.Connect()
 end
 
 function this.Start()
-	coroutine_call(this.co_init_lfbs)
+	--coroutine_call(this.co_init_lfbs)
 
 	this.Connect()
 
-	this.Button_Button.onClick:AddListener(this.lfb_test)
+	--this.Button_Button.onClick:AddListener(this.lfb_test)
 	-- fb_test()
 
-	util.coroutine_call(this.coroutine_demo)
 	util.coroutine_call(this.coroutine_start_receive)
 end
 

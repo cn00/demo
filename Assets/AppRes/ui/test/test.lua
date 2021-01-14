@@ -278,7 +278,7 @@ function this.Qrcode()
 	coroutine_call(function()
 		local obj = nil
 		yield_return(CS.AssetSys.Instance:GetAsset(
-		"ui/qrcode/qrcode.prefab",
+		"common/qrcode/qrcode.prefab",
 		function(asset)
 			obj = asset
 		end))

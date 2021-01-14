@@ -12,18 +12,6 @@ local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
--- function qrcode.coroutine_demo()
---     return coroutine.create(function()
---         print('qrcode coroutine start!')
---         yield_return(UnityEngine.WaitForSeconds(1))
---         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
---             obj = asset
---         end))
---         local gameObj = GameObject.Instantiate(obj)
---     end)
--- end
-
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
@@ -78,23 +66,6 @@ function qrcode.Start()
 
     --assert(coroutine.resume(qrcode.coroutine_demo()))
     this.OnScanResult("http://cn.test.qrcode")
-
-end
-
-function qrcode.FixedUpdate()
-
-end
-
-function qrcode.Update()
-
-end
-
-function qrcode.LateUpdate()
-
-end
-
-function qrcode.OnDestroy()
-    print("qrcode.OnDestroy")
 
 end
 

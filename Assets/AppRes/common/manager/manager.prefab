@@ -145,7 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LuaAsset: {fileID: 1042094116111776886, guid: f0c1c701890bb4dde9decf2bf2b6ab23,
     type: 3}
-  LuaPath: Assets/BundleRes/common/manager/manager.lua
+  LuaPath: Assets/AppRes/common/manager/manager.lua
   Injections:
   - obj: {fileID: 1735686852872660}
     exportComIdx: 1
@@ -220,7 +220,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4008927843853077049
 Transform:
   m_ObjectHideFlags: 0
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LuaAsset: {fileID: 1042094116111776886, guid: f52688cec68e547c9b4c5b63d905430e,
     type: 3}
-  LuaPath: Assets/BundleRes/common/manager/network.lua
+  LuaPath: Assets/AppRes/common/manager/network.lua
   Injections: []
   InjectValues:
   - k: Ip
