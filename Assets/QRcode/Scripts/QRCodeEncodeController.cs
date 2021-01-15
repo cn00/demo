@@ -7,7 +7,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 using ZXing;
 using ZXing.QrCode;
 using ZXing.QrCode.Internal;
@@ -26,6 +26,7 @@ public class QRCodeEncodeController : MonoBehaviour {
 		NONE
 	}
 
+	public RawImage m_EncodeImage;
 	private Texture2D m_EncodedTex;
 	public int e_QRCodeWidth = 400;
 	public int e_QRCodeHeight = 400;
@@ -136,7 +137,13 @@ public class QRCodeEncodeController : MonoBehaviour {
 			AddLogoToQRCode ();
 		}
 
-		onQREncodeFinished (m_EncodedTex);
+		if (m_EncodeImage) m_EncodeImage.texture = m_EncodedTex;
+		if(onQREncodeFinished != null)
+			onQREncodeFinished (m_EncodedTex);
+		else
+		{
+			Debug.LogWarning($"no QREncodeFinished listener");
+		}
 		return 0;
 	}
 
