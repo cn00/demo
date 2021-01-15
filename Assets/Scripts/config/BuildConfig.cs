@@ -11,6 +11,7 @@ using System.Diagnostics;
 using UnityEditor;
 #endif //UNITY_EDITOR
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
+using Debug = System.Diagnostics.Debug;
 
 public static class BundleManifestExtension
 {
@@ -175,7 +176,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     #region const
 
-    public const string BundleResDir = "BundleRes";
+    public const string BundleResDir = "AppRes";
     public const string BundleResRoot = "Assets/" + BundleResDir + "/";
 
     public const string ManifestName = "manifest.yaml";
@@ -348,6 +349,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             {
                 if (i.Rebuild)
                 {
+                    UnityEngine.Debug.Log($"Refresh {i}");
                     AssetDatabase.ImportAsset(BundleResRoot + i.Name.RReplace(".bd$", ""), ImportAssetOptions.ImportRecursive);
                 }
             }
@@ -422,7 +424,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         #endif
     }
 
-    [HideInInspector] public bool ForceRebuild = false;
+    [HideInInspector, NonSerialized] public bool ForceRebuild = false;
 
     [HideInInspector, SerializeField] public bool BuildScene = false;
 
@@ -601,7 +603,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         AssetDatabase.ImportAsset(resourcePath);
 
 
-        var bundlePath = BuildConfig.AssetPath.Replace("Assets/", "Assets/BundleRes/config/");
+        var bundlePath = BuildConfig.AssetPath.Replace("Assets/", "Assets/AppRes/config/");
         bundlePath.Dir()
             .CreateDir();
         File.Copy(BuildConfig.AssetPath, bundlePath, true);

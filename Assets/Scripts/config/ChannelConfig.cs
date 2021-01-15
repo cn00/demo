@@ -148,7 +148,7 @@ public class ChannelConfig
             if (BuildSystem == AndroidBuildSystem.Gradle
             && (OptionFlags.HasFlag(AppBuildOptions.AcceptExternalModificationsToPlayer)))
             {
-                target_path = "and.proj";
+                target_path = "proj.and";
                 // PlayerSettings.Android.GradleProjName = "android." +  PackageName;
             }
             else
@@ -164,7 +164,7 @@ public class ChannelConfig
         }
         else if (Channel.isIOS())
         {
-            target_path = "ios.proj";
+            target_path = "proj.ios";
             if (this.iOSSdkVersion == iOSSdkVersion.SimulatorSDK)
             {
                 PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
