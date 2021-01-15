@@ -57,7 +57,7 @@ function util.dump(obj, pretty, prefix)
             end
         else
             if type(val) == "string" then
-                return quoteStr(val) .. " = "
+                return val .. " = "
             else
                 return ""
             end

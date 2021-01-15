@@ -230,17 +230,17 @@ function card.OnDrop(evendData)
     local dropObj = evendData.pointerDrag
 end
 
-local isDraging = false
-function card.Update()
-    if isDraging and this.camera then
-        local mouseCurrent = UnityEngine.Input.mousePosition;
-        this.mouseCurrent = mouseCurrent
-        this.mouseCurrentWorld = this.camera:ScreenToWorldPoint(Vector3(mouseCurrent.x, mouseCurrent.y, -this.camera.transform.position.z));
-
-        this.mouseDeltaWorld = this.mouseCurrentWorld - this.mousePreviousWorld;
-        this.mousePreviousWorld = this.mouseCurrentWorld;
-    end
-end
+--local isDraging = false
+--function card.Update()
+--    if isDraging and this.camera then
+--        local mouseCurrent = UnityEngine.Input.mousePosition;
+--        this.mouseCurrent = mouseCurrent
+--        this.mouseCurrentWorld = this.camera:ScreenToWorldPoint(Vector3(mouseCurrent.x, mouseCurrent.y, -this.camera.transform.position.z));
+--
+--        this.mouseDeltaWorld = this.mouseCurrentWorld - this.mousePreviousWorld;
+--        this.mousePreviousWorld = this.mouseCurrentWorld;
+--    end
+--end
 
 ---OnAnimationEvent
 ---@param name string

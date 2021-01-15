@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2e8c7d98dfdeb4e128a47db890d6c921
+guid: 78ea92de1314446da8b2683ff6d186c7
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
   userData: 
-  assetBundleName: poetry/boot.bd
+  assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

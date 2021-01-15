@@ -11,7 +11,9 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "util"
+local xutil = require "xlua.util"
+local manager = G.AppGlobal.manager
 
 -- index
 
@@ -28,27 +30,36 @@ local this = index
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.bg_Image = bg:GetComponent(typeof(CS.UnityEngine.UI.Image))
-    this.pvc_Button = pvc:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.pvc_Button.onClick:AddListener(this.pvc_OnClick)
-    this.pvp_Button = pvp:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.pvp_Button.onClick:AddListener(this.pvp_OnClick)
+    this.joinGame_Button = joinGame:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.joinGame_Button.onClick:AddListener(this.joinGame_OnClick)
+    this.newGame_Button = newGame:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.newGame_Button.onClick:AddListener(this.newGame_OnClick)
+    this.uiroot_RectTransform = uiroot:GetComponent(typeof(CS.UnityEngine.RectTransform))
 end
 --AutoGenInit End
 
-function this.pvc_OnClick()
-    print('pvc_OnClick')
-end -- pvc_OnClick
-
-function this.pvp_OnClick()
-    print('pvp_OnClick')
-end -- pvp_OnClick
-
 function index.Awake()
-	this.AutoGenInit()
+    this.AutoGenInit()
 end
 
 function index.Start()
-	--util.coroutine_call(this.coroutine_demo)
+    --util.coroutine_call(this.coroutine_demo)
 end
+
+function this.joinGame_OnClick()
+    manager.Scene.push("common/qrcode/qrcode.prefab", function(url)
+        local args = {
+            tp = 1, -- 0:主场， 1:客场, 2:观众, 暂定为客场，建立连接后再判定是否为观众
+        }
+        manager.Scene.push("poetry/match/match.prefab", args, true)
+    end, false)
+end -- joinGame_OnClick
+
+function this.newGame_OnClick()
+    uiroot:SetActive(false)
+    manager.Scene.push("poetry/match/match.prefab", {
+        tp = 0
+    })
+end -- newGame_OnClick
 
 return index
