@@ -9,6 +9,9 @@ using UnityEngine.Video;
 public class Boot : SingleMono<Boot>
 {
     const string Tag = "Boot";
+
+    public LuaMonoBehaviour bootLua;
+    
     public override void Awake()
     {
         
@@ -30,19 +33,19 @@ public class Boot : SingleMono<Boot>
 
         yield return AssetSys.Instance.Init();
 
-        yield return (LuaSys.Instance.Init()) ;
+        yield return LuaSys.Instance.Init() ;
 
         
         yield return AssetSys.Instance.GetAsset<TextAsset>("lua/utility/xlua/util.lua");
 
         
-        yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset =>
-        {
-            var lua = gameObject.AddComponent<LuaMonoBehaviour>();
-            lua.LuaPath = "ui/boot/boot.lua";
-            lua.SetLua(asset);
-            lua.enabled = true;
-        });
+        // yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset => {
+        //     var lua = gameObject.AddComponent<LuaMonoBehaviour>();
+        //     lua.LuaPath = "ui/boot/boot.lua";
+        //     lua.SetLua(bootLua);
+        //     lua.enabled = true;
+        // });
+        bootLua.enabled = true;
         
         yield return base.Init();
     }

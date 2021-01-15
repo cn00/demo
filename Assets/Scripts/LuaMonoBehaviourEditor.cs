@@ -33,7 +33,7 @@ namespace UnityEditor
 
         static bool mShowInjections = true;
         static bool mShowInjectionValues = true;
-        static bool mShowLuaAutogens = true;
+        static bool mShowLuaAutogens = false;
         StringBuilder luaMember = new StringBuilder(1024);
 
         void refreshAutoGen()
@@ -74,6 +74,7 @@ namespace UnityEditor
             luaMember.Append(btnListeners);
         }
 
+        public string grep;
         public override void OnInspectorGUI()
         {
             var newLuaAsset = EditorGUILayout.ObjectField("Lua", mTarget.LuaAsset, typeof(TextAsset), false) as TextAsset;
@@ -239,13 +240,14 @@ namespace UnityEditor
             }
 
             mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);
-            if (mShowLuaAutogens)
+            if (mShowLuaAutogens && !Application.isPlaying)
                 GUILayout.TextArea(luaMember.ToString());
 
             // lua debug
             if (mTarget.Lua != null)
             {
-                mTarget.Lua.Draw();
+                grep = EditorGUILayout.TextField("grep", grep);
+                mTarget.Lua.Draw("<color=red>t</color>", 0, null, grep);
             }
 
         }

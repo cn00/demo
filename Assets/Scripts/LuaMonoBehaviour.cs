@@ -13,6 +13,8 @@ using XLua;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using Spine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 
@@ -45,16 +47,21 @@ public class LuaMonoBehaviour : MonoBehaviour
     internal static float lastGCTime = 0;
     internal const float GCInterval = 1;//1 second 
 
+    #region LuaActions
+
     private Action luaAwake;
     private Action luaOnEnable;
     private Action luaStart;
     private Action luaFixedUpdate;
 
+    private Action<BaseEventData> luaOnEventTrigger;
     private Action<Collider> luaOnTriggerEnter;
     private Action<Collider> luaOnTriggerStay;
     private Action<Collider> luaOnTriggerExit;
 
     private Action<Collision> luaOnCollisionEnter;
+
+    private Action<string> luaOnAnimationEvent;
 
     private Action luaOnMouseEnter;
     private Action luaOnMouseOver;
@@ -66,6 +73,8 @@ public class LuaMonoBehaviour : MonoBehaviour
     private Action luaUpdate;
     private Action luaLateUpdate;
     private Action luaOnDestroy;
+    
+    #endregion // LuaActions
 
     public LuaTable Lua
     {
@@ -73,17 +82,20 @@ public class LuaMonoBehaviour : MonoBehaviour
         protected set;
     }
 
-    void Init()
+    IEnumerator Init()
     {
+        while (!LuaSys.Instance.Inited)
+            yield return null;
+
         if (LuaAsset == null) 
-            return;
+            yield break;
         var luaInstance = LuaSys.Instance;
-        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath.Replace("Assets/BundleRes/", ""));
+        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath.Replace("Assets/AppRes/", ""));
 
         if (Lua == null)
         {
             Debug.LogErrorFormat("error load lua:{0}", LuaPath);
-            return;
+            yield break;
         }
 
         Lua.Get("Awake", out luaAwake);
@@ -97,24 +109,49 @@ public class LuaMonoBehaviour : MonoBehaviour
             Lua.Get("OnTriggerExit", out luaOnTriggerExit);
 
             Lua.Get("OnCollisionEnter", out luaOnCollisionEnter);
+            Lua.Get("OnAnimationEvent", out luaOnAnimationEvent);
 
+            Lua.Get("OnMouseEnter", out luaOnMouseEnter);
+            Lua.Get("OnMouseOver", out luaOnMouseOver);
+            Lua.Get("OnMouseExit", out luaOnMouseExit);
             Lua.Get("OnMouseDown", out luaOnMouseDown);
+            Lua.Get("OnMouseUp", out luaOnMouseUp);
             Lua.Get("OnMouseDrag", out luaOnMouseDrag);
         }
+
+        // var a = GetComponent<Animator>();
+        // a.GetCurrentAnimatorClipInfo(0);
+        // // a.ResetTrigger("jump");
+        // a.Play("jump");
+        
+        // {
+        //     Lua.Get("OnEventTrigger", out luaOnEventTrigger);
+        //     if (luaOnEventTrigger != null)
+        //     {
+        //         var tr = gameObject.GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
+        //         var et = new EventTrigger.Entry()
+        //         {
+        //             eventID = EventTriggerType.Drop,
+        //         };
+        //         et.callback.AddListener(OnEventTrigger);
+        //         tr.triggers.Add(et);
+        //     }
+        // }
 
         Lua.Get("Update", out luaUpdate);
         Lua.Get("LateUpdate", out luaLateUpdate);
         Lua.Get("OnDestroy", out luaOnDestroy);
-    }
-
-    void Awake()
-    {
-        Init();
 
         if(luaAwake != null)
         {
             luaAwake();
         }
+        yield return null;
+    }
+
+    void Awake()
+    {
+        StartCoroutine(Init());
     }
 
     private void OnEnable()
@@ -143,6 +180,13 @@ public class LuaMonoBehaviour : MonoBehaviour
     }
 
     #region OnTrigger
+
+    public void OnAnimationEvent(string name)
+    {
+        if (luaOnAnimationEvent != null)
+            luaOnAnimationEvent(name);
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (luaOnTriggerEnter != null)
@@ -194,7 +238,7 @@ public class LuaMonoBehaviour : MonoBehaviour
 
     #region Mouse
 
-    void OnMouseOver()
+    public void OnMouseOver()
     {
         if (luaOnMouseOver != null)
         {
@@ -202,7 +246,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
     }
 
-    void OnMouseEnter()
+    public void OnMouseEnter()
     {
         if (luaOnMouseEnter != null)
         {
@@ -210,7 +254,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    public void OnMouseDown()
     {
         if (luaOnMouseDown != null)
         {
@@ -218,7 +262,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
     }
 
-    void OnMouseDrag()
+    public void OnMouseDrag()
     {
         if(luaOnMouseDrag != null)
         {
@@ -226,7 +270,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
     }
 
-    void OnMouseUp()
+    public void OnMouseUp()
     {
         if (luaOnMouseUp != null)
         {
@@ -234,7 +278,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         }
     }
 
-    void OnMouseExit()
+    public void OnMouseExit()
     {
         if (luaOnMouseExit != null)
         {
@@ -288,7 +332,7 @@ public class LuaMonoBehaviour : MonoBehaviour
     {
         CleanLua();
         LuaAsset = asset;
-        Init();
+        StartCoroutine(Init());
     }
 
     public void YieldAndCallback(object to_yield, Action callback)

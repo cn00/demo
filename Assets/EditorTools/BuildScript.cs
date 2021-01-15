@@ -22,7 +22,7 @@ public class BuildScript
     static string DATETIME = DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss");
     static string TARGET_DIR = "bin/";
 
-    public const string BundleOutDir = "AssetBundle/";
+    public const string BundleOutDir = "ab/";
 
     public static string[] FindEnabledEditorScenes()
     {

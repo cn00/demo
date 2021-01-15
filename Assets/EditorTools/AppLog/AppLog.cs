@@ -4,13 +4,12 @@
 
 
 using System;
-using System.Net;
 using System.Text;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 using UnityEngine;
 
+#if UNITY_DLL
 public static class AppLog
 {
     public enum Level
@@ -140,3 +139,4 @@ public static class AppLog
     }
 
 }
+#endif
