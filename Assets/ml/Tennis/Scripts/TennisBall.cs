@@ -12,6 +12,7 @@ namespace ml.Tennis
         public TennisPlayground playground;
         public Rigidbody rb;
 
+        [Tooltip("触网")]
         public bool net;
 
         public enum AgentRole
@@ -79,14 +80,14 @@ namespace ml.Tennis
             {
             }
 
-            var px = Random.Range(-playground.HalfSize.x, playground.HalfSize.x) > 0 ? 8f : -8f;
+            var px = 8f;// Random.Range(-playground.HalfSize.x, playground.HalfSize.x) > 0 ? 8f : -8f;
             var py = 2f;//Random.Range(4f, playground.HalfSize.y);//
             var pz = 0f;// Random.Range(-playground.HalfSize.z, playground.HalfSize.z);
             transform.localPosition = new Vector3(px, py, pz);
 
-            var vx = (px > 0f ? -1f:1f) * Random.Range(velocityMinInit.x, velocityMax.x); // * 14f; // 
-            var vy = Random.Range(velocityMinInit.y, velocityMax.y); // 3.5f;//
-            var vz = Random.Range(velocityMinInit.z, velocityMax.z);
+            var vx = -12.6f;// (px > 0f ? -1f:1f) * Random.Range(velocityMinInit.x, velocityMax.x); // * 14f; // 
+            var vy = 3.5f;// Random.Range(velocityMinInit.y, velocityMax.y); // 3.5f;//
+            var vz = -3f;// Random.Range(velocityMinInit.z, velocityMax.z);
             rb.velocity = new Vector3(vx, vy,vz);
             
             playground.agentA.EndEpisode();

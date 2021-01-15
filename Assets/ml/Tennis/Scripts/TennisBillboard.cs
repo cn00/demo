@@ -20,7 +20,7 @@ public class TennisBillboard : MonoBehaviour
 
     private void Start()
     {
-        Dt = Time.fixedDeltaTime;
+        Dt = Time.deltaTime; // fixedDeltaTime;
         var ag = pg.agentA;
         var agb = pg.agentB;
         pg.agentA.episodeBeginAction += ()=>
@@ -41,7 +41,8 @@ public class TennisBillboard : MonoBehaviour
         {
             var time = DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss");
             // if(ball.lastAgentHit != TennisBall.AgentRole.O)
-                Debug.Log($"{time} {tag} {ball.lastHitAgent?.name} -> {c.gameObject.name} <- {ball.lastFloorHit} {ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount} c:{ball.rb.velocity} p:{ball.transform.localPosition}");
+                Debug.Log($"{time} {tag} v:{ball.rb.velocity} p:{ball.transform.localPosition} {ball.lastHitAgent?.name} -> {c.gameObject.name} <- {ball.lastFloorHit} "
+                 + $"{ag.score}/{ag.hitCount}:{agb.score}/{agb.hitCount}");
         };
     }
 
@@ -70,7 +71,7 @@ public class TennisBillboard : MonoBehaviour
         var p = new Vector3();
         var tp = new Vector3();
         var bouncec = 0;
-        for (float t = 0f; t < time && bouncec < 2; t += dt)
+        for (float t = 0f; t < time && bouncec < 4; t += dt)
         {
             
             var tpy = tp.y;
@@ -91,7 +92,6 @@ public class TennisBillboard : MonoBehaviour
                 (drag * v.x * v.x) / mass * (v.x > 0f ? -1f:1f),
                 (drag * v.y * v.y) / mass * (v.y > 0f ? -1f:1f) + G,
                 (drag * v.z * v.z) / mass * (v.z > 0f ? -1f:1f));
-            var pvy = v.y;
             v.Set(
                 v.x + a.x * dt,
                 v.y + a.y * dt,
@@ -109,7 +109,7 @@ public class TennisBillboard : MonoBehaviour
         Action drawParabola = () =>
         {
             var G = pg.G;
-            var pp = ball.transform.position;
+            var pp = ball.rb.position;//.transform.position;
             var v = ball.Velocity;
             if(v.x > 0)
                 Gizmos.color = Color.blue;
