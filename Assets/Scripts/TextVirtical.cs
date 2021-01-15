@@ -122,3 +122,25 @@ public class TextVirtical : Text
         m_DisableFontTextureRebuiltCallback = false;
     }
 }
+
+#if UNITY_EDITOR
+namespace UnityEditor
+{
+    using System;
+    using System.IO;
+    using System.Linq;
+    using UnityEngine;
+    using UnityEditor;
+    using System.Text.RegularExpressions;
+
+    [CustomEditor(typeof(TextVirtical))]
+    public class TextVirticalEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+        }
+
+    }
+}
+#endif
