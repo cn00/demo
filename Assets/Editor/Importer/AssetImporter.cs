@@ -22,7 +22,6 @@ public class AssetImporter : UnityEditor.AssetPostprocessor
             {
                 if (!assetPath.Contains("@"))
                     modelImporter.importAnimation = false;
-                modelImporter.importMaterials = false;
             }
         }
     }
