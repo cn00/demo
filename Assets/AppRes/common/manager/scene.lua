@@ -6,7 +6,17 @@ local GameObject = UnityEngine.GameObject
 local util = require "xlua.util"
 local AssetSys = CS.AssetSys
 
-local this = {name="SceneManager"}
+local Scene = { 
+    layer = {}, -- front, middle, back
+}
+
+local AppGlobal = _G.AppGlobal or {}
+local manager = AppGlobal.manager or {}
+if manager.Scene == nil then
+    manager.Scene = Scene
+else
+    return
+end
 
 local yield_return = util.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -20,73 +30,89 @@ end
     path = GameObject
 ]]
 local loadstack = {}
-this.loadstack = loadstack
+Scene.loadstack = loadstack
 
-this.loading = nil
-function this.openloading()
-    if(this.loading ~= nil)then
-        this.loading.go:SetActive(true)
+Scene.loading = nil
+function Scene.openloading()
+    if(Scene.loading ~= nil)then
+        Scene.loading.go:SetActive(true)
     end
 end
 
-function this.closeloading()
-    if (this.loading ~= nil) then
-        this.loading.go:SetActive(false)
+function Scene.closeloading()
+    if (Scene.loading ~= nil) then
+        Scene.loading.go:SetActive(false)
         LoadingValue = 0
         LoadingString = "..."
     end
 end
 
 
-function this.push(prefabPath, callback)
+---push
+---@param prefabPath string
+---@param arg table|function 初始化信息或加载后回调
+---@param replace boolean 是否替换当前场景, 默认 false
+function Scene.push(prefabPath, arg, replace)
 
+    arg = arg or {}
+    --replace = replace or replace == nil
     util.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
         local last = loadstack[#loadstack]
-        if(last ~= nil and last.obj ~= nil)then
+        if(replace and last ~= nil and last.obj ~= nil)then
+            local com = last.obj:GetComponent(typeof(CS.LuaMonoBehaviour))
+            if com and com.Lua and type(com.Lua.stateToSave) == "function" then
+                last.savedState = com.Lua.stateToSave()
+            end
             GameObject.DestroyImmediate(last.obj)
-            last.obj = nil
+            last.obj = undef
         end
         
-        -- todo: open loading
+        -- TODO: open loading
 
         local obj = nil
         yield_return(CS.AssetSys.Instance:GetAsset(prefabPath, function(asset)
             obj = asset
         end))
-        local gameObj = GameObject.Instantiate(obj)
-        table.insert(loadstack, {path = prefabPath, obj = gameObj})
-
-        if callback then
-            callback(gameObj)
+        
+        local parent = Scene.layer.middle
+        local callback
+        if type(arg) == "function" then callback = arg end
+        if type(arg) == "table" then parent = arg.parent or parent; callback = arg.callback end
+        local gameObj = GameObject.Instantiate(obj, parent)
+        local com = gameObj:GetComponent(typeof(CS.LuaMonoBehaviour))
+        if com and com.Lua and type(com.Lua.init) == "function" then
+            com.Lua.init(arg)
         end
+        table.insert(loadstack, {path = prefabPath, obj = gameObj, savedState = arg})
+        if callback then callback() end
 
     end)
 end
 
-function this.pop(callback)
+function Scene.pop(callback)
     local last = table.remove(loadstack)
     local newlast = table.remove(loadstack)
-    this.push(newlast.path, function (go)
+    Scene.push(newlast.path, function (go)
         GameObject.DestroyImmediate(last.obj)
         if callback then
-            callback(gameObj)
+            callback(newlast.savedState)
         end
     end)
 end
 
 --AutoGenInit Begin
-function this.AutoGenInit()
+function Scene.AutoGenInit()
 end
 --AutoGenInit End
 
-function this.Awake()
+function Scene.Awake()
     --this.AutoGenInit()
     util.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
-        if this.loading == nil then
+        if Scene.loading == nil then
             local obj
             print("sync_get_asset", obj)
             yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
@@ -95,7 +121,7 @@ function this.Awake()
             local go = GameObject.Instantiate(obj)
             go:SetActive(false)
             local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
-            this.loading = {
+            Scene.loading = {
                 go = go,
                 lua = lua
             }
@@ -112,4 +138,4 @@ end
 
 -- end
     
-return this
+return Scene

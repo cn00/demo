@@ -32,11 +32,11 @@ function qrcode.Awake()
         this.EncodeImage_RawImage.texture = tex
     end)
 
-	this.Back_Button.onClick:AddListener(
-		function()
-			assert(coroutine.resume(this.Back()))
-		end
-	)
+	--this.Back_Button.onClick:AddListener(
+	--	function()
+	--		assert(coroutine.resume(this.Back()))
+	--	end
+	--)
 end
 
 function qrcode.AddDecodeCallback(fun)
