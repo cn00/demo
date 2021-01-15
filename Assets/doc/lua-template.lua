@@ -11,7 +11,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "util"
+local xutil = require "xlua.util"
 
 -- ___SCRIPTNAME___
 
@@ -24,7 +25,7 @@ local ___SCRIPTNAME___ = {}
 local this = ___SCRIPTNAME___
 
 -- example-begin
-local yield_return = util.async_to_sync(function (to_yield, callback)
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 function this.coroutine_demo()
