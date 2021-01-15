@@ -71,14 +71,14 @@ public class LinkImageText : Text, IPointerClickHandler
     /// <summary>
     /// 正则取出所需要的属性
     /// </summary>
-    private static readonly Regex s_ImageRegex =
-        new Regex(@"<quad name=(.+?) size=(\d*\.?\d+%?) width=(\d*\.?\d+%?) />", RegexOptions.Singleline);
+    [HideInInspector]
+    public List<string> m_ImageRegex = new List<string>(1){@"<quad name=(.+?) size=(\d*\.?\d+%?) width=(\d*\.?\d+%?) />"};
 
     /// <summary>
     /// 超链接正则
     /// </summary>
-    private static readonly Regex s_HrefRegex =
-        new Regex(@"([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]+)", RegexOptions.Singleline);
+    [HideInInspector]
+    public  List<string>  m_HrefRegex = new List<string>(1){@"([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]+)"};
 
     /// <summary>
     /// 加载精灵图片方法
@@ -101,44 +101,48 @@ public class LinkImageText : Text, IPointerClickHandler
 #endif
         m_OutputText = CollectHref(text);
         m_ImagesVertexIndex.Clear();
-        foreach (Match match in s_ImageRegex.Matches(m_OutputText))
-        {
-            var picIndex = match.Index;
-            var endIndex = picIndex * 4 + 3;
-            m_ImagesVertexIndex.Add(endIndex);
+        m_ImageRegex.ForEach(i => {
+            foreach (Match match in Regex.Matches(m_OutputText, i, RegexOptions.Singleline))
+            {
+                var picIndex = match.Index;
+                var endIndex = picIndex * 4 + 3;
+                m_ImagesVertexIndex.Add(endIndex);
 
-            m_ImagesPool.RemoveAll(image => image == null);
-            if (m_ImagesPool.Count == 0)
-            {
-                GetComponentsInChildren<Image>(m_ImagesPool);
-            }
-            if (m_ImagesVertexIndex.Count > m_ImagesPool.Count)
-            {
-                var resources = new DefaultControls.Resources();
-                var go = DefaultControls.CreateImage(resources);
-                go.layer = gameObject.layer;
-                var rt = go.transform as RectTransform;
-                if (rt)
+                m_ImagesPool.RemoveAll(image => image == null);
+                if (m_ImagesPool.Count == 0)
                 {
-                    rt.SetParent(rectTransform);
-                    rt.localPosition = Vector3.zero;
-                    rt.localRotation = Quaternion.identity;
-                    rt.localScale = Vector3.one;
+                    GetComponentsInChildren<Image>(m_ImagesPool);
                 }
-                m_ImagesPool.Add(go.GetComponent<Image>());
-            }
 
-            var spriteName = match.Groups[1].Value;
-            var size = float.Parse(match.Groups[2].Value);
-            var img = m_ImagesPool[m_ImagesVertexIndex.Count - 1];
-            if (img.sprite == null || img.sprite.name != spriteName)
-            {
-                img.sprite = funLoadSprite != null ? funLoadSprite(spriteName) :
-                    Resources.Load<Sprite>(spriteName);
+                if (m_ImagesVertexIndex.Count > m_ImagesPool.Count)
+                {
+                    var resources = new DefaultControls.Resources();
+                    var go = DefaultControls.CreateImage(resources);
+                    go.layer = gameObject.layer;
+                    var rt = go.transform as RectTransform;
+                    if (rt)
+                    {
+                        rt.SetParent(rectTransform);
+                        rt.localPosition = Vector3.zero;
+                        rt.localRotation = Quaternion.identity;
+                        rt.localScale = Vector3.one;
+                    }
+
+                    m_ImagesPool.Add(go.GetComponent<Image>());
+                }
+
+                var spriteName = match.Groups[1].Value;
+                var size = float.Parse(match.Groups[2].Value);
+                var img = m_ImagesPool[m_ImagesVertexIndex.Count - 1];
+                if (img.sprite == null || img.sprite.name != spriteName)
+                {
+                    img.sprite = funLoadSprite != null ? funLoadSprite(spriteName) : Resources.Load<Sprite>(spriteName);
+                }
+
+                img.rectTransform.sizeDelta = new Vector2(size, size);
+                img.enabled = true;
             }
-            img.rectTransform.sizeDelta = new Vector2(size, size);
-            img.enabled = true;
-        }
+        });
 
         for (var i = m_ImagesVertexIndex.Count; i < m_ImagesPool.Count; i++)
         {
@@ -230,25 +234,28 @@ public class LinkImageText : Text, IPointerClickHandler
         s_TextBuilder.Length = 0;
         m_HrefInfos.Clear();
         var indexText = 0;
-        foreach (Match match in s_HrefRegex.Matches(outputText))
+        m_HrefRegex.ForEach(i =>
         {
-            var sub = outputText.Substring(indexText, match.Index - indexText);
-            s_TextBuilder.Append(sub);
-            s_TextBuilder.Append($"<a href=href{indexText}><color=#00ff00>");  // 超链接颜色
-
-            var href = match.Groups[1];
-            var hrefInfo = new HrefInfo
+            foreach (Match match in Regex.Matches(outputText, i, RegexOptions.Singleline))
             {
-                startIndex =  s_TextBuilder.Length * 4, // 超链接里的文本起始顶点索引//match.Index*4, //
-                endIndex = (s_TextBuilder.Length + match.Groups[1].Length - 1) * 4 + 3,
-                name = href.Value
-            };
-            m_HrefInfos.Add(hrefInfo);
+                var sub = outputText.Substring(indexText, match.Index - indexText);
+                s_TextBuilder.Append(sub);
+                s_TextBuilder.Append($"<a href=href{indexText}><color=#00ff00>"); // 超链接颜色
 
-            s_TextBuilder.Append(match.Groups[1].Value);
-            s_TextBuilder.Append("</color></a>");
-            indexText = match.Index + match.Length;
-        }
+                var href = match.Groups[1];
+                var hrefInfo = new HrefInfo
+                {
+                    startIndex = s_TextBuilder.Length * 4, // 超链接里的文本起始顶点索引//match.Index*4, //
+                    endIndex = (s_TextBuilder.Length + match.Groups[1].Length - 1) * 4 + 3,
+                    name = href.Value
+                };
+                m_HrefInfos.Add(hrefInfo);
+
+                s_TextBuilder.Append(match.Groups[1].Value);
+                s_TextBuilder.Append("</color></a>");
+                indexText = match.Index + match.Length;
+            }
+        });
         s_TextBuilder.Append(outputText.Substring(indexText, outputText.Length - indexText));
         return s_TextBuilder.ToString();
     }
@@ -317,3 +324,36 @@ public class LinkImageText : Text, IPointerClickHandler
     }
 
 }
+
+#if UNITY_EDITOR
+namespace UnityEditor
+{
+    using System;
+    using System.IO;
+    using System.Linq;
+    using UnityEngine;
+    using UnityEditor;
+    using System.Text.RegularExpressions;
+
+    [CustomEditor(typeof(LinkImageText))]
+    public class LinkImageTextEditor : Editor
+    {
+        // private LinkImageText mTarget;
+        // private void OnEnable()
+        // {
+        //     mTarget = target as LinkImageText;
+        // }
+        
+        // // private bool unlock = false;
+        // public override void OnInspectorGUI()
+        // {
+        //     base.OnInspectorGUI();
+        //     // unlock = EditorGUILayout.BeginToggleGroup("unlock", unlock);
+        //     // // EditorGUILayout.LabelField("ImageRegex", mTarget.s_ImageRegex);
+        //     // // EditorGUILayout.LabelField("HrefRegex", mTarget.s_HrefRegex);
+        //     // EditorGUILayout.EndToggleGroup();
+        // }
+    
+    }
+}
+#endif
