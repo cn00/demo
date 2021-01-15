@@ -180,10 +180,25 @@ public static class LuaTableExtension
     }
 #if UNITY_EDITOR
     public delegate object ValueDelegate(object k, object o);
-    public static void Draw(this XLua.LuaTable self, string ltname = "luat", int indent = 0, GUILayoutOption[] guiOpts = null)
+
+    private static LuaSys.LuaFuncDelegate mLuaFuncDelegate = null;
+    public static void Draw(this XLua.LuaTable self, string ltname = "luat", int indent = 0, GUILayoutOption[] guiOpts = null, string grep = null)
     {
-        LuaSys.Instance.GetGLuaFunc("BridgingClass.Draw")(self, null);
-        // if(EditorGUI.indentLevel > 5)
+        if(mLuaFuncDelegate == null)
+            mLuaFuncDelegate = LuaSys.Instance.GetGLuaFunc("BridgingClass.Draw");
+        LuaTable opt = LuaSys.Instance.luaEnv.NewTable();
+        opt.Set("ltname", "lt");
+        opt.Set("indent", 0);
+        if(!string.IsNullOrWhiteSpace(grep))opt.Set("grep", grep);
+        if(mLuaFuncDelegate!=null)
+            mLuaFuncDelegate(self, opt);
+        else
+        {
+            Debug.LogError($"place call require \"BridgingClass\" first");
+        }
+            
+        /*
+        if(EditorGUI.indentLevel > 5)
             return;
         EditorGUI.indentLevel += indent;
         var name = (self.ContainsKey("Name") ? self.Get<string>("Name"):ltname);
@@ -268,11 +283,15 @@ public static class LuaTableExtension
                         {
                             return;
                         }
+                        
+                        var tname = (v != null ? v.GetType().ToString() : "nil");
+                        var dotidx = tname.LastIndexOf('.');
+                        if(dotidx > 0)tname = tname.Substring(dotidx+1);
+                        if (!string.IsNullOrWhiteSpace(grep) && !tname.Contains(grep)) 
+                            return;
+
                         EditorGUILayout.BeginHorizontal();
                         {
-                            var tname = (v != null ? v.GetType().ToString() : "nil");
-                            var dotidx = tname.LastIndexOf('.');
-                            if(dotidx > 0)tname = tname.Substring(dotidx+1);
                             EditorGUILayout.LabelField(kk + ":" + tname);
                             drawv(k,v);
                         }
@@ -296,6 +315,7 @@ public static class LuaTableExtension
         }//if
 
         EditorGUI.indentLevel -= indent;
+        */
     }
 #endif
 
