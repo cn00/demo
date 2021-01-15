@@ -12,13 +12,13 @@ public class DialogSys : SingleMono<AssetSys>
         var asset = AssetSys.GetAssetSync("ui/dialog/dialog01.prefab") as GameObject;
         var go = Instantiate(asset);
         var lua = go.GetComponent<LuaMonoBehaviour>().Lua;
-        var contentText = lua["ContentText_Text"] as Text;
-        var titleText = lua["TitleText_Text"] as Text;
+        var contentText = lua.GetInPath<Text>("ContentText_Text");
+        var titleText = lua.GetInPath<Text>("TitleText_Text");
 
         titleText.text = title;
         contentText.text = message;
 
-        var button = lua["ConfirmBtn_Button"] as Button;
+        var button = lua.GetInPath<Button>("ConfirmBtn_Button") ;
         UnityAction onclick = () =>
         {
             if (onFinished != null)
