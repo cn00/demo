@@ -16,7 +16,7 @@ local File = CS.System.IO.File
 
 local stringx = require("stringx") -- split
 local xutil = require "xlua.util"
-local util = require "util"
+local util = require "lua.utility.util"
 local socket = require("socket.socket")
 local sqlite = require("lsqlite3")
 
@@ -46,20 +46,33 @@ local match = {
     matchState = matchState.playerPreparing,
     stateStartTime = 0, -- 状态开始时间
     playerPreparingCountdown = 10, -- 状态读秒
-    round = 0, -- 回合
+    round = -1, -- 回合
     roundStartTime = 0, -- 回合开始时间
     roundCountdown = 6, -- 回合读秒
     roundAnswer = -1, -- 当前双方选手的答案
     scoreA = 0, -- 得分
     scoreB = 0,
     poetryList = {}, -- all questions
-    cqs = {}, -- currnet questions index
-    cqi = -1, -- current question idx [1 - #cqs]
+    availableIdxs = {}, -- available questions index
+    availableIdxsA = {}, -- 
+    availableIdxsB = {}, -- 
+    currentIdx = -1, -- current question idx [1 - #cqs]
 }
 local this = match
 
 function match.init(info)
     match.tp = info.pt or 0
+end
+
+---removeValueFromArray
+---@param val any
+---@param arr table
+local function removeValueFromArray(val, arr)
+    print("removeValueFromArray", val)
+    for i, v in ipairs(arr) do
+        if v == val then table.remove(arr, i) return true end
+    end
+    return false
 end
 
 ---myAnswer
@@ -76,7 +89,43 @@ function match.myAnswer(idx)
             owner = card.owner 
         }
     }
+    if idx == this.currentIdx then
+        this.scoreA = this.scoreA + 1
+    else
+        match.poetryList[this.currentIdx].Lua.hidAnswer()
+        this.scoreB = this.scoreB + 1
+        if card.owner == 1 then
+            -- TODO: 罚牌
+            
+        end
+    end
+    
+    removeValueFromArray(idx, this.availableIdxs)
+    if not removeValueFromArray(idx, this.availableIdxsA) then
+        removeValueFromArray(idx, this.availableIdxsB)
+    end
+
+    
+    if #this.availableIdxsA == 0 then -- A win
+        
+    elseif #this.availableIdxsB == 0 then -- B win
+        
+    end
+    
+    this.scoreText_Text.text = string.format("%s:%s", this.scoreA, this.scoreB)
     this.Client.ClientSend(msg)
+
+    match.nextRound()
+end
+
+function match.nextRound()
+    match.roundStartTime = UnityEngine.Time.time
+    local i = math.random(1, #this.availableIdxs)
+    this.currentIdx = this.availableIdxs[i]
+    this.round = #this.poetryList - #this.availableIdxs
+    local card = this.poetryList[this.currentIdx]
+    card.Lua.showAnswer()
+    this.question_Text.text = card.content[card.qi]
 end
 
 ---throwCard 罚牌, 将一张牌调换阵营
@@ -141,6 +190,7 @@ function this.AutoGenInit()
     this.playerA_RectTransform = playerA:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.playerB_RectTransform = playerB:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.QRcode_QRCodeEncodeController = QRcode:GetComponent(typeof(CS.QRCodeEncodeController))
+    this.question_Text = question:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.scoreText_Text = scoreText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.ShowQRcodeBtn_Button = ShowQRcodeBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.ShowQRcodeBtn_Button.onClick:AddListener(this.ShowQRcodeBtn_OnClick)
@@ -161,7 +211,7 @@ function match.Awake()
 	this.AutoGenInit()
     cardTemplate:SetActive(false)
     this.scoreText_Text.text = "0:0"
-
+    this.question_Text.text = ""
 end
 
 function match.Start()
@@ -184,17 +234,21 @@ function match.Start()
     
     local ips = CS.NetSys.LocalIpAddressStr()
     local args = {}
-    local url = string.format("poetry#%s#%s#%s", ips[0], this.Server.ServerPort, util.dump(args))
+    local url = string.format("a3mkgp:%s:%s:%s", ips[0], this.Server.ServerPort, util.dump(args))
     print("qrcode:url", url)
     this.QRcode_QRCodeEncodeController:Encode(url)
 
     match.LoadData(function()
+        print("LoadData end")
         playerA:SetActive(true)
         playerB:SetActive(true)
         this.noteText_Text.text = "0"
-        local poetryIdList = match.getPoetryIds(40, "where tags like '%思念%'")
+        local poetryIdList = match.getPoetryIds(50, "where tags like '%思念%'")
         match.poetryList = match.getPoetryByIds(poetryIdList)
         match.distributeCard(match.poetryList)
+
+        -- start first round
+        match.nextRound()
     end)
 end
 
@@ -220,7 +274,8 @@ function match.LoadData(cb)
         this.noteText_Text.text = "download data ..."
         local dburl = "db.db"
         local cachePath = dbpath -- AssetSys.CacheRoot .. "db.db"
-        if not File.Exists(cachePath) then
+        local fi =  CS.System.IO.FileInfo(cachePath);
+        if not fi.Exists or fi.Length == 0  then
             yield_return(AssetSys.Download(dburl, cachePath))
         else
             print("use cache:", cachePath)
@@ -229,12 +284,11 @@ function match.LoadData(cb)
     end)
 end
 
-local function newRound()
-    match.roundStartTime = UnityEngine.Time.now
-end
 
 function match.Update()
-    match.roundCountdown = match.roundCountdown + UnityEngine.Time.deltaTime
+    if this.round >= 0 then
+        this.noteText_Text.text = string.format("%s:%s", this.round, math.modf(UnityEngine.Time.time - match.roundStartTime))
+    end
 end
 
 --[[{
@@ -256,7 +310,7 @@ end
 --	["poet_name"] = "佚名",
 --	["dynasty"] = "先秦",
 --	["about"] = "《毛诗序》以为是赞美文王的教化在汝坟这个国家施行的很好，妇人能劝诫丈夫尽力正直卫国而流传下来的民歌。但是近人大多认为这是妻子挽留久役归来的征夫而唱的诗歌。",
---	["fanyi"] = "译文沿着汝河大堤走，采伐山楸那枝条。还没见到我夫君，忧如忍饥在清早。沿着汝河大堤走，采伐山楸那余枝。终于见到我夫君，请莫再将我远弃。鳊鱼尾巴色赤红，王室事务急如火。虽然有事急如火，父母穷困谁养活！ 注释⑴遵：循，沿。汝：汝河，源出河南省。坟（fén）：水涯，大堤。⑵条枚：山楸树。一说树干（枝曰条，干曰枚）。⑶君子：此指在外服役或为官的丈夫。⑷惄（nì）：饥，一说忧愁。调（zhōu）：又作“輖”，“朝”（鲁诗此处作“朝”字），早晨。调饥：早上挨饿，以喻男女欢情未得满足。⑸肄（yì）：树砍后再生的小枝。⑹遐（xiá）：远。⑺鲂（fánɡ）鱼：鳊鱼。赬（chēng成）：浅红色。⑻毁（huǐ）：火，齐人谓火为毁。如火焚一样。⑼孔：甚。　迩（ěr）：近，此指迫近饥寒之境。",
+--	["fanyi"] = "注释⑴遵：循，沿。汝：汝河，源出河南省。坟（fén）：水涯，大堤。⑵条枚：山楸树。一说树干（枝曰条，干曰枚）。⑶君子：此指在外服役或为官的丈夫。⑷惄（nì）：饥，一说忧愁。调（zhōu）：又作“輖”，“朝”（鲁诗此处作“朝”字），早晨。调饥：早上挨饿，以喻男女欢情未得满足。⑸肄（yì）：树砍后再生的小枝。⑹遐（xiá）：远。⑺鲂（fánɡ）鱼：鳊鱼。赬（chēng成）：浅红色。⑻毁（huǐ）：火，齐人谓火为毁。如火焚一样。⑼孔：甚。　迩（ěr）：近，此指迫近饥寒之境。",
 --	["tags"] = "诗经|思念",
 --}]]
 --- 发牌
@@ -264,18 +318,22 @@ function match.distributeCard(poetryList)
     --print(util.dump(poetryList[1]))
     local cardRoot = this.playerA_RectTransform
     for i, v in ipairs(poetryList)do
+        this.availableIdxs[1+#this.availableIdxs] = i
         v.owner = 1
         if i > #poetryList/2 then
             v.owner = 2
             cardRoot = this.playerB_RectTransform
+            this.availableIdxsB[1+#this.availableIdxsB] = i
+        else
+            this.availableIdxsA[1+#this.availableIdxsA] = i
         end
         local c = GameObject.Instantiate(cardTemplate, cardRoot)
         c.name = "card_" .. v.id
         c:SetActive(true)
         
-        local cc = c:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
-        v.cc = cc
-        cc.info = v
+        local Lua = c:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+        Lua.info = v
+        v.Lua = Lua
     end
 end
 

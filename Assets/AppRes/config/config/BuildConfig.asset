@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   Configs: []
-  mUseBundle: 0
+  mUseBundle: 1
   LogLevel: 2
   runInBackground: 1
-  LastBuildTime: 132551601825756390
+  LastBuildTime: 132552600421226070
   Version:
     Major: 1
     Minor: 0
@@ -27,54 +27,24 @@ MonoBehaviour:
   BuildScene: 0
   mGroups:
   - Foldout: 0
-    Name: blender
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: blender/bot.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: blender/cat.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: blender/egypt.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: blender/fish.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: blender/fishy_cat.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-  - Foldout: 0
     Name: common
     mInclude: 0
     mRebuild: 1
     mBundles:
     - Name: common/click.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 81516
+      Hash: 40bbc95ae4336f265b18d55af56a9733
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/excel.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 12960
+      Hash: 1adbad37a3a27e0a5786164b3c4e0545
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/global.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 2475
+      Hash: 656d2590dcd7d0d81a75e224d79bee19
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/hint.bd
       Size: 0
@@ -82,24 +52,24 @@ MonoBehaviour:
       Version: 
       Rebuild: 1
     - Name: common/manager.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 10790
+      Hash: 935b36a902dca12d1a401f54db32e0f0
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/material.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1209
+      Hash: fe0dc8e55a960b2143fab647e0206bea
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/qrcode.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 59963
+      Hash: 00e9bf487165948eb6d674eff36a6595
+      Version: 1.0.0
       Rebuild: 1
     - Name: common/ui.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 31043
+      Hash: 01c49cb6faab7549f87cfb6bfab6b150
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: config
@@ -107,34 +77,34 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: config/config.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 3612
+      Hash: 41f7d4b4ac21849d603397d77c75b0b2
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
-    Name: don-quixote
+    Name: don_uixote
     mInclude: 0
     mRebuild: 1
     mBundles:
-    - Name: don-quixote/index.bd
+    - Name: don_uixote/index.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 1
-    - Name: don-quixote/linkText.bd
+      Rebuild: 0
+    - Name: don_uixote/linkText.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 1
+      Rebuild: 0
   - Foldout: 0
     Name: font
     mInclude: 0
     mRebuild: 1
     mBundles:
     - Name: font/fzxz.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 9120314
+      Hash: 6b18abc7e0b9180e6c5bf47eedd13092
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: lua
@@ -142,39 +112,39 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: lua/excel.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 4063
+      Hash: d09551a8058a93b416c6361f20460136
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/lxp.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 12488
+      Hash: adee6f2d0fcc8076967bf8440356d424
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/proto.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1462
+      Hash: 30fffed6e08cde1330c7a23896e46b30
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/table.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1718
+      Hash: 048be374e517399bfb86319f4508353b
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/test.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 11798
+      Hash: a09c521022c1d802e9649032ddd12c33
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/ustring.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 96503
+      Hash: 5b06e1b5b07c95017ba6eb5377bbfea7
+      Version: 1.0.0
       Rebuild: 1
     - Name: lua/utility.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 98244
+      Hash: fee824c8aa1becdd54e7b71b43137368
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: poetry
@@ -182,14 +152,14 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: poetry/boot.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1910
+      Hash: 15eec59b72aa985698ae3368c2ea79f0
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/card.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 22346
+      Hash: f7728bb1988ac80e42de995294f8a609
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/data.bd
       Size: 0
@@ -197,36 +167,31 @@ MonoBehaviour:
       Version: 
       Rebuild: 0
     - Name: poetry/img.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 16387
+      Hash: af8cfcf215d8e475cdf978e5495bd3c9
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/index.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 8550
+      Hash: d9f53a6e5b3abf48f8b6e28e08c2cde5
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/match.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 27419
+      Hash: e0277eb46856932aa4d6ad0890ccb7eb
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/player.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 8831
+      Hash: 6c94f3e860af0ae71a422b710684797c
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/result.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1634
+      Hash: 54ea1deecdca3d404a1986a518ea1a35
+      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/room.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: poetry/server.bd
       Size: 0
       Hash: 
       Version: 
@@ -237,89 +202,14 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: proto/bfbs.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 2083
+      Hash: 8f8dd575471578cd99e204bdc0abad89
+      Version: 1.0.0
       Rebuild: 1
     - Name: proto/common.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-  - Foldout: 0
-    Name: spine
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: spine/Dragon.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Eyes.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/FootSoldier.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Gauge.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Goblins.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Hero.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Raggedy Spineboy.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Raptor.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Spineunitygirl.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/Stretchyman.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/raptor-pro-and-mask.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/spineboy-pro.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/spineboy-unity.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: spine/whirlyblendmodes.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 3019
+      Hash: 0cd6f384b9c8252589f354694a136484
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: ui
@@ -327,49 +217,49 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: ui/bg.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 2577706
+      Hash: 870712768594e46b98fa88f89e565d6f
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/boot.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 28228
+      Hash: 5c2a2f8ac2bacf4a3933d1e710e3ed53
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/dialog.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 15513
+      Hash: 3d6cdaf6394cceb57776debcf86fb5a2
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/excel_viewer.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 30452
+      Hash: 68897629b6f7fd88f44402a72b21ae9e
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/linktext.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 7679
+      Hash: fa3247e7fabfba7d790530386a9f1e6b
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/loading.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 93290
+      Hash: 13f0b04f7704788e6dc42f807c9374d4
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/login.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 21161
+      Hash: 50a00fd26cba4c633bfbac6c86ac200c
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/test.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 28571
+      Hash: a75264e57c124c84349387fd6cca2f72
+      Version: 1.0.0
       Rebuild: 1
     - Name: ui/update.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 16722
+      Hash: 745d53ca0cf66fec4effdfcfa22e8b19
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: video
@@ -377,9 +267,9 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: video/op.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 13732
+      Hash: dbd7c49a95b4cd26d39fc04d60addc35
+      Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: writeplayer
@@ -387,19 +277,19 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: writeplayer/impoter.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 16882
+      Hash: b2014fe5ae5a2ea133e7eca0fbc42c60
+      Version: 1.0.0
       Rebuild: 1
     - Name: writeplayer/index.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 31328
+      Hash: 200eee6070040de83df7faa71b1b94b7
+      Version: 1.0.0
       Rebuild: 1
     - Name: writeplayer/player.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 1071344
+      Hash: 174ad4cf2981d16153df54c3987f5b4b
+      Version: 1.0.0
       Rebuild: 1
   BundleBuildOptions: 272
   mChannels:
@@ -409,7 +299,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u6B4C\u724C"
     BundleId: com.bili.a3mkgp
     PackageName: a3
-    BuildNum: 8
+    BuildNum: 11
     Version: 0.1.0
     DefineSymbols:
     - ENABLE_EMULATER

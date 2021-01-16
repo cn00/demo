@@ -4,8 +4,6 @@ require("lua.utility.BridgingClass")
 --local lpeg = require "lpeg"
 local mobdebug = require('ui.boot.mobdebug')
 
-local luasql = require "luasql.mysql"
-
 local CS = CS
 local AssetSys = CS.AssetSys
 local File = CS.System.IO.File
@@ -22,6 +20,8 @@ local print = function(...)
 end
 
 local function mysqlTest()
+
+    local luasql = require "luasql.mysql"
     print("luasql=",luasql)
     local mysql = luasql.mysql()
     local db, err = mysql:connect("a3_m_305", "a3", "654123", "10.23.24.239")
@@ -74,7 +74,7 @@ end)
 function boot.coroutine_boot(first, ...)
     -- local args = {...}
     xutil.coroutine_call(function(...)
-        print("boot.coroutine_boot")
+        print("boot.coroutine_boot 0")
         -- print(debug.traceback("test traceback"))
         -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
         -- yield_return(UnityEngine.WaitForSeconds(1))
@@ -98,7 +98,13 @@ function boot.coroutine_boot(first, ...)
         }
         AppGlobal.manager = this.manager
 
+        print("boot.coroutine_boot 1")
+        
+        yield_return(CS.AssetSys.Instance:GetAsset("ui/dialog/dialog01.prefab"))
+        
         yield_return(CS.AssetSys.Instance:GetAsset("font/fzxz/方正小篆体.ttf"))
+
+        print("boot.coroutine_boot 2 方正小篆体")
 
         -- yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
 
@@ -117,7 +123,7 @@ function boot.coroutine_boot(first, ...)
 
 
         yield_return(CS.UpdateSys.Instance:CheckUpdate())
-        print("UpdateSys.CheckUpdate 1")
+        print("boot.coroutine_boot 3 CheckUpdate")
 
         -- yield_return(CS.NetSys.Instance:Init())
         -- print("NetSys 1")
@@ -138,6 +144,7 @@ function boot.coroutine_boot(first, ...)
 
         --manager.Scene.push("index/index.prefab")
         this.manager.Scene.push("poetry/index/index.prefab")
+        print("boot.coroutine_boot 3 poetry/index/index")
         --this.manager.Scene.push("poetry/match/match.prefab")
         --manager.Scene.push("don-quixote/index/index.prefab")
         --manager.Scene.push("don-quixote/linkText/linkText.prefab")
@@ -153,6 +160,8 @@ function boot.coroutine_boot(first, ...)
 
         -- yield_return(UnityEngine.WaitForSeconds(9))
         -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
+        
+        print("boot.coroutine_boot end")
     end)
 end
 
@@ -177,7 +186,7 @@ end
 
 function boot.Start()
     mobdebug.start("localhost", 8173)
-    print("boot.Start mobdebug", mobdebug)
+    print("boot.Start mobdebug 8173", mobdebug)
 
     --print("UnityEditor.EditorApplication.applicationContentsPath", CS.UnityEditor.EditorApplication.applicationContentsPath)
     --print("UnityEditor.EditorApplication.applicationPath", CS.UnityEditor.EditorApplication.applicationPath)

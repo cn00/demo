@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.Experimental.AssetImporters;
+
 using System.IO;
 
-[ScriptedImporter(2, new[]{"lua", "sql", "bfbs"})]
-public class TxtImporter : ScriptedImporter
+[UnityEditor.AssetImporters.ScriptedImporter(2, new[]{"lua", "sql", "bfbs"})]
+public class TxtImporter : UnityEditor.AssetImporters.ScriptedImporter
 {
     const string Tag = "LuaImporter";
-    public override void OnImportAsset(AssetImportContext ctx)
+    public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext ctx)
     {
         var prefax = Path.GetExtension(ctx.assetPath).Substring(1);
         var text = File.ReadAllText(ctx.assetPath);

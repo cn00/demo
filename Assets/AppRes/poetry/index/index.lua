@@ -11,7 +11,7 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
+local util = require "lua.utility.util"
 local xutil = require "xlua.util"
 local manager = G.AppGlobal.manager
 
@@ -47,19 +47,23 @@ function index.Start()
 end
 
 function this.joinGame_OnClick()
-    manager.Scene.push("common/qrcode/qrcode.prefab", function(url)
+    uiroot:SetActive(false)
+    local openMatch = function(url)
+        print("openMatch", url)
         local args = {
             tp = 1, -- 0:主场， 1:客场, 2:观众, 暂定为客场，建立连接后再判定是否为观众
+            host = url,
         }
         manager.Scene.push("poetry/match/match.prefab", args, true)
-    end, false)
+    end
+    manager.Scene.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, false)
 end -- joinGame_OnClick
 
 function this.newGame_OnClick()
     uiroot:SetActive(false)
     manager.Scene.push("poetry/match/match.prefab", {
         tp = 0
-    })
+    }, true)
 end -- newGame_OnClick
 
 return index

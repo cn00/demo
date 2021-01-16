@@ -3,12 +3,14 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local xutil = require "xlua.util"
 
-local qrcode = {}
+local qrcode = {
+    info = {}, --
+}
 local this = qrcode
 
-local yield_return = util.async_to_sync(function (to_yield, callback)
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
@@ -21,22 +23,29 @@ function this.AutoGenInit()
     this.Encode_QRCodeEncodeController = Encode:GetComponent(typeof(CS.QRCodeEncodeController))
     this.EncodeImage_RawImage = EncodeImage:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
     this.EncodeImage_RectTransform = EncodeImage:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.testBtn_Button = testBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.testBtn_Button.onClick:AddListener(this.testBtn_OnClick)
 end
 --AutoGenInit End
+
+function this.testBtn_OnClick()
+    local strResult = this.DecodeResult_Text.text
+    this.OnScanResult(strResult)
+    this.Encode_QRCodeEncodeController:Encode(strResult)
+end -- testBtn_OnClick
 
 function qrcode.Awake()
     this.AutoGenInit()
 
     this.Decode_QRCodeDecodeController:onQRScanFinished('+', this.OnScanResult)
-    this.Encode_QRCodeEncodeController:onQREncodeFinished('+', function(tex)
-        this.EncodeImage_RawImage.texture = tex
-    end)
+    --this.Encode_QRCodeEncodeController:onQREncodeFinished('+', function(tex)
+    --    this.EncodeImage_RawImage.texture = tex
+    --end)
 
-	--this.Back_Button.onClick:AddListener(
-	--	function()
-	--		assert(coroutine.resume(this.Back()))
-	--	end
-	--)
+end
+
+function qrcode.init(info)
+    this.info = info
 end
 
 function qrcode.AddDecodeCallback(fun)
@@ -61,23 +70,23 @@ end
 
 function qrcode.Start()
     print("qrcode.Start")
-
     this.Decode_QRCodeDecodeController:StartWork()
-
-    --assert(coroutine.resume(qrcode.coroutine_demo()))
-    this.OnScanResult("http://cn.test.qrcode")
-
 end
 
 function qrcode.OnScanResult(strResult)
     print("ScanResult: " .. strResult)
     this.DecodeResult_Text.text = strResult
-    if #strResult > 7 then -- http://
-        -- assert(coroutine.resume(this.Back()))
-        this.Encode_QRCodeEncodeController:Encode(strResult)
-
+    local head = strResult:sub(1, 7)
+    if head == "a3mkgp:" then
+        -- callback
+        if type(this.info.scanCallback) == "function" then 
+            this.info.scanCallback(strResult)
+            GameObject.DestroyImmediate(mono.gameObject)
+        end
+    else
+        -- not a valied message, try again
+        this.Decode_QRCodeDecodeController:StartWork()
     end
-    this.Decode_QRCodeDecodeController:StartWork()
 end
 
 

@@ -23,6 +23,7 @@ end
 
 local card = {
     lock = 0,
+    owner = 1, -- 1: 自己的， 2：对方的
     id = "", -- question id
     qt = "", -- question type: ab/ba
     q = "云想衣裳花想容,春风拂槛露华浓.", -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>
@@ -56,25 +57,49 @@ end
 
 function this.AnswerBtn_OnClick()
     print('AnswerBtn_OnClick')
-    local info = card.info
-    local answer
-    if info.qi > info.ai then
-        answer = string.format("%s<color=red>%s</color>", info.content[info.qi], info.content[info.ai])
+    if this.isShowAnswer then
+        this.showAnswer()
     else
-        answer = string.format("<color=red>%s</color>%s", info.content[info.ai], info.content[info.qi])
+        this.hidAnswer()
     end
-    answer = string.gsub(answer,"(,)%s*", "%1\n")
-    :gsub("(%.)%s*", "%1\n")
-            :gsub("(%?)%s*", "%1\n")
-            :gsub("(!)%s*", "%1\n")
-    :gsub("(，)%s*", "%1\n")
-    :gsub("(。)%s*", "%1\n")
-    :gsub("(？)%s*", "%1\n")
-    :gsub("(！)%s*", "%1\n")
-    :trim()
-
-    this.Text_TextVirtical.text = answer
 end -- ShowAnswerBtn_OnClick
+
+function card.showAnswer()
+    this.isShowAnswer = true
+    local info = card.info
+    local text
+    if info.qi > info.ai then
+        text = string.format("%s<color=red>%s</color>", info.content[info.qi], info.content[info.ai])
+    else
+        text = string.format("<color=red>%s</color>%s", info.content[info.ai], info.content[info.qi])
+    end
+    text = string.gsub(text,"(,)%s*", "%1\n")
+                 :gsub("(%.)%s*", "%1\n")
+                 :gsub("(%?)%s*", "%1\n")
+                 :gsub("(!)%s*", "%1\n")
+                 :gsub("(，)%s*", "%1\n")
+                 :gsub("(。)%s*", "%1\n")
+                 :gsub("(？)%s*", "%1\n")
+                 :gsub("(！)%s*", "%1\n")
+                 :trim()
+
+    this.Text_TextVirtical.text = text
+end
+
+function card.hidAnswer()
+    this.isShowAnswer = false
+    local info = card.info
+    local text = string.gsub(info.content[info.qi], "(,)%s*", "%1\n")
+        :gsub("(%.)%s*", "%1\n")
+        :gsub("(%?)%s*", "%1\n")
+        :gsub("(!)%s*", "%1\n")
+        :gsub("(，)%s*", "%1\n")
+        :gsub("(。)%s*", "%1\n")
+        :gsub("(？)%s*", "%1\n")
+        :gsub("(！)%s*", "%1\n")
+        :trim()
+    this.Text_TextVirtical.text = text
+end
 
 function card.Awake()
 	this.AutoGenInit()
@@ -84,92 +109,25 @@ local mousePreviousWorld, mouseCurrentWorld, mouseDeltaWorld;
 function card.Start()
     this.Text_TextVirtical.text = card.info.content[card.info.qi]:gsub("(，)%s*", "%1\n"):gsub("(？)%s*", "%1\n")
     --[[public enum EventTriggerType
-    --    {
-    --        /// <summary>
-    --        /// Intercepts a IPointerEnterHandler.OnPointerEnter.
-    --        /// </summary>
-    --        PointerEnter = 0,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IPointerExitHandler.OnPointerExit.
-    --        /// </summary>
-    --        PointerExit = 1,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IPointerDownHandler.OnPointerDown.
-    --        /// </summary>
-    --        PointerDown = 2,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IPointerUpHandler.OnPointerUp.
-    --        /// </summary>
-    --        PointerUp = 3,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IPointerClickHandler.OnPointerClick.
-    --        /// </summary>
-    --        PointerClick = 4,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IDragHandler.OnDrag.
-    --        /// </summary>
-    --        Drag = 5,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IDropHandler.OnDrop.
-    --        /// </summary>
-    --        Drop = 6,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IScrollHandler.OnScroll.
-    --        /// </summary>
-    --        Scroll = 7,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IUpdateSelectedHandler.OnUpdateSelected.
-    --        /// </summary>
-    --        UpdateSelected = 8,
-    --
-    --        /// <summary>
-    --        /// Intercepts a ISelectHandler.OnSelect.
-    --        /// </summary>
-    --        Select = 9,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IDeselectHandler.OnDeselect.
-    --        /// </summary>
-    --        Deselect = 10,
-    --
-    --        /// <summary>
-    --        /// Intercepts a IMoveHandler.OnMove.
-    --        /// </summary>
-    --        Move = 11,
-    --
-    --        /// <summary>
-    --        /// Intercepts IInitializePotentialDrag.InitializePotentialDrag.
-    --        /// </summary>
-    --        InitializePotentialDrag = 12,
-    --
-    --        /// <summary>
-    --        /// Intercepts IBeginDragHandler.OnBeginDrag.</
-    --        /// </summary>
-    --        BeginDrag = 13,
-    --
-    --        /// <summary>
-    --        /// Intercepts IEndDragHandler.OnEndDrag.
-    --        /// </summary>
-    --        EndDrag = 14,
-    --
-    --        /// <summary>
-    --        /// Intercepts ISubmitHandler.Submit.
-    --        /// </summary>
-    --        Submit = 15,
-    --
-    --        /// <summary>
-    --        /// Intercepts ICancelHandler.OnCancel.
-    --        /// </summary>
-    --        Cancel = 16
-    --    }]]
+    {
+            PointerEnter = 0,/// Intercepts a IPointerEnterHandler.OnPointerEnter.
+            PointerExit = 1,/// Intercepts a IPointerExitHandler.OnPointerExit.
+            PointerDown = 2,/// Intercepts a IPointerDownHandler.OnPointerDown.
+            PointerUp = 3,/// Intercepts a IPointerUpHandler.OnPointerUp.
+            PointerClick = 4,/// Intercepts a IPointerClickHandler.OnPointerClick.
+            Drag = 5,/// Intercepts a IDragHandler.OnDrag.
+            Drop = 6,/// Intercepts a IDropHandler.OnDrop.
+            Scroll = 7,/// Intercepts a IScrollHandler.OnScroll.
+            UpdateSelected = 8,/// Intercepts a IUpdateSelectedHandler.OnUpdateSelected.
+            Select = 9,/// Intercepts a ISelectHandler.OnSelect.
+            Deselect = 10,/// Intercepts a IDeselectHandler.OnDeselect.
+            Move = 11,/// Intercepts a IMoveHandler.OnMove.
+            InitializePotentialDrag = 12,/// Intercepts IInitializePotentialDrag.InitializePotentialDrag.
+            BeginDrag = 13,/// Intercepts IBeginDragHandler.OnBeginDrag.
+            EndDrag = 14,/// Intercepts IEndDragHandler.OnEndDrag.
+            Submit = 15,/// Intercepts ISubmitHandler.Submit.
+            Cancel = 16 /// Intercepts ICancelHandler.OnCancel.
+    }]]
     local tr = gameObject:GetComponent(typeof(EventTrigger)) 
     if tr == nil then tr = gameObject:AddComponent(typeof(EventTrigger)) end
     local et = EventTrigger.Entry()
