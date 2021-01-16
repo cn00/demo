@@ -30,10 +30,11 @@ end
 
 local EditorGUI = CS.UnityEditor.EditorGUI
 local EditorGUILayout = CS.UnityEditor.EditorGUILayout
+local Draw
 ---Draw
 ---@param self table
 ---@param opt table
-local function Draw(self, opt)
+local function _Draw(self, opt)
 	opt = opt or {ltname = "t", indent = 0}
 	if self == nil then
 		return;
@@ -51,8 +52,10 @@ local function Draw(self, opt)
 	if(type(Foldout) ~= "boolean")then Foldout = false end
 	Foldout = EditorGUILayout.Foldout(Foldout, name .. ": " .. tostring(self), true);
 	rawset(self, "Foldout", Foldout);
-	if (Foldout) then
-		-- rawset(self, "Drawed", true);
+	local isdrawed = rawget(self, "__Drawed");
+	if (Foldout and not isdrawed) then
+		 rawset(self, "__Drawed", true);
+		
 		local drawv = function(k, v)
 			-- print("drawv_" .. tostring(k), type(v))
 			local typev = type(v)
@@ -110,15 +113,15 @@ local function Draw(self, opt)
 				if (vtype == "table") then
 					local t = v;
 					rawset(t, "Name", kk);
-					-- local Drawed = t["Drawed"] or false;
-					-- if(not Drawed) then
+					local isdrawed2 = rawget(t, "__Drawed");
+					if(not isdrawed2) then
 						--  t.RawSet("Drawed", true);
 						opt.ltname = kk
 						opt.indent = 1
 						Draw(t , opt);
-					-- else
-					-- 	EditorGUILayout.LabelField(kk .. "->" .. tostring(t));
-					-- end
+					else
+					 	EditorGUILayout.LabelField(kk .. "->" .. tostring(t));
+					end
 				else -- number string boolean function userdata
 					if (kk == "Foldout" or kk == "Name") or (grep ~= nil and kk:find(grep) == nil and tostring(v):find(grep) == nil) then
 						goto continue;
@@ -146,12 +149,12 @@ local function Draw(self, opt)
 						Draw(t , opt);
 					else
 						if umeta ~= nil then
-							if type(umeta) == "table" then 
-								opt.ltname = "_ud_meta"
-								opt.indent = 1
-								Draw(t , opt);
-							end
-						else
+						--	if type(umeta) == "table" then 
+						--		opt.ltname = "_ud_meta"
+						--		opt.indent = 1
+						--		_Draw(umeta , opt);
+						--	end
+						--else
 							EditorGUILayout.BeginHorizontal()
 							do
 								EditorGUILayout.LabelField("_ud_meta");
@@ -170,7 +173,7 @@ local function Draw(self, opt)
 				if type(meta) == "table" then
 					opt.ltname = "__meta"
 					opt.indent = 1
-					Draw(t , opt);
+					Draw(meta, opt);
 				else
 					EditorGUILayout.BeginHorizontal()
 					do
@@ -184,6 +187,17 @@ local function Draw(self, opt)
 		-- rawset(self, "Drawed", false);
 	end
 	EditorGUI.indentLevel = EditorGUI.indentLevel - opt.indent;
+end
+local function CleanDrawedFlag(self)
+	if type(self) == "table" then
+		if rawget(self, "__Drawed") then
+			rawset(self, "__Drawed", undef)
+		end
+	end
+end
+function Draw(self, opt)
+	_Draw(self, opt)
+	CleanDrawedFlag(self)
 end
 BridgingClass.Draw = Draw
 
