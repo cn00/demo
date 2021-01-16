@@ -47,7 +47,9 @@ end
 function qrcode.init(info)
     this.info = info
 end
-
+function qrcode.stateToSave()
+    return this.info
+end
 function qrcode.AddDecodeCallback(fun)
     this.Decode_QRCodeDecodeController:onQRScanFinished('+', fun)
 end

@@ -92,13 +92,28 @@ function match.playerAnswer(idx, tp)
             owner = card.owner 
         }
     }
-    if this.tp == 0 and idx == this.currentIdx then
-        this.scoreA = this.scoreA + 1
+
+    if tp == this.tp then
+        this.Client.ClientSend(msg)
+
+        if idx == this.currentIdx then
+            this.scoreA = this.scoreA + 1
+        else
+            match.poetryList[this.currentIdx].Lua.hidAnswer() -- 
+            this.scoreB = this.scoreB + 1
+            if card.owner == 1 then
+                -- TODO: 罚牌
+            end
+        end
     else
-        match.poetryList[this.currentIdx].Lua.hidAnswer()
-        this.scoreB = this.scoreB + 1
-        if card.owner == 1 then
-            -- TODO: 罚牌
+        if idx == this.currentIdx then
+            this.scoreB = this.scoreB + 1
+        else
+            match.poetryList[this.currentIdx].Lua.hidAnswer()
+            this.scoreA = this.scoreA + 1
+            if card.owner == 1 then
+                -- TODO: 罚牌
+            end
         end
     end
     
@@ -115,30 +130,44 @@ function match.playerAnswer(idx, tp)
     end
     
     this.scoreText_Text.text = string.format("%s:%s", this.scoreA, this.scoreB)
-    
-    if tp == this.tp then this.Client.ClientSend(msg) end
 
-    if this.tp == 0 then match.nextRound() end
+    if #this.availableIdxsA < 1 or #this.availableIdxsB < 1 then
+        this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
+        xutil.coroutine_call(function()
+            yield_return(UnityEngine.WaitForSeconds(10))
+            manager.Scene.push("poetry/index/index.prefab", nil, true)
+        end)
+    else
+        if this.tp == 0 then match.nextRound() end
+    end
 end
 
 function match.nextRound()
-    this.roundAnswer = -1
-    match.roundStartTime = UnityEngine.Time.time
-    local i = math.random(1, #this.availableIdxs)
-    this.currentIdx = this.availableIdxs[i]
-    this.round = #this.poetryList - #this.availableIdxs
-    local card = this.poetryList[this.currentIdx]
-    card.Lua.showAnswer()
-    this.question_Text.text = card.content[card.qi]
+    if #this.availableIdxsA < 1 or #this.availableIdxsB < 1 then
+        this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
+        xutil.coroutine_call(function()
+            yield_return(UnityEngine.WaitForSeconds(10))
+            manager.Scene.pop()
+        end)
+    else
+        this.roundAnswer = -1
+        match.roundStartTime = UnityEngine.Time.time
+        local i = math.random(1, #this.availableIdxs)
+        this.currentIdx = this.availableIdxs[i]
+        this.round = #this.poetryList - #this.availableIdxs
+        local card = this.poetryList[this.currentIdx]
+        card.Lua.showAnswer()
+        this.question_Text.text = card.content[card.qi]
 
-    local msgtopartner = {
-        type = "next_round",
-        body = {
-            currentIdx=this.currentIdx,
-            round = this.round
-        },
-    }
-    this.Client.ClientSend(msgtopartner)
+        local msgtopartner = {
+            type = "next_round",
+            body = {
+                currentIdx=this.currentIdx,
+                round = this.round
+            },
+        }
+        this.Client.ClientSend(msgtopartner)
+    end
 end
 
 ---throwCard 罚牌, 将一张牌调换阵营
