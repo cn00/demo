@@ -223,10 +223,13 @@ end
 function card.OnClick(eventData)
     -- TODO: post msg to match
     if card.info.match.roundAnswer == -1 then
-       card.info.match.myAnswer(card.info.idx)
+        card.info.match.playerAnswer(card.info.idx, card.info.match.tp)
     end
     
     --print("OnClick", p, eventData)
+end
+
+function card.hid()
     --this.Animator:ResetTrigger("tremble_out")
     this.Animator:Play("tremble_out")
 end

@@ -49,14 +49,16 @@ end
 function this.joinGame_OnClick()
     uiroot:SetActive(false)
     local openMatch = function(url)
-        print("openMatch", url)
+        local stringx require("stringx")
+        local hostInfo = url:split( ":")
+        print("openMatch", url, hostInfo)
         local args = {
             tp = 1, -- 0:主场， 1:客场, 2:观众, 暂定为客场，建立连接后再判定是否为观众
-            host = url,
+            hostInfo = hostInfo,
         }
         manager.Scene.push("poetry/match/match.prefab", args, true)
     end
-    manager.Scene.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, false)
+    manager.Scene.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, true)
 end -- joinGame_OnClick
 
 function this.newGame_OnClick()

@@ -14,6 +14,7 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
 local xutil = require "xlua.util"
 local socket = require("socket.socket")
+local manager = G.AppGlobal.manager
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
 	mono:YieldAndCallback(to_yield, callback)
@@ -53,12 +54,15 @@ function client.ClientConnectToServer(ip, port, callback)
 	xutil.coroutine_call(function ()
 		this.connect_stat = conn_stat.connecting
 		local retrycount = 0
-		while (this.connect_stat == conn_stat.connecting and retrycount < 10) do
+		while (this.connect_stat == conn_stat.connecting and retrycount < 3) do
 			print("try connect ...", retrycount)
 			retrycount = 1 + retrycount
-			local conn, err = socket.connect(ip, port)
+			local tcp = socket.tcp()
+			tcp:settimeout(2)
+			local conn, err = tcp:connect(ip, port)
+			print("conn", tcp, conn, err)
 			if err == nil and conn then
-				this.conn = conn
+				this.conn = tcp
 				this.connect_stat = conn_stat.connected
 				print("<color=green>connected to server ok</color>.")
 				-- else if err == "connection refused" then
@@ -68,37 +72,43 @@ function client.ClientConnectToServer(ip, port, callback)
 			end
 			yield_return(UnityEngine.WaitForSeconds(0.3))
 		end -- while
-		client.ClientStartReceiveLoop()
+		if this.conn ~= nil then
+			client.ClientStartReceiveLoop()
+		else
+			print("can not connect the host", ip, port)
+		end
 	end)
 end
 
 function client.ClientStartReceiveLoop()
 	print('ClientStartReceiveLoop')
-	while true
-	do
-		local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
-		-- print("canread", #canread, #this.client)
-		for _, c in ipairs(canread) do
-			c:settimeout(0.1)
-			local line, err = c:receive("*l")
-			--print("<color=red>client receive</color>", #line, line:gsub("[\0-\13]",""), err)
+	xutil.coroutine_call(function ()
+		while true do
+			local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
+			-- print("canread", #canread, #this.client)
+			for _, c in ipairs(canread) do
+				c:settimeout(0.1)
+				local line, err = c:receive("*l")
+				--print("<color=red>client receive</color>", #line, line:gsub("[\0-\13]",""), err)
 
-			if not err then
-				client.ClientOnReceiveMsg(line)
-			elseif(err == "closed")then
-				this.connect_stat = conn_stat.offline
-				c:close()
-			else
-				c:send("___ERRORPC "..err..tostring(c)..  "\n")
+				if not err then
+					client.ClientOnReceiveMsg(line)
+				elseif(err == "closed")then
+					this.connect_stat = conn_stat.offline
+					c:close()
+					manager.Scene.pop()
+				else
+					c:send("___ERRORPC "..err..tostring(c)..  "\n")
+				end
+				::continue::
 			end
-			::continue::
+			yield_return(UnityEngine.WaitForSeconds(0.3))
 		end
-
-		yield_return(UnityEngine.WaitForSeconds(0.3))
-	end
+	end)
 end
 
 function client.ClientOnReceiveMsg(msgs)
+	print("ClientOnReceiveMsg", msgs)
 	local f = load(msgs)
 	if f then
 		local msgt = f()

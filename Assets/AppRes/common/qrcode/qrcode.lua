@@ -81,7 +81,7 @@ function qrcode.OnScanResult(strResult)
         -- callback
         if type(this.info.scanCallback) == "function" then 
             this.info.scanCallback(strResult)
-            GameObject.DestroyImmediate(mono.gameObject)
+            GameObject.DestroyImmediate(gameObject)
         end
     else
         -- not a valied message, try again

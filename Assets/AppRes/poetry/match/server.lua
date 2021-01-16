@@ -30,12 +30,18 @@ local server = {
 	tcpServer = nil, -- tcpServer
 	tcpClients = {}, -- tcpClients
 	clientsInfo = {}, -- clients info: client = {status, id, tcp}
+	conn_stat = {
+		offline = 0,
+		connecting = 1,
+		connected = 2,
+	},
 }
 local this = server
 
 ---ServerStart 
 function server.ServerStart()
 	local port= server.ServerPort
+	print("<color=red>ServerStart", port)
 	local tcp, err = socket.bind("*", port)
 	if err == nil then
 		server.tcpServer = tcp
@@ -66,7 +72,7 @@ function server.ServerStartAcceptLoop()
 				}
 				server.clientsInfo[client] = cinfo
 				print("accept client", client, #server.tcpClients)
-				client:send("wellcom "..tostring(client).."\n")
+				--client:send("wellcom "..tostring(client).."\n")
 				client:send("return ")
 				client:send(xutil.dump({ type="login", body = cinfo }))
 				client:send("\n")
@@ -84,6 +90,7 @@ end
 
 function server.ServerStartReceiveLoop()
 	xutil.coroutine_call(function()
+		print("serving for clients ...")
 		while true do
 			local canread, sendt, status = socket.select(this.tcpClients, nil, 0.001)
 			-- print("canread", #canread, #this.client)
@@ -94,9 +101,9 @@ function server.ServerStartReceiveLoop()
 				if not err then
 					server.ServerOnReceiveMsg(c, line)
 				elseif(err == "closed")then
-					this.connect_stat = conn_stat.offline
 					c:close()
 					-- this.ondisconnect( c )
+					this.connect_stat = this.conn_stat.offline
 				else
 					c:send("server receive __ERROR__".. err .. tostring(c))
 				end
