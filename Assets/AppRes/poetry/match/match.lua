@@ -20,6 +20,7 @@ local util = require "lua.utility.util"
 local socket = require("socket.socket")
 local sqlite = require("lsqlite3")
 local manager = G.AppGlobal.manager
+local dbpath = AssetSys.CacheRoot .. "db.db";
 
 
 local manager = AppGlobal.manager
@@ -142,6 +143,31 @@ function match.playerAnswer(idx, tp)
     end
 end
 
+function match.saveResult()
+    local db = sqlite.open(dbpath)
+    local na, a, nb, b, date 
+        = 'na', this.scoreA, 'nb', this.scoreB, os.date("%Y-%m-%d %H:%M:%S")
+    local sql = string.format([[
+        CREATE TABLE IF NOT EXISTS "history" (
+            "id"	INTEGER NOT NULL UNIQUE,
+            "a"	INTEGER NOT NULL DEFAULT 0,
+            "b"	INTEGER NOT NULL DEFAULT 0,
+            "na"	TEXT,
+            "nb"	TEXT,
+            "date"	TEXT NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
+        insert into "history" (na, a, nb, b, date) 
+        VALIES ('%s', '%s', '%s', '%s', '%s')
+    ]], na, a, nb, b, date) --os.date("%Y-%m-%d %H:%M:%S",os.time())
+    local errn = db:exec(sql)
+    if errn ~= sqlite.OK then
+        print("saveResult err", db:errmsg())
+    else
+        print("saveResult ok",  na, a, nb, b, date)
+    end
+end
+
 function match.nextRound()
     if #this.availableIdxsA < 1 or #this.availableIdxsB < 1 then
         this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
@@ -176,7 +202,6 @@ function match.throwCard(role)
 
 end
 
-local dbpath = AssetSys.CacheRoot .. "db.db"; -- TODO: fixed db path
 ---getPoetryIds
 ---@param count number
 ---@param filter string sql conditions where where
