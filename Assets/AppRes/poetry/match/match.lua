@@ -368,7 +368,11 @@ function match.OnReceiveMsg(msgt)
             match.poetryList = match.getPoetryByIds(poetryIdList)
             match.distributeCard(match.poetryList)
 
-            --[LUA] [client]	ClientSend	{body = {cardsInfo = {{idx = 1,qi = 3,ai = 2,},{idx = 2,qi = 9,ai = 8,},{idx = 3,qi = 1,ai = 2,},{idx = 4,qi = 8,ai = 9,},{idx = 5,qi = 4,ai = 3,},{idx = 6,qi = 7,ai = 8,},{idx = 7,qi = 1,ai = 2,},{idx = 8,qi = 6,ai = 7,},{idx = 9,qi = 9,ai = 8,},{idx = 10,qi = 1,ai = 2,},{idx = 11,qi = 1,ai = 2,},{idx = 12,qi = 2,ai = 1,},{idx = 13,qi = 2,ai = 1,},{idx = 14,qi = 14,ai = 15,},{idx = 15,qi = 25,ai = 24,},{idx = 16,qi = 1,ai = 2,},{idx = 17,qi = 4,ai = 3,},{idx = 18,qi = 2,ai = 1,},{idx = 19,qi = 4,ai = 3,},{idx = 20,qi = 2,ai = 1,},{idx = 21,qi = 4,ai = 3,},{idx = 22,qi = 3,ai = 2,},{idx = 23,qi = 1,ai = 2,},{idx = 24,qi = 16,ai = 15,},{idx = 25,qi = 3,ai = 2,},{idx = 26,qi = 1,ai = 2,},{idx = 27,qi = 4,ai = 5,},{idx = 28,qi = 1,ai = 2,},{idx = 29,qi = 1,ai = 2,},{idx = 30,qi = 1,ai = 2,},{idx = 31,qi = 1,ai = 2,},{idx = 32,qi = 2,ai = 1,},{idx = 33,qi = 12,ai = 11,},{idx = 34,qi = 1,ai = 2,},{idx = 35,qi = 4,ai = 3,},{idx = 36,qi = 2,ai = 3,},{idx = 37,qi = 6,ai = 5,},{idx = 38,qi = 1,ai = 2,},{idx = 39,qi = 7,ai = 6,},{idx = 40,qi = 1,ai = 2,},{idx = 41,qi = 4,ai = 3,},{idx = 42,qi = 1,ai = 2,},{idx = 43,qi = 1,ai = 2,},{idx = 44,qi = 2,ai = 1,},{idx = 45,qi = 2,ai = 1,},{idx = 46,qi = 2,ai = 1,},{idx = 47,qi = 1,ai = 2,},{idx = 48,qi = 4,ai = 5,},{idx = 49,qi = 2,ai = 1,},{idx = 50,qi = 1,ai = 2,},},poetryIdList = {10,14,33,67,71,109,126,154,167,566,1230,1417,1775,1782,1845,1889,2504,2784,2845,2870,3524,4745,5124,5256,5480,5585,5770,5773,5775,5786,5796,5957,6432,6441,7100,7727,7739,7753,7757,7768,7807,7822,7826,7827,7833,8050,8347,8488,8493,8663,},youAreMyOpponent = "true",},type = "distribute_card",}
+            --[[{body = {
+                cardsInfo = {{idx = 1,qi = 3,ai = 2,},,...},
+                poetryIdList = {10,14,33,...},youAreMyOpponent = "true",},
+                type = "distribute_card",}
+            ]]
             local ci = body.cardsInfo
             for i, v in ipairs(this.poetryList) do
                 v.idx = ci[i].idx
@@ -444,8 +448,8 @@ end
 --	["star"] = 330,
 --	["poet_name"] = "佚名",
 --	["dynasty"] = "先秦",
---	["about"] = "《毛诗序》以为是赞美文王的教化在汝坟这个国家施行的很好，妇人能劝诫丈夫尽力正直卫国而流传下来的民歌。但是近人大多认为这是妻子挽留久役归来的征夫而唱的诗歌。",
---	["fanyi"] = "注释⑴遵：循，沿。汝：汝河，源出河南省。坟（fén）：水涯，大堤。⑵条枚：山楸树。一说树干（枝曰条，干曰枚）。⑶君子：此指在外服役或为官的丈夫。⑷惄（nì）：饥，一说忧愁。调（zhōu）：又作“輖”，“朝”（鲁诗此处作“朝”字），早晨。调饥：早上挨饿，以喻男女欢情未得满足。⑸肄（yì）：树砍后再生的小枝。⑹遐（xiá）：远。⑺鲂（fánɡ）鱼：鳊鱼。赬（chēng成）：浅红色。⑻毁（huǐ）：火，齐人谓火为毁。如火焚一样。⑼孔：甚。　迩（ěr）：近，此指迫近饥寒之境。",
+--	["about"] = "《毛诗序》以为是赞美文王的教化在汝坟这个国家施行的很好，...",
+--	["fanyi"] = "注释⑴遵：循，沿。汝：汝河，源出河南省。坟（fén）：...",
 --	["tags"] = "诗经|思念",
 --}]]
 --- 发牌
