@@ -79,7 +79,7 @@ function this.co_init_lfbs()
 	this.lfb = lfb
 	for i,v in ipairs(bfbs_names) do
 		local obj
-		yield_return(CS.AssetSys.Instance:GetAsset(v, function(asset)
+		yield_return(CS.AssetSys.GetAsset(v, function(asset)
 			obj = asset.bytes
 			-- print(v, (asset:GetType()), #obj, obj:gsub("[\0-\13]",""))
 		end))

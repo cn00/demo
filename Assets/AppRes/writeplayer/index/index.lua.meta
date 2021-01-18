@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bba0288b178f148dbb9fad142bda5e65
+guid: 93a0f26d5494346ed8e9a4e0425a23cd
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
   userData: 
-  assetBundleName: 
+  assetBundleName: writeplayer/index.bd
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

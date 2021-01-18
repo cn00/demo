@@ -27,7 +27,7 @@ function login.OpenTest(...)
 		function()
 			local obj = nil
 			yield_return(
-				CS.AssetSys.Instance:GetAsset(
+				CS.AssetSys.GetAsset(
 					"ui/test/test.prefab",
 					function(asset)
 						obj = asset

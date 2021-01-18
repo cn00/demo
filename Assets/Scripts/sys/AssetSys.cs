@@ -202,11 +202,11 @@ public class AssetSys : SingleMono<AssetSys>
 
                 mCacheRoot = Application.dataPath + "/../" + cacheDirName;
                 #else //!UNITY_EDITOR
-#   if UNITY_ANDROID || UNITY_IPHONE
+                #if UNITY_ANDROID || UNITY_IPHONE
                 mCacheRoot = Application.persistentDataPath + "/" + cacheDirName;
-#   else // UNITY_WINDOWS
+                #else // UNITY_WINDOWS
                 mCacheRoot = Application.streamingAssetsPath + "/" + cacheDirName;
-#   endif
+                #endif
                 #endif
             }
 
@@ -309,7 +309,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// <summary>
     /// 同步方式加载资源, 用于加载少量小型资源
     /// </summary>
-    public T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
+    public static T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
     {
         #if UNITY_EDITOR
         var UseBundle = BuildConfig.Instance().UseBundle;
@@ -355,17 +355,21 @@ public class AssetSys : SingleMono<AssetSys>
             return bundle.LoadAsset<UnityEngine.Object>(assetSubPath);
         }
         
-        object asset;
-        #if UNITY_ANDROID && !UNITY_EDITOR 
-        var fullpath = "file://" + Application.streamingAssetsPath + "/" + assetSubPath;
-        www = UnityWebRequest.Get(fullpath);
-        www.timeout = 9;
-        www.SendWebRequest();
-        while (!www.isDone)// && !www.isNetworkError) //(DateTime.Now - tstart).Seconds > Math.Min(120, www.timeout))
+        object asset = null;
+        #if UNITY_ANDROID && !UNITY_EDITOR
         {
-            Thread.Sleep(100);
+            var fullpath = Application.streamingAssetsPath + "/" + assetSubPath;
+            Debug.Log($"GetStreamingAsset:{fullpath}");
+            www = UnityWebRequest.Get(fullpath);
+            www.timeout = 9;
+            www.SendWebRequest();
+            while (!www.isDone) // && !www.isNetworkError) //(DateTime.Now - tstart).Seconds > Math.Min(120, www.timeout))
+            {
+                Thread.Sleep(100);
+            }
+
+            asset = www.downloadHandler.text;
         }
-        asset = www.downloadHandler.text;
         #else
         if (File.Exists(Application.streamingAssetsPath + "/" + assetSubPath))
         {
@@ -373,7 +377,7 @@ public class AssetSys : SingleMono<AssetSys>
             return asset;
         }
         #endif
-        return null;
+        return asset;
     }
 
     public static string GetBundlePath(string assetSubPath)
@@ -394,12 +398,12 @@ public class AssetSys : SingleMono<AssetSys>
     /// <summary>
     /// 异步方式加载资源, 以加载后的 (Object)res 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
+    public static IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
     {
         yield return GetAsset<UnityEngine.Object>(assetSubPath, callBack);
     }
 
-    public IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
+    public static IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
         T resObj = null; //default(T);
         
@@ -423,10 +427,10 @@ public class AssetSys : SingleMono<AssetSys>
 
     public static UnityEngine.Object GetAssetSync(string assetPath)
     {
-        return Instance.GetAssetSync<UnityEngine.Object>(assetPath);
+        return GetAssetSync<UnityEngine.Object>(assetPath);
     }
 
-    public AssetBundle GetBundleSync(string bundlePath)
+    public static AssetBundle GetBundleSync(string bundlePath)
     {
         if (string.IsNullOrEmpty(bundlePath))
         {
@@ -435,7 +439,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         AssetBundle bundle = null;
-        if (!mLoadedBundles.TryGetValue(bundlePath, out bundle))
+        if (!Instance.mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
             var cachePath = CacheRoot + bundlePath;
             if (File.Exists(cachePath))
@@ -450,7 +454,7 @@ public class AssetSys : SingleMono<AssetSys>
 
         if (bundle != null)
         {
-            mLoadedBundles[bundlePath] = bundle;
+            Instance.mLoadedBundles[bundlePath] = bundle;
         }
         else
         {
@@ -463,7 +467,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// AssetBundle 加载, 自动处理更新和依赖, 
     /// 以加载后的 AssetBundle 为参数调用 callBack 
     /// </summary>
-    public IEnumerator GetBundle(string bundlePath, Action<UnityEngine.AssetBundle> callBack = null)
+    public static IEnumerator GetBundle(string bundlePath, Action<UnityEngine.AssetBundle> callBack = null)
     {
         if (string.IsNullOrEmpty(bundlePath))
         {
@@ -472,10 +476,10 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         // Dependencies
-        if (mManifest != null) // 加载 manifest 时本身为空
+        if (Instance.mManifest != null) // 加载 manifest 时本身为空
         {
             AppLog.d(Tag, "GetAllDependencies for {0}", bundlePath);
-            var deps = mManifest.GetAllDependencies(bundlePath);
+            var deps = Instance.mManifest.GetAllDependencies(bundlePath);
             foreach (var i in deps)
             {
                 AppLog.d(Tag, "Dependencies: {0} +> {1}", bundlePath, i);
@@ -484,7 +488,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         AssetBundle bundle = null;
-        if (mLoadedBundles.TryGetValue(bundlePath, out bundle))
+        if (Instance.mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
             if (callBack != null)
                 callBack(bundle);
@@ -497,8 +501,8 @@ public class AssetSys : SingleMono<AssetSys>
 
         var isLocal = true;
         var needUpdate = UpdateSys.Instance.NeedUpdate(bundlePath);
-        var outStream = new FileStream(cachePath, FileMode.OpenOrCreate);
-        if (!File.Exists(cachePath) || outStream.Length == 0 || needUpdate)
+        var fi = new FileInfo(cachePath);
+        if (!fi.Exists || fi.Length == 0 || needUpdate)
         {
             isLocal = false;
             fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
@@ -513,41 +517,42 @@ public class AssetSys : SingleMono<AssetSys>
         {
             var lzmapath = cachePath + BuildConfig.CompressedExtension;
             yield return Download(fileUrl, lzmapath);
-            FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
-            var thread = new Thread(() => { BundleHelper.DecompressFileLZMA(lzmaStream, outStream); });
-            thread.Start();
-            while (thread.IsAlive)
-            {
-                AppLog.d(Tag, "解压中。。。{0}", fileUrl);
-                yield return new WaitForSeconds(0.3f);
-            }
-
-            if (IsLoaded(bundlePath))
-            {
-                UnloadBundle(bundlePath);
-            }
-
-            lzmaStream.Close();
+            // FileStream lzmaStream = new FileStream(lzmapath, FileMode.Open);
+            // var thread = new Thread(() => { BundleHelper.DecompressFileLZMA(lzmaStream, outStream); });
+            // thread.Start();
+            // while (thread.IsAlive)
+            // {
+            //     AppLog.d(Tag, "解压中。。。{0}", fileUrl);
+            //     yield return new WaitForSeconds(0.3f);
+            // }
+            //
+            // if (IsLoaded(bundlePath))
+            // {
+            //     UnloadBundle(bundlePath);
+            // }
+            // lzmaStream.Close();
+            
         }
-
-        mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
+        var outStream = new FileStream(cachePath, FileMode.Open);
+        Instance.mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
         outStream.Close();
 
 
         if (callBack != null)
-            callBack(mLoadedBundles[bundlePath]);
+            callBack(Instance.mLoadedBundles[bundlePath]);
 
         yield return null;
     }
 
 
-    public static IEnumerator Download(string url, string path = null, Action<FileStream> cb = null)
+    public static IEnumerator Download(string url, string path = null, Action<FileStream> cb = null, Action<string> processingcb = null)
     {
         if (path == null)
             path = Path.GetTempPath() + Path.GetTempFileName();
         if (!url.StartsWith("http"))
         {
-            url = WebRoot + url;
+            var version = BuildConfig.Instance().Version.ToString();
+            url = WebRoot + PlatformName() + "/" + version + "/" + url;
         }
 
         var cachDir = path.Substring(0, path.LastIndexOf('/'));
@@ -586,12 +591,16 @@ public class AssetSys : SingleMono<AssetSys>
         }
         catch (WebException we)
         {
-            AppLog.e(Tag, we.Dump());
-            DialogSys.Alert(we.Message, "Error: " + url);
+            File.Delete((path + ".tmp"));
+            AppLog.e(Tag, "Error: " + url, we.Message, we.Dump());
+            DialogSys.Alert(we.Message + we.StackTrace, url);
+            yield break;
         }
         catch (Exception e)
         {
+            File.Delete((path + ".tmp"));
             Debug.LogFormat(e.Message);
+            yield break;
         }
 
         int bufsize = 10 * 1024 * 1024; // 10M
@@ -614,11 +623,15 @@ public class AssetSys : SingleMono<AssetSys>
 
         while (thread.IsAlive)
         {
-            LuaSys.Instance.GlobalEnv.Global.Set("LoadingString", string.Format(" {0:F}/{1:F}M [{2}]\n{3}"
-                , downloadedLength * 1.0 / (1024 * 1024)
-                , totalLength * 1.0 / (1024 * 1024), readSize, url));
+            var msg = string.Format(" {0:0.00}/{1:0.00}M [{2}]"
+                                      , 1f*downloadedLength / (1024 * 1024)
+                                      , 1f*totalLength      / (1024 * 1024)
+                                      , readSize);
+            LuaSys.Instance.GlobalEnv.Global.Set("LoadingString", msg);
             LuaSys.Instance.GlobalEnv.Global.Set("LoadingValue", 1.0f * downloadedLength / totalLength);
-            yield return new WaitForSeconds(0.3f);
+            if(processingcb != null)
+                processingcb(msg);
+            yield return new WaitForSeconds(0.5f);
         }
 
         temfs.Flush(true);
@@ -628,7 +641,8 @@ public class AssetSys : SingleMono<AssetSys>
         temfs.Close();
 
         //下载完成重命名
-        File.Move(path + ".tmp", path);
+        // File.Move(path + ".tmp", path);
+        File.WriteAllBytes(path, File.ReadAllBytes(tmpPath));
         File.Delete((path + ".tmp"));
 
         UpdateCachInfo(path, heads.Get("ETag"), contentLength);

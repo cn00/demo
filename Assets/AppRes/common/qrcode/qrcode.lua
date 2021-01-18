@@ -4,6 +4,7 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local xutil = require "xlua.util"
+local manager = AppGlobal.manager
 
 local qrcode = {
     info = {}, --
@@ -17,6 +18,8 @@ end)
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
+    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
     this.Decode_QRCodeDecodeController = Decode:GetComponent(typeof(CS.QRCodeDecodeController))
     this.DecodeResult_Text = DecodeResult:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.DeviceCamera_DeviceCameraController = DeviceCamera:GetComponent(typeof(CS.DeviceCameraController))
@@ -27,6 +30,10 @@ function this.AutoGenInit()
     this.testBtn_Button.onClick:AddListener(this.testBtn_OnClick)
 end
 --AutoGenInit End
+
+function this.BackBtn_OnClick()
+    manager.Scene.push("poetry/index/index.prefab", nil, true)
+end -- BackBtn_OnClick
 
 function this.testBtn_OnClick()
     local strResult = this.DecodeResult_Text.text
@@ -96,7 +103,7 @@ function qrcode.Back()
     return coroutine.create(function()
         yield_return(CS.UnityEngine.WaitForSeconds(0.3))
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+        yield_return(CS.AssetSys.GetAsset("ui/test/test.prefab", function(asset)
             obj = asset
         end))
         local gameObj = GameObject.Instantiate(obj)

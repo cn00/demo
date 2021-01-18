@@ -6,6 +6,10 @@
 
 local unpack = unpack or table.unpack
 
+---async_to_sync
+---@param async_func function
+---@param callback_pos number
+---@return function
 local function async_to_sync(async_func, callback_pos)
     return function(...)
         local _co = coroutine.running() or error ('this function must be run in coroutine')

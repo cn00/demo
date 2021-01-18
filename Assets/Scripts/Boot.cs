@@ -9,8 +9,6 @@ using UnityEngine.Video;
 public class Boot : SingleMono<Boot>
 {
     const string Tag = "Boot";
-
-    public LuaMonoBehaviour bootLua;
     
     public override void Awake()
     {
@@ -34,24 +32,25 @@ public class Boot : SingleMono<Boot>
         yield return AssetSys.Instance.Init();
 
         yield return LuaSys.Instance.Init() ;
-
         
-        yield return AssetSys.Instance.GetAsset<TextAsset>("lua/utility/xlua/util.lua");
-
-        
-        // yield return AssetSys.Instance.GetAsset<TextAsset>("ui/boot/boot.lua", asset => {
-        //     var lua = gameObject.AddComponent<LuaMonoBehaviour>();
-        //     lua.LuaPath = "ui/boot/boot.lua";
-        //     lua.SetLua(bootLua);
-        //     lua.enabled = true;
-        // });
-        bootLua.enabled = true;
+        // download boot res
+        {
+            yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
+            yield return AssetSys.GetAsset("lua/utility/util.lua");
+            yield return AssetSys.GetAsset("common/root/root.prefab");
+        }
         
         yield return base.Init();
     }
 
-    private void Update()
+    void Start()
     {
-        
+        StartCoroutine(AssetSys.GetAsset<GameObject>("common/root/root.prefab", asset =>{
+            var obj = GameObject.Instantiate(asset);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.eulerAngles = Vector3.zero;
+       }));
     }
+
+    private void Update(){}
 }

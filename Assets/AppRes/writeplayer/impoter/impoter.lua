@@ -31,7 +31,7 @@ function import.Submit(...)
 		function()
 			local obj = nil
 			yield_return(
-				CS.AssetSys.Instance:GetAsset(
+				CS.AssetSys.GetAsset(
 					"ui/test/test.prefab",
 					function(asset)
 						obj = asset
@@ -97,7 +97,7 @@ function import.Awake()
 
 		--util.coroutine_call(function()
 			local insert_stmt = assert( this.db:prepare("INSERT INTO item (url, name, text, cpath) values (?,?,?,?)") )
-			--yield_return(AssetSys.Instance:GetAsset("writeplayer/impoter/insert.sql", function (asset)
+			--yield_return(AssetSys.GetAsset("writeplayer/impoter/insert.sql", function (asset)
 			--	sqlformat = asset.text
 			--end))
 			insert_stmt:bind_values(this.urlstr, this.titlestr, this.contentstr, this.localpath)

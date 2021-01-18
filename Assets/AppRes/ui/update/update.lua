@@ -18,7 +18,7 @@ end)
 -- update.coroutine_demo = coroutine.create(function()
 --     print('update coroutine start!')
 --     yield_return(CS.UnityEngine.WaitForSeconds(2))
---     yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--     yield_return(CS.AssetSys.GetAsset("ui/login/login.prefab", function(asset)
 --         obj = asset
 --     end))
 -- end
@@ -113,7 +113,7 @@ function update.Back()
     assert(coroutine.resume(coroutine.create(function()
         yield_return(UnityEngine.WaitForSeconds(0.3))
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+        yield_return(CS.AssetSys.GetAsset("ui/test/test.prefab", function(asset)
             obj = asset
         end))
         local gameObj = GameObject.Instantiate(obj)

@@ -24,7 +24,7 @@ end)
 --         print('excel_view coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--         yield_return(CS.AssetSys.GetAsset("ui/login/login.prefab", function(asset)
 --             obj = asset
 --         end))
 --         local gameObj = GameObject.Instantiate(obj)
@@ -218,7 +218,7 @@ function this.Back()
     assert(coroutine.resume(coroutine.create(function()
         yield_return(UnityEngine.WaitForSeconds(0.3))
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset("ui/test/test.prefab", function(asset)
+        yield_return(CS.AssetSys.GetAsset("ui/test/test.prefab", function(asset)
             obj = asset
         end))
         local gameObj = GameObject.Instantiate(obj)

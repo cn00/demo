@@ -72,7 +72,7 @@ function Scene.push(prefabPath, arg, replace)
         -- TODO: open loading
 
         local obj = nil
-        yield_return(CS.AssetSys.Instance:GetAsset(prefabPath, function(asset)
+        yield_return(CS.AssetSys.GetAsset(prefabPath, function(asset)
             obj = asset
         end))
         
@@ -115,7 +115,7 @@ function Scene.Awake()
         if Scene.loading == nil then
             local obj
             print("sync_get_asset", obj)
-            yield_return(AssetSys.Instance:GetAsset("ui/loading/loading.prefab", function(asset)
+            yield_return(AssetSys.GetAsset("ui/loading/loading.prefab", function(asset)
                 obj = asset
             end))
             local go = GameObject.Instantiate(obj)

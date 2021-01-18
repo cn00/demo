@@ -17,7 +17,7 @@ local self = sheet
 --         print('sheet coroutine start!')
 --         yield_return(UnityEngine.WaitForSeconds(1))
 --         local obj = nil
---         yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+--         yield_return(CS.AssetSys.GetAsset("ui/login/login.prefab", function(asset)
 --             obj = asset
 --         end))
 --         local gameObj = GameObject.Instantiate(obj)

@@ -206,7 +206,7 @@ function this.lfb_test()
 			print(k,v)
 		end
 		local obj
-		yield_return(CS.AssetSys.Instance:GetAsset("data/fb/sample.bfbs.txt", function(asset)
+		yield_return(CS.AssetSys.GetAsset("data/fb/sample.bfbs.txt", function(asset)
 			print("sample.bfbs.txt", (asset:GetType()))
 			obj = asset.bytes
 		end))
@@ -263,7 +263,7 @@ end
 function this.CheckUpdate()
 	coroutine_call(function()
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 		"ui/update/update.prefab", function(asset)
 			obj = asset
 		end))
@@ -277,7 +277,7 @@ end
 function this.Qrcode()
 	coroutine_call(function()
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 		"common/qrcode/qrcode.prefab",
 		function(asset)
 			obj = asset
@@ -293,7 +293,7 @@ function this.Op()
 	coroutine_call(function()
 		print("open Op")
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 		"video/op/op.prefab",
 		function(asset)
 			obj = asset
@@ -328,7 +328,7 @@ function this.TableViewTest()
 		-- yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
 		
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 		"ui/excel_viewer/excel_view.prefab",
 		function(asset)
 			obj = asset
@@ -449,7 +449,7 @@ end
 function this.PlanetTest(  )
 	coroutine_call(function (  )
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 			"bilibili/planet/planet.prefab",
 			function(asset)
 				obj = asset
@@ -458,7 +458,7 @@ function this.PlanetTest(  )
 		local go = GameObject.Instantiate(obj)
 		go.name = "planet"
 
-		yield_return(CS.AssetSys.Instance:GetAsset(
+		yield_return(CS.AssetSys.GetAsset(
 			"bilibili/planet/Capsule_1.prefab",
 			function(asset)
 				obj = asset

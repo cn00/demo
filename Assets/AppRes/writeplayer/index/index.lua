@@ -75,7 +75,7 @@ function this.LoadData()
     end
 
     local sql
-    yield_return(AssetSys.Instance:GetAsset("writeplayer/index/init.sql", function(asset)
+    yield_return(AssetSys.GetAsset("writeplayer/index/init.sql", function(asset)
         sql = asset.text
         print("init.sql", sql)
     end))
@@ -83,7 +83,7 @@ function this.LoadData()
     local db = sqlite3.open(cachePath);
     db:exec(sql)
     
-    yield_return(AssetSys.Instance:GetAsset("writeplayer/index/itemlist.sql", function(asset)
+    yield_return(AssetSys.GetAsset("writeplayer/index/itemlist.sql", function(asset)
         sql = asset.text
     end))
     local r

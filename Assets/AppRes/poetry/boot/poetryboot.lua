@@ -43,12 +43,12 @@ function poetryboot.Start()
 		print("boot.coroutine_boot")
 
 		local obj = nil
-		yield_return(CS.AssetSys.Instance:GetAsset("common/manager/manager.prefab", function(asset)
+		yield_return(CS.AssetSys.GetAsset("common/manager/manager.prefab", function(asset)
 			obj = asset
 		end))
 		GameObject.Instantiate(obj)
 
-		yield_return(CS.AssetSys.Instance:GetAsset("font/fzxz/方正小篆体.ttf"))
+		yield_return(CS.AssetSys.GetAsset("font/fzxz/方正小篆体.ttf"))
 		
 	end)
 end
