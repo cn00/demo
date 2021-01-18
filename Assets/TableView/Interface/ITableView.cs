@@ -5,9 +5,6 @@ namespace TableView
 {
     public interface ITableView
     {
-        ITableViewDataSource DataSource { get; set; }
-        ITableViewDelegate Delegate { get; set; }
-
         Range VisibleRange { get; }
         float ContentSize { get; }
         float Position { get; }

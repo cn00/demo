@@ -12,8 +12,7 @@ namespace TableView
 
         void Awake()
         {
-            tableView.Delegate = this;
-            tableView.DataSource = this;
+            tableView.tableViewController = this;
         // }
         // void Start()
         // {

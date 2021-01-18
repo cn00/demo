@@ -24,17 +24,7 @@ namespace TableView
         [SerializeField] private bool scrollToHighlighted = true;
         [SerializeField] private float scrollingSpeed = 0.2f;
 
-        public ITableViewDataSource DataSource
-        {
-            get { return dataSource; }
-            set { dataSource = value; requiresReload = true; }
-        }
 
-        public ITableViewDelegate Delegate
-        {
-            get { return tableViewDelegate; }
-            set { tableViewDelegate = value; }
-        }
 
         public Range VisibleRange
         {
@@ -63,8 +53,11 @@ namespace TableView
         private TableViewContent tableViewContent;
         private TableViewPlaceHolders tableViewPlaceHolders;
 
-        private ITableViewDataSource dataSource;
-        private ITableViewDelegate tableViewDelegate;
+        public TableViewController tableViewController;
+        public TableViewController dataSource
+        {
+            get { return tableViewController; }
+        }
 
         private float position;
 
@@ -183,7 +176,8 @@ namespace TableView
 
             for (int i = 0; i < numberOfRows; i++)
             {
-                float rowSize = dataSource.CellSizeAt(this, i) + tableViewLayout.Spacing;
+                float rowSize = dataSource.CellSizeAt(this, i);
+                rowSize += tableViewLayout.Spacing;
                 cellSizes.SetSizeForRow(rowSize, i);
             }
 
@@ -476,9 +470,9 @@ namespace TableView
 
         private void CellDidHighlight(int row)
         {
-            if (tableViewDelegate != null)
+            if (tableViewController != null)
             {
-                tableViewDelegate.OnHighlightAt(this, row);
+                tableViewController.OnHighlightAt(this, row);
             }
 
             if (scrollToHighlighted)
@@ -489,17 +483,17 @@ namespace TableView
 
         private void CellDidSelect(int row)
         {
-            if (tableViewDelegate != null)
+            if (tableViewController != null)
             {
-                tableViewDelegate.OnSelectAt(this, row);
+                tableViewController.OnSelectAt(this, row);
             }
         }
 
         private void PointClick(int row)
         {
-            if (tableViewDelegate != null)
+            if (tableViewController != null)
             {
-                tableViewDelegate.OnSelectAt(this, row);
+                tableViewController.OnSelectAt(this, row);
             }
         }
 
