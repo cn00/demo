@@ -266,6 +266,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1757670327448565028}
+  - {fileID: 7916106574638988428}
   m_Father: {fileID: 5630624575769621906}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -563,9 +564,88 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LuaAsset: {fileID: 1042094116111776886, guid: 1128cc3af95074e29a4d0876b8953f99,
     type: 3}
-  LuaPath: Assets/AppRes/poetry/match/client.lua
+  LuaPath: Assets/AppRes/poetry/net/client.lua
   Injections: []
   InjectValues: []
+--- !u!1 &2059793479667397882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7916106574638988428}
+  - component: {fileID: 3711001491878562015}
+  - component: {fileID: 4967763860489787175}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7916106574638988428
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059793479667397882}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8500028115460179187}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1.4533, y: -135.4134}
+  m_SizeDelta: {x: 287.681, y: 54.8269}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3711001491878562015
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059793479667397882}
+  m_CullTransparentMesh: 1
+--- !u!114 &4967763860489787175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059793479667397882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 24
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\u9080\u8BF7\u597D\u53CB\u626B\u7801\u8054\u673A\u5BF9\u6218"
 --- !u!1 &2224048311170895888
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,8 +994,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -83.3, y: 51.005}
-  m_SizeDelta: {x: 111.30359, y: 66.089294}
+  m_AnchoredPosition: {x: -45.234, y: 35.286}
+  m_SizeDelta: {x: 60.4683, y: 34.6516}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8775973446027261851
 CanvasRenderer:
@@ -1360,7 +1440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LuaAsset: {fileID: 1042094116111776886, guid: 78ea92de1314446da8b2683ff6d186c7,
     type: 3}
-  LuaPath: Assets/AppRes/poetry/match/server.lua
+  LuaPath: Assets/AppRes/poetry/net/server.lua
   Injections: []
   InjectValues: []
 --- !u!1 &7289112071689732758
@@ -1990,10 +2070,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 32
+    m_FontSize: 18
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -2311,12 +2391,12 @@ PrefabInstance:
     - target: {fileID: 2762755623541124261, guid: 46f05a5be08fe4d38acf21d816112d55,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 34
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2762755623541124261, guid: 46f05a5be08fe4d38acf21d816112d55,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25.73
+      value: -36.479965
       objectReference: {fileID: 0}
     - target: {fileID: 2762755623541124261, guid: 46f05a5be08fe4d38acf21d816112d55,
         type: 3}
@@ -2345,15 +2425,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46f05a5be08fe4d38acf21d816112d55, type: 3}
---- !u!224 &2806237773272986278 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2762755623541124261, guid: 46f05a5be08fe4d38acf21d816112d55,
-    type: 3}
-  m_PrefabInstance: {fileID: 46872150247316995}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &260552199810290564 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 232831622548426119, guid: 46f05a5be08fe4d38acf21d816112d55,
+    type: 3}
+  m_PrefabInstance: {fileID: 46872150247316995}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2806237773272986278 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2762755623541124261, guid: 46f05a5be08fe4d38acf21d816112d55,
     type: 3}
   m_PrefabInstance: {fileID: 46872150247316995}
   m_PrefabAsset: {fileID: 0}

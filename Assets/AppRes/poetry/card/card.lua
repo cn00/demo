@@ -135,6 +135,8 @@ function card.Start()
     et.callback:AddListener(this.OnClick);
     tr.triggers:Add(et);
 
+    if this.info.die == true then this.hid() end
+
     local mainCamera= UnityEngine.Camera.main;
     --print("mainCamera", mainCamera, transform, tr, et)
     this.camera = mainCamera
@@ -222,7 +224,7 @@ end
 
 function card.OnClick(eventData)
     -- TODO: post msg to match
-    if card.info.match.roundAnswer == -1 then
+    if card.info.match.roundAnswer == -1 and card.info.match.currentIdx > 0 then
         card.info.match.playerAnswer(card.info.idx, card.info.match.tp)
     end
     

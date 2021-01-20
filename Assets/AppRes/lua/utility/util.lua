@@ -1,5 +1,5 @@
 
-
+require("stringx")
 local util = {}
 function util.newIdx(start)
     start = start or 0
@@ -71,8 +71,8 @@ function util.dump(obj, pretty, prefix)
             return val
         elseif tv == "string" then
             return quoteStr(val:gsub("[\0-\15]", ""):gsub("\n", "\\n"):gsub("\r", "\\r"))
-        elseif tv == "string" then
-            return quoteStr(string.dump(val))
+        elseif tv == "function" then
+            return quoteStr(string.xxd(string.dump(val)))
         else
             return quoteStr(tostring(val))
         end
@@ -126,5 +126,12 @@ table.dump = util.dump
 -- function table:dump( breakline, prefix )
 --     dump(self, breakline, prefix)
 -- end
+
+function util.removeValue(t, vv)
+    for i, v in ipairs(t) do
+        if v == vv then table.remove(t, i) return true end
+    end
+    return false
+end
 
 return util
