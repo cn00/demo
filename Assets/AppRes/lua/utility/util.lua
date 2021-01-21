@@ -10,21 +10,39 @@ function util.newIdx(start)
     end
 end
 
-local table = table or {}
-function table.copy(tab, filter)
+---clean temp flag named `flag`
+---@param tab table
+---@param flag string
+function util.cleanFlag(tab, flag)
+    if type(tab) ~= "table" then return end
+    tab[flag] = undef
+    for i, v in pairs(tab) do
+        if type(v) == "table" then
+            util.cleanFlag(tab, flag)
+        end
+    end
+end
+
+local table = table
+function util.copy(tab, filter)
     local ntab = {}
     for k, v in tab do
-        if v.istable() then
-            ntab[k] = table.copy(v)
-        elseif v.isstring() or v.isnumber() then
+        if type(v) == "table" 
+           and not v.__copyed__  -- nested table
+        then
+            ntab[k] = util.copy(v)
+        else -- if v.isstring() or v.isnumber() then
             ntab[k] = v
         end
     end
+    util.cleanFlag(tab, "__copyed__")
     return ntab
 end
-
+table.copy  = util.copy
+table.clone = util.copy
 
 ---dump
+---@overload fun(obj:table)
 ---@param obj table
 ---@param pretty boolean
 ---@param prefix string
@@ -35,18 +53,18 @@ function util.dump(obj, pretty, prefix)
         prefix = ""
     end
 
-    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj,cleanWrap
-    getIndent = function(level)
+    --local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
+    local function getIndent (level)
         if pretty then
             return prefix .. string.rep("\t", level)
         else
             return ""
         end
     end
-    quoteStr = function(str)
+    local function quoteStr(str)
         return '"' .. string.gsub(str, '"', '\"') .. '"'
     end
-    wrapKey = function(val)
+    local function wrapKey(val)
         if pretty then
             if type(val) == "number" then
                 return "[" .. val .. "] = "
@@ -63,7 +81,7 @@ function util.dump(obj, pretty, prefix)
             end
         end
     end
-    wrapVal = function(val, level)
+    local function wrapVal(val, level)
         local tv = type(val)
         if tv == "table" then
             return dumpObj(val, level)
@@ -77,7 +95,7 @@ function util.dump(obj, pretty, prefix)
             return quoteStr(tostring(val))
         end
     end
-    dumpObj = function(obj, level)
+    local function dumpObj(obj, level)
         if type(obj) ~= "table" then
             return wrapVal(obj)
         end
@@ -87,14 +105,14 @@ function util.dump(obj, pretty, prefix)
         tokens[#tokens + 1] = "{"
         if level < 5 then
             for k, v in pairs(obj) do
-                if type(v) ~= "function" then
-                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
+                if type(v) == "function" then
+                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
                 else
                     if type(v) == "table" then
                         if v["__wraped__"] == true then goto continue end
                         v["__wraped__"] = true
                     end
-                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
+                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. wrapVal(v, level) .. ","
                 end
                 ::continue::
             end
@@ -110,15 +128,8 @@ function util.dump(obj, pretty, prefix)
             return table.concat(tokens, "")
         end
     end
-    cleanWrap = function(obj)
-        if type(obj) ~= "table" then return end
-        if obj["__wraped__"] == true then obj["__wraped__"] = undef end
-        for k, v in pairs(obj) do
-            cleanWrap(v)
-        end
-    end
     local res = dumpObj(obj, 0)
-    cleanWrap(obj)
+    util.cleanFlag(obj, "__wraped__")
     return res
 end
 table.dump = util.dump

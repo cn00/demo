@@ -7,7 +7,7 @@ local util = require "xlua.util"
 -- dialog01
 
 local print = function ( ... )
-    _G.print("[dialog01]", ...)
+    _G.print("dialog01", ...)
 end
 
 local this = {}

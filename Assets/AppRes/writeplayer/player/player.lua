@@ -16,8 +16,8 @@ local util = require "lua.utility.xlua.util"
 local dump = require "lua.utility.dump"
 
 local print = function(...)
-	_G.print("[writeplayer/player]", ...)
-	-- _G.print("[boot]", debug.traceback())
+	_G.print("writeplayer/player", ...)
+	-- _G.print("boot", debug.traceback())
 end
 local player = {}
 local this = player

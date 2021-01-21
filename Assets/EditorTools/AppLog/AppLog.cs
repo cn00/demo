@@ -56,7 +56,7 @@ public static class AppLog
     {
         if(LogLevel >= Level.Debug)
         {
-            var s = "[App]["+tag+"] " + log;
+            var s = "App:"+tag+": " + log;
             UnityEngine.Debug.Log(s);
             if(LogLevel >= Level.Net)
                 BroadcastMessage(log);
@@ -83,7 +83,7 @@ public static class AppLog
     {
         if(LogLevel >= Level.Warning)
         {
-            var s = "[App]["+tag+"] " + log;
+            var s = "App:"+tag+": " + log;
             UnityEngine.Debug.LogWarning(s);
             if(LogLevel >= Level.Net)
                 BroadcastMessage(s);
@@ -110,7 +110,7 @@ public static class AppLog
     {
         if(LogLevel >= Level.Error)
         {
-            var s = "[App]["+tag+"] " + log;
+            var s = "App:"+tag+": " + log;
             UnityEngine.Debug.LogError(s);
             if(LogLevel >= Level.Net)
                 BroadcastMessage(log);

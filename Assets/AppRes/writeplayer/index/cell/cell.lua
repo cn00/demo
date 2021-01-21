@@ -8,7 +8,7 @@ local sqlite3 = require("lsqlite3")
 local manager = manager
 
 local print = function ( ... )
-    _G.print("[writeplayer.index.cell]", ... )
+    _G.print("writeplayer.index.cell", ... )
 end
 
 local util = require "xlua.util"

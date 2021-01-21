@@ -9,7 +9,7 @@ local num2zh = require "lua.utility.num2zh"
 -- qread
 
 local print = function ( ... )
-    _G.print("[qread]", ...)
+    _G.print("qread", ...)
 end
 
 local qread = {}

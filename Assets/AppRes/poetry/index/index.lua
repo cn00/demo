@@ -28,7 +28,7 @@ end)
 -- index
 
 local print = function ( ... )
-    _G.print("[index]", ...)
+    _G.print("poetry/index", ...)
 end
 
 local index = {
@@ -40,7 +40,9 @@ local index = {
 }
 local this = index
 
-
+function index.stateToSave()
+    
+end
 
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
@@ -100,6 +102,7 @@ function index.Update()
         print("newServerCome")
         for i, v in pairs(this.servers) do
             if v.obj == nil then
+                print(v.name, v.url,v.description)
                 local obj = GameObject.Instantiate(roomTemplate, scrollContent.transform)
                 obj:SetActive(true)
                 local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
@@ -166,8 +169,7 @@ function index.StartUdpReceiveLoop()
         while not this.needQuitUdp do
             local msgs,receip,receport = udp:receivefrom()
             if (msgs and receip and receport) then
-                print(receip,receport, msgs)
-                OnReceiveMsgs(msgs)
+                OnReceiveMsgs(string.sub(msgs,1, 6) == "return" and msgs or string.hexr(msgs))
             else
                 --print('waiting client connect ...')
             end
@@ -190,12 +192,12 @@ function index.StartUdpBroadcastLoop()
         local msgt = {
             url = string.format("%s", myip),
             name = "--name--", 
-            description = "",
+            description = "--description--",
             --action = function()return {3.1415926, 369852}  end
         }
         local msgs = 'return' .. util.dump(msgt, false)
         while not this.needQuitUdp do
-            local udpsend, err = udp:send(msgs)
+            local udpsend, err = udp:send(string.hex(msgs))
             yield_return(UnityEngine.WaitForSeconds(15))
         end
         print("broadcast udp shutdown")

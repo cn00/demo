@@ -16,7 +16,7 @@ local util = require "lua.utility.xlua.util"
 -- result
 
 local print = function ( ... )
-    _G.print("[result]", ...)
+    _G.print("result", ...)
 end
 
 local result = {}

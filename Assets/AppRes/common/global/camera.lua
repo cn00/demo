@@ -7,7 +7,7 @@ local util = require "xlua.util"
 -- camera
 
 local print = function ( ... )
-    _G.print("[camera]", ...)
+    _G.print("global/camera", ...)
 end
 
 local this = {}

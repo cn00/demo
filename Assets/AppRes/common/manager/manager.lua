@@ -7,8 +7,8 @@ local GameObject = UnityEngine.GameObject
 local util = require "xlua.util"
 
 local print = function ( ... )
-    _G.print("[manager]", ... )
-    -- _G.print("[manager]", debug.traceback())
+    _G.print("manager", ... )
+    -- _G.print("manager", debug.traceback())
 end
 
 local manager = {

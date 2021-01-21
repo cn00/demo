@@ -15,7 +15,7 @@ local Game = _G.Game
 
 
 local print = function(...)
-	_G.print("[importer]", ...)
+	_G.print("importer", ...)
 end
 
 local yield_return =

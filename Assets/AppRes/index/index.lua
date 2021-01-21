@@ -7,7 +7,7 @@ local util = require "lua.utility.xlua.util"
 -- index
 
 local print = function ( ... )
-    _G.print("[index]", ...)
+    _G.print("index", ...)
 end
 
 local index = {}

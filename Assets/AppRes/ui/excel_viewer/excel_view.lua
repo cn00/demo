@@ -2,7 +2,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local xutil = require "xlua.util"
 
 local excel_view = {
     RowIdxA = 1,
@@ -15,7 +15,7 @@ local excel_view = {
 }
 local this = excel_view
 
-local yield_return = util.async_to_sync(function(to_yield, callback)
+local yield_return = xutil.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
@@ -48,13 +48,6 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
-function string.split(s, delimiter)
-    local result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
 function this.Awake()
     this.AutoGenInit()
     print("this.Awake")

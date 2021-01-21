@@ -309,7 +309,7 @@ public class AssetSys : SingleMono<AssetSys>
     /// <summary>
     /// 同步方式加载资源, 用于加载少量小型资源
     /// </summary>
-    public static T GetAssetSync<T>(string assetSubPath) where T : UnityEngine.Object
+    public static T GetAssetSync<T>(string assetSubPath, bool autoDownload = false) where T : UnityEngine.Object
     {
         #if UNITY_EDITOR
         var UseBundle = BuildConfig.Instance().UseBundle;
@@ -321,7 +321,7 @@ public class AssetSys : SingleMono<AssetSys>
         #endif // UNITY_EDITOR
         {
             string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
-            var bundle = GetBundleSync(bundleName);
+            var bundle = GetBundleSync(bundleName, autoDownload);
             T asset = null;
             if (bundle != null)
             {
@@ -430,7 +430,7 @@ public class AssetSys : SingleMono<AssetSys>
         return GetAssetSync<UnityEngine.Object>(assetPath);
     }
 
-    public static AssetBundle GetBundleSync(string bundlePath)
+    public static AssetBundle GetBundleSync(string bundlePath, bool autoDownload = false)
     {
         if (string.IsNullOrEmpty(bundlePath))
         {
@@ -442,8 +442,15 @@ public class AssetSys : SingleMono<AssetSys>
         if (!Instance.mLoadedBundles.TryGetValue(bundlePath, out bundle))
         {
             var cachePath = CacheRoot + bundlePath;
+            if (!File.Exists(cachePath) && autoDownload)
+            {
+                var dl = Download(bundlePath);
+                while (dl.MoveNext()) ;
+            }
+            
             if (File.Exists(cachePath))
                 bundle = AssetBundle.LoadFromFile(cachePath);
+            
             if (bundle == null) // try Resources.Load
             {
                 bundle = Resources.Load<AssetBundle>(bundlePath);
@@ -663,16 +670,24 @@ public class AssetSys : SingleMono<AssetSys>
         SQLite.SQLite3.Close(db);
     }
 
-    public static bool UrlIsExist(string url)
+    public static bool IsUrlAvailable(string url)
     {
         var b = false;
-        var webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
-        webRequest.Timeout = TimeoutMillisecond;
-        var response = webRequest.GetResponse() as HttpWebResponse;
+        try
+        {
+            var webRequest = System.Net.HttpWebRequest.Create(url) as HttpWebRequest;
+            webRequest.Timeout = TimeoutMillisecond;
+            webRequest.Method = "HEAD";
+            var response = webRequest.GetResponse() as HttpWebResponse;
 
-        // var heads = response.Headers;
-        if (response.StatusCode == HttpStatusCode.OK)
-            b = true;
+            // var heads = response.Headers;
+            if (response != null && response.StatusCode == HttpStatusCode.OK)
+                b = true;
+        }
+        catch (WebException e)
+        {
+            Debug.Log($"{url}: {e}");
+        }
 
         return b;
     }
@@ -680,13 +695,13 @@ public class AssetSys : SingleMono<AssetSys>
     public static int TimeOutSeconds = 3600 * 0 + 60 * 0 + 5;
     public static int TimeoutMillisecond = 1000 * 5;
 
-    public void UnloadBundle(string path, bool unloadAllLoadedObjects = false)
+    public static void UnloadBundle(string path, bool unloadAllLoadedObjects = false)
     {
         AssetBundle outBundle = null;
-        if (mLoadedBundles.TryGetValue(path, out outBundle) && outBundle != null)
+        if (Instance.mLoadedBundles.TryGetValue(path, out outBundle) && outBundle != null)
         {
             outBundle.Unload(unloadAllLoadedObjects);
-            mLoadedBundles.Remove(path);
+            Instance.mLoadedBundles.Remove(path);
             AppLog.d(Tag, "UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
     }
@@ -694,23 +709,23 @@ public class AssetSys : SingleMono<AssetSys>
     /// <summary>
     /// 在新线程中异步保存文件
     /// </summary>
-    public static void AsyncSave(string fname, byte[] bytes)
+    public static void AsyncSave(string fpath, byte[] bytes)
     {
-        AppLog.d(Tag, fname);
-        var dir = Path.GetDirectoryName(fname);
+        AppLog.d(Tag, fpath);
+        var dir = Path.GetDirectoryName(fpath);
         if (!Directory.Exists(dir))
         {
             Directory.CreateDirectory(dir);
         }
 
-        FileStream writer = new FileStream(fname, FileMode.OpenOrCreate);
+        FileStream writer = new FileStream(fpath, FileMode.OpenOrCreate);
         writer.BeginWrite(bytes, 0, bytes.Length, (IAsyncResult result) =>
         {
             FileStream stream = (FileStream) result.AsyncState;
             stream.EndWrite(result);
             stream.Close();
             stream.Dispose();
-            AppLog.d(Tag, "Saved:" + fname);
+            AppLog.d(Tag, "Saved:" + fpath);
         }, writer);
     }
 

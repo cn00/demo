@@ -17,8 +17,8 @@ local xutil = require "xlua.util"
 -- roomList
 
 local print = function ( ... )
-    _G.print("[roomList]", ...)
-    -- _G.print("[roomList]", debug.traceback())
+    _G.print("roomList", ...)
+    -- _G.print("roomList", debug.traceback())
 end
 
 local roomList = {}

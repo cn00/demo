@@ -10,7 +10,7 @@ local util = require "xlua.util"
 -- loading
 
 local print = function ( ... )
-    _G.print("[loading]", ...)
+    _G.print("loading", ...)
 end
 
 local this = {}

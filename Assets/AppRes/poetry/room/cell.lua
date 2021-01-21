@@ -17,8 +17,8 @@ local xutil = require "xlua.util"
 -- cell
 
 local print = function ( ... )
-    _G.print("[cell]", ...)
-    -- _G.print("[cell]", debug.traceback())
+    _G.print("cell", ...)
+    -- _G.print("cell", debug.traceback())
 end
 
 local cell = {}

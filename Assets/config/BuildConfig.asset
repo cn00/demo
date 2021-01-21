@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   Configs: []
-  m_UseBundle: 1
+  m_UseBundle: 0
   LogLevel: 2
   runInBackground: 1
   LastBuildTime: 132552600421226070
@@ -66,6 +66,11 @@ MonoBehaviour:
       Hash: 00e9bf487165948eb6d674eff36a6595
       Version: 1.0.0
       Rebuild: 1
+    - Name: common/root.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/ui.bd
       Size: 31043
       Hash: 01c49cb6faab7549f87cfb6bfab6b150
@@ -166,6 +171,11 @@ MonoBehaviour:
       Hash: 
       Version: 
       Rebuild: 0
+    - Name: poetry/history.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: poetry/img.bd
       Size: 16387
       Hash: af8cfcf215d8e475cdf978e5495bd3c9
@@ -180,6 +190,11 @@ MonoBehaviour:
       Size: 27419
       Hash: e0277eb46856932aa4d6ad0890ccb7eb
       Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/net.bd
+      Size: 0
+      Hash: 
+      Version: 
       Rebuild: 0
     - Name: poetry/player.bd
       Size: 8831
@@ -219,11 +234,6 @@ MonoBehaviour:
     - Name: ui/bg.bd
       Size: 2577706
       Hash: 870712768594e46b98fa88f89e565d6f
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/boot.bd
-      Size: 28228
-      Hash: 5c2a2f8ac2bacf4a3933d1e710e3ed53
       Version: 1.0.0
       Rebuild: 1
     - Name: ui/dialog.bd
@@ -299,7 +309,7 @@ MonoBehaviour:
     ProductName: "A3! \u6EE1\u5F00\u6B4C\u724C"
     BundleId: com.bili.a3mkgp
     PackageName: a3
-    BuildNum: 11
+    BuildNum: 15
     Version: 0.1.0
     DefineSymbols:
     - ENABLE_EMULATER
@@ -311,7 +321,7 @@ MonoBehaviour:
     iOSSdkVersion: 989
     OptionFlags: 33
     Channel: 2
-  - Name: ChannelConfig
+  - Name: ios
     BatchBuild: 0
     AddTime: 0
     ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"

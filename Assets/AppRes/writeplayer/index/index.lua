@@ -8,7 +8,7 @@ local File = CS.System.IO.File
 local Directory = CS.System.IO.Directory
 
 local print = function ( ... )
-    _G.print("[writeplayer/index]", ... )
+    _G.print("1:", ... )
 end
 
 local util = require "xlua.util"

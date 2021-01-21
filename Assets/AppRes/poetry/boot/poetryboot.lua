@@ -17,7 +17,7 @@ require("lua.utility.BridgingClass")
 -- poetryboot
 
 local print = function ( ... )
-    _G.print("[poetryboot]", ...)
+    _G.print("poetryboot", ...)
 end
 
 local poetryboot = {}

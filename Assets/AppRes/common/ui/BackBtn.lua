@@ -8,7 +8,7 @@ local manager = manager
 -- BackBtn
 
 local print = function ( ... )
-    _G.print("[BackBtn]", ...)
+    _G.print("BackBtn", ...)
 end
 
 local this = {}

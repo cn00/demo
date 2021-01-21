@@ -71,7 +71,26 @@ function string:from_hex()
   end))
 end
 
---- split string to sub-strings table, work with multi-byte char string you can use str:gsub('(多字节分隔符)', '%1|'):split('|') -- keep delimiter
+function string:hex()
+  return string.gsub(self, '(.)', function(bs) return string.format("%02x", string.byte(bs)) end)
+  -- local t = {}
+  -- for i in string.gmatch(self, '(.)')do
+  --     t[1+#t] = string.format("%02x", string.byte(i))
+  -- end
+  -- return table.concat(t)
+end
+
+function string:hexr()
+  return string.gsub(self, '(..)', function(bs)return string.char(tonumber(bs, 16))end)
+  --local t = {}
+  --for i in string.gmatch(self, '(..)')do
+  --  t[1+#t] = string.char(tonumber(i, 16))
+  --end
+  --return table.concat(t)
+end
+
+--- split string to sub-strings table, work with multi-byte char string you can use
+--- str:gsub('(多字节分隔符)', '%1|'):split('|') -- keep delimiter
 --- or str:gsub('(多字节分隔符)', '|'):split('|') -- strip delimiter
 ---@param delimiter string only single byte chars availble, like `, %. %- | [,%.%-|]`
 ---@param keepdelimiter boolean

@@ -18,7 +18,7 @@ local Vector3 = UnityEngine.Vector3
 -- player
 
 local print = function ( ... )
-    _G.print("[player]", ...)
+    _G.print("player", ...)
 end
 
 local stateIdx = util.newIdx()

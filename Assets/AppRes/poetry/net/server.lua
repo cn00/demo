@@ -22,7 +22,7 @@ end)
 -- server
 
 local print = function ( ... )
-    _G.print("[server]", ...)
+    _G.print("server", ...)
 end
 local server = {
 	ServerPort = 9990,

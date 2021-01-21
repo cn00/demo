@@ -12,7 +12,7 @@ local R = lpeg.R
 local match = lpeg.match
 
 local print = function ( ... )
-    _G.print("[console]", ...)
+    _G.print("console", ...)
 end
 
 local this = {

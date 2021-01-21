@@ -23,8 +23,8 @@ local test = {}
 local this = test
 
 local print = function ( ... )
-    _G.print("[test]", ... )
-    -- _G.print("[this]", debug.traceback())
+    _G.print("test", ... )
+    -- _G.print("this", debug.traceback())
 end
 
 print("p7zip", p7zip)

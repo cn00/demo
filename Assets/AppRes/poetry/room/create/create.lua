@@ -18,8 +18,8 @@ local manager = AppGlobal.manager
 -- create
 
 local print = function ( ... )
-    _G.print("[create]", ...)
-    -- _G.print("[create]", debug.traceback())
+    _G.print("create", ...)
+    -- _G.print("create", debug.traceback())
 end
 
 local create = {}

@@ -7,7 +7,7 @@ local util = require "xlua.util"
 -- linktext
 
 local print = function ( ... )
-    _G.print("[linktext]", ...)
+    _G.print("linktext", ...)
 end
 
 local this = {}

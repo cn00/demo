@@ -25,8 +25,8 @@ end)
 local useUdp = true
 
 local print = function ( ... )
-    _G.print("[client]", ...)
-    -- _G.print("[client]", debug.traceback())
+    _G.print("client", ...)
+    -- _G.print("client", debug.traceback())
 end
 
 local client = {

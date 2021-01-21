@@ -23,7 +23,7 @@ local yield_return = util.async_to_sync(function (to_yield, callback)
 end)
 
 local print = function(...)
-    _G.print("[manager/scene.lua]", ...)
+    _G.print("manager/scene.lua", ...)
 end
 
 --[[

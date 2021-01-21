@@ -88,7 +88,7 @@ function qrcode.OnScanResult(strResult)
     local head = strResult:sub(1, 7)
     if head == "a3mkgp:" then
         -- callback
-        if type(this.info.scanCallback) == "function" then 
+        if type(this.info) == "table" and type(this.info.scanCallback) == "function" then 
             this.info.scanCallback(strResult)
             GameObject.DestroyImmediate(gameObject)
         end

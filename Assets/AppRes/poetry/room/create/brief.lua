@@ -17,8 +17,8 @@ local xutil = require "xlua.util"
 -- brief
 
 local print = function ( ... )
-    _G.print("[brief]", ...)
-    -- _G.print("[brief]", debug.traceback())
+    _G.print("brief", ...)
+    -- _G.print("brief", debug.traceback())
 end
 
 local brief = {}

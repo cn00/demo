@@ -7,7 +7,7 @@ local util = require "xlua.util"
 -- cell
 
 local print = function ( ... )
-    _G.print("[cell]", ...)
+    _G.print("cell", ...)
 end
 
 local this = {}

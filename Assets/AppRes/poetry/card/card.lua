@@ -18,7 +18,7 @@ local EventTriggerType = UnityEngine.EventSystems.EventTriggerType
 -- card
 
 local print = function ( ... )
-    _G.print("[card]", ...)
+    _G.print("card", ...)
 end
 
 local card = {
