@@ -17,8 +17,8 @@ function util.cleanFlag(tab, flag)
     if type(tab) ~= "table" then return end
     tab[flag] = undef
     for i, v in pairs(tab) do
-        if type(v) == "table" then
-            util.cleanFlag(tab, flag)
+        if type(v) == "table" and v[flag] then 
+            util.cleanFlag(v, flag)
         end
     end
 end
@@ -53,18 +53,18 @@ function util.dump(obj, pretty, prefix)
         prefix = ""
     end
 
-    --local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
-    local function getIndent (level)
+    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
+    getIndent = function(level)
         if pretty then
             return prefix .. string.rep("\t", level)
         else
             return ""
         end
     end
-    local function quoteStr(str)
+    quoteStr = function(str)
         return '"' .. string.gsub(str, '"', '\"') .. '"'
     end
-    local function wrapKey(val)
+    wrapKey = function(val)
         if pretty then
             if type(val) == "number" then
                 return "[" .. val .. "] = "
@@ -81,7 +81,7 @@ function util.dump(obj, pretty, prefix)
             end
         end
     end
-    local function wrapVal(val, level)
+    wrapVal = function(val, level)
         local tv = type(val)
         if tv == "table" then
             return dumpObj(val, level)
@@ -95,7 +95,7 @@ function util.dump(obj, pretty, prefix)
             return quoteStr(tostring(val))
         end
     end
-    local function dumpObj(obj, level)
+    dumpObj = function(obj, level)
         if type(obj) ~= "table" then
             return wrapVal(obj)
         end
