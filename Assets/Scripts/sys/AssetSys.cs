@@ -515,7 +515,7 @@ public class AssetSys : SingleMono<AssetSys>
             fileUrl = WebRoot + PlatformName() + "/" + version + "/" + bundlePath + BuildConfig.CompressedExtension;
         }
 
-        AppLog.d(Tag, fileUrl);
+        // AppLog.d(Tag, fileUrl);
 
         var cachDir = cachePath.Substring(0, cachePath.LastIndexOf('/'));
         cachDir.CreateDir();
@@ -599,8 +599,8 @@ public class AssetSys : SingleMono<AssetSys>
         catch (WebException we)
         {
             File.Delete((path + ".tmp"));
-            AppLog.e(Tag, "Error: " + url, we.Message, we.Dump());
-            DialogSys.Alert(we.Message + we.StackTrace, url);
+            AppLog.e(Tag, url, we.Message, we.Dump());
+            DialogSys.Alert(url + "\n" + we.Message + we.StackTrace, "error");
             yield break;
         }
         catch (Exception e)

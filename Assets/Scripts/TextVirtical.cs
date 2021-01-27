@@ -84,39 +84,39 @@ public class TextVirtical : Text
         }
         else
         {
-            // for (int i = 0; i < vertCount; ++i)
-            // {
-            //     int tempVertsIndex = i & 3;
-            //     m_TempVerts[tempVertsIndex] = verts[i];
-            //     m_TempVerts[tempVertsIndex].position *= unitsPerPixel;
-            //     m_TempVerts[tempVertsIndex].position.x += roundingOffset.x;
-            //     m_TempVerts[tempVertsIndex].position.y += roundingOffset.y;
-            //     if (tempVertsIndex == 3)
-            //     {
-            //         var lb = m_TempVerts[0];
-            //         var lt = m_TempVerts[1];
-            //         var rt = m_TempVerts[2];
-            //         var rb = m_TempVerts[3];
-            //
-            //         Vector3 center = Vector3.Lerp(lb.position, rt.position, 0.5f);
-            //         var p = rectTransform.localPosition - new Vector3(extents.x/2f, extents.y/2f, 0f);
-            //         float x = p.y;
-            //         float y = p.x+3;
-            //
-            //         Matrix4x4 move = Matrix4x4.TRS(-center, Quaternion.identity, Vector3.one);
-            //         Matrix4x4 place =
-            //             Matrix4x4.TRS(new Vector3(x, y, 0), Quaternion.identity,
-            //                 Vector3.one); //rotation and scaling matrix
-            //         Matrix4x4 transform = place * move;
-            //
-            //         lb.position = transform.MultiplyPoint(lb.position);
-            //         lt.position = transform.MultiplyPoint(lt.position);
-            //         rt.position = transform.MultiplyPoint(rt.position);
-            //         rb.position = transform.MultiplyPoint(rb.position);
-            //
-            //         toFill.AddUIVertexQuad(new UIVertex[4] {lb, lt, rt, rb});
-            //     }
-            // }
+            for (int i = 0; i < vertCount; ++i)
+            {
+                int tempVertsIndex = i & 3;
+                m_TempVerts[tempVertsIndex] = verts[i];
+                m_TempVerts[tempVertsIndex].position *= unitsPerPixel;
+                m_TempVerts[tempVertsIndex].position.x += roundingOffset.x;
+                m_TempVerts[tempVertsIndex].position.y += roundingOffset.y;
+                if (tempVertsIndex == 3)
+                {
+                    var lb = m_TempVerts[0];
+                    var lt = m_TempVerts[1];
+                    var rt = m_TempVerts[2];
+                    var rb = m_TempVerts[3];
+            
+                    Vector3 center = Vector3.Lerp(lb.position, rt.position, 0.5f);
+                    var p = center;
+                    float x = p.y;
+                    float y = p.x+3;
+            
+                    Matrix4x4 move = Matrix4x4.TRS(-center, Quaternion.identity, Vector3.one);
+                    Matrix4x4 place =
+                        Matrix4x4.TRS(new Vector3(x, y, 0), Quaternion.identity,
+                            Vector3.one); //rotation and scaling matrix
+                    Matrix4x4 transform = place * move;
+            
+                    lb.position = transform.MultiplyPoint(lb.position);
+                    lt.position = transform.MultiplyPoint(lt.position);
+                    rt.position = transform.MultiplyPoint(rt.position);
+                    rb.position = transform.MultiplyPoint(rb.position);
+            
+                    toFill.AddUIVertexQuad(new UIVertex[4] {lb, lt, rt, rb});
+                }
+            }
         }
 
         m_DisableFontTextureRebuiltCallback = false;

@@ -174,8 +174,9 @@ public class NetSys : SingleMono<NetSys>
     public static IPAddress[] LocalIpAddress()
     {
         var hostname = Dns.GetHostName();
-        if (!hostname.EndsWith(".local"))
-            hostname = hostname + ".local";
+        Debug.Log($"hostname:{hostname}");
+        // if (!hostname.EndsWith(".local"))
+        //     hostname = hostname + ".local";
 
         IPHostEntry ipHost = Dns.GetHostEntry(hostname);
 

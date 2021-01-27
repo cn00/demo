@@ -23,7 +23,7 @@ namespace UnityEditor
         {
             mTarget = (LuaMonoBehaviour) target;
 
-            if (mTarget.LuaAsset)
+            if (mTarget.LuaAsset && !Application.isPlaying)
             {
                 mLuaText = mTarget.LuaAsset.text;
                 refreshAutoGen();
@@ -204,44 +204,48 @@ namespace UnityEditor
             #endregion
             
             // gen lua code
-            if (GUI.changed)
+            if(!Application.isPlaying)
             {
-                mTarget.InjectValues.Sort((a, b) =>
+                if (GUI.changed)
                 {
-                    if (a.k != null && b.k != null)
-                        return a.k.CompareTo(b.k);
-                    else if (a.k == null && b.k != null)
-                        return 1;
-                    else
-                        return -1;
-                });
+                    mTarget.InjectValues.Sort((a, b) =>
+                    {
+                        if (a.k != null && b.k != null)
+                            return a.k.CompareTo(b.k);
+                        else if (a.k == null && b.k != null)
+                            return 1;
+                        else
+                            return -1;
+                    });
 
-                mTarget.Injections.Sort((a, b) =>
+                    mTarget.Injections.Sort((a, b) =>
+                    {
+                        if (a.obj != null && b.obj != null)
+                            return a.obj.name.CompareTo(b.obj.name);
+                        else if (a.obj == null && b.obj != null)
+                            return 1;
+                        else
+                            return -1;
+                    });
+                    refreshAutoGen();
+                    EditorUtility.SetDirty(mTarget);
+                }
+
+                var rect = EditorGUILayout.GetControlRect();
+                if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
                 {
-                    if (a.obj != null && b.obj != null)
-                        return a.obj.name.CompareTo(b.obj.name);
-                    else if (a.obj == null && b.obj != null)
-                        return 1;
-                    else
-                        return -1;
-                });
-                refreshAutoGen();
-                EditorUtility.SetDirty(mTarget);
-            }
-            var rect = EditorGUILayout.GetControlRect();
-            if (GUI.Button(rect.Split(0, 3), "Wtrite to lua"))
-            {
-                var path = AssetDatabase.GetAssetPath(mTarget.LuaAsset);
-                var pattern = Regex.Match(mLuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
-                    RegexOptions.Multiline).ToString();
-                mLuaText = mLuaText.Replace(pattern.ToString(), luaMember.ToString());
-                File.WriteAllText(path, mLuaText);
-                AppLog.d(Tag, path + " updated");
-            }
+                    var path = AssetDatabase.GetAssetPath(mTarget.LuaAsset);
+                    var pattern = Regex.Match(mLuaText, "--AutoGenInit Begin(.|\r|\n)*--AutoGenInit End",
+                        RegexOptions.Multiline).ToString();
+                    mLuaText = mLuaText.Replace(pattern.ToString(), luaMember.ToString());
+                    File.WriteAllText(path, mLuaText);
+                    AppLog.d(Tag, path + " updated");
+                }
 
-            mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);
-            if (mShowLuaAutogens && !Application.isPlaying)
-                GUILayout.TextArea(luaMember.ToString());
+                mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);
+                if (mShowLuaAutogens && !Application.isPlaying)
+                    GUILayout.TextArea(luaMember.ToString());
+            }
 
             // lua debug
             if (mTarget.Lua != null)

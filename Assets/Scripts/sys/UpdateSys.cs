@@ -204,8 +204,8 @@ public class UpdateSys : SingleMono<UpdateSys>
                 AppLog.d(Tag, "Updated: {0}={1}", newi.Name, newi.Hash);
             }
             
-            AssetSys.Instance.UnloadBundle(subPath, false);
-            AssetSys.Instance.GetBundleSync(subPath);
+            AssetSys.UnloadBundle(subPath, false);
+            AssetSys.GetBundleSync(subPath);
 
         }
     }

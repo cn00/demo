@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using App;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -32,11 +33,15 @@ public class Boot : SingleMono<Boot>
         yield return AssetSys.Instance.Init();
 
         yield return LuaSys.Instance.Init() ;
+
+        yield return SdkSys.Instance.Init();
         
         // download boot res
         {
-            yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
             yield return AssetSys.GetAsset("lua/utility/util.lua");
+            yield return AssetSys.GetAsset("ui/loading/loading.prefab");
+            yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
+            yield return AssetSys.GetAsset("common/config/config.lua");
             yield return AssetSys.GetAsset("common/root/root.prefab");
         }
         

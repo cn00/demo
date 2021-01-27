@@ -40,7 +40,10 @@ public class LuaSys : SingleMono<LuaSys>
         get
         {
             if(luaEnv == null)
+            {
                 luaEnv = new LuaEnv();
+                // InitLuaEnv();
+            }
             return luaEnv;
         }
     }
@@ -109,7 +112,7 @@ public class LuaSys : SingleMono<LuaSys>
         else
 #endif
         {
-            var data = AssetSys.Instance.GetAssetSync<TextAsset>(assetName);
+            var data = AssetSys.GetAssetSync<TextAsset>(assetName);
             if(data!=null)
                 bytes = data.bytes;
         }
@@ -121,7 +124,7 @@ public class LuaSys : SingleMono<LuaSys>
         return bytes;
     }
 
-    public override IEnumerator Init()
+    public void InitLuaEnv()
     {
         luaEnv.AddLoader(Require);
 
@@ -134,14 +137,18 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("lfb", XLua.LuaDLL.Lua.LoadLfb);
 
         luaEnv.AddBuildin("nslua", XLua.LuaDLL.Lua.LoadNSLua);
-        
+
         luaEnv.AddBuildin("p7zip", XLua.LuaDLL.Lua.LoadP7zip);
 
         luaEnv.AddBuildin("lsqlite3", XLua.LuaDLL.Lua.LoadLSQLite3);
         luaEnv.AddBuildin("luasql.mysql", XLua.LuaDLL.Lua.LoadLuasqlMysql);
 
         luaEnv.AddBuildin("lxp", XLua.LuaDLL.Lua.LoadLxp);
+    }
 
+    public override IEnumerator Init()
+    {
+        InitLuaEnv();
         yield return base.Init();
     }
 

@@ -1,33 +1,28 @@
+using System;
 using UnityEngine;
+using XLua;
 
-namespace sys
+namespace App
 {
-    public class SdkSys : StateMachineBehaviour
+    public class SdkSys : SingleMono<SdkSys>
     {
-        public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo,
-            int layerIndex)
+        private LuaSys.LuaFuncDelegate luaJsonDecoder = null;
+        public void NativeMessageHandler(string jsonstr)
         {
+            if(luaJsonDecoder == null)
+                luaJsonDecoder = LuaSys.Instance.GetGLuaFunc("json.decode");
+            Debug.Assert(luaJsonDecoder!= null, $"luaJsonDecoder not found");
             
-        }
-
-        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo,
-            int layerIndex)
-        {
-        }
-
-        public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo,
-            int layerIndex)
-        {
-        }
-
-        public override void OnStateMove(Animator animator, AnimatorStateInfo stateInfo,
-            int layerIndex)
-        {
-        }
-
-        public override void OnStateIK(Animator animator, AnimatorStateInfo stateInfo,
-            int layerIndex)
-        {
+            LuaTable lt = luaJsonDecoder(jsonstr, null) as LuaTable;
+            Debug.Assert(lt != null, $"json to lua decode err:[{jsonstr}]");
+            
+            var type = lt.Get<string>("type") ?? "";
+            var gluafunc = "OnNativeMessage" + type;
+            var luaf = LuaSys.Instance.GetGLuaFunc(gluafunc);
+            if (luaf != null)
+                luaf(null, lt);
+            else
+                Debug.LogError($"global lua function [{gluafunc}] not found");
         }
     }
 }
