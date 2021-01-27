@@ -17,8 +17,8 @@ local xutil = require "xlua.util"
 -- ___SCRIPTNAME___
 
 local print = function ( ... )
-    _G.print("[___SCRIPTNAME___]", ...)
-    -- _G.print("[___SCRIPTNAME___]", debug.traceback())
+    _G.print("___SCRIPTNAME___", ...)
+    -- _G.print("___SCRIPTNAME___", debug.traceback())
 end
 
 local ___SCRIPTNAME___ = {}
@@ -32,7 +32,7 @@ function this.coroutine_demo()
     print('coroutine start!')
     yield_return(UnityEngine.WaitForSeconds(1))
     local obj = nil
-    yield_return(CS.AssetSys.Instance:GetAsset("ui/login/login.prefab", function(asset)
+    yield_return(CS.AssetSys.GetAsset("ui/login/login.prefab", function(asset)
         obj = asset
     end))
     local gameObj = GameObject.Instantiate(obj)
@@ -54,6 +54,9 @@ function ___SCRIPTNAME___.Start()
 end
 
 -- example-begin
+function G.OnNativeMessageXXXX(null, data)
+    print(util.dump(data))
+end
 function ___SCRIPTNAME___.FixedUpdate() end
 
 function ___SCRIPTNAME___.OnTriggerEnter(otherCollider) end
@@ -74,10 +77,10 @@ function ___SCRIPTNAME___.Update() end
 function ___SCRIPTNAME___.LateUpdate() end
 
 function ___SCRIPTNAME___.OnDestroy() end
--- example-end
 
 function ___SCRIPTNAME___.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
+-- example-end
 
 return ___SCRIPTNAME___
