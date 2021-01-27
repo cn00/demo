@@ -88,7 +88,8 @@ public class DeviceCamera
 			webcamera.Play ();
 		}
 #else
-        webcamera.Play();
+        if(UnityEngine.WebCamTexture.devices.Length > 0)
+	        webcamera.Play();
 #endif
         isRunning = true;
     }
