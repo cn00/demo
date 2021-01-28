@@ -144,6 +144,30 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("luasql.mysql", XLua.LuaDLL.Lua.LoadLuasqlMysql);
 
         luaEnv.AddBuildin("lxp", XLua.LuaDLL.Lua.LoadLxp);
+        
+        #if UNITY_EDITOR
+        luaEnv.Global.Set("UNITY_EDITOR", true);
+        #endif
+        #if UNITY_EDITOR_OSX
+        luaEnv.Global.Set("UNITY_EDITOR_OSX", true);
+        #endif
+        #if UNITY_EDITOR_WIN
+        luaEnv.Global.Set("UNITY_EDITOR_WIN", true);
+        #endif
+        
+        #if UNITY_OSX
+        luaEnv.Global.Set("UNITY_OSX", true);
+        #endif
+        #if UNITY_STANDALONE_WIN
+        luaEnv.Global.Set("UNITY_STANDALONE_WIN", true);
+        #endif
+        
+        #if UNITY_ANDROID
+        luaEnv.Global.Set("UNITY_ANDROID", true);
+        #endif
+        #if UNITY_IOS
+        luaEnv.Global.Set("UNITY_IOS", true);
+        #endif
     }
 
     public override IEnumerator Init()
