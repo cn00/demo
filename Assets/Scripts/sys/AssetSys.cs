@@ -283,28 +283,36 @@ public class AssetSys : SingleMono<AssetSys>
         }
         #if UNITY_EDITOR
         if (BuildConfig.Instance().UseBundle)
-            #endif
+        #endif
         {
-            if (mManifest == null)
-            {
-                #if UNITY_EDITOR
-                string manifestBundleName = BuildScript.TargetName(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
-                #else
-                string manifestBundleName = PlatformName(Application.platform);
-                #endif
-                yield return GetBundle(manifestBundleName, (bundle) =>
-                {
-                    var manifext = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                    mManifest = manifext;
-                    AppLog.d(Tag, "load manifest: " + manifestBundleName);
-                });
-            }
-
             yield return GetBundle("ui/boot.bd");
         }
 
         yield return base.Init();
     }
+
+    IEnumerator LoadManifest()
+    {
+        if (mManifest == null)
+        {
+            string manifestBundleName = PlatformName();
+            var old = AssetBundle.GetAllLoadedAssetBundles().ToList().Find(i => i.name == ""); //AssetBundleManifest);
+            if(old)
+            {
+                AppLog.d(Tag, $"unload AssetBundleManifest {old.name}:{old}");
+                old.Unload(true);
+            }
+
+            mLoadedBundles.Remove(manifestBundleName);
+            
+            yield return GetBundle(manifestBundleName, (bundle) =>
+            {
+                mManifest = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                AppLog.d(Tag, "load manifest: " + manifestBundleName);
+            });
+        }
+    }
+    
 
     /// <summary>
     /// 同步方式加载资源, 用于加载少量小型资源
@@ -482,6 +490,9 @@ public class AssetSys : SingleMono<AssetSys>
             yield break;
         }
 
+        if(bundlePath != PlatformName() && Instance.mManifest == null) // Manifest it self
+            yield return Instance.LoadManifest();
+        
         // Dependencies
         if (Instance.mManifest != null) // 加载 manifest 时本身为空
         {
