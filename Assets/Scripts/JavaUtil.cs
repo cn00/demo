@@ -4,15 +4,27 @@ namespace App
     public class JavaUtil
     {
 
-        public static object Call(string classname, string apiName, params object[] args)
+        public static void CallStaticVoid(string classname, string apiName, params object[] args)
         {
-            return Call<string>( classname,  apiName, args);
+            var argss = string.Join(",", args); 
+            #if UNITY_ANDROID  && ! UNITY_EDITOR
+            using AndroidJavaClass cls = new AndroidJavaClass(classname);
+            cls.CallStatic(apiName, args);
+            Debug.Log($"Android CallStaticVoid {classname}.{apiName}({argss})");
+            #else
+            Debug.Log($"Java CallStaticVoid {classname}.{apiName}({argss})");
+            #endif
         }
-        public static T Call<T>(string classname, string apiName, params object[] args)
+
+        public static string CallStatic(string classname, string apiName, params object[] args)
+        {
+            return CallStatic<string>( classname,  apiName, args);
+        }
+        public static T CallStatic<T>(string classname, string apiName, params object[] args)
         {
             var argss = string.Join(",", args); 
             T res = default(T);
-            #if UNITY_ANDROID && ! UNITY_EDITOR
+            #if UNITY_ANDROID  && ! UNITY_EDITOR
             using AndroidJavaClass cls = new AndroidJavaClass(classname);
             res = cls.CallStatic<T>(apiName, args);
             Debug.Log($"Android CallStatic {classname}.{apiName}({argss})");
