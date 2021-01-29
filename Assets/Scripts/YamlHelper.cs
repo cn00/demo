@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 public class YamlHelper
 {
     public static string Serialize<T>(T obj)
     {
-        var serializer = new YamlDotNet.Serialization.SerializerBuilder().Build();
+        var serializer = new YamlDotNet.Serialization.SerializerBuilder()
+            // .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .Build();
         var yaml = serializer.Serialize(obj);
         return yaml;
     }

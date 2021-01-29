@@ -281,13 +281,6 @@ public class AssetSys : SingleMono<AssetSys>
         {
             Directory.CreateDirectory(CacheRoot);
         }
-        #if UNITY_EDITOR
-        if (BuildConfig.Instance().UseBundle)
-        #endif
-        {
-            yield return GetBundle("ui/boot.bd");
-        }
-
         yield return base.Init();
     }
 
@@ -609,7 +602,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
         catch (WebException we)
         {
-            File.Delete((path + ".tmp"));
+            File.Delete(tmpPath);
             AppLog.e(Tag, url, we.Message, we.Dump());
             DialogSys.Alert(url + "\n" + we.Message + we.StackTrace, "error");
             yield break;

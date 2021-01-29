@@ -87,7 +87,7 @@ namespace UnityEditor
             }
             else
             {
-                AppLog.d(Tag, "not a lua script");
+                AppLog.d(Tag, $"{assetPath} not a lua script");
             }
             
             base.OnInspectorGUI();

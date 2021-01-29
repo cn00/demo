@@ -90,7 +90,7 @@ public class LuaMonoBehaviour : MonoBehaviour
         if (LuaAsset == null) 
             yield break;
         var luaInstance = LuaSys.Instance;
-        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath.Replace("Assets/AppRes/", ""));
+        Lua = luaInstance.GetLuaTable(LuaAsset.bytes, this, LuaPath);
 
         if (Lua == null)
         {
