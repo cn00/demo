@@ -22,6 +22,11 @@ public static class AppLog
         Net = 9,
     }
 
+    public static bool isEditor = false;
+
+    public static Level LogLevel = Level.Debug;
+
+
     public class OnMessageReceivedHandler : EventArgs
     {
         public string Message;
@@ -31,11 +36,6 @@ public static class AppLog
             Message = msg;
         }
     }
-
-    public static bool isEditor = false;
-
-    public static Level LogLevel = Level.Debug;
-
     public static event EventHandler<OnMessageReceivedHandler> OnMessageReceived;
 
     static void BroadcastMessage(string msg)
@@ -108,7 +108,7 @@ public static class AppLog
     // [Conditional("USE_LOG")]
     private static void e(string tag, string log)
     {
-        if(LogLevel >= Level.Error)
+        // if(LogLevel >= Level.Error)
         {
             var s = "App:"+tag+": " + log;
             UnityEngine.Debug.LogError(s);
@@ -120,7 +120,7 @@ public static class AppLog
     
     public static void e(string tag, params object[] args)
     {
-        if(LogLevel >= Level.Net)
+        // if(LogLevel >= Level.Error)
         {
             logs.Clear();
             foreach (var i in args)
@@ -134,7 +134,7 @@ public static class AppLog
 
     public static void e(string tag, Exception ex)
     {
-        if(LogLevel >= Level.Error)
+        // if(LogLevel >= Level.Error)
             e(tag, ex.ToString());
     }
 
