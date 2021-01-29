@@ -1,5 +1,7 @@
 
 require("stringx")
+require("tablex")
+
 local util = {}
 function util.newIdx(start)
     start = start or 0
@@ -105,6 +107,7 @@ function util.dump(obj, pretty, prefix)
         tokens[#tokens + 1] = "{"
         if level < 5 then
             for k, v in pairs(obj) do
+                if k == "__wraped__" then goto continue end
                 if type(v) == "function" then
                     tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
                 else

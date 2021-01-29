@@ -100,6 +100,7 @@ local function _Draw(self, opt)
 			-- local k,v = next(self)
 			-- while k ~= nil do
 			for k, v in pairs(self) do
+				if k == "__Drawed" then goto continue end
 				-- print(k, v, type(v))
 				local kk = tostring(k);
 				local vtype = type(v)
