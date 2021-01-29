@@ -4,7 +4,10 @@
 --- Date: 2021/01/12 12:07:03
 --- Description: 
 --[[
-
+-[ ] 人机对战
+-[ ] 自动匹配
+-[ ] 创建对局
+-[ ] 选择对局:对战/旁观
 ]]
 
 local G = _G
@@ -15,7 +18,7 @@ local util = require "util"
 local xutil = require "xlua.util"
 local sqlite3 = require("lsqlite3")
 local manager = AppGlobal.manager
-local config = require("config.config.config")
+local config = require("common.config.config")
 local socket = require("socket.core")
 
 local dbpath = config.dbCachePath;
@@ -32,11 +35,6 @@ local print = function ( ... )
 end
 
 local index = {
-    needQuitUdp = false,
-    receiveUdp = nil, 
-    sendUdp = nil,
-    servers = {}, -- {{url, name}, ...}
-    newServerCome = false,
 }
 local this = index
 
@@ -49,28 +47,51 @@ end
 function this.AutoGenInit()
     this.bg_Image = bg:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.bottom_RectTransform = bottom:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.createRoom_Button = createRoom:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.createRoom_Button.onClick:AddListener(this.createRoom_OnClick)
+    this.gameGround_Button = gameGround:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.gameGround_Button.onClick:AddListener(this.gameGround_OnClick)
     this.history_Button = history:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.history_Button.onClick:AddListener(this.history_OnClick)
     this.nameInput_Text = nameInput:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.qingdong_Button = qingdong:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.qingdong_Button.onClick:AddListener(this.qingdong_OnClick)
-    this.roomList_LuaMonoBehaviour = roomList:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.roomTemplate_RectTransform = roomTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.scrollContent_RectTransform = scrollContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.wangzhe_Button = wangzhe:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.wangzhe_Button.onClick:AddListener(this.wangzhe_OnClick)
+    this.p2cPlay_Button = p2cPlay:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.p2cPlay_Button.onClick:AddListener(this.p2cPlay_OnClick)
+    this.startMatch_Button = startMatch:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.startMatch_Button.onClick:AddListener(this.startMatch_OnClick)
 end
 --AutoGenInit End
 
-function this.qingdong_OnClick()
-    print('qingdong_OnClick')
-end -- qingdong_OnClick
+---对局大厅
+function this.gameGround_OnClick()
+    print('gameGround_OnClick')
+end -- gameGround_OnClick
 
-function this.wangzhe_OnClick()
-    print('wangzhe_OnClick')
-end -- wangzhe_OnClick
+---人机对战
+function this.p2cPlay_OnClick()
+    print('p2cPlay_OnClick')
+    -- start a local server
+    local server = GameObject.Instantiate(CS.AssetSys.GetAssetSync("poetry/net/server.prefab"), manager.Scene.layer.back)
+    manager.Scene.push("poetry/match/match.prefab", {
+        --parent = nil,
+        matchType = "p2c",
+        server = server
+    }, true)
+end -- p2cPlay_OnClick
 
+function this.createRoom_OnClick()
+    print('createRoom_OnClick')
+    manager.Scene.push("poetry/room/create.prefab", nil, true)
+end -- createRoom_OnClick
+
+---自动匹配
+function this.startMatch_OnClick()
+    print('startMatch_OnClick')
+    manager.Scene.push("poetry/match/match.prefab", nil, true)
+end -- startMatch_OnClick
+
+---历史战绩
 function this.history_OnClick()
+    print('history_OnClick')
     manager.Scene.push("poetry/history/history.prefab", nil, true)
 end -- history_OnClick
 
@@ -79,39 +100,17 @@ function index.Awake()
 end
 
 function index.Start()
-    --xutil.coroutine_call(function()
-    --    local sql
-    --    yield_return(CS.AssetSys.GetAsset("poetry/data/userdata.sql", function(asset)
-    --        sql = asset.text
-    --        print("userdata.sql", sql)
-    --    end))
-    --    local db = sqlite3.open(userDbpath);
-    --    assert(sqlite3.OK == db:exec(sql), db:errmsg())
-    --    db:close()
-    --end)
-
-    roomTemplate:SetActive(false)
-
-    this.needQuitUdp = false
-    this.StartUdpReceiveLoop()
-    this.StartUdpBroadcastLoop()
-end
-
-function index.Update()
-    if this.newServerCome then
-        print("newServerCome")
-        for i, v in pairs(this.servers) do
-            if v.obj == nil then
-                print(v.name, v.url,v.description)
-                local obj = GameObject.Instantiate(roomTemplate, scrollContent.transform)
-                obj:SetActive(true)
-                local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
-                com.init(v)
-                v.obj = obj
-            end
-        end
-        this.newServerCome = false
-    end
+    xutil.coroutine_call(function()
+        -- init userdata db
+        local sql
+        yield_return(CS.AssetSys.GetAsset("poetry/data/userdata.sql", function(asset)
+            sql = asset.text
+            print("userdata.sql", sql)
+        end))
+        local db = sqlite3.open(userDbpath);
+        assert(sqlite3.OK == db:exec(sql), db:errmsg())
+        db:close()
+    end)
 end
 
 function this.joinGame_OnClick()
@@ -141,74 +140,5 @@ function this.newGame_OnClick()
     }, true)
 end -- newGame_OnClick
 
-local function OnReceiveMsgs(msgs)
-    if string.sub(msgs, 1,6) == "return" then
-        local f = load(msgs)
-        if f then
-            local msgt = f() -- {id, name, url, description}
-            if msgt.url and this.servers[msgt.url] == nil then
-                this.servers[msgt.url] = msgt
-                this.newServerCome = true
-            end
-        end
-    end
-end
-
-local port = 8800
-
---server
-function index.StartUdpReceiveLoop()
-    xutil.coroutine_call(function()
-        local udp = socket.udp()
-        this.receiveUdp = udp
-        local host = '0.0.0.0' -- '10.23.24.239'
-        udp:settimeout(0.1)
-        udp:setsockname(host, tostring(port))
-        assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
-        print('waiting client connect', host, port)
-        while not this.needQuitUdp do
-            local msgs,receip,receport = udp:receivefrom()
-            if (msgs and receip and receport) then
-                OnReceiveMsgs(string.sub(msgs,1, 6) == "return" and msgs or string.hexr(msgs))
-            else
-                --print('waiting client connect ...')
-            end
-            yield_return(UnityEngine.WaitForSeconds(3))
-        end
-        udp:close()
-    end)
-end
-
--- client
-function index.StartUdpBroadcastLoop()
-    xutil.coroutine_call(function()
-        local udp = socket.udp()
-        local host = '10.23.25.255'
-        assert(udp:settimeout(0.1))
-        assert(udp:setpeername(host, port))
-        assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
-        print('waiting client connect', host, port)
-        local myip = assert(udp:getsockname())
-        local msgt = {
-            url = string.format("%s", myip),
-            name = "--name--", 
-            description = "--description--",
-            --action = function()return {3.1415926, 369852}  end
-        }
-        local msgs = 'return' .. util.dump(msgt, false)
-        while not this.needQuitUdp do
-            local udpsend, err = udp:send(string.hex(msgs))
-            yield_return(UnityEngine.WaitForSeconds(15))
-        end
-        print("broadcast udp shutdown")
-        udp:close()
-    end)
-end
-
-function this.OnDestroy()
-    this.needQuitUdp = true
-    if this.sendUdp then this.sendUdp:close() end
-    if this.receiveUdp then this.receiveUdp:close() end
-end
 
 return index

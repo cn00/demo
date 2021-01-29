@@ -33,4 +33,19 @@ CREATE VIEW IF NOT EXISTS poetryAuthor AS
 SELECT
 	p.id, p.title, a.dynasty, a.name author, p.content, p.tags, p.star pstar,p.about,a.id aid
 FROM poetry p 
-LEFT JOIN author a ON p.authorId = a.id
+LEFT JOIN author a ON p.authorId = a.id;
+
+CREATE VIEW poetry100_57_author as
+SELECT a.xuhao xh5, b.xuhao xh7, a.author author5, b.author author7, a.content content5, b.content content7
+FROM
+(
+        SELECT *
+        FROM poetry100 p1
+        WHERE tags like '%五言'
+) a
+LEFT JOIN
+(
+    SELECT *
+    FROM poetry100 p1
+    WHERE tags like '%七言'
+) b ON a.author = b.author;

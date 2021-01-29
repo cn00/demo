@@ -1,7 +1,7 @@
 
 --- Author: cn
 --- Email: cool_navy@qq.com
---- Date: 2021/01/20 18:40:19
+--- Date: 2021/01/28 18:50:25
 --- Description: 
 --[[
 
@@ -11,35 +11,35 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.util"
+local util = require "util"
 local xutil = require "xlua.util"
 
--- roomList
+-- roomDetail
 
 local print = function ( ... )
-    _G.print("roomList", ...)
-    -- _G.print("roomList", debug.traceback())
+    _G.print("roomDetail", ...)
+    -- _G.print("roomDetail", debug.traceback())
 end
 
-local roomList = {}
-local this = roomList
+local roomDetail = {}
+local this = roomDetail
 
 
 
 --AutoGenInit Begin
-function roomList.AutoGenInit() end
+function roomDetail.AutoGenInit() end
 --AutoGenInit End
 
-function roomList.Awake()
+function roomDetail.Awake()
 	this.AutoGenInit()
 end
 
--- function roomList.OnEnable() end
+-- function roomDetail.OnEnable() end
 
-function roomList.Start()
+function roomDetail.Start()
 	--util.coroutine_call(this.coroutine_demo)
 end
 
 
 
-return roomList
+return roomDetail

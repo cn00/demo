@@ -25,11 +25,12 @@ end)
 local useUdp = true
 
 local print = function ( ... )
-    _G.print("client", ...)
+    _G.print("<color=green>client</color>", ...)
     -- _G.print("client", debug.traceback())
 end
 
 local client = {
+	lastActive = 0,
 	conn_stat = {
 		offline = 0,
 		connecting = 1,
@@ -57,12 +58,13 @@ function client.ClientConnectToServer(ip, port, callback)
 	xutil.coroutine_call(function ()
 		this.connect_stat = conn_stat.connecting
 		local retrycount = 0
+		print("ClientConnectToServer", ip, port)
 		while (this.connect_stat == conn_stat.connecting and retrycount < 3) do
 			print("try connect ...", retrycount)
 			retrycount = 1 + retrycount
 			local tcp = socket.tcp()
 			tcp:settimeout(2)
-			local  err, msg = tcp:connect(ip, port)
+			local   msg, err = tcp:connect(ip, port)
 			print("conn", tcp, err, msg)
 			if err == nil then
 				this.conn = tcp
@@ -71,7 +73,7 @@ function client.ClientConnectToServer(ip, port, callback)
 				-- else if err == "connection refused" then
 				-- 	print(err)
 			else
-				print("connect err", err)
+				print("connect err", err, msg)
 			end
 			yield_return(UnityEngine.WaitForSeconds(0.3))
 		end -- while
@@ -118,7 +120,7 @@ function client.StartHeartbeatLoop()
 	xutil.coroutine_call(function ()
 		while true do
 			if os.time() - this.lastActive > deltas then
-				this.SendMsgt({ type = "heartbeat", body = {"do you know my heart?"} })
+				this.SendMsgt({ type = "heartbeat", body = {"do you know my heart?", clientId = this.clientId} })
 			end
 			yield_return(UnityEngine.WaitForSeconds(deltas))
 		end
@@ -184,10 +186,5 @@ local function broadcastTest()
 	udp:close()
 end
 
-function client.OnDestroy()
-	if this.conn then
-		this.conn:close()
-	end
-end
 
 return client

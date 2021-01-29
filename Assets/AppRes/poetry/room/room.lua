@@ -14,17 +14,17 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
 local xutil = require "xlua.util"
 
--- cell
+-- room
 
 local print = function ( ... )
     _G.print("cell", ...)
     -- _G.print("cell", debug.traceback())
 end
 
-local cell = {}
-local this = cell
+local room = {}
+local this = room
 
-function cell.init(info)
+function room.init(info)
     this.info = info
 end
 
@@ -39,13 +39,13 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
-function cell.Awake()
+function room.Awake()
 	this.AutoGenInit()
 end
 
 -- function cell.OnEnable() end
 
-function cell.Start()
+function room.Start()
 	--util.coroutine_call(this.coroutine_demo)
     this.id_Text.text = this.info.id
     this.description_Text.text = this.info.description
@@ -55,4 +55,4 @@ end
 
 
 
-return cell
+return room

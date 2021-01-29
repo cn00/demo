@@ -4,7 +4,8 @@
 --- Date: 2021/01/13 13:01:28
 --- Description: 
 --[[
-
+-[ ] android 广播
+-[x] 生成机器人
 ]]
 
 local G = _G
@@ -14,6 +15,8 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
 local xutil = require "xlua.util"
 local socket = require("socket.socket")
+local config = require("common.config.config")
+local sqlite = require("lsqlite3")
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
 	mono:YieldAndCallback(to_yield, callback)
@@ -22,7 +25,7 @@ end)
 -- server
 
 local print = function ( ... )
-    _G.print("server", ...)
+    _G.print("<color=yellow>server</color>", ...)
 end
 local server = {
 	ServerPort = 9990,
@@ -33,6 +36,7 @@ local server = {
 
 	-- room
 	rooms = {}, 	-- {[roomId]={clientId, ...},...}
+	levels = {},	-- {[level]={roomId, ...}, ...}
 	cardIds = {},	-- {[roomId]={cardId, ...},...}
 	clientIds = {}, -- {[roomId]={clientId, ...},...}
 }
@@ -47,16 +51,67 @@ local conn_stat = {
 local newRoomId = util.newIdx(1)
 local newClientId = util.newIdx(1)
 
+local function getDbData(sql)
+	local db = sqlite.open(config.dbCachePath)
+	local ret = {}
+	for row in db:nrows(sql)do
+		table.insert(ret, row)
+	end
+	return ret
+end
+
+---createNpc roomId [1, 9]
+local function createNpc()
+	local t0 = os.clock()
+	local count = 200
+	local filter = "WHERE tags like '%唐诗%'"
+	local sql = string.format([[
+			SELECT a.id
+			FROM `poetry` a
+			JOIN (
+				SELECT ROUND(substr(random(), 2, 4) / 10000.0 * (( SELECT MAX(id) FROM `poetry` %s) - ( SELECT MIN(id) FROM `poetry` %s) - %d) + (SELECT MIN(id) FROM `poetry` %s)) AS id
+			) AS b
+			%s and a.id >= b.id
+			LIMIT %d;]], filter, filter, count, filter, filter, count):gsub("\n\t\t", " ")
+	--print(sql:gsub("[\n\t ]+", " "))
+	local rit = getDbData(sql)
+	--print("rit", util.dump(rit))
+	for i = 1, 100 do
+		local roomId = newRoomId()
+		local room = {
+			roomId = roomId,
+			level = math.random(0, 9),
+			--masterId = body.clientId, -- poetry.author.id
+			--note = body.note,			-- poetry.author.desc
+			isnpc = true
+		}
+		this.rooms[roomId]   = room
+		
+		local roomgroup = this.levels[room.level] or {}
+		table.insert(roomgroup, roomId)
+		this.levels[room.level] = roomgroup
+		
+		local count = 0
+		local cardIds = table.where(rit, function(o) count = count + 1 return count <= 20, rit[math.random(1, #rit)] end)
+		this.cardIds[roomId] = cardIds
+		--this.clientIds[roomId] = {body.clientId}
+	end
+	print("createNpc 100 use", t0, os.clock() - t0)
+end
+
 ---ServerStart 
-function server.ServerStart()
+function server.Start()
 	local port= server.ServerPort
 	print("<color=red>ServerStart", port)
 	local tcp, err = socket.bind("*", port)
 	if err == nil then
 		this.tcpServer = tcp
+		
+		createNpc()
+		
 		this.ServerStartAcceptLoop()
 		this.ServerStartReceiveLoop()
-		print("StartServer ok, listen on:", port)
+		print("StartServer ok, listen on *:", port)
 	else
 		print("StartServer failed.", err)
 	end
@@ -137,7 +192,7 @@ end
 ---@param msgs string
 ---@param tcp tcpClient
 function server.ServerOnReceiveMsgs(msgs, tcp)
-	print("ServerOnReceiveMsgs", tcp, msgs)
+	print("OnReceive", msgs)
 	local f = load(msgs)
 	if f then
 		local msgt = f()
@@ -187,7 +242,10 @@ local function OnCreateRoom(msgt)
 	local rt = {
 		type = "createRoom",
 		body = {
-			success = true
+			success = true,
+			roomId = roomId,
+			cardIds = body.cardIds,
+			level = body.level or 0
 		}
 	}
 	this.SendMsgtToClient(rt, body.tcp)
@@ -197,9 +255,18 @@ end
 ---OnRoomList
 ---@param msgt table body = {}
 local function OnRoomList(msgt)
+	local level = msgt.body.level or 0
+	local perpage = 10
+	local page = math.min(#this.rooms, msgt.body.page or 0)
+	local rooms = {}
+	for i = page*perpage, math.min((1+page)*perpage, #this.levels[level]) do
+		local roomid = this.levels[level][i]
+		local room = this.rooms[roomid]
+		table.insert(rooms, room)
+	end
 	local rt = {
 		type = "roomList",
-		body = this.rooms, -- TODO: only send simple room info
+		body = rooms, -- TODO: only send simple room info
 	}
 	this.SendMsgtToClient(rt, msgt.body.tcp)
 	return true
@@ -256,9 +323,10 @@ local function OnClientStateChanged(msgt)
 	for _, clientId in ipairs(this.clientIds[body.roomId]) do
 		this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
 	end
+	return true
 end
 
---- 房主发起开始游戏
+--- 房主发起开始游戏, 默记阶段
 ---@param msgt table
 local function OnStartMatch(msgt)
 	local body = msgt.body
@@ -269,6 +337,19 @@ local function OnStartMatch(msgt)
 		this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
 	end
 	local cardIds = {}
+	xutil.coroutine_call(function()
+		yield_return(UnityEngine.WaitForSeconds(5)) -- TODO: 默记时间⌚️
+		local currentIdx = this.cardIds[body.roomId][math.random(1, #this.cardIds[body.roomId])] -- first round
+		local ret = {
+			type = "nextRound",
+			body = {
+				currentIdx = currentIdx,
+			}
+		}
+		for _, clientId in ipairs(this.clientIds[body.roomId]) do
+			this.SendMsgtToClient(ret, this.clientsInfo[clientId].tcp)
+		end
+	end)
 	return true
 end
 
@@ -278,7 +359,7 @@ end
 local function OnUserAction(msgt)
 	local body= msgt.body
 	local room = this.rooms[body.roomId]
-	local currentIdx = 0 -- TODO:currentIdx
+	local currentIdx = body.currentIdx -- TODO:currentIdx
 	local ret = {
 		type = "nextRound",
 		body = {
@@ -293,7 +374,19 @@ end
 
 local function OnHeartbeat(msgt)
 	this.clientsInfo[msgt.body.clientId].lastActive = os.clock()
-	this.SendMsgtToClient({ type = "heartbeat", body = {"my heart will go on."} }, this.clientsInfo[msgt.body.clientId].tcp)
+	this.SendMsgtToClient({ type = "heartbeat", body = {"my heart will go on.", serverTime = os.time()} }, this.clientsInfo[msgt.body.clientId].tcp)
+	return true
+end
+local function OnChat(msgt)
+	local roomId = msgt.body.roomId
+	for _, clientId in ipairs(this.clientIds[roomId]) do
+		this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
+	end
+	return true
+end
+local function OnBye(msgt)
+	
+	return true
 end
 
 server.OnClientMsgType = {
@@ -304,8 +397,10 @@ server.OnClientMsgType = {
 	["leaveRoom"] 	= OnLeaveRoom,
 	["cStateChange"] = OnClientStateChanged,
 	["startMatch"]	= OnStartMatch,
-	["userAction"]	= OnUserAction,
+	["nextRound"]	= OnUserAction,
 	["heartbeat"] 	= OnHeartbeat,
+	["chat"]        = OnChat,
+	["bye"] 		= OnBye,
 }
 
 ---ServerSendMsgTo
@@ -343,31 +438,4 @@ function server.OnDestroy()
 	end
 end
 
-
-local function udpServerReceiveBroadcastTest() -- ok
-	local socket = require("socket.core")
-	local udp = socket.udp()
-	local host = '0.0.0.0' -- '10.23.24.239'
-	local port = '8800'
-	udp:settimeout(10)
-	udp:setsockname(host, port)
-	assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
-	--assert(udp:setoption('dontroute', true))
-	print('waiting client connect', host, port)
-	while 1 do
-		local revbuff,receip,receport = udp:receivefrom()
-		if (revbuff and receip and receport) then
-			print('revbuff:['..revbuff..'],receip:'..receip..',receport:'..receport)
-			local sendcli = udp:sendto('hello i am lua server',receip,receport)
-			if(sendcli) then
-				print('sendcli ok')
-			else
-				print('sendcli error')
-			end
-		else
-			print('waiting client connect ...')
-		end
-	end
-	udp:close()
-end
 return server

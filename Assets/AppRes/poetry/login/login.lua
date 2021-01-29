@@ -13,11 +13,12 @@ local GameObject = UnityEngine.GameObject
 local util = require "util"
 local xutil = require "xlua.util"
 require("json")
+local manager = AppGlobal.manager
 
 -- login
 
 local print = function(...)
-    _G.print("[login]", ...)
+    _G.print("poetry/login", ...)
     -- _G.print("[login]", debug.traceback())
 end
 
@@ -37,24 +38,48 @@ end
 function this.loginBtn_OnClick()
     print('loginBtn_OnClick')
 
-    CS.App.JavaUtil.Call("com.bili.a3.BSGameSdkCenter", "login")
+    --local jo = this.BSGameSdkCenter
+    --local channel = jo:CallStatic("channel") -- return void
+    --jo:CallStatic("login") -- return void
+    print(string.format("macro and:%s ios:%s editor:%s osx:%s win:%s"
+    , UNITY_ANDROID, UNITY_IOS, UNITY_EDITOR, UNITY_EDITOR_OSX, UNITY_EDITOR_WIN))
+
+    if UNITY_ANDROID then
+        CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "login")
+        local channel = CS.App.JavaUtil.CallStatic("com.bili.a3.BSGameSdkCenter", "channel")
+        print("channel", channel)
+    --elseif UNITY_IOS then
+    --elseif UNITY_EDITOR then -- uid input
+    else
+        manager.Scene.push("poetry/index/index.prefab", nil, true)
+    end
 end -- loginBtn_OnClick
 
 function G.OnNativeMessageBLSdk(null, data)
     local callbackType = data.callbackType
-    local userInfo = data.data
-    local example = {
-        data = { __wraped__ = "true",
-                 access_token = "c417254592631ff61b76701b0b9aee98_sh",
-                 expire_times = "1613475840392",
-                 nickname = "Test003",
-                 refresh_token = "c417254592631ff61b76701b0b9aee98_sh",
-                 username = "Test003",
-                 uid = "28387110", },
-        callbackType = "Login",
-        code = 10010,
-        type = "BLSdk", }
+    local args = data.data
     print(util.dump(data))
+    local actions = {
+        ["Login"] = function(argt)
+            --[[ example = {
+                type = "BLSdk",
+                code = 10010,
+                callbackType = "Login",
+                data = {
+                    access_token = "c417254592631ff61b76701b0b9aee98_sh",
+                    username = "Test003",
+                    expire_times = "1613475840392", -- ms
+                    refresh_token = "c417254592631ff61b76701b0b9aee98_sh",
+                    nickname = "Test003",
+                    uid = "28387110",
+                    result = 1,
+                }
+            }]]
+            manager.Scene.push("poetry/index/index.prefab", nil, true)
+        end,
+        ["Logout"] = function(argt)  end
+    }
+    if actions[callbackType] then actions[callbackType](args) end
 end
 
 function login.Awake()
@@ -65,8 +90,16 @@ end
 
 function login.Start()
     --util.coroutine_call(this.coroutine_demo)
-    local MerchantId, AppId, ServerId, AppKey = "1", "265", "506", "82a737d38acf4bc6abb903ccdbd7a562"
-    CS.App.JavaUtil.Call("com.bili.a3.BSGameSdkCenter", "init", true, MerchantId, AppId, ServerId, AppKey)
+    
+    -- init sdk
+    if UNITY_EDITOR then -- uid input
+
+    elseif UNITY_ANDROID then
+        local MerchantId, AppId, ServerId, AppKey = "1", "265", "506", "82a737d38acf4bc6abb903ccdbd7a562"
+        CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "init", true, MerchantId, AppId, ServerId, AppKey)
+    elseif UNITY_IOS then
+        
+    end
 end
 
 function login.OnDestroy()

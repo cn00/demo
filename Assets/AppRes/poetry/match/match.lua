@@ -4,7 +4,8 @@
 --- Date: 2021/01/08 19:18:14
 --- Description: 
 --[[
-
+-[ ] 单人模式
+-[ ] 团队模式
 ]]
 
 local G = _G
@@ -20,7 +21,7 @@ local util = require "lua.utility.util"
 local socket = require("socket.socket")
 local sqlite = require("lsqlite3")
 local manager = G.AppGlobal.manager
-local config = require("config.config.config")
+local config = require("common.config.config")
 
 local dbpath = config.dbCachePath;
 local userDbpath = config.userDbPath;
@@ -47,7 +48,10 @@ local print = function ( ... )
     _G.print("match", ...)
 end
 
-local match = {
+local this = {
+    ServerHost = "localhost",
+    ServerPort = 9990,
+    matchType = "p2c", -- p2c, p2p, visitor
     tp = 0, -- 0:主场， 1:客场, 2:观众
     matchState = clientState.playerPreparing,
     stateStartTime = 0, -- 状态开始时间
@@ -73,8 +77,11 @@ local match = {
     cinfo = nil,  -- client info {myname ,id}
     roomId = nil, -- 加入的房间信息
     clientsInfo = {}, -- {[clientId] = {}}
+    roomList={},
+    chatHistory = {}, -- {{clientId, content},...}
+    chatMsgNew = false, 
 }
-local this = match
+local match = this
 
 function match.init(info)
     this.tp = info.tp or 0
@@ -198,7 +205,7 @@ function match.nextRound()
         this.question_Text.text = card.content[card.qi]
 
         local msgtopartner = {
-            type = "next_round",
+            type = "nextRound",
             body = {
                 currentIdx=this.currentIdx,
                 round = this.round
@@ -265,8 +272,15 @@ function this.AutoGenInit()
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
     this.cardTemplate_RectTransform = cardTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.Chat_RectTransform = Chat:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.ChatBtn_Button = ChatBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.ChatBtn_Button.onClick:AddListener(this.ChatBtn_OnClick)
+    this.chatContent_VerticalLayoutGroup = chatContent:GetComponent(typeof(CS.UnityEngine.UI.VerticalLayoutGroup))
+    this.chatInputField_InputField = chatInputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.chatMsgTemp_RectTransform = chatMsgTemp:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.chatSendBtn_Button = chatSendBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.chatSendBtn_Button.onClick:AddListener(this.chatSendBtn_OnClick)
     this.netClient_LuaMonoBehaviour = netClient:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.netServer_LuaMonoBehaviour = netServer:GetComponent(typeof(CS.LuaMonoBehaviour))
     this.noteText_Text = noteText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.playerA_RectTransform = playerA:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.playerB_RectTransform = playerB:GetComponent(typeof(CS.UnityEngine.RectTransform))
@@ -277,6 +291,25 @@ function this.AutoGenInit()
     this.ShowQRcodeBtn_Button.onClick:AddListener(this.ShowQRcodeBtn_OnClick)
 end
 --AutoGenInit End
+
+function this.chatSendBtn_OnClick()
+    print('chatSendBtn_OnClick')
+    if this.chatInputField_InputField.text == "" then return end
+    this.Client.SendMsgt({
+        type = "chat",
+        body = {
+            clientId = this.clientId,
+            roomId = this.roomId,
+            content = this.chatInputField_InputField.text
+        }
+    })
+    this.chatInputField_InputField.text = ""
+end -- chatSendBtn_OnClick
+
+function this.ChatBtn_OnClick()
+    print('ChatBtn_OnClick')
+    Chat:SetActive(not Chat.activeSelf)
+end -- ChatBtn_OnClick
 
 function this.ShowQRcodeBtn_OnClick()
     QRcode:SetActive(not QRcode.activeSelf)
@@ -297,29 +330,23 @@ end
 
 function match.Start()
     this.Client = this.netClient_LuaMonoBehaviour.Lua
-    this.Server = this.netServer_LuaMonoBehaviour.Lua
-    print("Start-1", this.tp, this.Server)
 
     if(match.tp == 0) then
-        this.Server.ServerStart()
-        print("<color=red>server machine</color>")
-        
-        -- local
-        this.Client.ClientConnectToServer("localhost", this.Server.ServerPort, this.OnServerMsg)
+        this.Client.ClientConnectToServer(this.ServerHost, this.ServerPort, this.OnServerMsg)
 
-        local ips = CS.NetSys.LocalIpAddressStr()
-        local args = {}
-        local url = string.format("a3mkgp:%s:%s:%s", ips.Length > 0 and ips[0] or "127.0.0.1", this.Server.ServerPort, util.dump(args))
-        print("qrcode:url", url)
-        this.QRcode_QRCodeEncodeController:Encode(url)
+        -- TODO: Server url QRcode
+        --local ips = CS.NetSys.LocalIpAddressStr()
+        --local args = {}
+        --local url = string.format("a3mkgp:%s:%s:%s", ips.Length > 0 and ips[0] or "127.0.0.1", this.Server.ServerPort, util.dump(args))
+        --print("qrcode:url", url)
+        --this.QRcode_QRCodeEncodeController:Encode(url)
     else
-        --this.Server.ServerStart() -- local test client
         print("<color=red>client machine</color>")
         -- remote {"a3mkgp", ip, port, argt}
         this.Client.ClientConnectToServer(this.hostInfo[2], this.hostInfo[3], this.OnServerMsg)
     end
     
-    match.stateStartTime = UnityEngine.Time.now
+    this.stateStartTime = UnityEngine.Time.now
 
     this.QRcode_QRCodeEncodeController:onQREncodeFinished('+', function(s)
         print("QRCodeEncode finished", s)
@@ -400,7 +427,7 @@ function match.OnReceiveMsg(msgt)
                 v.qi  = ci[i].qi
                 v.die = ci[i].die
             end
-            match.distributeCard(match.poetryList)
+            match.distributeCard(this.poetryList)
 
             local msgtopartner = {
                 type = "partner_ready",
@@ -452,6 +479,11 @@ function match.Update()
     if this.round >= 0 then
         this.noteText_Text.text = string.format("%s:%s", 
                 this.round, math.modf(UnityEngine.Time.time - match.roundStartTime))
+    end
+
+    if this.chatMsgNew then
+        -- TODO: refresh msg ui
+        this.chatMsgNew = false
     end
 end
 
@@ -521,12 +553,23 @@ end
 ---@param msgt table body = {id}
 local function OnConnect(msgt)
     this.clientId = msgt.body.clientId
+    this.Client.clientId = msgt.body.clientId
+    
+    this.Client.SendMsgt({
+        type = "createRoom",
+        body = {
+            cardIds = {1,2,3,4,5,6,7},
+            clientId = this.clientId
+        }
+    })
+    return true
 end
 
 ---OnLoginResult
 ---@param msgt table body = {success}
 local function OnLoginResult(msgt)
     this.loginInfo = msgt.body
+    return true
 end
 
 ---OnCreateRoomResult
@@ -534,7 +577,8 @@ end
 local function OnCreateRoomResult(msgt)
     local roomId = msgt.body.roomId
     this.roomId = roomId
-    this.roomList[roomId].clientIds = msgt.body
+    this.poetryIdList = msgt.body.cardIds
+    --this.roomList[roomId].clientIds = msgt.body
     return true
 end
 
@@ -542,6 +586,7 @@ end
 ---@param msgt table body = {{roomId, client={{id,name}, ...}}, ...}
 local function OnRoomListResult(msgt)
     this.roomList = msgt.body
+    return true
 end
 
 ---OnJoinRoomResult
@@ -552,6 +597,8 @@ local function OnJoinRoomResult(msgt)
     this.clientsId = body.clientsId
     this.cardIds = body.cardIds
     -- TODO: 查看房间及卡牌信息 refresh ui
+    this.noteText_Text.text = "等待对手准备就绪"
+    return true
 end
 
 local function OnLeaveRoom(msgt)
@@ -564,6 +611,7 @@ local function OnLeaveRoom(msgt)
         util.removeValue(this.room.clientIds, body.clientId)
     end
     -- TODO: refresh ui
+    return true
 end
 
 ---同步客户端状态
@@ -585,32 +633,66 @@ local function OnClientStateChanged(msgt)
 
         end
     end
+    return true
 end
 
 local function OnNextround(msgt)
     local body = msgt.body
     this.currentIdx = body.currentIdx
     this.nextRound()
+    return true
 end
 
 ---OnSendCard
 ---@param msgt table body = {cardId, cardInfo={state}}
 local function OnSendCard(msgt)
 
+    return true
 end
 
 ---OnCardAction
 ---@param msgt table body = {cardId, action}
 local function OnCardAction(msgt)
 
+    return true
 end
 
 ---OnMatchResult
 ---@param msgt table body = {result}
 local function OnMatchResult(msgt)
 
+    return true
 end
 
+local function OnStartMatch(msgt)
+    local body = msgt.body
+    this.clientName = body.myname
+    --local poetryIdList = body.poetryIdList -- match.getPoetryIds(50, "where tags like '%思念%'")
+    this.poetryList = this.getPoetryByIds(this.poetryIdList)
+
+    this.distributeCard(this.poetryList)
+    return true
+end
+
+local function OnHeartbeat(msgt)
+    
+    return true
+end
+
+--- body {clientId, content}
+local function OnChat(msgt)
+    
+    table.insert(this.chatHistory, msgt.body)
+    this.chatMsgNew = true
+    
+    return true
+end
+
+local function OnBye(msgt)
+    local body = msgt.body
+    local clientId = body.clientId
+    return true
+end
 
 local OnServerMsgType = {
     ["connect"] 	= OnConnect, --> login
@@ -625,11 +707,27 @@ local OnServerMsgType = {
     ["sendCard"]	= OnSendCard,
     ["cardAction"]	= OnCardAction,
     ["matchResult"]	= OnMatchResult,
+    ["heartbeat"]   = OnHeartbeat,
+    ["bye"] 		= OnBye,
+    ["chat"]        = OnChat,
 }
 
 function match.OnServerMsg(msgt)
     local type = msgt.type
     assert(OnServerMsgType[type] and OnServerMsgType[type](msgt))
+end
+
+function match.OnDestroy()
+    if this.Client.conn then
+        this.Client.SendMsgt({
+            type = "bye",
+            body = {
+                clientId = this.clientId,
+                roomId = this.roomId
+            }
+        })
+        this.Client.conn:close()
+    end
 end
 
 return match
