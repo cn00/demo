@@ -148,4 +148,13 @@ function util.removeValue(t, vv)
     return false
 end
 
+function util.StrTable2CSArray( tab )
+    local list = CS.System.Collections.Generic["List`1[System.String]"]()
+    for i,v in ipairs(tab) do
+        -- print(i,v)
+        list:Add(v)
+    end
+    return list --:ToArray()
+end
+    
 return util
