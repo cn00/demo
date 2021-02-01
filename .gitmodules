@@ -19,3 +19,6 @@
 [submodule "ml"]
 	path = ml
 	url = git@github.com:cn00/ml-agents.git
+[submodule "Packages/com.unity.assetbundlebrowser"]
+	path = Packages/com.unity.assetbundlebrowser
+	url = git@github.com:cn00/com.unity.assetbundlebrowser.git
