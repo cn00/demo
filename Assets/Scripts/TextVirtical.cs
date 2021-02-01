@@ -8,9 +8,15 @@ using UnityEngine.UI;
 [AddComponentMenu("UI/TextVirtical", 10)]
 public class TextVirtical : Text
 {
+    public bool isVirtical = true;
     protected override void OnPopulateMesh(VertexHelper toFill)
     {
-        // base.OnPopulateMesh(toFill);
+        if(!isVirtical)
+        {
+            base.OnPopulateMesh(toFill);
+            return;
+        }
+        
         if (font == null)
             return;
 
