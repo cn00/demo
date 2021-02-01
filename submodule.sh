@@ -4,7 +4,7 @@ subbrname=${1}
 thisdir="${PWD}"
 
 # set -x
-git submodule | 
+git submodule | gsed -e 's/^[ +-]//g' | 
     awk -F'[ ]' '{print $2, $3}' | while read l; do
         hash="${l/* }"
         gitname="${l/*\/}.git"
@@ -13,7 +13,7 @@ git submodule |
             echo "${l}: ${gitname}:${subpath} ==> /Volumes/Data/bare/${gitname}";
             if [[ -d ${subpath} ]]; then rmdir ${subpath}; fi
             pushd "/Volumes/Data/bare/${gitname}"
-            git br "${subbrname}"
+            git br "${subbrname}" "${hash}"
             git worktree add "${thisdir}/${subpath}" "${subbrname}"
             popd
         fi;
