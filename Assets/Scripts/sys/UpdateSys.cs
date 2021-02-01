@@ -35,12 +35,17 @@ public class UpdateSys : SingleMono<UpdateSys>
     public IEnumerator GetLocalVersion()
     {
         var cachePath = AssetSys.CacheRoot + "resversion.txt";
-        var localVersionUrl = "file://" + cachePath;
+        var localVersionUrl = cachePath;
         AppLog.d(Tag, "GetLocalVersion: {0}", localVersionUrl);
 
         if(File.Exists(cachePath))
         {
             mLocalVersion = new Version(File.ReadAllText(cachePath));
+        }
+        else
+        {
+            mLocalVersion = new Version("1.0.0");
+            File.WriteAllText(cachePath, "1.0.0");
         }
 
         AppLog.d(Tag, "LocalVersion {0}", mLocalVersion.ToString());
@@ -145,6 +150,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public IEnumerator CheckUpdate()
     {
+        LocalManifestPath = AssetSys.CacheRoot + "manifest.yaml";
         #if UNITY_EDITOR
         var UseBundle = BuildConfig.Instance().UseBundle;
         if (!UseBundle) yield break;
@@ -182,7 +188,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         return info != null;
     }
 
-    private string LocalManifestPath = AssetSys.CacheRoot + "manifest.yaml";
+    private string LocalManifestPath;
     /// <summary>
     /// 将更新过的md5更新到本地
     /// </summary>
