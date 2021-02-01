@@ -519,7 +519,8 @@ end
 ---@param msgt table
 ---@param roomId number
 function server.SendMsgtToRoom(msgt, roomId)
-    for _, clientId in ipairs(this.roomsInfo[roomId]) do
+    print("SendMsgtToRoom", msgt.type, roomId, #this.clientIds[roomId])
+    for _, clientId in ipairs(this.clientIds[roomId]) do
         this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
     end
 end

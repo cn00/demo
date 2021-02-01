@@ -116,7 +116,7 @@ end
 
 function client.StartHeartbeatLoop()
 	print('StartHeartbeatLoop')
-	local deltas = 10
+	local deltas = 30
 	xutil.coroutine_call(function ()
 		while true do
 			if os.time() - this.lastActive > deltas then

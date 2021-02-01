@@ -153,7 +153,7 @@ function match.onCardClick(idx, tp)
         end
 
         -- show right answer
-        this.question_Text.text = string.format("<color=red>%s</color>", card.content[card.ai])
+        this.question_Text.text = string.format("<color=red>%s</color>|%s|%ss", card.content[card.ai], )
         yield_return(UnityEngine.WaitForSeconds(3))
         --this.question_Text.text = "" -- client is not finished yield_return
 
@@ -166,8 +166,6 @@ function match.onCardClick(idx, tp)
                 yield_return(UnityEngine.WaitForSeconds(10))
                 manager.Scene.push("poetry/index/index.prefab", nil, true)
             end)
-        else
-            if this.matchType == 0 then match.nextRound() end
         end
         
     end)
@@ -616,13 +614,13 @@ local function OnAnswer(msgt)
     this.roundAnswer = body.roundAnswer
     if body.clientId == this.clientId then
         xutil.coroutine_call(function()
-            -- TODO: show answer time
-            yield_return(UnityEngine.WaitForSeconds(5))
-            tihs.Client.SendMsgt({
+            -- TODO: show answer & time
+            yield_return(UnityEngine.WaitForSeconds(2))
+            this.Client.SendMsgt({
                 type = "endRound",
                 body = {
                     clientId = this.clientId,
-                    roomId = tihs.roomId
+                    roomId = this.roomId
                 }
             })
         end)
