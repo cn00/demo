@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local xutil = require "xlua.util"
 local AssetSys = CS.AssetSys
 
 local Scene = { 
@@ -18,7 +18,7 @@ else
     return
 end
 
-local yield_return = util.async_to_sync(function (to_yield, callback)
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
@@ -56,7 +56,7 @@ function Scene.push(prefabPath, arg, replace)
 
     arg = arg or {}
     --replace = replace or replace == nil
-    util.coroutine_call(function()
+    xutil.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
         local last = loadstack[#loadstack]
@@ -109,7 +109,7 @@ end
 
 function Scene.Awake()
     --this.AutoGenInit()
-    util.coroutine_call(function()
+    xutil.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
 
         if Scene.loading == nil then

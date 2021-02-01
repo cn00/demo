@@ -44,7 +44,9 @@ function this.loginBtn_OnClick()
     print(string.format("macro and:%s ios:%s editor:%s osx:%s win:%s"
     , UNITY_ANDROID, UNITY_IOS, UNITY_EDITOR, UNITY_EDITOR_OSX, UNITY_EDITOR_WIN))
 
-    if UNITY_ANDROID then
+    if UNITY_EDITOR  then
+        manager.Scene.push("poetry/index/index.prefab", nil, true)
+    elseif UNITY_ANDROID then
         CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "login")
         local channel = CS.App.JavaUtil.CallStatic("com.bili.a3.BSGameSdkCenter", "channel")
         print("channel", channel)

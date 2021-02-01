@@ -89,10 +89,12 @@ function util.dump(obj, pretty, prefix)
             return dumpObj(val, level)
         elseif tv == "number" then
             return val
+        elseif tv == "boolean" then
+            return val and "true" or "false"
         elseif tv == "string" then
             return quoteStr(val:gsub("[\0-\15]", ""):gsub("\n", "\\n"):gsub("\r", "\\r"))
-        elseif tv == "function" then
-            return quoteStr(string.xxd(string.dump(val)))
+        --elseif tv == "function" then
+        --    return quoteStr(string.hex(string.dump(val)))
         else
             return quoteStr(tostring(val))
         end
@@ -141,6 +143,9 @@ table.dump = util.dump
 --     dump(self, breakline, prefix)
 -- end
 
+---removeValue
+---@param t table
+---@param vv any
 function util.removeValue(t, vv)
     for i, v in ipairs(t) do
         if v == vv then table.remove(t, i) return true end

@@ -42,6 +42,7 @@ local clientState ={
     fighting = 4,
     countScore = 5,
     readyToStart = 6,
+    penaltySelect = 7,-- 罚牌选择
 }
 
 local print = function ( ... )
@@ -51,8 +52,8 @@ end
 local this = {
     ServerHost = "localhost",
     ServerPort = 9990,
-    matchType = "p2c", -- p2c, p2p, visitor
-    tp = 0, -- 0:主场， 1:客场, 2:观众
+    --matchTypes = "p2c", -- p2c, p2p, visitor
+    matchType = 0, -- 0:主场， 1:客场, 2:观众
     matchState = clientState.playerPreparing,
     stateStartTime = 0, -- 状态开始时间
     playerPreparingCountdown = 10, -- 状态读秒
@@ -63,7 +64,6 @@ local this = {
     roundAnswer = -1, -- 当前双方选手的答案
     scoreA = 0, -- 得分
     scoreB = 0,
-    poetryList = nil, -- all questions
     availableIdxs = {}, -- available questions index
     availableIdxsA = {}, -- 
     availableIdxsB = {}, -- 
@@ -72,7 +72,7 @@ local this = {
     loginInfo = nil,
     clientId = -1, -- 每次登录服务器时分配的 id 会变
     clientsId = {}, -- 房间成员
-    cardIds = nil, -- 房间卡牌id
+    cardsInfo = nil, -- 房间卡牌id
     clientName = "",
     cinfo = nil,  -- client info {myname ,id}
     roomId = nil, -- 加入的房间信息
@@ -84,7 +84,8 @@ local this = {
 local match = this
 
 function match.init(info)
-    this.tp = info.tp or 0
+    this.info = info
+    this.matchType = info.tp or 0
     this.hostInfo = info.hostInfo
     this.myname = info.name
 end
@@ -102,32 +103,33 @@ end
 
 ---myAnswer
 ---@param idx number
-function match.playerAnswer(idx, tp)
-    if this.currentIdx < 0 then print("game not start yet.")return end
+function match.onCardClick(idx, tp)
+    if this.currentIdx < 0 then print("game not start yet.", idx)return end
+
+    if this.roundAnswer == idx then print("慢了一步") return end
 
     this.roundAnswer = -1
 
+    print("onCardClick", idx)
     xutil.coroutine_call(function()
-        local card = match.poetryList[idx]
+        local card = this.cardsInfo[idx]
         card.Lua.hid()
         card.die = true
         local msg = {
-            type = "card_action", -- or "card_action_b",
+            type = "answer", -- or "card_action_b",
             body = {
-                idx = idx,
-                id = card.id,
-                tp = tp or this.tp,
-                owner = card.owner
+                clientId = this.clientId,
+                roomId = this.roomId,
+                roundAnswer = idx,
             }
         }
+        this.Client.SendMsgt(msg)
 
-        if tp == this.tp then
-            this.Client.SendMsgt(msg)
-
+        if tp == this.matchType then
             if idx == this.currentIdx then
                 this.scoreA = this.scoreA + 1
             else
-                this.poetryList[this.currentIdx].Lua.hidAnswer() -- 
+                this.cardsInfo[this.currentIdx].Lua.hidAnswer() -- 
                 this.scoreB = this.scoreB + 1
                 if card.owner == 1 then
                     -- TODO: 罚牌
@@ -137,7 +139,7 @@ function match.playerAnswer(idx, tp)
             if idx == this.currentIdx then
                 this.scoreB = this.scoreB + 1
             else
-                match.poetryList[this.currentIdx].Lua.hidAnswer()
+                match.cardsInfo[this.currentIdx].Lua.hidAnswer()
                 this.scoreA = this.scoreA + 1
                 if card.owner == 1 then
                     -- TODO: 罚牌
@@ -150,7 +152,7 @@ function match.playerAnswer(idx, tp)
             removeValueFromArray(idx, this.availableIdxsB)
         end
 
-        -- show answer
+        -- show right answer
         this.question_Text.text = string.format("<color=red>%s</color>", card.content[card.ai])
         yield_return(UnityEngine.WaitForSeconds(3))
         --this.question_Text.text = "" -- client is not finished yield_return
@@ -165,7 +167,7 @@ function match.playerAnswer(idx, tp)
                 manager.Scene.push("poetry/index/index.prefab", nil, true)
             end)
         else
-            if this.tp == 0 then match.nextRound() end
+            if this.matchType == 0 then match.nextRound() end
         end
         
     end)
@@ -197,23 +199,22 @@ function match.nextRound()
     else
         this.roundAnswer = -1
         match.roundStartTime = UnityEngine.Time.time
-        local i = math.random(1, #this.availableIdxs)
-        this.currentIdx = this.availableIdxs[i]
-        this.round = #this.poetryList - #this.availableIdxs
-        local card = this.poetryList[this.currentIdx]
+        this.round = #this.cardsInfo - #this.availableIdxs
+        local card = this.cardsInfo[this.currentIdx]
         card.Lua.showAnswer()
         this.question_Text.text = card.content[card.qi]
 
-        local msgtopartner = {
-            type = "nextRound",
-            body = {
-                currentIdx=this.currentIdx,
-                round = this.round
-            },
-        }
-        this.Client.SendMsgt(msgtopartner)
+        --local msgtopartner = {
+        --    type = "nextRound",
+        --    body = {
+        --        currentIdx=this.currentIdx,
+        --        round = this.round
+        --    },
+        --}
+        --this.Client.SendMsgt(msgtopartner)
+        
         print("host tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
-        CS.App.JavaUtil.Call("com.unity3d.player.TTS", "Say", card.content[card.qi])
+        CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.TTS", "Say", card.content[card.qi])
     end
 end
 
@@ -241,33 +242,33 @@ end
 
 ---@param id table
 ---@return table
-function match.getPoetryByIds(ids)
+function match.mergeCardsInfo()
+    local ids =  table.select(this.cardsInfo, function(o) return o.id end)
     local sids = table.concat(ids, ",")
     local db = sqlite.open(dbpath)
-    local sql = string.format([[select * from poetry where id in (%s)]], sids)
+    local sql = string.format([[select id, content from poetry where id in (%s)]], sids)
     local res = {}
-    local idx = 0
     for row in db:nrows(sql) do
-        idx = idx + 1
         row.content = row.content
                 :gsub("(。)%s*", "%1|")
                 :gsub("(？)%s*", "%1|")
                 :gsub("(！)%s*", "%1|")
                 :split("|")
-        row.qi = math.random(1, #row.content)
-        local ai = row.qi == #row.content and row.qi-1 or row.qi+1
-        if row.qi > 1 and row.qi < #row.content and math.random(0,100) > 50 then  ai = row.qi-1 end -- 前一句
-        row.ai = ai
-        row.idx = idx
-        row.match = this
-        res[1+#res] = row
+        res[row.id] = row.content
+    end
+    for i, v in ipairs(this.cardsInfo) do
+        v.content = res[v.id]
     end
     db:close()
-    return res
 end
 
 --AutoGenInit Begin
---DO NOT EDIT THIS FUNCTION MANUALLY.
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
 function this.AutoGenInit()
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
@@ -289,8 +290,21 @@ function this.AutoGenInit()
     this.scoreText_Text = scoreText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.ShowQRcodeBtn_Button = ShowQRcodeBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.ShowQRcodeBtn_Button.onClick:AddListener(this.ShowQRcodeBtn_OnClick)
+    this.startBtn_Button = startBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.startBtn_Button.onClick:AddListener(this.startBtn_OnClick)
 end
 --AutoGenInit End
+
+function this.startBtn_OnClick()
+    print('startBtn_OnClick')
+    this.Client.SendMsgt({
+        type = "startMatch",
+        body = {
+            clientId = this.clientId,
+            roomId = this.roomId,
+        }
+    })
+end -- startBtn_OnClick
 
 function this.chatSendBtn_OnClick()
     print('chatSendBtn_OnClick')
@@ -330,9 +344,9 @@ end
 
 function match.Start()
     this.Client = this.netClient_LuaMonoBehaviour.Lua
-
-    if(match.tp == 0) then
-        this.Client.ClientConnectToServer(this.ServerHost, this.ServerPort, this.OnServerMsg)
+    startBtn:SetActive(false)
+    if(this.matchType == 0) then
+        this.Client.ConnectToServer(this.ServerHost, this.ServerPort, this.OnServerMsg)
 
         -- TODO: Server url QRcode
         --local ips = CS.NetSys.LocalIpAddressStr()
@@ -343,7 +357,7 @@ function match.Start()
     else
         print("<color=red>client machine</color>")
         -- remote {"a3mkgp", ip, port, argt}
-        this.Client.ClientConnectToServer(this.hostInfo[2], this.hostInfo[3], this.OnServerMsg)
+        this.Client.ConnectToServer(this.hostInfo[2], this.hostInfo[3], this.OnServerMsg)
     end
     
     this.stateStartTime = UnityEngine.Time.now
@@ -356,108 +370,9 @@ function match.Start()
         print("LoadData end")
         playerA:SetActive(true)
         playerB:SetActive(true)
-        this.noteText_Text.text = this.tp == 0 and "等待对手上线..." or "对手正在酝酿中..."
+        this.noteText_Text.text = this.matchType == 0 and "等待对手上线..." or "对手正在酝酿中..."
     end)
 end
-
-function match.OnReceiveMsg(msgt)
-    local type = msgt.type
-    local body = msgt.body
-    print("OnReceiveMsg", type)
-    if type then
-        if type == "client_join" then --{{{ host
-            this.clientName = body.myname
-            local poetryIdList = this.poetryIdList or this.getPoetryIds(50, "where tags like '%思念%'")
-            if not this.youAreMyOpponent then
-                this.poetryIdList = poetryIdList
-                this.poetryList = this.getPoetryByIds(poetryIdList)
-                this.distributeCard(this.poetryList)
-            end
-
-            local cardsInfo = {}
-            for i, v in ipairs(this.poetryList) do
-                cardsInfo[1+#cardsInfo] = {
-                    idx = v.idx,
-                    ai = v.ai,
-                    qi = v.qi,
-                    die = v.die,
-                }
-            end
-    
-            local msgtopartner = {
-                type = "distribute_card",
-                body = {
-                    myname = this.myname,
-                    poetryIdList = poetryIdList,
-                    cardsInfo = cardsInfo,
-                    youAreMyOpponent = not this.youAreMyOpponent -- TODO: audience
-                },
-            }
-            this.youAreMyOpponent = true
-            this.Client.SendMsgt(msgtopartner)
-            this.noteText_Text.text = "等待对手准备就绪"
-        elseif type == "partner_ready" then -- host}}}
-            -- start the first round
-            this.startTime = UnityEngine.Time.time
-            match.nextRound()
-        elseif type == "hello" then --{{{ client
-            local cinfo = msgt.body
-            cinfo.myname = this.myname
-            this.cinfo = cinfo
-            local msgtopartner = {
-                type = "client_join",
-                body = cinfo,
-            }
-            this.Client.SendMsgt(msgtopartner)
-
-        elseif type == "distribute_card" then
-            this.clientName = body.myname
-            local poetryIdList = body.poetryIdList -- match.getPoetryIds(50, "where tags like '%思念%'")
-            match.poetryList = match.getPoetryByIds(poetryIdList)
-
-            --[[{body = {
-                cardsInfo = {{idx = 1,qi = 3,ai = 2,die = true},,...},
-                poetryIdList = {10,14,33,...},youAreMyOpponent = "true",},
-                type = "distribute_card",}
-            ]]
-            local ci = body.cardsInfo
-            for i, v in ipairs(this.poetryList) do
-                v.idx = ci[i].idx
-                v.ai  = ci[i].ai
-                v.qi  = ci[i].qi
-                v.die = ci[i].die
-            end
-            match.distributeCard(this.poetryList)
-
-            local msgtopartner = {
-                type = "partner_ready",
-                body = {},
-            }
-            this.Client.SendMsgt(msgtopartner)
-        elseif type == "card_action" then
-            local card = this.poetryList[body.idx]
-            this.roundAnswer = body.idx
-            card.die = true
-            card.Lua.OnClick()
-            this.playerAnswer(body.idx, body.tp)
-        elseif type == "next_round" then
-            this.currentIdx = body.currentIdx
-            this.round = body.round
-            this.roundAnswer = -1
-            this.roundStartTime = UnityEngine.Time.time
-            local card = this.poetryList[body.currentIdx]
-            card.Lua.showAnswer()
-            this.question_Text.text = card.content[card.qi]
-            print("tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
-            CS.App.JavaUtil.Call("com.unity3d.player.TTS", "Say", card.content[card.qi])
-            print("tts 1")
-        elseif type == "byebye" then
-            manager.Scene.pop()
-        elseif type == "audience_join" then --{{{ audience
-        end
-    end
-end
-
 
 function match.LoadData(cb)
     xutil.coroutine_call(function()
@@ -510,21 +425,22 @@ end
 	["tags"] = "诗经|思念",
 --}]]
 --- 发牌
-function match.distributeCard(poetryList)
-    --print(util.dump(poetryList[1]))
+function match.loadCard()
+    local cardsInfo = this.cardsInfo
+    print("loadCard", util.dump(cardsInfo[1]))
     local cardRootA, cardRootB = this.playerA_RectTransform,this.playerB_RectTransform
     local idsA, idsB= this.availableIdxsA,this.availableIdxsB
     local ownerA, ownerB = 1, 2
-    if this.tp == 1 then
+    if this.matchType == 1 then
         ownerA, ownerB = 2, 1
         idsB, idsA = this.availableIdxsA,this.availableIdxsB
         cardRootB, cardRootA = this.playerA_RectTransform,this.playerB_RectTransform
     end
-    for i, v in ipairs(poetryList)do
+    for i, v in ipairs(cardsInfo)do
         this.availableIdxs[1+#this.availableIdxs] = i
         v.owner = 1
         local c
-        if i < #poetryList/2 then
+        if i < #cardsInfo/2 then
             v.owner = ownerA
             c = GameObject.Instantiate(cardTemplate, cardRootA)
             idsA[1+#idsA] = i
@@ -536,6 +452,8 @@ function match.distributeCard(poetryList)
 
         c.name = "card_" .. v.id
         c:SetActive(true)
+        
+        v.onClickCallback = this.onCardClick
 
         local Lua = c:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
         Lua.info = v
@@ -543,25 +461,21 @@ function match.distributeCard(poetryList)
     end
 end
 
-function match.OnMouseDown()
-    print("OnMouseDown")
-end
-
-
-
 ---OnConnect
 ---@param msgt table body = {id}
 local function OnConnect(msgt)
     this.clientId = msgt.body.clientId
     this.Client.clientId = msgt.body.clientId
-    
-    this.Client.SendMsgt({
-        type = "createRoom",
-        body = {
-            cardIds = {1,2,3,4,5,6,7},
-            clientId = this.clientId
-        }
-    })
+
+    if this.info.autoMatch then
+        this.Client.SendMsgt({
+            type = "autoMatch",
+            body = {
+                level = math.random(0, 9),
+                clientId = this.clientId,
+            }
+        })
+    end
     return true
 end
 
@@ -595,7 +509,16 @@ local function OnJoinRoomResult(msgt)
     local body = msgt.body
     this.roomId = body.roomId
     this.clientsId = body.clientsId
-    this.cardIds = body.cardIds
+    this.cardsInfo = body.cardsInfo
+
+    this.mergeCardsInfo() -- table.select(this.cardIds, function(o) return o.id end))
+    
+    -- TODO: visitor
+    --this.loadCard()
+    
+    if body.roomInfo.isNpc or this.roomInfo.masterId == this.clientId then
+        startBtn:SetActive(true)
+    end
     -- TODO: 查看房间及卡牌信息 refresh ui
     this.noteText_Text.text = "等待对手准备就绪"
     return true
@@ -628,15 +551,14 @@ local function OnClientStateChanged(msgt)
     end
     if readyToStart then
         if body.clientId == this.clientId then -- 房主
-            -- TODO: show startBtn
-        else
-
+            -- show startBtn
+            startBtn:SetActive(true)
         end
     end
     return true
 end
 
-local function OnNextround(msgt)
+local function OnNextRound(msgt)
     local body = msgt.body
     this.currentIdx = body.currentIdx
     this.nextRound()
@@ -660,17 +582,16 @@ end
 ---OnMatchResult
 ---@param msgt table body = {result}
 local function OnMatchResult(msgt)
-
+    
     return true
 end
 
 local function OnStartMatch(msgt)
     local body = msgt.body
     this.clientName = body.myname
-    --local poetryIdList = body.poetryIdList -- match.getPoetryIds(50, "where tags like '%思念%'")
-    this.poetryList = this.getPoetryByIds(this.poetryIdList)
-
-    this.distributeCard(this.poetryList)
+    startBtn:SetActive(false)
+    this.loadCard()
+    this.noteText_Text.text = '默记时间🕙' 
     return true
 end
 
@@ -685,6 +606,33 @@ local function OnChat(msgt)
     table.insert(this.chatHistory, msgt.body)
     this.chatMsgNew = true
     
+    return true
+end
+
+local function OnAnswer(msgt)
+    local body = msgt.body
+    local roomId = body.roomId
+    this.currentIdx = -1
+    this.roundAnswer = body.roundAnswer
+    if body.clientId == this.clientId then
+        xutil.coroutine_call(function()
+            -- TODO: show answer time
+            yield_return(UnityEngine.WaitForSeconds(5))
+            tihs.Client.SendMsgt({
+                type = "endRound",
+                body = {
+                    clientId = this.clientId,
+                    roomId = tihs.roomId
+                }
+            })
+        end)
+    end
+    return true
+end
+
+local function OnEndRound(msgt)
+    local body = msgt.body
+    local clientId = body.clientId
     return true
 end
 
@@ -703,13 +651,15 @@ local OnServerMsgType = {
     ["leaveRoom"] 	= OnLeaveRoom,
     ["cStateChange"] = OnClientStateChanged,
     ["startMatch"]  = OnStartMatch,
-    ["nextround"]	= OnNextround,
+    ["nextRound"]	= OnNextRound,
+    ["endRound"]    = OnEndRound,
     ["sendCard"]	= OnSendCard,
     ["cardAction"]	= OnCardAction,
     ["matchResult"]	= OnMatchResult,
     ["heartbeat"]   = OnHeartbeat,
     ["bye"] 		= OnBye,
     ["chat"]        = OnChat,
+    ["answer"]    = OnAnswer,
 }
 
 function match.OnServerMsg(msgt)

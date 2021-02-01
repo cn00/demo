@@ -29,7 +29,7 @@ local print = function ( ... )
     -- _G.print("client", debug.traceback())
 end
 
-local client = {
+local this = {
 	lastActive = 0,
 	conn_stat = {
 		offline = 0,
@@ -40,14 +40,14 @@ local client = {
 	cinfo = nil, -- client info 
 	callback = {}, -- regist callback
 }
-local this = client
+local client = this
 local conn_stat = client.conn_stat
 
----ClientConnectToServer
+---ConnectToServer
 ---@param ip string
 ---@param port number
 ---@param callback function
-function client.ClientConnectToServer(ip, port, callback)
+function client.ConnectToServer(ip, port, callback)
 	table.insert(this.callback, callback)
 	if this.conn ~= nil and this.conn:getstats() == 1 then
 		--https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
@@ -58,7 +58,7 @@ function client.ClientConnectToServer(ip, port, callback)
 	xutil.coroutine_call(function ()
 		this.connect_stat = conn_stat.connecting
 		local retrycount = 0
-		print("ClientConnectToServer", ip, port)
+		print("ConnectToServer", ip, port)
 		while (this.connect_stat == conn_stat.connecting and retrycount < 3) do
 			print("try connect ...", retrycount)
 			retrycount = 1 + retrycount
@@ -78,7 +78,7 @@ function client.ClientConnectToServer(ip, port, callback)
 			yield_return(UnityEngine.WaitForSeconds(0.3))
 		end -- while
 		if this.conn ~= nil then
-			this.ClientStartReceiveLoop()
+			this.StartReceiveLoop()
 			this.StartHeartbeatLoop()
 		else
 			print("can not connect the host", ip, port)
@@ -88,8 +88,8 @@ function client.ClientConnectToServer(ip, port, callback)
 	end)
 end
 
-function client.ClientStartReceiveLoop()
-	print('ClientStartReceiveLoop')
+function client.StartReceiveLoop()
+	print('StartReceiveLoop')
 	xutil.coroutine_call(function ()
 		while true do
 			local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
@@ -99,7 +99,7 @@ function client.ClientStartReceiveLoop()
 				local line, err = c:receive("*l")
 
 				if not err then
-					client.ClientOnReceiveMsg(line)
+					this.OnReceiveMsg(line)
 				elseif(err == "closed")then
 					this.connect_stat = conn_stat.offline
 					c:close()
@@ -127,8 +127,8 @@ function client.StartHeartbeatLoop()
 	end)
 end
 
-function client.ClientOnReceiveMsg(msgs)
-	print("ClientOnReceiveMsg", msgs)
+function client.OnReceiveMsg(msgs)
+	print("OnReceiveMsg", msgs)
 	this.lastActive = os.time()
 	local f = load(msgs)
 	if f then

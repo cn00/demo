@@ -223,9 +223,9 @@ function card.OnMouseDrag()
 end
 
 function card.OnClick(eventData)
-    -- TODO: post msg to match
-    if card.info.match.roundAnswer == -1 and card.info.match.currentIdx > 0 then
-        card.info.match.playerAnswer(card.info.idx, card.info.match.tp)
+    -- callback to match
+    if this.info.onClickCallback then
+        this.info.onClickCallback(this.info.idx)
     end
     
     --print("OnClick", p, eventData)

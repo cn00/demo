@@ -73,8 +73,8 @@ function this.p2cPlay_OnClick()
     local server = GameObject.Instantiate(CS.AssetSys.GetAssetSync("poetry/net/server.prefab"), manager.Scene.layer.back)
     manager.Scene.push("poetry/match/match.prefab", {
         --parent = nil,
-        matchType = "p2c",
-        server = server
+        autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
     }, true)
 end -- p2cPlay_OnClick
 
@@ -86,7 +86,11 @@ end -- createRoom_OnClick
 ---自动匹配
 function this.startMatch_OnClick()
     print('startMatch_OnClick')
-    manager.Scene.push("poetry/match/match.prefab", nil, true)
+    manager.Scene.push("poetry/match/match.prefab", {
+        --matchType = "p2c",
+        autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
 end -- startMatch_OnClick
 
 ---历史战绩
@@ -101,6 +105,7 @@ end
 
 function index.Start()
     xutil.coroutine_call(function()
+        yield_return(CS.AssetSys.GetAsset("poetry/net/server.prefab"))
         -- init userdata db
         local sql
         yield_return(CS.AssetSys.GetAsset("poetry/data/userdata.sql", function(asset)
