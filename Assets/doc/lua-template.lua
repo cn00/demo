@@ -21,8 +21,8 @@ local print = function ( ... )
     -- _G.print("___SCRIPTNAME___", debug.traceback())
 end
 
-local ___SCRIPTNAME___ = {}
-local this = ___SCRIPTNAME___
+local this = {}
+local ___SCRIPTNAME___ = this
 
 -- example-begin
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
