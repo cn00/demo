@@ -92,11 +92,14 @@ end
 --- split string to sub-strings table, work with multi-byte char string you can use
 --- str:gsub('(多字节分隔符)', '%1|'):split('|') -- keep delimiter
 --- or str:gsub('(多字节分隔符)', '|'):split('|') -- strip delimiter
----@param delimiter string only single byte chars availble, like `, %. %- | [,%.%-|]`
----@param keepdelimiter boolean
+---@param self string
+---@param delimiter string muti delimiter only support single byte chars, like `, %. %- | [,%.%-|]`
+---@param keepemptyline boolean|nil 是否保留空白行
+---@param keepdelimiter boolean|nil 是否保留分隔符
+---@overload fun(self:string, delimiter:string)
 function string.split(self, delimiter, keepemptyline, keepdelimiter)
-  keepdelimiter = keepdelimiter == nil and false or keepdelimiter
-  keepemptyline = keepemptyline == nil and false or keepemptyline
+  --keepemptyline = keepemptyline == nil and false or keepemptyline
+  --keepdelimiter = keepdelimiter == nil and false or keepdelimiter
   local pattern = keepdelimiter and "(.-" .. delimiter .. ")" or "(.-)"..delimiter
   local result = {};
   for match in (self..delimiter):gmatch(pattern) do
