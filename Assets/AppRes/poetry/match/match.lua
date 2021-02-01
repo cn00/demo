@@ -152,8 +152,6 @@ function match.onCardClick(idx, tp)
             removeValueFromArray(idx, this.availableIdxsB)
         end
 
-        -- show right answer
-        this.question_Text.text = string.format("<color=red>%s</color>|%s|%ss", card.content[card.ai], )
         yield_return(UnityEngine.WaitForSeconds(3))
         --this.question_Text.text = "" -- client is not finished yield_return
 
@@ -196,7 +194,7 @@ function match.nextRound()
         end)
     else
         this.roundAnswer = -1
-        match.roundStartTime = UnityEngine.Time.time
+        match.roundStartTime = os.time()
         this.round = #this.cardsInfo - #this.availableIdxs
         local card = this.cardsInfo[this.currentIdx]
         card.Lua.showAnswer()
@@ -391,7 +389,7 @@ end
 function match.Update()
     if this.round >= 0 then
         this.noteText_Text.text = string.format("%s:%s", 
-                this.round, math.modf(UnityEngine.Time.time - match.roundStartTime))
+                this.round, math.modf(os.time() - match.roundStartTime))
     end
 
     if this.chatMsgNew then
@@ -610,11 +608,18 @@ end
 local function OnAnswer(msgt)
     local body = msgt.body
     local roomId = body.roomId
+    local currentIdx = this.currentIdx
+    local card = this.cardsInfo[currentIdx]
+    this.question_Text.text = string.format("<color=red>%s</color>|<color=%s>%s|%ss</color>"
+        , card.content[card.ai]
+        , body.clientId == this.clientId and "yellow" or "blue"
+        , this.clientId, os.time() - this.roundStartTime)
     this.currentIdx = -1
     this.roundAnswer = body.roundAnswer
     if body.clientId == this.clientId then
         xutil.coroutine_call(function()
             -- TODO: show answer & time
+            -- show right answer
             yield_return(UnityEngine.WaitForSeconds(2))
             this.Client.SendMsgt({
                 type = "endRound",
