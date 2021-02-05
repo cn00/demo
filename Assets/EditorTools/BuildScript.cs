@@ -41,7 +41,8 @@ public class BuildScript
         // EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, build_target);
         try
         {
-            BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
+            var res = BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
+            UnityEngine.Debug.Log($"{res.summary}");
         }
         catch (Exception e)
         {

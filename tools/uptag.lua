@@ -45,8 +45,27 @@ local function upTags3457()
 end
 --upTags3457()
 
+--- 17s
+local function collectTags0()
 
-local function collectTags()
+    local vm, ok = db:prepare([[insert or ignore into tags (tag) VALUES (?)]])
+    print(vm, ok, db:errmsg())
+    for row in db:nrows("select tags from poetry group by tags") do
+        local tags = row["tags"] or ""
+        local ts = string.split(tags, "|")
+        print(table.unpack(ts))
+        for i, t in pairs(ts) do
+            assert(sqlite.OK==vm:bind_values(t))
+            assert(vm:step() == sqlite.DONE)
+            assert(vm:reset() == sqlite.OK)
+        end
+    end
+    assert(vm:finalize() == sqlite.OK)
+end
+collectTags0()
+
+--- 18s
+local function collectTags1()
     local tags = {}
     for row in db:nrows([[select tags tag from poetry group by tag]]) do
         tags[1+#tags] = row.tag
@@ -61,4 +80,4 @@ local function collectTags()
         end
     end
 end
-collectTags()
+--collectTags1()

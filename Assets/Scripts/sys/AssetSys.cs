@@ -248,7 +248,7 @@ public class AssetSys : SingleMono<AssetSys>
             case RuntimePlatform.OSXEditor:
                 return "OSX";
             default:
-                return null;
+                return platform.ToString();
         }
     }
 

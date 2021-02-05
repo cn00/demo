@@ -40,7 +40,7 @@ namespace UnityEditor
         {
             string luaname = "this"; //mLuaMono.luaScript.path.Substring(mLuaMono.luaScript.path.LastIndexOf('/') + 1);
             luaMember.Clear();
-            luaMember.Append("--AutoGenInit Begin\n--DO NOT EDIT THIS FUNCTION MANUALLY.\nfunction " + luaname +
+            luaMember.Append("--AutoGenInit Begin\n--[[\n请勿手动编辑此函数\n手動でこの関数を編集しないでください。\nDO NOT EDIT THIS FUNCTION MANUALLY.\nلا يدويا تحرير هذه الوظيفة\n]]\nfunction " + luaname +
                              ".AutoGenInit()");
             var btnListeners = new StringBuilder(512);
             foreach (var i in mTarget.Injections.Where(o => o != null && o.obj != null))

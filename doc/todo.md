@@ -1,12 +1,17 @@
 ## todo
 
+## 模型
+-[ ] blender
+-[ ] spine
+
+
 ## 多语言
 - [ ] Awake 时遍历所有 Text 组件查询替换翻译
 
 ### 用户自定义数据导入
 - [ ] 视频文字导入
 - [ ] 分类筛选索引
-- [ ] Mono.Data.SQLite3 存储 x iOS 不可用, 放弃
+- [x] Mono.Data.SQLite3 存储 x iOS 不可用, 回滚改用 lsqlite3
 
 ### 上传共享
 - [ ] 

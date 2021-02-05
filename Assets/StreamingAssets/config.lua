@@ -8,10 +8,11 @@ local File = CS.System.IO.File
 -- config
 
 local print = function ( ... )
-    _G.print("[config]", ...)
+    _G.print("config", ...)
 end
 
-AssetSys.WebRoot = "http://10.23.22.233/assets/test/ab/"
+local oss = "https://a3-dev-patch-oss.oss-cn-hangzhou.aliyuncs.com/test/a3mkgp/"
+AssetSys.WebRoot = oss -- "http://10.23.24.239/assets/test/ab/"
 
 print(AssetSys.WebRoot)
 

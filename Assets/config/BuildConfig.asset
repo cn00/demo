@@ -36,6 +36,11 @@ MonoBehaviour:
       Hash: 40bbc95ae4336f265b18d55af56a9733
       Version: 1.0.0
       Rebuild: 1
+    - Name: common/config.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/excel.bd
       Size: 12960
       Hash: 1adbad37a3a27e0a5786164b3c4e0545
@@ -74,16 +79,6 @@ MonoBehaviour:
     - Name: common/ui.bd
       Size: 31043
       Hash: 01c49cb6faab7549f87cfb6bfab6b150
-      Version: 1.0.0
-      Rebuild: 1
-  - Foldout: 0
-    Name: config
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: config/config.bd
-      Size: 3612
-      Hash: 41f7d4b4ac21849d603397d77c75b0b2
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
@@ -186,6 +181,11 @@ MonoBehaviour:
       Hash: d9f53a6e5b3abf48f8b6e28e08c2cde5
       Version: 1.0.0
       Rebuild: 0
+    - Name: poetry/login.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: poetry/match.bd
       Size: 27419
       Hash: e0277eb46856932aa4d6ad0890ccb7eb
@@ -226,7 +226,7 @@ MonoBehaviour:
       Hash: 0cd6f384b9c8252589f354694a136484
       Version: 1.0.0
       Rebuild: 1
-  - Foldout: 0
+  - Foldout: 1
     Name: ui
     mInclude: 0
     mRebuild: 1
@@ -236,9 +236,9 @@ MonoBehaviour:
       Hash: 870712768594e46b98fa88f89e565d6f
       Version: 1.0.0
       Rebuild: 1
-    - Name: ui/dialog.bd
-      Size: 15513
-      Hash: 3d6cdaf6394cceb57776debcf86fb5a2
+    - Name: ui/loading.bd
+      Size: 93290
+      Hash: 13f0b04f7704788e6dc42f807c9374d4
       Version: 1.0.0
       Rebuild: 1
     - Name: ui/excel_viewer.bd
@@ -246,14 +246,9 @@ MonoBehaviour:
       Hash: 68897629b6f7fd88f44402a72b21ae9e
       Version: 1.0.0
       Rebuild: 1
-    - Name: ui/linktext.bd
-      Size: 7679
-      Hash: fa3247e7fabfba7d790530386a9f1e6b
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/loading.bd
-      Size: 93290
-      Hash: 13f0b04f7704788e6dc42f807c9374d4
+    - Name: ui/test.bd
+      Size: 28571
+      Hash: a75264e57c124c84349387fd6cca2f72
       Version: 1.0.0
       Rebuild: 1
     - Name: ui/login.bd
@@ -261,14 +256,19 @@ MonoBehaviour:
       Hash: 50a00fd26cba4c633bfbac6c86ac200c
       Version: 1.0.0
       Rebuild: 1
-    - Name: ui/test.bd
-      Size: 28571
-      Hash: a75264e57c124c84349387fd6cca2f72
-      Version: 1.0.0
-      Rebuild: 1
     - Name: ui/update.bd
       Size: 16722
       Hash: 745d53ca0cf66fec4effdfcfa22e8b19
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/dialog.bd
+      Size: 15513
+      Hash: 3d6cdaf6394cceb57776debcf86fb5a2
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/linktext.bd
+      Size: 7679
+      Hash: fa3247e7fabfba7d790530386a9f1e6b
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
@@ -331,6 +331,23 @@ MonoBehaviour:
     Version: 1.0.0
     DefineSymbols: []
     USE_LOG: 0
+    USE_EMULATOR: 0
+    BuildType: 0
+    BuildSystem: 1
+    iOSSdkVersion: 989
+    OptionFlags: 0
+    Channel: 2
+  - Name: OSX
+    BatchBuild: 0
+    AddTime: 0
+    ProductName: "A3! \u6EE1\u5F00\u5267\u56E2"
+    BundleId: com.bili.a3
+    PackageName: a3
+    BuildNum: 0
+    Version: 1.0.0
+    DefineSymbols:
+    - USE_LOG
+    USE_LOG: 1
     USE_EMULATOR: 0
     BuildType: 0
     BuildSystem: 1
