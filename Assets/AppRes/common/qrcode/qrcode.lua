@@ -32,7 +32,7 @@ end
 --AutoGenInit End
 
 function this.BackBtn_OnClick()
-    manager.Scene.push("poetry/index/index.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
 end -- BackBtn_OnClick
 
 function this.testBtn_OnClick()

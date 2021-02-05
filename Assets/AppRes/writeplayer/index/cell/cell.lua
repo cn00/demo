@@ -68,7 +68,7 @@ function this.Start()
         print("cellevent DidPointClickEvent", row2, this.RowNumber, ct.Animator, ct.Animator.Play)
         ct.Animator:Play("cell_scale", 0)
         --this.Play()
-        manager.Scene.push("writeplayer/player/player.prefab",function(player)
+        AppGlobal.SceneManager.push("writeplayer/player/player.prefab",function(player)
             local playermono = player:GetComponent(typeof(CS.LuaMonoBehaviour))
             local ct = playermono.Lua
             ct.SetData(this.data)

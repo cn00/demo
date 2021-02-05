@@ -41,7 +41,7 @@ end
 
 function this.Start()
 	this.Button.onClick:AddListener(function()
-		manager.Scene.pop()
+		AppGlobal.SceneManager.pop()
 	end)
 end
 

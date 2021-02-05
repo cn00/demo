@@ -79,7 +79,7 @@ end
 --end
 function this.init(data)
     util.coroutine_call(function()
-	    manager.Scene.openloading()
+	    AppGlobal.SceneManager.openloading()
 	    
 	    local videourl = data.url
 		
@@ -163,12 +163,12 @@ function this.init(data)
 		end)
 
 	    this.BackBtn_Button.onClick:AddListener(function()
-		    manager.Scene.pop();
+		    AppGlobal.SceneManager.pop();
 	    end)
 
 		this.proc = this.mUpdate
 
-	    manager.Scene.closeloading()
+	    AppGlobal.SceneManager.closeloading()
     end)
 end
 

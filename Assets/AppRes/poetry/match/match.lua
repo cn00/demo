@@ -162,7 +162,7 @@ function match.onCardClick(idx, tp)
             this.saveResult()
             xutil.coroutine_call(function()
                 yield_return(UnityEngine.WaitForSeconds(10))
-                manager.Scene.push("poetry/index/index.prefab", nil, true)
+                AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
             end)
         end
         
@@ -190,7 +190,7 @@ function match.nextRound()
         this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
         xutil.coroutine_call(function()
             yield_return(UnityEngine.WaitForSeconds(10))
-            manager.Scene.pop()
+            AppGlobal.SceneManager.pop()
         end)
     else
         this.roundAnswer = -1
@@ -215,7 +215,6 @@ function match.nextRound()
 end
 
 ---throwCard 罚牌, 将一张牌调换阵营
----@param role number 1:playerA 2:playerB
 function match.throwCard(role)
 
 end
@@ -326,7 +325,7 @@ function this.ShowQRcodeBtn_OnClick()
 end -- ShowQRcodeBtn_OnClick
 
 function this.BackBtn_OnClick()
-    manager.Scene.pop(function()
+    AppGlobal.SceneManager.pop(function()
         print("pop")
     end)
 end -- BackBtn_OnClick
@@ -645,6 +644,11 @@ local function OnBye(msgt)
     return true
 end
 
+local function OnGameOver(msgt)
+    
+    return true
+end
+
 local OnServerMsgType = {
     ["connect"] 	= OnConnect, --> login
     ["login"]		= OnLoginResult,
@@ -656,13 +660,14 @@ local OnServerMsgType = {
     ["startMatch"]  = OnStartMatch,
     ["nextRound"]	= OnNextRound,
     ["endRound"]    = OnEndRound,
+    ["gameOver"]    = OnGameOver,
     ["sendCard"]	= OnSendCard,
     ["cardAction"]	= OnCardAction,
     ["matchResult"]	= OnMatchResult,
     ["heartbeat"]   = OnHeartbeat,
     ["bye"] 		= OnBye,
     ["chat"]        = OnChat,
-    ["answer"]    = OnAnswer,
+    ["answer"]      = OnAnswer,
 }
 
 function match.OnServerMsg(msgt)

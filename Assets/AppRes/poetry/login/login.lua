@@ -45,7 +45,7 @@ function this.loginBtn_OnClick()
     , UNITY_ANDROID, UNITY_IOS, UNITY_EDITOR, UNITY_EDITOR_OSX, UNITY_EDITOR_WIN))
 
     if UNITY_EDITOR  then
-        manager.Scene.push("poetry/index/index.prefab", nil, true)
+        AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
     elseif UNITY_ANDROID then
         CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "login")
         local channel = CS.App.JavaUtil.CallStatic("com.bili.a3.BSGameSdkCenter", "channel")
@@ -53,7 +53,7 @@ function this.loginBtn_OnClick()
     --elseif UNITY_IOS then
     --elseif UNITY_EDITOR then -- uid input
     else
-        manager.Scene.push("poetry/index/index.prefab", nil, true)
+        AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
     end
 end -- loginBtn_OnClick
 
@@ -77,7 +77,7 @@ function G.OnNativeMessageBLSdk(null, data)
                     result = 1,
                 }
             }]]
-            manager.Scene.push("poetry/index/index.prefab", nil, true)
+            AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
         end,
         ["Logout"] = function(argt)  end
     }

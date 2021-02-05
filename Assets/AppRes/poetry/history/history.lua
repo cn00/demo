@@ -38,7 +38,7 @@ end
 
 function this.BackBtn_OnClick()
     local manager = AppGlobal.manager
-    manager.Scene.push("poetry/index/index.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
 end -- BackBtn_OnClick
 
 

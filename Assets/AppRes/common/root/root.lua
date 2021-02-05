@@ -52,12 +52,13 @@ local function p7zipTest()
     p7zip.g_StdOut:Flush()
 end
 --p7zipTest()
-
-local sqlite = require("lsqlite3")
-print("sqlite", sqlite)
-package.cpath = package.cpath..";./Assets/XLua/Plugins/OSX/lib?.dylib"
-local lfs = require "lfs"
-print("lfs", lfs)
+local function testSqliteLfs()
+    local sqlite = require("lsqlite3")
+    print("sqlite", sqlite)
+    package.cpath = package.cpath..";./Assets/XLua/Plugins/OSX/lib?.dylib"
+    local lfs = require "lfs"
+    print("lfs", lfs)
+end
 
 local boot = {}
 local this = boot
@@ -91,7 +92,7 @@ function boot.coroutine_boot(first, ...)
         obj = GameObject.Instantiate(obj)
         this.manager = obj:GetComponent("LuaMonoBehaviour").Lua
         yield_return(UnityEngine.WaitForSeconds(0.3))
-        this.manager.Scene.layer = {
+        AppGlobal.SceneManager.layer = {
             front = this.front_Transform,
             middle = this.middle_Transform,
             back = this.back_Transform
@@ -142,11 +143,11 @@ function boot.coroutine_boot(first, ...)
         -- print(obj)
         -- local write_player = GameObject.Instantiate(obj)
 
-        --manager.Scene.push("index/index.prefab")
-        this.manager.Scene.push("poetry/login/login.prefab")
-        --this.manager.Scene.push("poetry/match/match.prefab")
-        --manager.Scene.push("don-quixote/index/index.prefab")
-        --manager.Scene.push("don-quixote/linkText/linkText.prefab")
+        --AppGlobal.SceneManager.push("index/index.prefab")
+        AppGlobal.SceneManager.push("poetry/login/login.prefab")
+        --AppGlobal.SceneManager.push("poetry/match/match.prefab")
+        --AppGlobal.SceneManager.push("don-quixote/index/index.prefab")
+        --AppGlobal.SceneManager.push("don-quixote/linkText/linkText.prefab")
         
         --obj = nil
         --yield_return(CS.AssetSys.GetAsset("writeplayer/index/index.prefab", function(asset)

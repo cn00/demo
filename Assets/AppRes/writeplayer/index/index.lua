@@ -55,7 +55,7 @@ function this.Awake()
     print("Awake-1")
 
     this.add_Button.onClick:AddListener(function ()
-        manager.Scene.push("writeplayer/impoter/impoter.prefab")
+        AppGlobal.SceneManager.push("writeplayer/impoter/impoter.prefab")
     end)
 
     util.coroutine_call(this.LoadData)

@@ -64,7 +64,7 @@ function this.textBtn_OnClick()
 end -- textBtn_OnClick
 
 function this.BackBtn_OnClick()
-    manager.Scene.push("poetry/index/index.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
 end -- BackBtn_OnClick
 
 function this.okBtn_OnClick()

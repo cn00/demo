@@ -20,6 +20,7 @@ local sqlite3 = require("lsqlite3")
 local manager = AppGlobal.manager
 local config = require("common.config.config")
 local socket = require("socket.core")
+local AppGlobal = AppGlobal
 
 local dbpath = config.dbCachePath;
 local userDbpath = config.userDbPath;
@@ -70,8 +71,8 @@ end -- gameGround_OnClick
 function this.p2cPlay_OnClick()
     print('p2cPlay_OnClick')
     -- start a local server
-    local server = GameObject.Instantiate(CS.AssetSys.GetAssetSync("poetry/net/server.prefab"), manager.Scene.layer.back)
-    manager.Scene.push("poetry/match/match.prefab", {
+    local server = GameObject.Instantiate(CS.AssetSys.GetAssetSync("poetry/net/server.prefab"), AppGlobal.SceneManager.layer.back)
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
         --parent = nil,
         autoMatch = true,
         matchType = 1, -- 0:主场， 1:客场, 2:观众
@@ -80,13 +81,13 @@ end -- p2cPlay_OnClick
 
 function this.createRoom_OnClick()
     print('createRoom_OnClick')
-    manager.Scene.push("poetry/room/create.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/room/create.prefab", nil, true)
 end -- createRoom_OnClick
 
 ---自动匹配
 function this.startMatch_OnClick()
     print('startMatch_OnClick')
-    manager.Scene.push("poetry/match/match.prefab", {
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
         --matchType = "p2c",
         autoMatch = true,
         matchType = 1, -- 0:主场， 1:客场, 2:观众
@@ -96,7 +97,7 @@ end -- startMatch_OnClick
 ---历史战绩
 function this.history_OnClick()
     print('history_OnClick')
-    manager.Scene.push("poetry/history/history.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/history/history.prefab", nil, true)
 end -- history_OnClick
 
 function index.Awake()
@@ -130,16 +131,16 @@ function this.joinGame_OnClick()
             hostInfo = hostInfo,
             name = name,
         }
-        manager.Scene.push("poetry/match/match.prefab", args, true)
+        AppGlobal.SceneManager.push("poetry/match/match.prefab", args, true)
     end
-    manager.Scene.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, true)
+    AppGlobal.SceneManager.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, true)
 end -- joinGame_OnClick
 
 function this.newGame_OnClick()
     local name = this.nameInput_Text.text
     uiroot:SetActive(false)
     this.needQuitUdp = true
-    manager.Scene.push("poetry/match/match.prefab", {
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
         tp = 0,
         name = name
     }, true)

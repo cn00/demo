@@ -6,17 +6,13 @@ local GameObject = UnityEngine.GameObject
 local xutil = require "xlua.util"
 local AssetSys = CS.AssetSys
 
-local Scene = { 
+local Scene = AppGlobal.SceneManager
+if Scene ~= nil then return Scene end
+
+Scene =  { 
     layer = {}, -- front, middle, back
 }
-
-local AppGlobal = _G.AppGlobal or {}
-local manager = AppGlobal.manager or {}
-if manager.Scene == nil then
-    manager.Scene = Scene
-else
-    return
-end
+AppGlobal.SceneManager = Scene
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -70,6 +66,7 @@ function Scene.push(prefabPath, arg, replace)
         end
         
         -- TODO: open loading
+        
 
         local obj = nil
         yield_return(CS.AssetSys.GetAsset(prefabPath, function(asset)

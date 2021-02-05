@@ -83,7 +83,7 @@ function client.ConnectToServer(ip, port, callback)
 		else
 			print("can not connect the host", ip, port)
 			
-			manager.Scene.push("poetry/index/index.prefab", nil, true)
+			AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
 		end
 	end)
 end
@@ -103,7 +103,7 @@ function client.StartReceiveLoop()
 				elseif(err == "closed")then
 					this.connect_stat = conn_stat.offline
 					c:close()
-					manager.Scene.push("poetry/index/index.prefab", nil, true)
+					AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
 				else
 					c:send("___ERRORPC "..err..tostring(c)..  "\n")
 				end

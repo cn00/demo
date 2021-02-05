@@ -459,15 +459,24 @@ local function OnEndRound(msgt)
     local clientId = body.clientId
     local roomId = body.roomId
     local room = this.roomsInfo[roomId]
-    local currentIdx = room.availableIdxs[math.random(1, #room.availableIdxs)] -- currentIdx
-    util.removeValue(room.availableIdxs, currentIdx)
-    local ret = {
-        type = "nextRound",
-        body = {
-            currentIdx = currentIdx,
+
+    if #room.availableIdxs > 0 then
+        local currentIdx = room.availableIdxs[math.random(1, #room.availableIdxs)] -- currentIdx
+        util.removeValue(room.availableIdxs, currentIdx)
+        local ret = {
+            type = "nextRound",
+            body = {
+                currentIdx = currentIdx,
+            }
         }
-    }
-    this.SendMsgtToRoom(ret, roomId)
+        this.SendMsgtToRoom(ret, roomId)
+    else
+        local ret = {
+            type = "gameOver",
+            body = {}
+        }
+        this.SendMsgtToRoom(ret, roomId)
+    end
     return true
 end
 

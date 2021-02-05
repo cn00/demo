@@ -108,7 +108,7 @@ function import.Awake()
 	end)
 
 	this.BackBtn_Button.onClick:AddListener(function()
-		manager.Scene.pop();
+		AppGlobal.SceneManager.pop();
 	end)
 
 	-- -- test message center

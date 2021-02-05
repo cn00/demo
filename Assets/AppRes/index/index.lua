@@ -45,7 +45,7 @@ end
 --- Triggered on MouseUp after MouseDown on the same object.
 function this.qread_OnClick()
     print('qread_OnClick')
-    manager.Scene.push("qread/qread.prefab")
+    AppGlobal.SceneManager.push("qread/qread.prefab")
 end -- qread_OnClick
 
 function this.Button_3_OnClick()
