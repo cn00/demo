@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: dcb6a35b17a2e43c0ad1efbb5b964ef8
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: poetry/room.bd
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}
