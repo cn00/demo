@@ -559,7 +559,7 @@ public class AssetSys : SingleMono<AssetSys>
     public static IEnumerator Download(string url, string path = null, Action<FileStream> cb = null, Action<string> processingcb = null)
     {
         if (path == null)
-            path = Path.GetTempPath() + Path.GetTempFileName();
+            path = Path.GetTempFileName().upath();
         if (!url.StartsWith("http"))
         {
             var version = BuildConfig.Instance().Version.ToString();

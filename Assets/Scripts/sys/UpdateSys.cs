@@ -58,7 +58,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         var remoteVersionUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + "resversion.txt";
         AppLog.d(Tag, remoteVersionUrl);
 
-        var temp = Path.GetTempPath() + Path.GetTempFileName();
+        var temp = Path.GetTempFileName().upath();
         yield return AssetSys.Download(remoteVersionUrl, temp);
         mRemoteVersion = new Version(File.ReadAllText(temp));
         AppLog.d(Tag, "RemoteVersion {0}", mRemoteVersion.ToString());
@@ -90,7 +90,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             old.Unload(true);
         }
 
-        var temp = Path.GetTempPath() + Path.GetTempFileName();
+        var temp = Path.GetTempFileName().upath();
         yield return AssetSys.Download(remoteManifestUrl, temp, fs =>
         {
             mRemoteManifest = AssetBundle.LoadFromStream(fs).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
