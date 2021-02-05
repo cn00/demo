@@ -6,13 +6,15 @@ local GameObject = UnityEngine.GameObject
 local xutil = require "xlua.util"
 local AssetSys = CS.AssetSys
 
-local Scene = AppGlobal.SceneManager
-if Scene ~= nil then return Scene end
+local this = AppGlobal.SceneManager
+if this ~= nil then return this end
 
-Scene =  { 
+this =  { 
     layer = {}, -- front, middle, back
+    loading = nil,
 }
-AppGlobal.SceneManager = Scene
+AppGlobal.SceneManager = this
+local Scene = this
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -28,7 +30,6 @@ end
 local loadstack = {}
 Scene.loadstack = loadstack
 
-Scene.loading = nil
 function Scene.openloading()
     if(Scene.loading ~= nil)then
         Scene.loading.go:SetActive(true)
@@ -50,6 +51,8 @@ end
 ---@param replace boolean 是否替换当前场景, 默认 false
 function Scene.push(prefabPath, arg, replace)
 
+    this.openloading()
+
     arg = arg or {}
     --replace = replace or replace == nil
     xutil.coroutine_call(function()
@@ -64,16 +67,13 @@ function Scene.push(prefabPath, arg, replace)
             GameObject.DestroyImmediate(last.obj)
             last.obj = undef
         end
-        
-        -- TODO: open loading
-        
 
         local obj = nil
         yield_return(CS.AssetSys.GetAsset(prefabPath, function(asset)
             obj = asset
         end))
         
-        local parent = Scene.layer.middle
+        local parent = this.layer.middle
         local callback
         if type(arg) == "function" then callback = arg end
         if type(arg) == "table" then parent = arg.parent or parent; callback = arg.callback end
@@ -84,6 +84,8 @@ function Scene.push(prefabPath, arg, replace)
         end
         table.insert(loadstack, {path = prefabPath, obj = gameObj, savedState = arg})
         if callback then callback() end
+        
+        this.closeloading()
 
     end)
 end
@@ -103,36 +105,5 @@ end
 function Scene.AutoGenInit()
 end
 --AutoGenInit End
-
-function Scene.Awake()
-    --this.AutoGenInit()
-    xutil.coroutine_call(function()
-        print('scene_manager push -->', prefabPath)
-
-        if Scene.loading == nil then
-            local obj
-            print("sync_get_asset", obj)
-            yield_return(AssetSys.GetAsset("ui/loading/loading.prefab", function(asset)
-                obj = asset
-            end))
-            local go = GameObject.Instantiate(obj)
-            go:SetActive(false)
-            local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
-            Scene.loading = {
-                go = go,
-                lua = lua
-            }
-        end
-    end)
-end
-
--- function this.OnEnable()
---     print("this.OnEnable")
--- end
-
--- function this.OnDestroy()
---     print("this.OnDestroy")
-
--- end
     
 return Scene

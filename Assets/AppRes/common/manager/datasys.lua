@@ -13,20 +13,21 @@ local sqlite = require("lsqlite3")
 
 local config = require("common.config.config")
 
-if AppGlobal and AppGlobal.Data then return AppGlobal.Data end -- singleton
+if AppGlobal and AppGlobal.Datasys then return AppGlobal.Datasys end -- singleton
 
 local this = {
     userdb = nil,
     datadb = nil,
+    datacache = {},
 }
-local data = this
-AppGlobal.Data = this
+local datasys = this
+AppGlobal.Datasys = this
 
-function data.initdb()
+function datasys.initdb()
     local userdb = sqlite.open(config.userDbPath)
     local datadb = sqlite.open(config.dbCachePath)
-    data.userdb = userdb
-    data.datadb = datadb
+    datasys.userdb = userdb
+    datasys.datadb = datadb
 end
 
 ---getdata
@@ -37,11 +38,12 @@ end
 local function get(db, stable, fields, filter)
     filter = filter or ""
     local t = {}
-    local sql = string.format([[select %s from %s %s]]
-    ,table.concat(fields, ","), stable, filter)
+    local sql = string.format([[select %s from %s %s]], table.concat(fields, ","), stable, filter)
     for row in db:nrows(sql) do
         t[1+#t] = row
     end
+    print(#t, sql)
+    this.datacache[sql] = t
     return t
 end
 
@@ -56,28 +58,36 @@ local function update(db, strtab, records, filter)
     assert(sqlite.OK == db:exec(sql), db:errmsg())
 end
 
-function data.getdata( stable, fields, filter)
+---getdata
+---@param stable string
+---@param fields table
+---@param filter string sql
+function datasys.getdata(stable, fields, filter)
     return get(this.datadb, stable, fields, filter)
 end
-function data.getuser(stable, fields, filter)
+function datasys.getuser(stable, fields, filter)
     return get(this.userdb, stable, fields, filter)
 end
 
-function data.updateData(strtab, records, filter)
+function datasys.updateData(strtab, records, filter)
     update(this.datadb, strtab, records, filter)
 end
 
-function data.updateUser(strtab, records, filter)
+function datasys.updateUser(strtab, records, filter)
     update(this.userdb, strtab, records, filter)
 end
 
-function data.getUserPoetry()
+function datasys.getUserPoetry()
     
 end
 
-function data.Destroy()
+function datasys.Start()
+    this.initdb()
+end
+
+function datasys.Destroy()
     this.datadb:close()
     this.userdb:close()
 end
 
-return data
+return datasys

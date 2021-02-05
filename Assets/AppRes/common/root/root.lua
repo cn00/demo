@@ -67,81 +67,44 @@ local yield_return = xutil.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
 
--- local printbak = _G.print
--- _G.print = function(...)
---     printbak(table.unpack({...}), debug.traceback())
--- end
 
 function boot.coroutine_boot(first, ...)
     -- local args = {...}
     xutil.coroutine_call(function(...)
         print("boot.coroutine_boot 0")
-        -- print(debug.traceback("test traceback"))
-        -- print(table.unpack({...}), debug.traceback( "coroutine_boot "..tostring({...})  ))
-        -- yield_return(UnityEngine.WaitForSeconds(1))
-
-
-        -- yield_return(CS.AssetSys.GetBundle("lua/socket.bd", function ( bundle )
-        --     print(bundle)
-        -- end))
 
         local obj = nil
         yield_return(CS.AssetSys.GetAsset("common/manager/manager.prefab", function(asset)
             obj = asset
         end))
-        obj = GameObject.Instantiate(obj)
-        this.manager = obj:GetComponent("LuaMonoBehaviour").Lua
+        obj = GameObject.Instantiate(obj, this.back_Transform)
+        local manager = obj:GetComponent("LuaMonoBehaviour").Lua
         yield_return(UnityEngine.WaitForSeconds(0.3))
         AppGlobal.SceneManager.layer = {
             front = this.front_Transform,
             middle = this.middle_Transform,
             back = this.back_Transform
         }
-        AppGlobal.manager = this.manager
 
-        print("boot.coroutine_boot 1")
-        
+        if AppGlobal.SceneManager.loading == nil then
+            local obj
+            yield_return(AssetSys.GetAsset("common/loading/loading.prefab", function(asset)
+                obj = asset
+            end))
+            local go = GameObject.Instantiate(obj, this.front_Transform)
+            go:SetActive(false)
+            local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+            AppGlobal.SceneManager.loading = {
+                go = go,
+                lua = lua
+            }
+        end
+
         yield_return(CS.AssetSys.GetAsset("ui/dialog/dialog01.prefab"))
         
         yield_return(CS.AssetSys.GetAsset("font/fzxz/方正小篆体.ttf"))
 
-        print("boot.coroutine_boot 2 方正小篆体")
-
-        -- yield_return(UnityEngine.WaitForSeconds(0.01)) -- wait for child object awaked
-
-        -- this.msgmanager = this.manager.message
-
-        -- this.msgmanager.AddListener("test001", function ( data )
-        --     print("test001", data)
-        -- end)
-        -- this.msgmanager.AddListener("test001", function ( data )
-        --     print("test001 11", data)
-        -- end)
-        -- this.msgmanager.AddListener("test002", function ( data )
-        --     print("test002", data)
-        -- end)
-        -- print("AddListener test001")
-
-
         yield_return(CS.UpdateSys.Instance:CheckUpdate())
-        print("boot.coroutine_boot 3 CheckUpdate")
-
-        -- yield_return(CS.NetSys.Instance:Init())
-        -- print("NetSys 1")
-
-        --obj = nil
-        --yield_return(CS.AssetSys.GetAsset("ui/login/login.prefab", function(asset)
-        --    obj = asset;
-        --end))
-        --print("lua login 1", obj);
-        --local login = GameObject.Instantiate(obj);
-
-
-        -- yield_return(CS.AssetSys.GetAsset("video/op/op.prefab", function(asset)
-        --     obj = asset
-        -- end))
-        -- print(obj)
-        -- local write_player = GameObject.Instantiate(obj)
 
         --AppGlobal.SceneManager.push("index/index.prefab")
         AppGlobal.SceneManager.push("poetry/login/login.prefab")
@@ -149,19 +112,6 @@ function boot.coroutine_boot(first, ...)
         --AppGlobal.SceneManager.push("don-quixote/index/index.prefab")
         --AppGlobal.SceneManager.push("don-quixote/linkText/linkText.prefab")
         
-        --obj = nil
-        --yield_return(CS.AssetSys.GetAsset("writeplayer/index/index.prefab", function(asset)
-        --    obj = asset
-        --    print("get index", obj)
-        --end))
-        --print(obj)
-        --local go = GameObject.Instantiate(obj)
-        --print("index", go)
-
-        -- yield_return(UnityEngine.WaitForSeconds(9))
-        -- this.msgmanager.Trigger("test001", {k1 = 1, k2 = 2, k3 = "asdfg"})
-        
-        print("boot.coroutine_boot end")
     end)
 end
 

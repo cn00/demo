@@ -81,7 +81,7 @@ end -- p2cPlay_OnClick
 
 function this.createRoom_OnClick()
     print('createRoom_OnClick')
-    AppGlobal.SceneManager.push("poetry/room/create.prefab", nil, true)
+    AppGlobal.SceneManager.push("poetry/room/create/create.prefab", nil, true)
 end -- createRoom_OnClick
 
 ---自动匹配
