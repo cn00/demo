@@ -221,8 +221,10 @@ public class AssetSys : SingleMono<AssetSys>
         name = PlatformName(RuntimePlatform.IPhonePlayer);
         # elif UNITY_ANDROID
         name = PlatformName(RuntimePlatform.Android);
-        # else
-        name = PlatformName(Application.platform);
+        # elif UNITY_STANDALONE_WIN
+        name = PlatformName(RuntimePlatform.WindowsPlayer);
+        # elif UNITY_OSX
+        name = PlatformName(RuntimePlatform.OSXPlayer);
         # endif
         return name;
     }
@@ -438,6 +440,8 @@ public class AssetSys : SingleMono<AssetSys>
             AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
             return null;
         }
+
+        bundlePath = bundlePath.ToLower();
 
         AssetBundle bundle = null;
         if (!Instance.mLoadedBundles.TryGetValue(bundlePath, out bundle))

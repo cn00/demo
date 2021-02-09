@@ -27,10 +27,9 @@ public class LuaSys : SingleMono<LuaSys>
 {
     [SerializeField]
     public string[] PackagePath = new []{
-        "lua/com/",
+        "lua/",
+        "lua/utility/",
         "lua/proto/",
-        "lua/plugins/",
-        "lua/utility/"
     };
     const string Tag = "LuaSys";
     //all lua behaviour shared one luaenv only!
