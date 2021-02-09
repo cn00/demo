@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   Configs: []
-  m_UseBundle: 0
+  m_UseBundle: 1
   LogLevel: 2
   runInBackground: 1
   LastBuildTime: 132552600421226070
@@ -56,6 +56,11 @@ MonoBehaviour:
       Hash: 
       Version: 
       Rebuild: 1
+    - Name: common/loading.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/manager.bd
       Size: 10790
       Hash: 935b36a902dca12d1a401f54db32e0f0
@@ -136,11 +141,6 @@ MonoBehaviour:
       Hash: a09c521022c1d802e9649032ddd12c33
       Version: 1.0.0
       Rebuild: 1
-    - Name: lua/ustring.bd
-      Size: 96503
-      Hash: 5b06e1b5b07c95017ba6eb5377bbfea7
-      Version: 1.0.0
-      Rebuild: 1
     - Name: lua/utility.bd
       Size: 98244
       Hash: fee824c8aa1becdd54e7b71b43137368
@@ -161,12 +161,22 @@ MonoBehaviour:
       Hash: f7728bb1988ac80e42de995294f8a609
       Version: 1.0.0
       Rebuild: 0
+    - Name: poetry/chat.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: poetry/data.bd
       Size: 0
       Hash: 
       Version: 
       Rebuild: 0
     - Name: poetry/history.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: poetry/hostList.bd
       Size: 0
       Hash: 
       Version: 
@@ -207,6 +217,16 @@ MonoBehaviour:
       Version: 1.0.0
       Rebuild: 0
     - Name: poetry/room.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: poetry/roomList.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
+    - Name: poetry/util.bd
       Size: 0
       Hash: 
       Version: 

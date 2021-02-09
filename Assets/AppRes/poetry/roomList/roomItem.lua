@@ -41,8 +41,8 @@ function this.AutoGenInit()
     this.description_Text = description:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.hosturl_Text = hosturl:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.id_Text = id:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.RectTransform = gameObject:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.name_Text = name:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.TableViewCell = gameObject:GetComponent(typeof(CS.TableView.TableViewCell))
 end
 --AutoGenInit End
 
