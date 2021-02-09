@@ -48,5 +48,7 @@ MonoBehaviour:
   LuaPath: Assets/AppRes/poetry/net/server.lua
   Injections: []
   InjectValues:
+  - k: BroadcastPort
+    v: 8800
   - k: Port
     v: 9990

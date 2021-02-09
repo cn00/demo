@@ -45,7 +45,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_lfb(L);
         }
 
-        [DllImport("socket", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("mime", CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_mime_core(System.IntPtr L);
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
@@ -54,14 +54,14 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_mime_core(L);
         }
 
-
-        [DllImport("socket", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int luaopen_luasocket_scripts(System.IntPtr L);
+        
+        [DllImport("serial", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int luaopen_socket_serial(System.IntPtr L);
 
         [MonoPInvokeCallback(typeof(LuaCSFunction))]
-        public static int LoadSocketScripts(System.IntPtr L)
+        public static int LoadSocketSerial(System.IntPtr L)
         {
-            return luaopen_luasocket_scripts(L);
+            return luaopen_socket_serial(L);
         }
 
         [DllImport("nslua", CallingConvention = CallingConvention.Cdecl)]

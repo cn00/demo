@@ -161,5 +161,14 @@ function util.StrTable2CSArray( tab )
     end
     return list --:ToArray()
 end
-    
+
+function util.ipv4str2num(str)
+    return string.gsub(str, "(%d*)%.?", function(sb)return string.format("%02x", tonumber(sb)) end)
+end
+
+function util.num2ipv4str(n)
+    local hex = string.format("02x", n)
+    return string.gsub(hex, "(..)", function(sb) return tonumber(sb, 16) end)
+end
+
 return util

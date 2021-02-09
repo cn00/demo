@@ -14,6 +14,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 local File = CS.System.IO.File
+local Vector2 = UnityEngine.Vector2
 
 local stringx = require("stringx") -- split
 local xutil = require "xlua.util"
@@ -25,9 +26,6 @@ local config = require("common.config.config")
 
 local dbpath = config.dbCachePath;
 local userDbpath = config.userDbPath;
-
-
-local manager = AppGlobal.manager
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -117,11 +115,9 @@ function match.onCardClick(idx, tp)
         card.die = true
         local msg = {
             type = "answer", -- or "card_action_b",
-            body = {
                 clientId = this.clientId,
                 roomId = this.roomId,
                 roundAnswer = idx,
-            }
         }
         this.Client.SendMsgt(msg)
 
@@ -202,10 +198,8 @@ function match.nextRound()
 
         --local msgtopartner = {
         --    type = "nextRound",
-        --    body = {
         --        currentIdx=this.currentIdx,
         --        round = this.round
-        --    },
         --}
         --this.Client.SendMsgt(msgtopartner)
         
@@ -276,7 +270,6 @@ function this.AutoGenInit()
     this.chatMsgTemp_RectTransform = chatMsgTemp:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.chatSendBtn_Button = chatSendBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.chatSendBtn_Button.onClick:AddListener(this.chatSendBtn_OnClick)
-    this.netClient_LuaMonoBehaviour = netClient:GetComponent(typeof(CS.LuaMonoBehaviour))
     this.noteText_Text = noteText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.playerA_RectTransform = playerA:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.playerB_RectTransform = playerB:GetComponent(typeof(CS.UnityEngine.RectTransform))
@@ -294,10 +287,8 @@ function this.startBtn_OnClick()
     print('startBtn_OnClick')
     this.Client.SendMsgt({
         type = "startMatch",
-        body = {
             clientId = this.clientId,
             roomId = this.roomId,
-        }
     })
 end -- startBtn_OnClick
 
@@ -306,11 +297,9 @@ function this.chatSendBtn_OnClick()
     if this.chatInputField_InputField.text == "" then return end
     this.Client.SendMsgt({
         type = "chat",
-        body = {
             clientId = this.clientId,
             roomId = this.roomId,
             content = this.chatInputField_InputField.text
-        }
     })
     this.chatInputField_InputField.text = ""
 end -- chatSendBtn_OnClick
@@ -338,22 +327,14 @@ function match.Awake()
 end
 
 function match.Start()
-    this.Client = this.netClient_LuaMonoBehaviour.Lua
+    this.Client = AppGlobal.Client
     startBtn:SetActive(false)
-    if(this.matchType == 0) then
-        this.Client.ConnectToServer(this.ServerHost, this.ServerPort, this.OnServerMsg)
+    this.Client.AddListeners(this.OnServerMsg())
 
-        -- TODO: Server url QRcode
-        --local ips = CS.NetSys.LocalIpAddressStr()
-        --local args = {}
-        --local url = string.format("a3mkgp:%s:%s:%s", ips.Length > 0 and ips[0] or "127.0.0.1", this.Server.ServerPort, util.dump(args))
-        --print("qrcode:url", url)
-        --this.QRcode_QRCodeEncodeController:Encode(url)
-    else
-        print("<color=red>client machine</color>")
-        -- remote {"a3mkgp", ip, port, argt}
-        this.Client.ConnectToServer(this.hostInfo[2], this.hostInfo[3], this.OnServerMsg)
-    end
+    this.Client.SendMsgt({
+        type = "joinRoom",
+            roomId = this.info.roomId
+    })
     
     this.stateStartTime = UnityEngine.Time.now
 
@@ -365,13 +346,13 @@ function match.Start()
         print("LoadData end")
         playerA:SetActive(true)
         playerB:SetActive(true)
-        this.noteText_Text.text = this.matchType == 0 and "等待对手上线..." or "对手正在酝酿中..."
+        this.noteText_Text.text = this.matchType == 0 and "等待对手上线..." or "对手正在准备中..."
     end)
 end
 
 function match.LoadData(cb)
     xutil.coroutine_call(function()
-        this.noteText_Text.text = "正在积极和诗人们取得联系,马上就好..."
+        this.noteText_Text.text = "正在准备,马上就好..."
         local dburl = "db.db"
         local cachePath = dbpath -- AssetSys.CacheRoot .. "db.db"
         local fi =  CS.System.IO.FileInfo(cachePath);
@@ -435,7 +416,7 @@ function match.loadCard()
         this.availableIdxs[1+#this.availableIdxs] = i
         v.owner = 1
         local c
-        if i < #cardsInfo/2 then
+        if i <= #cardsInfo/2 then
             v.owner = ownerA
             c = GameObject.Instantiate(cardTemplate, cardRootA)
             idsA[1+#idsA] = i
@@ -448,6 +429,10 @@ function match.loadCard()
         c.name = "card_" .. v.id
         c:SetActive(true)
         
+        local h = #cardsInfo/2/11 * 110
+        cardRootA.sizeDelta = Vector2(0, h)
+        cardRootB.sizeDelta = Vector2(0, h)
+        
         v.onClickCallback = this.onCardClick
 
         local Lua = c:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
@@ -456,52 +441,27 @@ function match.loadCard()
     end
 end
 
----OnConnect
----@param msgt table body = {id}
-local function OnConnect(msgt)
-    this.clientId = msgt.body.clientId
-    this.Client.clientId = msgt.body.clientId
-
-    if this.info.autoMatch then
-        this.Client.SendMsgt({
-            type = "autoMatch",
-            body = {
-                level = math.random(0, 9),
-                clientId = this.clientId,
-            }
-        })
-    end
-    return true
-end
-
 ---OnLoginResult
----@param msgt table body = {success}
+---@param msgt table {success}
 local function OnLoginResult(msgt)
-    this.loginInfo = msgt.body
+    this.loginInfo = msgt
     return true
 end
 
 ---OnCreateRoomResult
----@param msgt table body = {roomId, masterId, clients = {}}
+---@param msgt table {roomId, masterId, clients = {}}
 local function OnCreateRoomResult(msgt)
-    local roomId = msgt.body.roomId
+    local roomId = msgt.roomId
     this.roomId = roomId
-    this.poetryIdList = msgt.body.cardIds
-    --this.roomList[roomId].clientIds = msgt.body
+    this.poetryIdList = msgt.cardIds
     return true
 end
 
----OnRoomListResult
----@param msgt table body = {{roomId, client={{id,name}, ...}}, ...}
-local function OnRoomListResult(msgt)
-    this.roomList = msgt.body
-    return true
-end
 
 ---OnJoinRoomResult
----@param msgt table body = {roomId, clientId}
+---@param msgt table {roomId, clientId}
 local function OnJoinRoomResult(msgt)
-    local body = msgt.body
+    local body = msgt
     this.roomId = body.roomId
     this.clientsId = body.clientsId
     this.cardsInfo = body.cardsInfo
@@ -514,13 +474,14 @@ local function OnJoinRoomResult(msgt)
     if body.roomInfo.isNpc or this.roomInfo.masterId == this.clientId then
         startBtn:SetActive(true)
     end
+    
     -- TODO: 查看房间及卡牌信息 refresh ui
     this.noteText_Text.text = "等待对手准备就绪"
     return true
 end
 
 local function OnLeaveRoom(msgt)
-    local body = msgt.body
+    local body = msgt
 
     if body.clientId == this.clientId and body.roomId == this.roomId then
         this.roomId = nil
@@ -535,7 +496,7 @@ end
 ---同步客户端状态
 ---@param msgt table body={id, state}
 local function OnClientStateChanged(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     this.clientsInfo[body.clientId].state = body.state
     local readyToStart = true
     for clientId, clientInfo in pairs(this.clientsInfo) do
@@ -554,35 +515,38 @@ local function OnClientStateChanged(msgt)
 end
 
 local function OnNextRound(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     this.currentIdx = body.currentIdx
     this.nextRound()
     return true
 end
 
 ---OnSendCard
----@param msgt table body = {cardId, cardInfo={state}}
+---@param msgt table {cardId, cardInfo={state}}
 local function OnSendCard(msgt)
 
     return true
 end
 
 ---OnCardAction
----@param msgt table body = {cardId, action}
+---@param msgt table {cardId, action}
 local function OnCardAction(msgt)
 
     return true
 end
 
 ---OnMatchResult
----@param msgt table body = {result}
+---@param msgt table {result}
 local function OnMatchResult(msgt)
     
     return true
 end
 
+
+---开始对局
+---@param msgt table
 local function OnStartMatch(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     this.clientName = body.myname
     startBtn:SetActive(false)
     this.loadCard()
@@ -590,22 +554,16 @@ local function OnStartMatch(msgt)
     return true
 end
 
-local function OnHeartbeat(msgt)
-    
-    return true
-end
-
 --- body {clientId, content}
 local function OnChat(msgt)
-    
-    table.insert(this.chatHistory, msgt.body)
+    table.insert(this.chatHistory, msgt)
     this.chatMsgNew = true
     
     return true
 end
 
 local function OnAnswer(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local roomId = body.roomId
     local currentIdx = this.currentIdx
     local card = this.cardsInfo[currentIdx]
@@ -615,17 +573,15 @@ local function OnAnswer(msgt)
         , this.clientId, os.time() - this.roundStartTime)
     this.currentIdx = -1
     this.roundAnswer = body.roundAnswer
-    if body.clientId == this.clientId then
+    if body.clientId == this.Client.clientId then
         xutil.coroutine_call(function()
             -- TODO: show answer & time
             -- show right answer
             yield_return(UnityEngine.WaitForSeconds(2))
             this.Client.SendMsgt({
                 type = "endRound",
-                body = {
                     clientId = this.clientId,
                     roomId = this.roomId
-                }
             })
         end)
     end
@@ -633,13 +589,13 @@ local function OnAnswer(msgt)
 end
 
 local function OnEndRound(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local clientId = body.clientId
     return true
 end
 
 local function OnBye(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local clientId = body.clientId
     return true
 end
@@ -650,10 +606,8 @@ local function OnGameOver(msgt)
 end
 
 local OnServerMsgType = {
-    ["connect"] 	= OnConnect, --> login
     ["login"]		= OnLoginResult,
     ["createRoom"]	= OnCreateRoomResult,
-    ["roomList"]	= OnRoomListResult,
     ["joinRoom"] 	= OnJoinRoomResult,
     ["leaveRoom"] 	= OnLeaveRoom,
     ["cStateChange"] = OnClientStateChanged,
@@ -664,25 +618,22 @@ local OnServerMsgType = {
     ["sendCard"]	= OnSendCard,
     ["cardAction"]	= OnCardAction,
     ["matchResult"]	= OnMatchResult,
-    ["heartbeat"]   = OnHeartbeat,
     ["bye"] 		= OnBye,
     ["chat"]        = OnChat,
     ["answer"]      = OnAnswer,
 }
 
 function match.OnServerMsg(msgt)
-    local type = msgt.type
-    assert(OnServerMsgType[type] and OnServerMsgType[type](msgt))
+    return OnServerMsgType
 end
 
 function match.OnDestroy()
+    if AppGlobal.Client then AppGlobal.Client.RemoveListeners(OnServerMsgType) end
     if this.Client.conn then
         this.Client.SendMsgt({
             type = "bye",
-            body = {
                 clientId = this.clientId,
                 roomId = this.roomId
-            }
         })
         this.Client.conn:close()
     end

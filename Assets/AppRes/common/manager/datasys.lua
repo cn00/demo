@@ -39,10 +39,10 @@ local function get(db, stable, fields, filter)
     filter = filter or ""
     local t = {}
     local sql = string.format([[select %s from %s %s]], table.concat(fields, ","), stable, filter)
+    print(#t, sql)
     for row in db:nrows(sql) do
         t[1+#t] = row
     end
-    print(#t, sql)
     this.datacache[sql] = t
     return t
 end

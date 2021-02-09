@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2491c576b20fa46e59ff0d7968bab39a
+guid: 87afd06ff10f247ebae40ec3749a40c9
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
   userData: 
-  assetBundleName: common/loading.bd
+  assetBundleName: poetry/room.bd
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

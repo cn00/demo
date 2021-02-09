@@ -128,8 +128,7 @@ public class LuaSys : SingleMono<LuaSys>
     {
         luaEnv.AddLoader(Require);
 
-        // luaEnv.AddBuildin("socket.socket", XLua.StaticLuaCallbacks.LoadSocketCore);
-        // luaEnv.AddBuildin("socket.util", XLua.LuaDLL.Lua.LoadSocketScripts);
+        luaEnv.AddBuildin("socket.serial",  XLua.LuaDLL.Lua.LoadSocketSerial);
         luaEnv.AddBuildin("mime.core", XLua.LuaDLL.Lua.LoadSocketMime);
         luaEnv.AddBuildin("lpeg", XLua.LuaDLL.Lua.LoadLpeg);
         luaEnv.AddBuildin("ffi", XLua.LuaDLL.Lua.LoadFfi);
@@ -155,6 +154,9 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.Global.Set("UNITY_EDITOR_WIN", true);
         #endif
         
+        #if UNITY_STANDALONE
+        luaEnv.Global.Set("UNITY_STANDALONE", true);
+        #endif
         #if UNITY_OSX
         luaEnv.Global.Set("UNITY_OSX", true);
         #endif

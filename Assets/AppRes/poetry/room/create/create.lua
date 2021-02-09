@@ -27,7 +27,7 @@ local this = {
 }
 local create = this
 
-
+local suzukiLimitTag = "思琪限定"
 
 --AutoGenInit Begin
 --[[
@@ -56,16 +56,26 @@ end
 function this.testBtn_OnClick()
     print('testBtn_OnClick')
     -- refresh ui
-    if(not testRoot.activeSelf) then
+    if(not testRoot.activeSelf and #this.selectTags > 0) then
+        
         xutil.coroutine_call(function()
             -- get poetry
             local condition = string.format("where tags like '%%%s%%' limit 10", table.concat(this.selectTags, "%' or tags like '%"))
-            local poetry = AppGlobal.Datasys.getdata("poetryAuthor", {"title", "author", "tags", "content"}, condition)
-            local st = table.select(poetry, function(o) return string.format("<color=red>%s</color>|<color=green>%s</color>|%s", o.title, o.tags, o.content) end)
+            local dbtable = "poetryAuthor"
+            if this.selectTags[1] == suzukiLimitTag then
+                dbtable = "poetry100"
+                condition = string.format("ORDER BY random() LIMIT 30")
+            end
+            local poetry = AppGlobal.Datasys.getdata(dbtable, {"title", "author", "tags", "content"}, condition)
+            local idx = 0
+            local st = table.select(poetry, function(o)
+            idx = idx + 1;
+            return string.format("%02d:<color=red>%s</color>|<color=green>%s</color>|%s", idx, o.title, o.tags, o.content)
+            end)
             this.testContent_Text.text = table.concat(st, "\n")
-    
+
             this.testContent_RectTransform.sizeDelta = Vector2(0, this.testContent_Text.preferredHeight)
-        end)
+            end)
     end
     testRoot:SetActive(not testRoot.activeSelf)
 end -- textBtn_OnClick
@@ -84,10 +94,18 @@ end
 
 -- function create.OnEnable() end
 
-local function tagOnClick(tag, isAdd)
+local function tagOnClick(tag, isAdd, tagItem)
     if isAdd then
-        if #this.selectTags > 3 then return false end
-        table.insert(this.selectTags, tag)
+        if tag == suzukiLimitTag then
+            this.selectTags = {tag}
+        else
+            if this.selectTags[1] == suzukiLimitTag then
+                return false
+            else
+                if #this.selectTags > 3 then return false end
+                table.insert(this.selectTags, tag)
+            end
+        end
     else
         util.removeValue(this.selectTags, tag)
     end
@@ -97,11 +115,23 @@ end
 function create.Start()
     -- load tags
 	xutil.coroutine_call(function()
-        local tags = AppGlobal.Datasys.getdata("tags", {"tag"}, "limit 40")
+        local tags = AppGlobal.Datasys.getdata("tags", {"tag"}, "") -- limit 100
         this.tags = tags
-        local count = 0
+        local size = this.tagContentRoot_RectTransform.rect.size
+        local h = 131 * #tags/13 -- (size.x/80)
+        print("hhh", h, size)
+        this.tagContentRoot_RectTransform.sizeDelta = Vector2(0, h)
+        
+        -- 思琪限定
+        local go = GameObject.Instantiate(tagItemTemplate, this.tagContentRoot_RectTransform)
+        local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+        local info = {
+            text = suzukiLimitTag,
+            clickCallback = tagOnClick
+        }
+        lua.init(info)
+
         for _, v in pairs(tags) do
-            count = count + 1
             local info = {
                 text = v.tag,
                 clickCallback = tagOnClick
@@ -110,8 +140,6 @@ function create.Start()
             local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
             lua.init(info)
         end
-        local size = this.tagContentRoot_RectTransform.sizeDelta
-        local h = 140 * count/(size.x/80)
     end)
 end
 

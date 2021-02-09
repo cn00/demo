@@ -149,20 +149,20 @@ local function _Draw(self, opt)
 						opt.indent = 1
 						Draw(t , opt);
 					else
-						if umeta ~= nil then
-						--	if type(umeta) == "table" then 
-						--		opt.ltname = "_ud_meta"
-						--		opt.indent = 1
-						--		_Draw(umeta , opt);
-						--	end
-						--else
-							EditorGUILayout.BeginHorizontal()
-							do
-								EditorGUILayout.LabelField("_ud_meta");
-								EditorGUILayout.LabelField(tostring(umeta));
-							end
-							EditorGUILayout.EndHorizontal()
-						end
+						--if umeta ~= nil then
+						----	if type(umeta) == "table" then 
+						----		opt.ltname = "_ud_meta"
+						----		opt.indent = 1
+						----		_Draw(umeta , opt);
+						----	end
+						----else
+						----	EditorGUILayout.BeginHorizontal()
+						----	do
+						----		EditorGUILayout.LabelField("_ud_meta");
+						----		EditorGUILayout.LabelField(tostring(umeta));
+						----	end
+						----	EditorGUILayout.EndHorizontal()
+						--end
 					end
 				end
 				::continue::

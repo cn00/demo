@@ -61,8 +61,8 @@ function Scene.push(prefabPath, arg, replace)
         local last = loadstack[#loadstack]
         if(replace and last ~= nil and last.obj ~= nil)then
             local com = last.obj:GetComponent(typeof(CS.LuaMonoBehaviour))
-            if com and com.Lua and type(com.Lua.stateToSave) == "function" then
-                last.savedState = com.Lua.stateToSave()
+            if com and com.Lua then
+                last.savedState = com.Lua.info
             end
             GameObject.DestroyImmediate(last.obj)
             last.obj = undef
@@ -93,12 +93,14 @@ end
 function Scene.pop(callback)
     local last = table.remove(loadstack)
     local newlast = table.remove(loadstack)
-    Scene.push(newlast.path, function (go)
+    last.info = last.info or {}
+    last.info.callback = function (go)
         GameObject.DestroyImmediate(last.obj)
         if callback then
             callback(newlast.savedState)
         end
-    end)
+    end
+    this.push(newlast.path, last.info)
 end
 
 --AutoGenInit Begin

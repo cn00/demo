@@ -9,6 +9,7 @@
 
 local G = _G
 local CS = CS
+local System = CS.System
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
@@ -16,6 +17,9 @@ local xutil = require "xlua.util"
 local socket = require("socket.socket")
 local config = require("common.config.config")
 local sqlite = require("lsqlite3")
+
+local this = AppGlobal.Server
+if this then return this end
 
 local yield_return = xutil.async_to_sync(function(to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -26,9 +30,13 @@ end)
 local print = function(...)
     _G.print("<color=yellow>server</color>", ...)
 end
-local server = {
-    ServerPort = 9990,
-    tcpServer = nil, -- tcpServer
+local this = {
+    socket= socket,
+    ServerIP = "*",
+    ServerPort = Port, -- from mono inject values
+    tcpServer = nil, -- game Server
+    sendUdp = nil, -- broadcast server
+    broadcastPort = BroadcastPort, 
 
     tcpClients = {}, -- tcpClients -- for socket.select
     clientsInfo = {}, -- {[clientId] = {status, userId, tcp}, ...}
@@ -37,9 +45,11 @@ local server = {
     roomsInfo = {},     -- {[roomId]={clientId, ...},...}
     levels = {},        -- {[level]={roomId, ...}, ...}
     cardsInfo = {},     -- {[roomId]={cardId, ...},...}
+    availableIdxs = {}, -- {[roomId]={idx, ...},...}
     clientIds = {}, -- {[roomId]={clientId, ...},...}
 }
-local this = server
+local server = this
+AppGlobal.Server = this
 
 local conn_stat = {
     offline = 0,
@@ -63,8 +73,8 @@ local function getRandomCard(n)
     local count = n
     local filter = "WHERE tags like '%唐诗%'"
     local sql = string.format([[
-			SELECT a.id, a.content
-			FROM `poetry` a
+			SELECT a.id, a.content, a.author
+			FROM `poetryAuthor` a
 			JOIN (
 				SELECT ROUND(substr(random(), 2, 4) / 10000.0 * (( SELECT MAX(id) FROM `poetry` %s) - ( SELECT MIN(id) FROM `poetry` %s) - %d) + (SELECT MIN(id) FROM `poetry` %s)) AS id
 			) AS b
@@ -96,11 +106,11 @@ local function getRandomCard(n)
 end
 
 ---createNpc roomId [1, 9]
-local function createNpc()
+local function createNpc(num)
     local t0 = os.clock()
     
     --print("rit", util.dump(rit))
-    for i = 1, 100 do
+    for i = 1, num do
         local roomId = newRoomId()
         local room = {
             roomId = roomId,
@@ -117,37 +127,72 @@ local function createNpc()
         table.insert(roomgroup, roomId)
         this.levels[room.level] = roomgroup
 
-        local count = 0
         local cardsInfo = getRandomCard(40)
+        this.cardsInfo[roomId] = cardsInfo
+        room.masterName = cardsInfo[1].author
         local availableIdxs = {}
         for i, v in ipairs(cardsInfo) do
             v.idx = i
             table.insert(availableIdxs, i)
         end
-        cardsInfo.availableIdxs = availableIdxs
-        this.cardsInfo[roomId] = cardsInfo
-        room.availableIdxs = availableIdxs -- {idx, ...} A:(idx < #this.cardsInfo[roomId]) B:(idx ~< #this.cardsInfo[roomId])
-        --this.clientIds[roomId] = {body.clientId}
+        this.availableIdxs[roomId] = availableIdxs
     end
     print("createNpc 100 use", t0, os.clock() - t0)
 end
 
 ---ServerStart 
 function server.Start()
-    local port = server.ServerPort
+    local ip = this.ServerIP
+    local port = this.ServerPort
     print("<color=red>ServerStart", port)
-    local tcp, err = socket.bind("*", port)
-    if err == nil then
+    local tcp, err = assert(socket.bind(ip, port))
+    if tcp then
         this.tcpServer = tcp
 
-        createNpc()
+        createNpc(100)
 
+        this.StartUdpBroadcastLoop()
         this.ServerStartAcceptLoop()
         this.ServerStartReceiveLoop()
         print("StartServer ok, listen on *:", port)
     else
         assert(false, err, port)
     end
+end
+
+---广播服务器地址
+function server.StartUdpBroadcastLoop()
+    xutil.coroutine_call(function()
+        local udp = socket.udp()
+        this.sendUdp = udp
+        local host = '10.23.25.255' --[[ok]] -- '10.23.24.239' --[[android]]-- CS.System.Net.IPAddress.Broadcast:ToString() -- [[desktop ok]] -- 
+        local port = this.broadcastPort
+        print('broadcastIp', host, host)
+        --CS.App.JavaUtil.Call("com.unity3d.player.UnityPlayerActivity", "RequireWifiLock")
+        assert(udp:settimeout(0.1))
+        assert(udp:setpeername(host, port))
+        assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
+        --CS.App.JavaUtil.Call("com.unity3d.player.UnityPlayerActivity", "ReleaseWifiLock")
+        local myip = assert(udp:getsockname())
+        local hostname = System.Net.Dns.GetHostName()
+        local msgt = {
+            ip = string.format("%s", myip),
+            port = this.ServerPort,
+            name = hostname,
+            description = "wellcome",
+            --action = function()return {3.1415926, 369852}  end
+        }
+        local msgs = 'return' .. util.dump(msgt, false)
+        local count = 0
+        while not this.needQuitUdp do
+            local udpsend, err = udp:send(string.hex(msgs))
+            print('broadcast', count, host, myip, port)
+            count = count + 1
+            yield_return(UnityEngine.WaitForSeconds(count%20))
+        end
+        print("broadcast udp shutdown")
+        udp:close()
+    end)
 end
 
 local function selectClient(filter)
@@ -178,11 +223,12 @@ function server.ServerStartAcceptLoop()
                 this.clientsInfo = this.clientsInfo or {}
                 local clientId = newClientId()
                 local cinfo = {
+                    type = "connect",
                     status = 0,
                     clientId = clientId,
                 }
                 server.clientsInfo[clientId] = cinfo
-                this.SendMsgtToClient({ type = "connect", body = cinfo }, client)
+                this.SendMsgtToClient(cinfo, client)
                 cinfo.tcp = client
             else
                 if errmsg ~= err then
@@ -233,7 +279,7 @@ function server.ServerOnReceiveMsgs(msgs, tcp)
     if f then
         local msgt = f()
         local type = msgt.type
-        local body = msgt.body
+        local body = msgt or {}
         body.tcp = tcp
         assert(this.OnClientMsgType[type] and this.OnClientMsgType[type](msgt))
     else
@@ -242,29 +288,27 @@ function server.ServerOnReceiveMsgs(msgs, tcp)
 end
 
 ---OnLogin
----@param msgt table body = {userId, userName, clientId}
+---@param msgt table {userId, userName, clientId}
 local function OnLogin(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local playerId = body.playerId
     local passwd = body.passwd
     local success = true
     local loginMsg = "welcome"
     local ret = {
         type = "login",
-        body = {
             success = success,
             playerId = playerId,
             loginMsg = loginMsg
-        }
     }
     this.SendMsgtToClient(ret, body.tcp)
     return true
 end
 
 --- 房主选择诗集范围，用 id 列表创建房间
----@param msgt table body = {userId, cardsInfo = {}}
+---@param msgt table {userId, cardsInfo = {}}
 local function OnCreateRoom(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local roomId = newRoomId()
     local room = {
         roomId = roomId,
@@ -277,23 +321,21 @@ local function OnCreateRoom(msgt)
 
     local rt = {
         type = "createRoom",
-        body = {
             success = true,
             roomId = roomId,
             cardIds = body.cardIds,
             level = body.level or 0
-        }
     }
     this.SendMsgtToClient(rt, body.tcp)
     return true
 end
 
 ---OnRoomList
----@param msgt table body = {}
+---@param msgt table {}
 local function OnRoomList(msgt)
-    local level = msgt.body.level or 0
+    local level = msgt.level or 0
     local perpage = 10
-    local page = math.min(#this.roomsInfo, msgt.body.page or 0)
+    local page = math.min(#this.roomsInfo, msgt.page or 0)
     local rooms = {}
     for i = page * perpage, math.min((1 + page) * perpage, #this.levels[level]) do
         local roomid = this.levels[level][i]
@@ -302,22 +344,23 @@ local function OnRoomList(msgt)
     end
     local rt = {
         type = "roomList",
-        body = rooms, -- TODO: only send simple room info
+        rooms = rooms, -- TODO: only send simple room info
     }
-    this.SendMsgtToClient(rt, msgt.body.tcp)
+    this.SendMsgtToClient(rt, msgt.tcp)
     return true
 end
 
 ---原有成员只发送 clientId， 新成员发送 this.clientIds[body.roomId]
 ---@param msgt table body = 
 local function OnJoinRoom(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local roomId = body.roomId
     local room = this.roomsInfo[body.roomId]
 
     local rt = {
         type = "joinRoom",
-        body = { roomId = body.roomId, clientId = body.clientId },
+        roomId = body.roomId, 
+        clientId = body.clientId,
     }
 
     -- 原有成员
@@ -327,21 +370,22 @@ local function OnJoinRoom(msgt)
 
     -- 新成员
     table.insert(this.clientIds[roomId], body.clientId)
-    rt.body.clientIds = this.clientIds[roomId]
-    rt.body.cardsInfo = this.cardsInfo[roomId]
-    rt.body.roomInfo  = this.roomsInfo[roomId]
-    this.SendMsgtToClient(rt, msgt.body.tcp)
+    rt.clientIds = this.clientIds[roomId]
+    rt.cardsInfo = this.cardsInfo[roomId]
+    rt.roomInfo  = this.roomsInfo[roomId]
+    this.SendMsgtToClient(rt, msgt.tcp)
     return true
 end
 
 ---OnLeaveRoom
----@param msgt table body = {clientId, roomId}
+---@param msgt table {clientId, roomId}
 local function OnLeaveRoom(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local room = this.roomsInfo[body.roomId]
     local rt = {
         type = "leaveRoom",
-        body = { roomId = body.roomId, clientId = body.clientId },
+        roomId = body.roomId, 
+        clientId = body.clientId,
     }
     for _, clientId in pairs(this.clientIds[body.roomId]) do
         this.SendMsgtToClient(rt, this.clientsInfo[clientId].tcp)
@@ -351,9 +395,9 @@ local function OnLeaveRoom(msgt)
 end
 
 ---OnPrepared
----@param msgt table body = {clientId, roomId, state} -- state = 0:free 1:prepared 2: ...
+---@param msgt table {clientId, roomId, state} -- state = 0:free 1:prepared 2: ...
 local function OnClientStateChanged(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local client = this.clientsInfo[body.clientId]
     client.state = body.state
     local room = this.roomsInfo[body.roomId]
@@ -366,9 +410,11 @@ end
 --- 房主发起开始游戏, 默记阶段
 ---@param msgt table
 local function OnStartMatch(msgt)
-    local body = msgt.body
-    local client = this.clientsInfo[body.clientId]
-    client.state = body.state
+    local body = msgt or {}
+    local roomId = body.roomId
+    --TODO: 验证房主
+    --local client = this.clientsInfo[body.clientId]
+    --client.state = body.state
     local room = this.roomsInfo[body.roomId]
     for _, clientId in ipairs(this.clientIds[body.roomId]) do
         this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
@@ -376,13 +422,12 @@ local function OnStartMatch(msgt)
     local cardIds = {}
     xutil.coroutine_call(function()
         yield_return(UnityEngine.WaitForSeconds(5)) -- TODO: 默记时间⌚️
-        local currentIdx = room.availableIdxs[math.random(1, #room.availableIdxs)] -- first round
-        util.removeValue(room.availableIdxs, currentIdx)
+        local availableIdxs = this.availableIdxs[roomId]
+        local currentIdx = availableIdxs[math.random(1, #availableIdxs)] -- first round
+        util.removeValue(availableIdxs, currentIdx)
         local ret = {
             type = "nextRound",
-            body = {
                 currentIdx = currentIdx,
-            }
         }
         for _, clientId in ipairs(this.clientIds[body.roomId]) do
             this.SendMsgtToClient(ret, this.clientsInfo[clientId].tcp)
@@ -392,17 +437,17 @@ local function OnStartMatch(msgt)
 end
 
 ---OnUserAction
----@param msgt table body = {}
+---@param msgt table {}
 local function OnUserAction(msgt)
-    local body = msgt.body
+    local body = msgt or {}
+    local roomId = body.roomId
     local room = this.roomsInfo[body.roomId]
-    local currentIdx = room.availableIdxs[math.random(1, #room.availableIdxs)] -- currentIdx
-    util.removeValue(room.availableIdxs, currentIdx)
+    local availableIdxs = this.availableIdxs[roomId]
+    local currentIdx = availableIdxs[math.random(1, #availableIdxs)] -- currentIdx
+    util.removeValue(availableIdxs, currentIdx)
     local ret = {
         type = "nextRound",
-        body = {
             currentIdx = currentIdx,
-        }
     }
     for _, clientId in ipairs(this.clientIds[body.roomId]) do
         this.SendMsgtToClient(ret, this.clientsInfo[clientId].tcp)
@@ -411,12 +456,12 @@ local function OnUserAction(msgt)
 end
 
 local function OnHeartbeat(msgt)
-    this.clientsInfo[msgt.body.clientId].lastActive = os.clock()
-    this.SendMsgtToClient({ type = "heartbeat", body = { "my heart will go on.", serverTime = os.time() } }, this.clientsInfo[msgt.body.clientId].tcp)
+    this.clientsInfo[msgt.clientId].lastActive = os.clock()
+    this.SendMsgtToClient({ type = "heartbeat", "my heart will go on.", serverTime = os.time() }, this.clientsInfo[msgt.clientId].tcp)
     return true
 end
 local function OnChat(msgt)
-    local roomId = msgt.body.roomId
+    local roomId = msgt.roomId
     for _, clientId in ipairs(this.clientIds[roomId]) do
         this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
     end
@@ -424,56 +469,43 @@ local function OnChat(msgt)
 end
 
 local function OnAutoMatch(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local clientId = body.clientId
     local level = body.level or 0
     local roomId = this.levels[level][math.random(1, #this.levels[level])]
     local rt = {
-        type = "joinRoom",
-        body = { roomId = roomId, clientId = clientId },
+        type = "autoMatch",
+        roomId = roomId,
     }
-
-    -- 原有成员
-    for _, clientId in pairs(this.clientIds[roomId]) do
-        this.SendMsgtToClient(rt, this.clientsInfo[clientId].tcp)
-    end
-
-    -- 新成员
-    table.insert(this.clientIds[roomId], clientId)
-    rt.body.clientIds = this.clientIds[roomId]
-    rt.body.cardsInfo = this.cardsInfo[roomId]
-    rt.body.roomInfo  = this.roomsInfo[roomId]
     this.SendMsgtToClient(rt, body.tcp)
     return true
 end
 
 local function OnAnswer(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local roomId = body.roomId
     this.SendMsgtToRoom(msgt, roomId)
     return true
 end
 
 local function OnEndRound(msgt)
-    local body = msgt.body
+    local body = msgt or {}
     local clientId = body.clientId
     local roomId = body.roomId
     local room = this.roomsInfo[roomId]
 
-    if #room.availableIdxs > 0 then
-        local currentIdx = room.availableIdxs[math.random(1, #room.availableIdxs)] -- currentIdx
-        util.removeValue(room.availableIdxs, currentIdx)
+    local availableIdxs = this.availableIdxs[roomId]
+    if #availableIdxs > 0 then
+        local currentIdx = availableIdxs[math.random(1, #availableIdxs)] -- currentIdx
+        util.removeValue(availableIdxs, currentIdx)
         local ret = {
             type = "nextRound",
-            body = {
                 currentIdx = currentIdx,
-            }
         }
         this.SendMsgtToRoom(ret, roomId)
     else
         local ret = {
             type = "gameOver",
-            body = {}
         }
         this.SendMsgtToRoom(ret, roomId)
     end
@@ -540,10 +572,15 @@ function server.OnDestroy()
             v:close()
         end
     end
-    if server.tcpServer ~= nil then
-        server.tcpServer:close()
+    if this.sendUdp then
+        print("sendUdp:close")
+        this.sendUdp:close()
+    end
+    if this.tcpServer ~= nil then
+        this.tcpServer:close()
         print("shutdown server")
     end
+    AppGlobal.Server = undef
 end
 
 return server

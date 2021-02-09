@@ -39,15 +39,20 @@ local index = {
 }
 local this = index
 
-function index.stateToSave()
-    
+function index.OnDestroy()
+    AppGlobal.Client.RemoveListeners(this.OnServerMsgType)
 end
 
 --AutoGenInit Begin
---DO NOT EDIT THIS FUNCTION MANUALLY.
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
 function this.AutoGenInit()
     this.bg_Image = bg:GetComponent(typeof(CS.UnityEngine.UI.Image))
-    this.bottom_RectTransform = bottom:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.btnRoot_RectTransform = btnRoot:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.createRoom_Button = createRoom:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.createRoom_Button.onClick:AddListener(this.createRoom_OnClick)
     this.gameGround_Button = gameGround:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -57,42 +62,37 @@ function this.AutoGenInit()
     this.nameInput_Text = nameInput:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.p2cPlay_Button = p2cPlay:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.p2cPlay_Button.onClick:AddListener(this.p2cPlay_OnClick)
-    this.startMatch_Button = startMatch:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.startMatch_Button.onClick:AddListener(this.startMatch_OnClick)
 end
 --AutoGenInit End
 
 ---对局大厅
 function this.gameGround_OnClick()
     print('gameGround_OnClick')
+    AppGlobal.SceneManager.push("poetry/hostList/hostList.prefab", {
+        --parent = nil,
+        autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
 end -- gameGround_OnClick
 
 ---人机对战
 function this.p2cPlay_OnClick()
     print('p2cPlay_OnClick')
     -- start a local server
-    local server = GameObject.Instantiate(CS.AssetSys.GetAssetSync("poetry/net/server.prefab"), AppGlobal.SceneManager.layer.back)
-    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
-        --parent = nil,
-        autoMatch = true,
-        matchType = 1, -- 0:主场， 1:客场, 2:观众
-    }, true)
+    AppGlobal.Client.ConnectToServer("localhost", 9990, function(ok)
+        if ok then
+            AppGlobal.Client.AddListeners(this.OnServerMsgType)
+            AppGlobal.Client.SendMsgt({
+                type = "autoMatch"
+            })
+        end
+    end)
 end -- p2cPlay_OnClick
 
 function this.createRoom_OnClick()
     print('createRoom_OnClick')
     AppGlobal.SceneManager.push("poetry/room/create/create.prefab", nil, true)
 end -- createRoom_OnClick
-
----自动匹配
-function this.startMatch_OnClick()
-    print('startMatch_OnClick')
-    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
-        --matchType = "p2c",
-        autoMatch = true,
-        matchType = 1, -- 0:主场， 1:客场, 2:观众
-    }, true)
-end -- startMatch_OnClick
 
 ---历史战绩
 function this.history_OnClick()
@@ -105,8 +105,21 @@ function index.Awake()
 end
 
 function index.Start()
+    btnRoot:SetActive(false)
     xutil.coroutine_call(function()
-        yield_return(CS.AssetSys.GetAsset("poetry/net/server.prefab"))
+        local obj
+        if(AppGlobal.Client == nil)then
+            yield_return(CS.AssetSys.GetAsset("poetry/net/client.prefab", function(asset) obj = asset  end))
+            GameObject.Instantiate(obj, AppGlobal.SceneManager.layer.back)
+        end
+
+        if(AppGlobal.Server == nil) then
+            yield_return(CS.AssetSys.GetAsset("poetry/net/server.prefab", function(asset) obj = asset  end))
+            GameObject.Instantiate(obj, AppGlobal.SceneManager.layer.back)
+        end
+        
+        btnRoot:SetActive(true)
+
         -- init userdata db
         local sql
         yield_return(CS.AssetSys.GetAsset("poetry/data/userdata.sql", function(asset)
@@ -146,5 +159,18 @@ function this.newGame_OnClick()
     }, true)
 end -- newGame_OnClick
 
+
+local function OnAutoMatch(msgt)
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
+        --matchType = "p2c",
+        roomId = msgt.roomId,
+        autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
+end
+
+index.OnServerMsgType = {
+    ["autoMatch"]   = OnAutoMatch,
+}
 
 return index

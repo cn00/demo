@@ -1,0 +1,167 @@
+
+--- Author: cn
+--- Email: cool_navy@qq.com
+--- Date: 2021/01/20 18:40:19
+--- Description: 
+--[[
+
+]]
+
+local G = _G
+local CS = CS
+local System = CS.System
+local UnityEngine = CS.UnityEngine
+local GameObject = UnityEngine.GameObject
+local util = require "lua.utility.util"
+local xutil = require "xlua.util"
+local socket = require("socket.socket")
+
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
+
+-- roomList
+
+local print = function ( ... )
+    _G.print("roomList", ...)
+    -- _G.print("roomList", debug.traceback())
+end
+
+local this = {
+    needQuitUdp = false,
+    receiveUdp = nil,
+    broadcastPort = 8800,
+    servers = {}, -- {{url, name}, ...}
+    newItemCome = false,
+    roomList = {},
+}
+local roomList = this
+
+function roomList.init(info)
+    this.info = info
+end
+
+--AutoGenInit Begin
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
+function this.AutoGenInit()
+    this.autoMatchBtn_Button = autoMatchBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.autoMatchBtn_Button.onClick:AddListener(this.autoMatchBtn_OnClick)
+    this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
+    this.itemTemplate_RectTransform = itemTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.scrollContent_RectTransform = scrollContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
+    this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
+    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
+end
+--AutoGenInit End
+
+---自动匹配
+function this.autoMatchBtn_OnClick()
+    print('autoMatchBtn_OnClick')
+    AppGlobal.Client.SendMsgt({
+        type = "autoMatch"
+    })
+end -- autoMatchBtn_OnClick
+
+function this.BackBtn_OnClick()
+    print('BackBtn_OnClick')
+    AppGlobal.SceneManager.pop()
+end -- BackBtn_OnClick
+
+function roomList.Awake()
+	this.AutoGenInit()
+end
+
+-- function roomList.OnEnable() end
+
+function roomList.Start()
+	--util.coroutine_call(this.coroutine_demo)
+    
+    itemTemplate:SetActive(false)
+
+    xutil.coroutine_call(function()
+        while AppGlobal.Client == nil do yield_return(UnityEngine.WaitForSeconds(0.3)) end
+        AppGlobal.Client.ConnectToServer(this.info.serverIp, this.info.serverPort, function(ok)
+            if ok then
+                AppGlobal.Client.AddListeners(this.OnServerMsg())
+                AppGlobal.Client.SendMsgt({
+                    type = "roomList",
+                })
+            end
+        end)
+    end)
+
+    this.needQuitUdp = false
+end
+
+function roomList.Update()
+    if this.newItemCome then
+        print("newItemCome")
+        for i, v in pairs(this.roomList) do
+            if v.obj == nil then
+                print(v.name, v.url,v.description)
+                v.onClickRoomCallback = function(roomId)
+                    print(roomId)
+                    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
+                        --parent = nil,
+                        roomId = roomId,
+                        matchType = 1, -- 0:主场， 1:客场, 2:观众
+                    }, true)
+                end
+                local obj = GameObject.Instantiate(itemTemplate, scrollContent.transform)
+                obj:SetActive(true)
+                local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+                com.init(v)
+                v.obj = obj
+            end
+        end
+        this.newItemCome = false
+    end
+end
+
+local function OnAutoMatch(msgt)
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
+        --matchType = "p2c",
+        roomId = msgt.roomId,
+        autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
+end
+---OnRoomListResult
+---@param msgt table {{roomId, client={{id,name}, ...}}, ...}
+local function OnRoomListResult(msgt)
+    for roomId, roomInfo in ipairs(msgt.rooms) do
+        if this.roomList[roomId] == nil then
+            this.roomList[roomId] = roomInfo
+            this.newItemCome = true
+        end
+    end
+    return true
+end
+
+local OnServerMsgType = {
+    ["roomList"]	= OnRoomListResult,
+    ["autoMatch"]   = OnAutoMatch,
+}
+
+function roomList.OnServerMsg(msgt)
+    return OnServerMsgType
+end
+
+function this.OnDestroy()
+    this.needQuitUdp = true
+    if this.receiveUdp then
+        print("receiveUdp:close")
+        this.receiveUdp:close()
+    end
+    if AppGlobal.Client then AppGlobal.Client.RemoveListeners(OnServerMsgType) end
+end
+
+return roomList
