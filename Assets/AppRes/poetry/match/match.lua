@@ -33,7 +33,8 @@ end)
 
 -- match
 
-local clientState ={
+local MatchState ={
+    idle = 0,
     waitingForPlayerB = 1,
     cardSending = 2,
     playerPreparing = 3,
@@ -41,6 +42,7 @@ local clientState ={
     countScore = 5,
     readyToStart = 6,
     penaltySelect = 7,-- 罚牌选择
+    memoryTime = 8,
 }
 
 local print = function ( ... )
@@ -52,14 +54,14 @@ local this = {
     ServerPort = 9990,
     --matchTypes = "p2c", -- p2c, p2p, visitor
     matchType = 0, -- 0:主场， 1:客场, 2:观众
-    matchState = clientState.playerPreparing,
+    matchState = MatchState.idle,
     stateStartTime = 0, -- 状态开始时间
     playerPreparingCountdown = 10, -- 状态读秒
     round = -1, -- 回合
     startTime = -1, -- 
     roundStartTime = 0, -- 回合开始时间
     roundCountdown = 6, -- 回合读秒
-    roundAnswer = -1, -- 当前双方选手的答案
+    userAnswer = -1, -- 当前双方选手的答案
     scoreA = 0, -- 得分
     scoreB = 0,
     availableIdxs = {}, -- available questions index
@@ -69,7 +71,7 @@ local this = {
     myname = "libai",
     loginInfo = nil,
     clientId = -1, -- 每次登录服务器时分配的 id 会变
-    clientsId = {}, -- 房间成员
+    clientIds = {}, -- 房间成员
     cardsInfo = nil, -- 房间卡牌id
     clientName = "",
     cinfo = nil,  -- client info {myname ,id}
@@ -78,12 +80,14 @@ local this = {
     roomList={},
     chatHistory = {}, -- {{clientId, content},...}
     chatMsgNew = false, 
+    memoryTime = 10, -- 默记时间(秒)
+    memoryTimeCount = -1,
 }
 local match = this
 
 function match.init(info)
     this.info = info
-    this.matchType = info.tp or 0
+    this.matchType = info.matchType or 0
     this.hostInfo = info.hostInfo
     this.myname = info.name
 end
@@ -102,66 +106,26 @@ end
 ---myAnswer
 ---@param idx number
 function match.onCardClick(idx, tp)
-    if this.currentIdx < 0 then print("game not start yet.", idx)return end
+    if this.currentIdx < 0 then 
+        --print("game not start yet.", idx)
+        return 
+    end
 
-    if this.roundAnswer == idx then print("慢了一步") return end
+    if this.userAnswer == idx then print("慢了一步") return end
 
-    this.roundAnswer = -1
+    this.userAnswer = -1
 
-    print("onCardClick", idx)
+    --print("onCardClick", idx)
     xutil.coroutine_call(function()
         local card = this.cardsInfo[idx]
         card.Lua.hid()
         card.die = true
         local msg = {
             type = "answer", -- or "card_action_b",
-                clientId = this.clientId,
                 roomId = this.roomId,
-                roundAnswer = idx,
+                userAnswer = idx,
         }
         this.Client.SendMsgt(msg)
-
-        if tp == this.matchType then
-            if idx == this.currentIdx then
-                this.scoreA = this.scoreA + 1
-            else
-                this.cardsInfo[this.currentIdx].Lua.hidAnswer() -- 
-                this.scoreB = this.scoreB + 1
-                if card.owner == 1 then
-                    -- TODO: 罚牌
-                end
-            end
-        else
-            if idx == this.currentIdx then
-                this.scoreB = this.scoreB + 1
-            else
-                match.cardsInfo[this.currentIdx].Lua.hidAnswer()
-                this.scoreA = this.scoreA + 1
-                if card.owner == 1 then
-                    -- TODO: 罚牌
-                end
-            end
-        end
-
-        removeValueFromArray(idx, this.availableIdxs)
-        if not removeValueFromArray(idx, this.availableIdxsA) then
-            removeValueFromArray(idx, this.availableIdxsB)
-        end
-
-        yield_return(UnityEngine.WaitForSeconds(3))
-        --this.question_Text.text = "" -- client is not finished yield_return
-
-        this.scoreText_Text.text = string.format("%s:%s", this.scoreA, this.scoreB)
-
-        if #this.availableIdxsA < 1 or #this.availableIdxsB < 1 then
-            this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
-            this.saveResult()
-            xutil.coroutine_call(function()
-                yield_return(UnityEngine.WaitForSeconds(10))
-                AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
-            end)
-        end
-        
     end)
 end
 
@@ -182,6 +146,7 @@ function match.saveResult()
 end
 
 function match.nextRound()
+    this.matchState = MatchState.fighting
     if #this.availableIdxsA < 1 or #this.availableIdxsB < 1 then
         this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
         xutil.coroutine_call(function()
@@ -189,19 +154,12 @@ function match.nextRound()
             AppGlobal.SceneManager.pop()
         end)
     else
-        this.roundAnswer = -1
+        this.userAnswer = -1
         match.roundStartTime = os.time()
         this.round = #this.cardsInfo - #this.availableIdxs
         local card = this.cardsInfo[this.currentIdx]
         card.Lua.showAnswer()
         this.question_Text.text = card.content[card.qi]
-
-        --local msgtopartner = {
-        --    type = "nextRound",
-        --        currentIdx=this.currentIdx,
-        --        round = this.round
-        --}
-        --this.Client.SendMsgt(msgtopartner)
         
         print("host tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
         CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.TTS", "Say", card.content[card.qi])
@@ -265,7 +223,7 @@ function this.AutoGenInit()
     this.Chat_RectTransform = Chat:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.ChatBtn_Button = ChatBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.ChatBtn_Button.onClick:AddListener(this.ChatBtn_OnClick)
-    this.chatContent_VerticalLayoutGroup = chatContent:GetComponent(typeof(CS.UnityEngine.UI.VerticalLayoutGroup))
+    this.chatContent_RectTransform = chatContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.chatInputField_InputField = chatInputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.chatMsgTemp_RectTransform = chatMsgTemp:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.chatSendBtn_Button = chatSendBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -285,6 +243,7 @@ end
 
 function this.startBtn_OnClick()
     print('startBtn_OnClick')
+    startBtn:SetActive(false)
     this.Client.SendMsgt({
         type = "startMatch",
             clientId = this.clientId,
@@ -304,9 +263,28 @@ function this.chatSendBtn_OnClick()
     this.chatInputField_InputField.text = ""
 end -- chatSendBtn_OnClick
 
+-- refresh msg ui
+local function refreshChat()
+    if Chat.activeSelf then
+        if this.chatMsgNew then
+            for i, v in ipairs(this.chatHistory) do
+                if v.obj == nil then
+                    local obj = GameObject.Instantiate(chatMsgTemp, this.chatContent_RectTransform)
+                    obj:SetActive(true)
+                    v.obj = obj
+                    local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+                    com.init(v)
+                end
+            end
+            this.chatMsgNew = false
+        end
+    end
+end
+
 function this.ChatBtn_OnClick()
     print('ChatBtn_OnClick')
     Chat:SetActive(not Chat.activeSelf)
+    refreshChat()
 end -- ChatBtn_OnClick
 
 function this.ShowQRcodeBtn_OnClick()
@@ -314,9 +292,10 @@ function this.ShowQRcodeBtn_OnClick()
 end -- ShowQRcodeBtn_OnClick
 
 function this.BackBtn_OnClick()
-    AppGlobal.SceneManager.pop(function()
-        print("pop")
-    end)
+    this.Client.SendMsgt({
+        type = "leaveRoom",
+        roomId = this.roomId
+    })
 end -- BackBtn_OnClick
 
 function match.Awake()
@@ -328,7 +307,10 @@ end
 
 function match.Start()
     this.Client = AppGlobal.Client
+    Chat:SetActive(false)
     startBtn:SetActive(false)
+    chatMsgTemp:SetActive(false)
+    
     this.Client.AddListeners(this.OnServerMsg())
 
     this.Client.SendMsgt({
@@ -365,17 +347,23 @@ function match.LoadData(cb)
     end)
 end
 
+local stateUpdate = {
+    [MatchState.fighting] = function()
+        if this.matchState == MatchState.fighting then
+            if this.round >= 0 then
+                this.noteText_Text.text = string.format("%s:%s", 
+                        this.round, math.modf(os.time() - this.roundStartTime))
+            end
+        end
+    end,
+    [MatchState.memoryTime] = function ()
+        local t = this.memoryTimeCount - os.time()
+        this.noteText_Text.text = string.format('默记时间: %02d:%02d', t//60, t%60)
+    end
+}
 
 function match.Update()
-    if this.round >= 0 then
-        this.noteText_Text.text = string.format("%s:%s", 
-                this.round, math.modf(os.time() - match.roundStartTime))
-    end
-
-    if this.chatMsgNew then
-        -- TODO: refresh msg ui
-        this.chatMsgNew = false
-    end
+    if stateUpdate[this.matchState] then stateUpdate[this.matchState]() end
 end
 
 --[[{
@@ -407,10 +395,10 @@ function match.loadCard()
     local cardRootA, cardRootB = this.playerA_RectTransform,this.playerB_RectTransform
     local idsA, idsB= this.availableIdxsA,this.availableIdxsB
     local ownerA, ownerB = 1, 2
-    if this.matchType == 1 then
+    if this.info.matchType == 1 then
         ownerA, ownerB = 2, 1
         idsB, idsA = this.availableIdxsA,this.availableIdxsB
-        cardRootB, cardRootA = this.playerA_RectTransform,this.playerB_RectTransform
+        cardRootB, cardRootA = this.playerA_RectTransform, this.playerB_RectTransform
     end
     for i, v in ipairs(cardsInfo)do
         this.availableIdxs[1+#this.availableIdxs] = i
@@ -453,30 +441,31 @@ end
 local function OnCreateRoomResult(msgt)
     local roomId = msgt.roomId
     this.roomId = roomId
-    this.poetryIdList = msgt.cardIds
     return true
 end
-
 
 ---OnJoinRoomResult
 ---@param msgt table {roomId, clientId}
 local function OnJoinRoomResult(msgt)
     local body = msgt
     this.roomId = body.roomId
-    this.clientsId = body.clientsId
-    this.cardsInfo = body.cardsInfo
+    if this.Client.clientId ~= body.clientId then table.insert(this.clientIds, body.clientId) end
+    this.cardsInfo = body.cardsInfo or this.cardsInfo
+    this.roomInfo = body.roomInfo or this.roomInfo
 
     this.mergeCardsInfo() -- table.select(this.cardIds, function(o) return o.id end))
     
     -- TODO: visitor
     --this.loadCard()
     
-    if body.roomInfo.isNpc or this.roomInfo.masterId == this.clientId then
+    if this.roomInfo.isNpc or (this.roomInfo.masterId == this.Client.clientId and #this.clientIds > 0) then
         startBtn:SetActive(true)
+        this.noteText_Text.text = "点击 Start 开始"
+    else
+        this.noteText_Text.text = "准备就绪，等待开局。。。"
     end
     
     -- TODO: 查看房间及卡牌信息 refresh ui
-    this.noteText_Text.text = "等待对手准备就绪"
     return true
 end
 
@@ -487,9 +476,17 @@ local function OnLeaveRoom(msgt)
         this.roomId = nil
         this.room = undef
     else
-        util.removeValue(this.room.clientIds, body.clientId)
+        util.removeValue(this.clientIds, body.clientId)
     end
-    -- TODO: refresh ui
+    
+    if body.clientId == this.Client.clientId or #this.clientIds < 2 then
+        this.Client.SendMsgt({
+            type = "leaveRoom",
+            roomId = this.roomId
+        })
+        AppGlobal.SceneManager.pop()
+    end
+    
     return true
 end
 
@@ -500,7 +497,7 @@ local function OnClientStateChanged(msgt)
     this.clientsInfo[body.clientId].state = body.state
     local readyToStart = true
     for clientId, clientInfo in pairs(this.clientsInfo) do
-        if clientInfo.state ~= clientState.readyToStart then
+        if clientInfo.state ~= MatchState.readyToStart then
             readyToStart = false
             break
         end
@@ -550,7 +547,9 @@ local function OnStartMatch(msgt)
     this.clientName = body.myname
     startBtn:SetActive(false)
     this.loadCard()
-    this.noteText_Text.text = '默记时间🕙' 
+    this.matchState = MatchState.memoryTime
+    this.memoryTimeCount = os.time() + this.memoryTime
+    this.noteText_Text.text = string.format('默记时间: %02d:%02d', this.memoryTime//60, this.memoryTime%60)
     return true
 end
 
@@ -558,21 +557,24 @@ end
 local function OnChat(msgt)
     table.insert(this.chatHistory, msgt)
     this.chatMsgNew = true
-    
+    refreshChat()
     return true
 end
 
 local function OnAnswer(msgt)
     local body = msgt or {}
     local roomId = body.roomId
-    local currentIdx = this.currentIdx
+    local currentIdx = body.currentIdx
     local card = this.cardsInfo[currentIdx]
-    this.question_Text.text = string.format("<color=red>%s</color>|<color=%s>%s|%ss</color>"
+    this.question_Text.text = string.format("<color=red>%s</color> <color=%s>%s|%ss</color>"
         , card.content[card.ai]
-        , body.clientId == this.clientId and "yellow" or "blue"
-        , this.clientId, os.time() - this.roundStartTime)
+        , msgt.userAnswer == msgt.currentIdx and "yellow" or "blue"
+        , body.clientId == this.Client.clientId and "我" or "对手"
+        , os.time() - this.roundStartTime)
+    card.Lua.hid()
+    card.die = true
     this.currentIdx = -1
-    this.roundAnswer = body.roundAnswer
+    this.userAnswer = body.userAnswer
     if body.clientId == this.Client.clientId then
         xutil.coroutine_call(function()
             -- TODO: show answer & time
@@ -580,28 +582,52 @@ local function OnAnswer(msgt)
             yield_return(UnityEngine.WaitForSeconds(2))
             this.Client.SendMsgt({
                 type = "endRound",
-                    clientId = this.clientId,
-                    roomId = this.roomId
+                clientId = this.clientId,
+                roomId = this.roomId
             })
         end)
+    end
+    if msgt.userAnswer == msgt.currentIdx then
+        if body.clientId == this.Client.clientId then
+            print("you are right")
+            this.scoreA = this.scoreA + 1
+        else
+            print("partner are right")
+            this.scoreB = this.scoreB + 1
+        end
+    else -- 错误
+        card.Lua.hidAnswer()
+        if body.clientId == this.Client.clientId then
+            print("you are wrong", msgt.userAnswer, this.currentIdx)
+            this.scoreB = this.scoreB + 1
+        else
+            print("partner are wrong")
+            this.scoreA = this.scoreA + 1
+        end
+    end
+    this.scoreText_Text.text = string.format("%s:%s", this.scoreA, this.scoreB)
+
+
+    removeValueFromArray(body.userAnswer, this.availableIdxs)
+    if not removeValueFromArray(body.userAnswer, this.availableIdxsA) then
+        removeValueFromArray(body.userAnswer, this.availableIdxsB)
     end
     return true
 end
 
-local function OnEndRound(msgt)
-    local body = msgt or {}
-    local clientId = body.clientId
-    return true
-end
-
 local function OnBye(msgt)
-    local body = msgt or {}
-    local clientId = body.clientId
+    AppGlobal.SceneManager.pop()
     return true
 end
 
 local function OnGameOver(msgt)
-    
+    this.matchState = MatchState.idle
+    xutil.coroutine_call(function()
+        this.saveResult()
+        this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
+        yield_return(UnityEngine.WaitForSeconds(5))
+        AppGlobal.SceneManager.pop()
+    end)
     return true
 end
 
@@ -613,7 +639,6 @@ local OnServerMsgType = {
     ["cStateChange"] = OnClientStateChanged,
     ["startMatch"]  = OnStartMatch,
     ["nextRound"]	= OnNextRound,
-    ["endRound"]    = OnEndRound,
     ["gameOver"]    = OnGameOver,
     ["sendCard"]	= OnSendCard,
     ["cardAction"]	= OnCardAction,

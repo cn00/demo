@@ -40,7 +40,7 @@ local index = {
 local this = index
 
 function index.OnDestroy()
-    AppGlobal.Client.RemoveListeners(this.OnServerMsgType)
+    if AppGlobal.Client then AppGlobal.Client.RemoveListeners(this.OnServerMsgType) end
 end
 
 --AutoGenInit Begin
@@ -53,6 +53,8 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.bg_Image = bg:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.btnRoot_RectTransform = btnRoot:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.cnwin_Button = cnwin:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.cnwin_Button.onClick:AddListener(this.cnwin_OnClick)
     this.createRoom_Button = createRoom:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.createRoom_Button.onClick:AddListener(this.createRoom_OnClick)
     this.gameGround_Button = gameGround:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -64,6 +66,19 @@ function this.AutoGenInit()
     this.p2cPlay_Button.onClick:AddListener(this.p2cPlay_OnClick)
 end
 --AutoGenInit End
+
+function this.cnwin_OnClick()
+    print('cnwin_OnClick')
+    AppGlobal.SceneManager.push("poetry/roomList/roomList.prefab", {
+        --parent = nil,
+        serverIp = "10.23.24.239",
+        serverPort = 9990,
+        --autoMatch = true,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
+
+end -- cnwin_OnClick
+
 
 ---对局大厅
 function this.gameGround_OnClick()

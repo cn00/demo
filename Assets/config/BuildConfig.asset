@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   Configs: []
-  m_UseBundle: 1
+  m_UseBundle: 0
   LogLevel: 2
   runInBackground: 1
   LastBuildTime: 132552600421226070

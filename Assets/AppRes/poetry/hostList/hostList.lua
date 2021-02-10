@@ -48,10 +48,6 @@ function this.AutoGenInit()
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
     this.itemTemplate_RectTransform = itemTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.scrollContent_RectTransform = scrollContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
-    this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
-    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
 end
 --AutoGenInit End
 
@@ -82,7 +78,7 @@ function hostList.Update()
         for i, v in pairs(this.servers) do
             if v.obj == nil then -- 未创建
                 v.onClickRoomCallback = function(ip, port)
-                    print(url)
+                    print("connect", ip, port)
                     AppGlobal.SceneManager.push("poetry/roomList/roomList.prefab", {
                         --parent = nil,
                         serverIp = ip,

@@ -28,8 +28,14 @@ local this = login
 
 
 --AutoGenInit Begin
---DO NOT EDIT THIS FUNCTION MANUALLY.
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
 function this.AutoGenInit()
+    this.InputField_InputField = InputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.loginBtn_Button = loginBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.loginBtn_Button.onClick:AddListener(this.loginBtn_OnClick)
 end
@@ -92,7 +98,13 @@ end
 
 function login.Start()
     --util.coroutine_call(this.coroutine_demo)
-    
+    this.InputField_InputField.onEndEdit:AddListener(function(text)
+        print("InputField_InputField.onEndEdit:" .. text)
+        AppGlobal.USER_ID = text
+
+        self.url_InputField:Select()
+    end)
+
     -- init sdk
     if UNITY_EDITOR then -- uid input
 

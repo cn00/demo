@@ -13,6 +13,11 @@ local sqlite = require("lsqlite3")
 
 local config = require("common.config.config")
 
+
+local print = function ( ... )
+    _G.print("datasys", ... )
+end
+
 if AppGlobal and AppGlobal.Datasys then return AppGlobal.Datasys end -- singleton
 
 local this = {
@@ -25,8 +30,20 @@ AppGlobal.Datasys = this
 
 function datasys.initdb()
     local userdb = sqlite.open(config.userDbPath)
-    local datadb = sqlite.open(config.dbCachePath)
     datasys.userdb = userdb
+    local sql = [[CREATE TABLE IF NOT EXISTS "history" (
+            "id"	INTEGER NOT NULL UNIQUE,
+            "a"	INTEGER NOT NULL DEFAULT 0,
+            "b"	INTEGER NOT NULL DEFAULT 0,
+            "na"	TEXT,
+            "nb"	TEXT,
+            "dt"	INTEGER NOT NULL DEFAULT 0,
+            "date"	TEXT NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );]]
+    userdb:exec(sql)
+
+    local datadb = sqlite.open(config.dbCachePath)
     datasys.datadb = datadb
 end
 

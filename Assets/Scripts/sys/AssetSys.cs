@@ -216,7 +216,7 @@ public class AssetSys : SingleMono<AssetSys>
 
     public static string PlatformName()
     {
-        string name;
+        string name = PlatformName(Application.platform);;
         # if UNITY_IOS
         name = PlatformName(RuntimePlatform.IPhonePlayer);
         # elif UNITY_ANDROID
@@ -419,7 +419,7 @@ public class AssetSys : SingleMono<AssetSys>
         else
         #endif // UNITY_EDITOR
         {
-            string bundleName = GetBundlePath(assetSubPath); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
+            string bundleName = GetBundlePath(assetSubPath).ToLower(); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
             AppLog.d(Tag, "from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) => { resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath); });
         }
@@ -606,14 +606,16 @@ public class AssetSys : SingleMono<AssetSys>
         }
         catch (WebException we)
         {
-            File.Delete(tmpPath);
+            temfs.Close();
+            File.Delete((tmpPath));
             AppLog.e(Tag, url, we.Message, we.Dump());
             DialogSys.Alert(url + "\n" + we.Message + we.StackTrace, "error");
             yield break;
         }
         catch (Exception e)
         {
-            File.Delete((path + ".tmp"));
+            temfs.Close();
+            File.Delete((tmpPath));
             Debug.LogFormat(e.Message);
             yield break;
         }
@@ -658,9 +660,9 @@ public class AssetSys : SingleMono<AssetSys>
         //下载完成重命名
         // File.Move(path + ".tmp", path);
         File.WriteAllBytes(path, File.ReadAllBytes(tmpPath));
-        File.Delete((path + ".tmp"));
+        File.Delete((tmpPath));
 
-        UpdateCachInfo(path, heads.Get("ETag"), contentLength);
+        // UpdateCachInfo(path, heads.Get("ETag"), contentLength);
 
         yield return null;
     }

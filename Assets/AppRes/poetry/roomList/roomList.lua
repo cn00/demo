@@ -15,6 +15,7 @@ local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
 local xutil = require "xlua.util"
 local socket = require("socket.socket")
+local Vector2 = UnityEngine.Vector2
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
@@ -28,8 +29,6 @@ local print = function ( ... )
 end
 
 local this = {
-    needQuitUdp = false,
-    receiveUdp = nil,
     broadcastPort = 8800,
     servers = {}, -- {{url, name}, ...}
     newItemCome = false,
@@ -53,14 +52,17 @@ function this.AutoGenInit()
     this.autoMatchBtn_Button.onClick:AddListener(this.autoMatchBtn_OnClick)
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
+    this.createBtn_Button = createBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.createBtn_Button.onClick:AddListener(this.createBtn_OnClick)
     this.itemTemplate_RectTransform = itemTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.scrollContent_RectTransform = scrollContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.SliderV_Slider = SliderV:GetComponent(typeof(CS.UnityEngine.UI.Slider))
-    this.SliderVText_Text = SliderVText:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.tableview_TableView = tableview:GetComponent(typeof(CS.TableView.TableView))
-    this.tableview_TableViewController = tableview:GetComponent(typeof(CS.TableView.TableViewController))
 end
 --AutoGenInit End
+
+function this.createBtn_OnClick()
+    print('createBtn_OnClick')
+    AppGlobal.SceneManager.load("poetry/room/create/create.prefab", nil, true)
+end -- createBtn_OnClick
 
 ---自动匹配
 function this.autoMatchBtn_OnClick()
@@ -88,33 +90,37 @@ function roomList.Start()
 
     xutil.coroutine_call(function()
         while AppGlobal.Client == nil do yield_return(UnityEngine.WaitForSeconds(0.3)) end
-        AppGlobal.Client.ConnectToServer(this.info.serverIp, this.info.serverPort, function(ok)
-            if ok then
-                AppGlobal.Client.AddListeners(this.OnServerMsg())
-                AppGlobal.Client.SendMsgt({
-                    type = "roomList",
-                })
-            end
-        end)
-    end)
 
-    this.needQuitUdp = false
+        if AppGlobal.Client.connectStat == AppGlobal.Client.State.offline then
+            AppGlobal.Client.ConnectToServer(this.info.serverIp, this.info.serverPort, function(ok)
+                if ok then
+                end
+            end)
+        end
+
+        while AppGlobal.Client.connectStat ~= AppGlobal.Client.State.connected do yield_return(UnityEngine.WaitForSeconds(0.3)) end
+
+        AppGlobal.Client.AddListeners(this.OnServerMsg())
+        AppGlobal.Client.SendMsgt({
+            type = "roomList",
+        })
+    end)
+end
+
+function roomList.OnRoomSelect(roomId)
+    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
+        --parent = nil,
+        roomId = roomId,
+        matchType = 1, -- 0:主场， 1:客场, 2:观众
+    }, true)
 end
 
 function roomList.Update()
     if this.newItemCome then
-        print("newItemCome")
         for i, v in pairs(this.roomList) do
             if v.obj == nil then
-                print(v.name, v.url,v.description)
-                v.onClickRoomCallback = function(roomId)
-                    print(roomId)
-                    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
-                        --parent = nil,
-                        roomId = roomId,
-                        matchType = 1, -- 0:主场， 1:客场, 2:观众
-                    }, true)
-                end
+                print("new room", v.name, v.url,v.description)
+                v.onClickRoomCallback = this.OnRoomSelect
                 local obj = GameObject.Instantiate(itemTemplate, scrollContent.transform)
                 obj:SetActive(true)
                 local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
@@ -122,6 +128,9 @@ function roomList.Update()
                 v.obj = obj
             end
         end
+        local size = this.scrollContent_RectTransform.rect.size
+        local h = 205 * (3+#this.roomList)/4 -- (size.x/80)
+        this.scrollContent_RectTransform.sizeDelta = Vector2(0, h)
         this.newItemCome = false
     end
 end
@@ -146,9 +155,18 @@ local function OnRoomListResult(msgt)
     return true
 end
 
+local function OnNewRoom(msgt)
+    local roomId = msgt.roomId
+    if this.roomList[roomId] == nil then
+        this.roomList[roomId] = msgt
+        this.newItemCome = true
+    end
+end
+
 local OnServerMsgType = {
     ["roomList"]	= OnRoomListResult,
     ["autoMatch"]   = OnAutoMatch,
+    ["createRoom"]  = OnNewRoom,
 }
 
 function roomList.OnServerMsg(msgt)
@@ -156,11 +174,6 @@ function roomList.OnServerMsg(msgt)
 end
 
 function this.OnDestroy()
-    this.needQuitUdp = true
-    if this.receiveUdp then
-        print("receiveUdp:close")
-        this.receiveUdp:close()
-    end
     if AppGlobal.Client then AppGlobal.Client.RemoveListeners(OnServerMsgType) end
 end
 

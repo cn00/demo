@@ -1,7 +1,7 @@
 package.path = package.path .. ";/Volumes/Data/test/Assets/AppRes/lua/utility/?.lua"
 local sqlite = require "lsqlite3"
 local util = require "util"
-local db = sqlite.open("/Volumes/Data/test/ab/Android/db.db")
+local db = sqlite.open("/Volumes/Data/test/ab/db.db")
 
 local function upTags3457()
     local tags = {
@@ -62,7 +62,7 @@ local function collectTags0()
     end
     assert(vm:finalize() == sqlite.OK)
 end
-collectTags0()
+-- collectTags0()
 
 --- 18s
 local function collectTags1()
@@ -81,3 +81,70 @@ local function collectTags1()
     end
 end
 --collectTags1()
+
+
+local function collectTags2()
+
+    -- local vm, ok = db:prepare([[insert or ignore into tags (tag) VALUES (?)]])
+    -- print(vm, ok, db:errmsg())
+    for row in db:nrows("select tags from poetry100 group by tags") do
+        local tags = row["tags"] or ""
+        local ts = string.split(tags, "|")
+        print(table.unpack(ts))
+        for i, t in pairs(ts) do
+            -- assert(sqlite.OK==vm:bind_values(t))
+            -- vm:step()
+            -- vm:reset()
+            local sql = string.format([[INSERT or IGNORE into tags (tag) values ('%s')]], t)
+            assert(sqlite.OK == db:exec(sql), db:errmsg() .. sql)
+        end
+    end
+    -- assert(vm:finalize() == sqlite.OK)
+end
+-- collectTags2()
+
+
+local function mergePoetry100()
+    -- body
+    local sql = [[
+        select p2.id id2, p1.*
+        from poetry100 p1
+        left join poetry p2 on p1.content = p2.content
+        where p2.id not null
+    ]]
+    -- sql = [[
+    --     SELECT p2.id pid, p.*
+    --     FROM poetry100 p
+    --     LEFT JOIN poetry p2 on p2.content = p.content
+    -- ]]
+    for row in db:nrows(sql)do
+        local sql2 = string.format([[update poetry set tags = tags || '|%s' where id = %s and tags not null]], row.tags, row.id2)
+        print(sql2)
+        assert(sqlite.OK == db:exec(sql2), db:errmsg() .. sql2)
+ 
+        local sql2 = string.format([[update poetry set tags = '%s' where id = %s and tags is null]], row.tags, row.id2)
+        print(sql2)
+        assert(sqlite.OK == db:exec(sql2), db:errmsg() .. sql2)
+
+        -- local sql2 = string.format([[update poetry set tags = tags || '|思琪限定' where id = %s]], row.pid)
+        -- print(sql2)
+        -- assert(sqlite.OK == db:exec(sql2), db:errmsg() .. sql2)
+    end
+end
+-- mergePoetry100()
+local function mergePoetry1002()
+    -- body
+    local sql = [[
+        select p2.id id2, p1.*
+        from poetry100 p1
+        left join poetry p2 on p1.content = p2.content
+        where p2.id is null
+    ]]
+    for row in db:nrows(sql)do
+        local sql2 = string.format([[insert or ignore into poetry (authorId, title, content, tags) VALUES(%s,'%s', '%s', '%s')]]
+        , row.authorId or 0, row.title, row.content, row.tags)
+        print(sql2)
+        assert(sqlite.OK == db:exec(sql2), db:errmsg() .. sql2)
+   end
+end
+-- mergePoetry1002()

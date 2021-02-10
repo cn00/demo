@@ -65,11 +65,11 @@ function this.Start()
     local data = this.data
     if data then
         this.id_Text.text   = data.row
-        this.na_Text.text   = data.na
-        this.va_Text.text   = data.a
-        this.dt_Text.text   = data.dt
-        this.nb_Text.text   = data.nb
-        this.vb_Text.text   = data.b
+        this.na_Text.text   = data.nameA
+        this.va_Text.text   = data.scoreA
+        this.dt_Text.text   = string.format("%.1f", data.useTime)
+        this.nb_Text.text   = data.nameB
+        this.vb_Text.text   = data.scoreB
         this.date_Text.text = data.date
     end
 

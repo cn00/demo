@@ -36,7 +36,7 @@ FROM poetry p
 LEFT JOIN author a ON p.authorId = a.id;
 
 CREATE VIEW poetry100_57_author as
-SELECT a.xuhao xh5, b.xuhao xh7, a.author author5, b.author author7, a.content content5, b.content content7
+SELECT a.id xh5, b.id xh7, a.author author5, b.author author7, a.content content5, b.content content7
 FROM
 (
         SELECT *

@@ -13,7 +13,6 @@ using XLua;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using Spine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 

@@ -53,31 +53,8 @@ end
 
 function this.LoadData()
     util.coroutine_call(function()
-        local dburl = "db.db"
-        local cachePath = AssetSys.CacheRoot .. "userdb.db"
-        if not File.Exists(cachePath) then
-            yield_return(AssetSys.Download(dburl, cachePath))
-        else
-            print("use cache:", cachePath)
-        end
-
-        local db = sqlite3.open(cachePath)
-        local sql = [[CREATE TABLE IF NOT EXISTS "history" (
-            "id"	INTEGER NOT NULL UNIQUE,
-            "a"	INTEGER NOT NULL DEFAULT 0,
-            "b"	INTEGER NOT NULL DEFAULT 0,
-            "na"	TEXT,
-            "nb"	TEXT,
-            "dt"	INTEGER NOT NULL DEFAULT 0,
-            "date"	TEXT NOT NULL,
-            PRIMARY KEY("id" AUTOINCREMENT)
-        );select * from history order by id;]]
-        local records = {}
-        for record in db:nrows(sql) do
-            records[#records + 1] = record
-        end
+        local records = AppGlobal.Datasys.getuser("history", {"*"})
         this.DataSource = records
-        db:close()
         print("records", #records)
 
         this.InitTableViewData()
@@ -91,35 +68,34 @@ function this.InitTableViewData()
         return #this.DataSource
     end
     this.tableview_TableViewController.GetCellSize = function(table, row)
-        
-         print("GetCellSize: ", row)
         local size = 60;
-        --local hightperline = 40
         return size
     end
     this.tableview_TableViewController.CellAtRow = function(tb, row)
-        print("CellAtRow", row)
+        --print("CellAtRow", row)
         local celltypenumber = this.tableview_TableViewController.prefabCells.Length
         local cellidentifier = string.format("cell_%02d", 1+(row % celltypenumber))
-        print("cellidentifier",cellidentifier,row,celltypenumber)
+        --print("cellidentifier",cellidentifier,row,celltypenumber)
         local cell = tb:ReusableCellForRow(cellidentifier, row)
         cell.name = "lua-Cell-" ..(row)
         local cellmono = cell:GetComponent("LuaMonoBehaviour")
         local ct = cellmono.Lua
         local cdata = this.DataSource[row + 1]
         cdata.row = row+1
-        if(cdata.a > cdata.b)then ct.Image_Image.color = Color(0.3, 0.2, 0, 0.2) end
-
-        local delcallback = function(cbid)
-            -- row changed  after remove
-            for i, v in ipairs(this.DataSource) do
-                if v.id == cbid then
-                    table.remove(this.DataSource, i)
-                end
-            end
-            this.tableview_TableView:ReloadData()
-        end
-        ct.init({ data = cdata, delcallback = delcallback })
+        
+        if(cdata.scoreA > cdata.scoreB)then ct.Image_Image.color = Color(0.3, 0.2, 0, 0.2) end
+        
+        --local delcallback = function(cbid)
+        --    -- row changed  after remove
+        --    for i, v in ipairs(this.DataSource) do
+        --        if v.id == cbid then
+        --            table.remove(this.DataSource, i)
+        --        end
+        --    end
+        --    this.tableview_TableView:ReloadData()
+        --end
+        
+        ct.init({ data = cdata})
 
         return cell
     end

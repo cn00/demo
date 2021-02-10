@@ -162,7 +162,7 @@ function client.OnReceiveMsg(msgs)
 				v(msgt)
 			end
 		else
-			error("no listener for type: " .. msgt.type)
+			print("no listener for type: " .. msgt.type)
 		end
 	end
 end
@@ -225,41 +225,12 @@ function client.SendMsgs(msgs)
 	this.tcpClient:send("\n")
 end
 ----------------------client end---------------------
-local function broadcastTest()
-	--ok
-	local d_host ='10.23.25.255' -- '127.0.0.1'
-	local d_port = 8800
-	local udp = socket.udp()
-	udp:settimeout(1)
-	assert(udp:setpeername(d_host, d_port))
-	assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
-	assert(udp:setoption('dontroute', true))
-	-- print(res, errmsg)
-	local function rec_msg()
-		local recudp = udp:receive()
-		if (recudp) then
-			print('recudp data:' .. recudp)
-		else
-			print('recudp data nil')
-		end
-	end
-	while 1 do
-		local udpsend, err = udp:send('hello i am lua client')
-		if (udpsend) then
-			print('udpsend ok', udpsend, err, d_host, d_port)
-			rec_msg()
-			break
-		else
-			print('udpsend err', err, d_host, d_port)
-		end
-	end
-	udp:close()
-end
 
 function client.closeConnect()
 	if this.tcpClient ~= nil then
 		this.tcpClient:close()
 		print("shutdown client")
+		this.tcpClient = nil
 	end
 	
 	-- TODO: clean ...
