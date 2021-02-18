@@ -38,7 +38,7 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 ]]
 function this.AutoGenInit()
     this.chatContent_Text = chatContent:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.RectTransform = gameObject:GetComponent(typeof(CS.UnityEngine.RectTransform))
+    this.emoji_RawImage = emoji:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
     this.userName_Text = userName:GetComponent(typeof(CS.UnityEngine.UI.Text))
 end
 --AutoGenInit End
@@ -49,9 +49,19 @@ end
 
 function chatMsg.Start()
     this.userName_Text.text = "client_" .. this.info.clientId
-    this.chatContent_Text.text = this.info.content
+    local emojiId = string.match(this.info.content, "{emoji:(%d+)}")
+    if emojiId then
+        local af = string.format("common/emoji/%d.png", emojiId)
+        local tx = CS.AssetSys.GetAssetSync(af)
+        this.emoji_RawImage.texture =  tx
+        this.chatContent_Text.text = ""
+        emoji:SetActive(true)
+    else
+        emoji:SetActive(false)
+        this.chatContent_Text.text = this.info.content
+    end
 
-    --this.RectTransform.sizeDelta = Vector2(0, this.chatContent_Text.rectTransform.sizeDelta.y)
-end
+        --this.RectTransform.sizeDelta = Vector2(0, this.chatContent_Text.rectTransform.sizeDelta.y)
+    end
 
 return chatMsg

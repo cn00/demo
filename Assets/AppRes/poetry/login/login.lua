@@ -69,7 +69,7 @@ function G.OnNativeMessageBLSdk(null, data)
     print(util.dump(data))
     local actions = {
         ["Login"] = function(argt)
-            --[[ example = {
+            --[[ argt = {
                 type = "BLSdk",
                 code = 10010,
                 callbackType = "Login",

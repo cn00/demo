@@ -188,10 +188,10 @@ RectTransform:
   m_Father: {fileID: 778468009015273911}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -5.2555, y: 5.6009}
-  m_SizeDelta: {x: 60.9848, y: 91.2557}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -4.7736, y: 2.8358}
+  m_SizeDelta: {x: -6.4556, y: -11.882}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &121923549738345884
 CanvasRenderer:
@@ -222,19 +222,21 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: e6782f6ee933d4c0e8dc41184cefb356, type: 3}
-    m_FontSize: 12
+    m_Font: {fileID: 12800000, guid: 8ae35eeca57b8427a96219bb3db3d930, type: 3}
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 0
     m_MaxSize: 200
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
-    m_LineSpacing: 0.76
-  m_Text: "\u4E91\u60F3\u8863\u88F3\u82B1\u60F3\u5BB9,\n\u6625\u98CE\u62C2\u69DB\u9732\u534E\u6D53."
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\u4E91\u60F3\u8863\u88F3\u82B1\u60F3\u5BB9\uFF0C\n\u6625\u98CE\u62C2\u69DB\u9732\u534E\u6D53\u3002
+    \n\u82E5\u975E\u7FA4\u7389\u5C71\u5934\u89C1\uFF0C\n\u4F1A\u5411\u7476\u53F0\u6708\u4E0B\u9022\u3002"
+  isVirtical: 1
 --- !u!1 &4837781041682705203
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,7 +264,7 @@ RectTransform:
   m_GameObject: {fileID: 4837781041682705203}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children:
   - {fileID: 778468009015273911}
   m_Father: {fileID: 0}
@@ -271,7 +273,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 182, y: 256}
+  m_SizeDelta: {x: 140, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3272045456943330479
 MonoBehaviour:
@@ -292,11 +294,7 @@ MonoBehaviour:
   - obj: {fileID: 8071883238949560843}
     exportComIdx: 3
   - obj: {fileID: 4837781041682705203}
-    exportComIdx: 4
-  - obj: {fileID: 4837781041682705203}
-    exportComIdx: 3
-  - obj: {fileID: 4837781041682705203}
-    exportComIdx: 5
+    exportComIdx: 2
   - obj: {fileID: 2210745200087042205}
     exportComIdx: 0
   - obj: {fileID: 4821016937981430306}

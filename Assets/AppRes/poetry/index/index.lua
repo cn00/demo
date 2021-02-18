@@ -55,8 +55,6 @@ function this.AutoGenInit()
     this.btnRoot_RectTransform = btnRoot:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.cnwin_Button = cnwin:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.cnwin_Button.onClick:AddListener(this.cnwin_OnClick)
-    this.createRoom_Button = createRoom:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.createRoom_Button.onClick:AddListener(this.createRoom_OnClick)
     this.gameGround_Button = gameGround:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.gameGround_Button.onClick:AddListener(this.gameGround_OnClick)
     this.history_Button = history:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -104,11 +102,6 @@ function this.p2cPlay_OnClick()
     end)
 end -- p2cPlay_OnClick
 
-function this.createRoom_OnClick()
-    print('createRoom_OnClick')
-    AppGlobal.SceneManager.push("poetry/room/create/create.prefab", nil, true)
-end -- createRoom_OnClick
-
 ---历史战绩
 function this.history_OnClick()
     print('history_OnClick')
@@ -122,6 +115,11 @@ end
 function index.Start()
     btnRoot:SetActive(false)
     xutil.coroutine_call(function()
+        yield_return(CS.AssetSys.GetAsset("font/fzkt/STKaiti.ttf"))
+
+        -- chat emoji
+        yield_return(CS.AssetSys.GetAsset(string.format("common/emoni/%d.png", 1)))
+        
         local obj
         if(AppGlobal.Client == nil)then
             yield_return(CS.AssetSys.GetAsset("poetry/net/client.prefab", function(asset) obj = asset  end))
@@ -146,34 +144,6 @@ function index.Start()
         db:close()
     end)
 end
-
-function this.joinGame_OnClick()
-    local name = this.nameInput_Text.text
-    uiroot:SetActive(false)
-    local openMatch = function(url)
-        require("stringx")
-        local hostInfo = string.split(url, ":")
-        print("joinGame", url, hostInfo)
-        local args = {
-            tp = 1, -- 0:主场， 1:客场, 2:观众, 暂定为客场，建立连接后再判定是否为观众
-            hostInfo = hostInfo,
-            name = name,
-        }
-        AppGlobal.SceneManager.push("poetry/match/match.prefab", args, true)
-    end
-    AppGlobal.SceneManager.push("common/qrcode/qrcode.prefab", { scanCallback = openMatch }, true)
-end -- joinGame_OnClick
-
-function this.newGame_OnClick()
-    local name = this.nameInput_Text.text
-    uiroot:SetActive(false)
-    this.needQuitUdp = true
-    AppGlobal.SceneManager.push("poetry/match/match.prefab", {
-        tp = 0,
-        name = name
-    }, true)
-end -- newGame_OnClick
-
 
 local function OnAutoMatch(msgt)
     AppGlobal.SceneManager.push("poetry/match/match.prefab", {

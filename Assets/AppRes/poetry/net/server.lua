@@ -28,7 +28,7 @@ end)
 -- server
 
 local print = function(...)
-    _G.print("<color=yellow>server</color>", ...)
+    _G.print("<color=yellow>server</color>", os.date(), ...)
 end
 local this = {
     socket= socket,
@@ -99,7 +99,7 @@ end
 
 local function getRandomCard(n)
     local count = n
-    local filter = "WHERE tags like '%唐诗%'"
+    local filter = "WHERE tags like '%思琪限定%'"
     local sql = string.format([[
 			SELECT a.id, a.content, a.author
 			FROM `poetryAuthor` a
@@ -490,20 +490,26 @@ local function nextRound(roomId)
     this.SendMsgtToRoom(ret, roomId)
 
     -- NPC
-    if room.isNpc then
+    local userAnswers = room.userAnswers[currentIdx] or {}
+    if room.isNpc and #userAnswers == 0 then
         xutil.coroutine_call(function()
-            yield_return(UnityEngine.WaitForSeconds(math.random(30, 300)*0.01))
+            yield_return(UnityEngine.WaitForSeconds(7))
             local userAnswers = room.userAnswers[currentIdx] or {}
-            if currentIdx == room.currentIdx and #userAnswers == 0 then
+            if currentIdx == room.currentIdx and #userAnswers == 0 then -- player answered within 5 seconds?
+                --yield_return(UnityEngine.WaitForSeconds(0.01*math.random(200, 500)))
+                print("npc answer", currentIdx)
                 this.SendMsgtToRoom({
                     type = "answer",
                     roomId = roomId,
                     currentIdx = currentIdx,
                     userAnswer = currentIdx,
                 }, roomId)
-                nextRound(roomId)
+                
+                this.endRound(roomId)
             end
         end)
+    --else
+    --    nextRound(roomId)
     end
 end
 
@@ -512,6 +518,7 @@ end
 local function OnStartMatch(msgt)
     local body = msgt or {}
     local roomId = body.roomId
+    local memoryTime = msgt.memoryTime or 5
     --TODO: 验证房主
     --local client = this.clientsInfo[body.clientId]
     --client.state = body.state
@@ -520,7 +527,7 @@ local function OnStartMatch(msgt)
     end
     local cardIds = {}
     xutil.coroutine_call(function()
-        yield_return(UnityEngine.WaitForSeconds(5)) -- TODO: 默记时间⌚️
+        yield_return(UnityEngine.WaitForSeconds(memoryTime)) -- TODO: 默记时间⌚️
         nextRound(roomId)
     end)
     return true
@@ -535,6 +542,7 @@ local function OnHeartbeat(msgt)
 end
 local function OnChat(msgt)
     local roomId = msgt.roomId
+    print("OnChat SendMsgtToClient", roomId, this.clientIds[roomId])
     for _, clientId in ipairs(this.clientIds[roomId]) do
         this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
     end
@@ -557,25 +565,42 @@ end
 local function OnAnswer(msgt)
     local body = msgt or {}
     local roomId = body.roomId
-    msgt.currentIdx = this.roomsInfo[roomId].currentIdx
+    local room = this.roomsInfo[roomId]
+    msgt.currentIdx = room.currentIdx
+
+    local userAnswers = room.userAnswers[room.currentIdx] or {}
+    table.insert(userAnswers, msgt.userAnswer)
+    room.userAnswers[room.currentIdx] = userAnswers
+    
     this.SendMsgtToRoom(msgt, roomId)
+
+    this.endRound(roomId)
     return true
 end
 
-local function OnEndRound(msgt)
-    local body = msgt or {}
-    local roomId = body.roomId
-    local room = this.roomsInfo[roomId]
+function server.endRound(roomId)
+    xutil.coroutine_call(function()
+        yield_return(UnityEngine.WaitForSeconds(4)) -- show answer time
 
-    local availableIdxs = this.availableIdxs[roomId]
-    if #availableIdxs > 0 then
-        nextRound(roomId)
-    else
-        local ret = {
-            type = "gameOver",
-        }
-        this.SendMsgtToRoom(ret, roomId)
-    end
+        this.SendMsgtToRoom({
+            type = "endRound",
+            roomId = roomId
+        }, roomId)
+
+        local availableIdxs = this.availableIdxs[roomId]
+        if #availableIdxs > 0 then
+            nextRound(roomId)
+        else
+            local ret = {
+                type = "gameOver",
+            }
+            this.SendMsgtToRoom(ret, roomId)
+            util.removeValue(this.levels[0], roomId) --TODO: fixed level
+            this.clientIds[roomId] = undef
+            this.cardsInfo[roomId] = undef
+            this.roomsInfo[roomId] = undef
+        end    end)
+
     return true
 end
 
@@ -594,7 +619,7 @@ server.OnClientMsgType = {
     ["cStateChange"] = OnClientStateChanged,
     ["startMatch"] = OnStartMatch,
     ["answer"]    = OnAnswer,
-    ["endRound"]    = OnEndRound,
+    --["endRound"]    = OnEndRound,
     ["heartbeat"] = OnHeartbeat,
     ["chat"] = OnChat,
     ["bye"] = OnBye,
@@ -604,7 +629,7 @@ server.OnClientMsgType = {
 ---@param msgt table
 ---@param client tcp
 function server.SendMsgtToClient(msgt, client)
-    print("SendMsgtToClient", msgt.clientId, client)
+    --print("SendMsgtToClient", msgt.clientId, client)
     this.SendMsgsToClient(util.dump(msgt), client)
 end
 
@@ -627,7 +652,7 @@ end
 ---@param msgt table
 ---@param roomId number
 function server.SendMsgtToRoom(msgt, roomId)
-    print("SendMsgtToRoom", msgt.type, roomId, #this.clientIds[roomId])
+    --print("SendMsgtToRoom", msgt.type, roomId)
     for _, clientId in ipairs(this.clientIds[roomId]) do
         this.SendMsgtToClient(msgt, this.clientsInfo[clientId].tcp)
     end

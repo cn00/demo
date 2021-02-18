@@ -46,7 +46,7 @@ local MatchState ={
 }
 
 local print = function ( ... )
-    _G.print("match", ...)
+    _G.print("match", os.date(), ...)
 end
 
 local this = {
@@ -78,9 +78,7 @@ local this = {
     roomId = nil, -- 加入的房间信息
     clientsInfo = {}, -- {[clientId] = {}}
     roomList={},
-    chatHistory = {}, -- {{clientId, content},...}
-    chatMsgNew = false, 
-    memoryTime = 10, -- 默记时间(秒)
+    memoryTime = 3, -- 默记时间(秒)
     memoryTimeCount = -1,
 }
 local match = this
@@ -96,7 +94,7 @@ end
 ---@param val any
 ---@param arr table
 local function removeValueFromArray(val, arr)
-    print("removeValueFromArray", val)
+    --print("removeValueFromArray", val)
     for i, v in ipairs(arr) do
         if v == val then table.remove(arr, i) return true end
     end
@@ -105,17 +103,16 @@ end
 
 ---myAnswer
 ---@param idx number
-function match.onCardClick(idx, tp)
-    if this.currentIdx < 0 then 
-        --print("game not start yet.", idx)
+function match.onCardClick(idx)
+    if this.userAnswer > 0 or this.matchState ~= MatchState.fighting then 
+        print("game not start yet.", idx)
         return 
     end
 
     if this.userAnswer == idx then print("慢了一步") return end
 
-    this.userAnswer = -1
+    this.userAnswer = idx
 
-    --print("onCardClick", idx)
     xutil.coroutine_call(function()
         local card = this.cardsInfo[idx]
         card.Lua.hid()
@@ -154,15 +151,15 @@ function match.nextRound()
             AppGlobal.SceneManager.pop()
         end)
     else
-        this.userAnswer = -1
         match.roundStartTime = os.time()
         this.round = #this.cardsInfo - #this.availableIdxs
         local card = this.cardsInfo[this.currentIdx]
+        this.say(card.id, card.qi)
         card.Lua.showAnswer()
         this.question_Text.text = card.content[card.qi]
         
-        print("host tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
-        CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.TTS", "Say", card.content[card.qi])
+        ----print("host tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
+        --CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.TTS", "Say", card.content[card.qi])
     end
 end
 
@@ -217,17 +214,13 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 لا يدويا تحرير هذه الوظيفة
 ]]
 function this.AutoGenInit()
+    this.audio_AudioSource = audio:GetComponent(typeof(CS.UnityEngine.AudioSource))
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
     this.cardTemplate_RectTransform = cardTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.Chat_RectTransform = Chat:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.ChatBtn_Button = ChatBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.ChatBtn_Button.onClick:AddListener(this.ChatBtn_OnClick)
-    this.chatContent_RectTransform = chatContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.chatInputField_InputField = chatInputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
-    this.chatMsgTemp_RectTransform = chatMsgTemp:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.chatSendBtn_Button = chatSendBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.chatSendBtn_Button.onClick:AddListener(this.chatSendBtn_OnClick)
     this.noteText_Text = noteText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.playerA_RectTransform = playerA:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.playerB_RectTransform = playerB:GetComponent(typeof(CS.UnityEngine.RectTransform))
@@ -246,45 +239,15 @@ function this.startBtn_OnClick()
     startBtn:SetActive(false)
     this.Client.SendMsgt({
         type = "startMatch",
-            clientId = this.clientId,
-            roomId = this.roomId,
+        clientId = this.clientId,
+        roomId = this.roomId,
+        memoryTime = this.memoryTime
     })
 end -- startBtn_OnClick
-
-function this.chatSendBtn_OnClick()
-    print('chatSendBtn_OnClick')
-    if this.chatInputField_InputField.text == "" then return end
-    this.Client.SendMsgt({
-        type = "chat",
-            clientId = this.clientId,
-            roomId = this.roomId,
-            content = this.chatInputField_InputField.text
-    })
-    this.chatInputField_InputField.text = ""
-end -- chatSendBtn_OnClick
-
--- refresh msg ui
-local function refreshChat()
-    if Chat.activeSelf then
-        if this.chatMsgNew then
-            for i, v in ipairs(this.chatHistory) do
-                if v.obj == nil then
-                    local obj = GameObject.Instantiate(chatMsgTemp, this.chatContent_RectTransform)
-                    obj:SetActive(true)
-                    v.obj = obj
-                    local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
-                    com.init(v)
-                end
-            end
-            this.chatMsgNew = false
-        end
-    end
-end
 
 function this.ChatBtn_OnClick()
     print('ChatBtn_OnClick')
     Chat:SetActive(not Chat.activeSelf)
-    refreshChat()
 end -- ChatBtn_OnClick
 
 function this.ShowQRcodeBtn_OnClick()
@@ -309,7 +272,6 @@ function match.Start()
     this.Client = AppGlobal.Client
     Chat:SetActive(false)
     startBtn:SetActive(false)
-    chatMsgTemp:SetActive(false)
     
     this.Client.AddListeners(this.OnServerMsg())
 
@@ -416,6 +378,12 @@ function match.loadCard()
 
         c.name = "card_" .. v.id
         c:SetActive(true)
+
+        xutil.coroutine_call(function()
+            local ap = string.format("poetry_audio/%04d/%04d_%04d.aiff", v.id, v.id, v.ai)
+            --print("apa", ap)
+            yield_return(AssetSys.GetAsset(ap, function(clip) end))
+        end)
         
         local h = #cardsInfo/2/11 * 110
         cardRootA.sizeDelta = Vector2(0, h)
@@ -427,6 +395,17 @@ function match.loadCard()
         Lua.info = v
         v.Lua = Lua
     end
+end
+
+
+---say
+---@param info table
+function match.say(id, idx)
+    this.audio_AudioSource:Stop()
+    local ap = string.format("poetry_audio/%04d/%04d_%04d.aiff",id, id, idx)
+    print("poetry_audio", ap)
+    this.audio_AudioSource.clip = AssetSys.GetAssetSync(ap)
+    this.audio_AudioSource:Play()
 end
 
 ---OnLoginResult
@@ -449,6 +428,7 @@ end
 local function OnJoinRoomResult(msgt)
     local body = msgt
     this.roomId = body.roomId
+    this.Client.roomId = body.roomId
     if this.Client.clientId ~= body.clientId then table.insert(this.clientIds, body.clientId) end
     this.cardsInfo = body.cardsInfo or this.cardsInfo
     this.roomInfo = body.roomInfo or this.roomInfo
@@ -475,6 +455,7 @@ local function OnLeaveRoom(msgt)
     if body.clientId == this.clientId and body.roomId == this.roomId then
         this.roomId = nil
         this.room = undef
+        this.Client.roomId = undef
     else
         util.removeValue(this.clientIds, body.clientId)
     end
@@ -513,6 +494,7 @@ end
 
 local function OnNextRound(msgt)
     local body = msgt or {}
+    this.userAnswer = -1
     this.currentIdx = body.currentIdx
     this.nextRound()
     return true
@@ -553,13 +535,6 @@ local function OnStartMatch(msgt)
     return true
 end
 
---- body {clientId, content}
-local function OnChat(msgt)
-    table.insert(this.chatHistory, msgt)
-    this.chatMsgNew = true
-    refreshChat()
-    return true
-end
 
 local function OnAnswer(msgt)
     local body = msgt or {}
@@ -572,21 +547,9 @@ local function OnAnswer(msgt)
         , body.clientId == this.Client.clientId and "我" or "对手"
         , os.time() - this.roundStartTime)
     card.Lua.hid()
+    this.say(card.id, card.ai)
     card.die = true
-    this.currentIdx = -1
     this.userAnswer = body.userAnswer
-    if body.clientId == this.Client.clientId then
-        xutil.coroutine_call(function()
-            -- TODO: show answer & time
-            -- show right answer
-            yield_return(UnityEngine.WaitForSeconds(2))
-            this.Client.SendMsgt({
-                type = "endRound",
-                clientId = this.clientId,
-                roomId = this.roomId
-            })
-        end)
-    end
     if msgt.userAnswer == msgt.currentIdx then
         if body.clientId == this.Client.clientId then
             print("you are right")
@@ -624,8 +587,15 @@ local function OnGameOver(msgt)
     this.matchState = MatchState.idle
     xutil.coroutine_call(function()
         this.saveResult()
+        local ap = string.format("poetry_audio/result/%s.aiff",  (this.scoreA > this.scoreB and 'win' or 'lost'))
+        print("result", ap)
+        yield_return(AssetSys.GetAsset(ap, function(clip)
+            this.audio_AudioSource.clip = clip
+            this.audio_AudioSource:Play()
+        end))
+        
         this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
-        yield_return(UnityEngine.WaitForSeconds(5))
+        yield_return(UnityEngine.WaitForSeconds(10))
         AppGlobal.SceneManager.pop()
     end)
     return true
@@ -644,7 +614,6 @@ local OnServerMsgType = {
     ["cardAction"]	= OnCardAction,
     ["matchResult"]	= OnMatchResult,
     ["bye"] 		= OnBye,
-    ["chat"]        = OnChat,
     ["answer"]      = OnAnswer,
 }
 

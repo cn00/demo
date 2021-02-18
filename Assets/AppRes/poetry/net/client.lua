@@ -167,6 +167,9 @@ function client.OnReceiveMsg(msgs)
 	end
 end
 
+---AddListener
+---@param msgtype string
+---@param callback function
 function client.AddListener(msgtype, callback)
 	local listener = this.listeners[msgtype]
 	if listener == nil then
@@ -180,6 +183,8 @@ function client.AddListener(msgtype, callback)
 	end
 end
 
+---AddListeners
+---@param listeners table
 function client.AddListeners(listeners)
 	for k, v in pairs(listeners) do
 		this.AddListener(k, v)
@@ -210,7 +215,7 @@ function client.SendMsgt(msgt)
 	if this.tcpClient ~= nil and type(msgt) == "table" then
 		msgt = msgt or {}
 		msgt.clientId = this.clientId
-		--msgt.roomId = msgt.roomId or this.roomId
+		msgt.roomId = msgt.roomId or this.roomId
 		local msgs = util.dump(msgt,false)
 		print("ClientSend", msgs)
 		this.SendMsgs(msgs)

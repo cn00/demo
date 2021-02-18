@@ -11,17 +11,22 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local xutil = require "xlua.util"
 local Vector3 = UnityEngine.Vector3
 local EventTrigger= UnityEngine.EventSystems.EventTrigger
 local EventTriggerType = UnityEngine.EventSystems.EventTriggerType
+local AssetSys = CS.AssetSys
+
 -- card
+
+local yield_return = xutil.async_to_sync(function(to_yield, callback) mono:YieldAndCallback(to_yield, callback) end)
 
 local print = function ( ... )
     _G.print("card", ...)
 end
 
-local card = {
+local this = {
+    isShowAnswer = false,
     lock = 0,
     owner = 1, -- 1: 自己的， 2：对方的
     id = "", -- question id
@@ -29,7 +34,7 @@ local card = {
     q = "云想衣裳花想容,春风拂槛露华浓.", -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>
     a = "若非群玉山头见,会向瑶台月下逢.", -- info.a
 }
-local this = card
+local card = this
 
 ---init
 ---@param info table
@@ -37,18 +42,21 @@ function card.init(info)
     card.lock = 0 -- 0:free, 1:owner free 2:all lock
     card.id = info.id
     card.qt = info.qt
-    card.q = "云想衣裳花想容,春风拂槛露华浓." -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>解决，。
-    card.a = "若非群玉山头见,会向瑶台月下逢." -- info.a
+    --card.q = "云想衣裳花想容,春风拂槛露华浓." -- info.q 云想衣裳花想容春风拂槛露华浓.<color=red>若非群玉山头见,会向瑶台月下逢.</color>解决，。
+    --card.a = "若非群玉山头见,会向瑶台月下逢." -- info.a
 end
 
 
 --AutoGenInit Begin
---DO NOT EDIT THIS FUNCTION MANUALLY.
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
 function this.AutoGenInit()
     this.AnswerBtn_Button = AnswerBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.AnswerBtn_Button.onClick:AddListener(this.AnswerBtn_OnClick)
-    this.EventTrigger = gameObject:GetComponent(typeof(CS.UnityEngine.EventSystems.EventTrigger))
-    this.Image = gameObject:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.Animator = gameObject:GetComponent(typeof(CS.UnityEngine.Animator))
     this.contentRoot_RectTransform = contentRoot:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.Text_TextVirtical = Text:GetComponent(typeof(CS.TextVirtical))
@@ -68,7 +76,7 @@ function card.showAnswer()
     this.isShowAnswer = true
     local info = card.info
     local text
-    if info.qi > info.ai then
+    if info.qi < info.ai then
         text = string.format("%s<color=red>%s</color>", info.content[info.qi], info.content[info.ai])
     else
         text = string.format("<color=red>%s</color>%s", info.content[info.ai], info.content[info.qi])
@@ -128,12 +136,12 @@ function card.Start()
             Submit = 15,/// Intercepts ISubmitHandler.Submit.
             Cancel = 16 /// Intercepts ICancelHandler.OnCancel.
     }]]
-    local tr = gameObject:GetComponent(typeof(EventTrigger)) 
-    if tr == nil then tr = gameObject:AddComponent(typeof(EventTrigger)) end
-    local et = EventTrigger.Entry()
-    et.eventID = EventTriggerType.PointerClick,
-    et.callback:AddListener(this.OnClick);
-    tr.triggers:Add(et);
+     local tr = gameObject:GetComponent(typeof(EventTrigger)) 
+     if tr == nil then tr = gameObject:AddComponent(typeof(EventTrigger)) end
+     local et = EventTrigger.Entry()
+     et.eventID = EventTriggerType.PointerClick,
+     et.callback:AddListener(this.OnClick);
+     tr.triggers:Add(et);
 
     if this.info.die == true then this.hid() end
 

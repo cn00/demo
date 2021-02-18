@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: emoji
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 717ef7496011643aaaf45b4f4fadffaa, type: 3}
+    totalSpriteSurfaceArea: 308308
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 1c2f26400742b40fc899b79ab8a7b404, type: 3}
+  - {fileID: 21300000, guid: c955d980f31db4c59b4fab47529219b1, type: 3}
+  - {fileID: 21300000, guid: c187f1e0c022c46548614d533914b217, type: 3}
+  - {fileID: 21300000, guid: d5f12a41efae1468b9245bbea7639017, type: 3}
+  - {fileID: 21300000, guid: c005927120ad34ff8a899de5b8c5c140, type: 3}
+  - {fileID: 21300000, guid: 942ad71239e0042e88d3ff034e07d498, type: 3}
+  - {fileID: 21300000, guid: cfbd5352d9ade4a09bac92e74880a3c3, type: 3}
+  - {fileID: 21300000, guid: 0316b592b9edb462286716234eebb012, type: 3}
+  - {fileID: 21300000, guid: 4a316692288f744ab9831e2d785a23df, type: 3}
+  - {fileID: 21300000, guid: be0a08929d026445b9f2486b64ba8c8a, type: 3}
+  - {fileID: 21300000, guid: 7292acc3da66f4992845b605284664aa, type: 3}
+  - {fileID: 21300000, guid: 07c55d24e125840aca9eca6c5b24e41b, type: 3}
+  - {fileID: 21300000, guid: f28bc1346cc244f859b0a22a88cd4e21, type: 3}
+  - {fileID: 21300000, guid: 147401a46175340749310829a286b74d, type: 3}
+  - {fileID: 21300000, guid: 1269d026fe36d42908885a93dbed01f5, type: 3}
+  - {fileID: 21300000, guid: 18449426c28cd4480a153113a1b8bf06, type: 3}
+  - {fileID: 21300000, guid: 201e96664ecde40b5b61e38e478820fb, type: 3}
+  - {fileID: 21300000, guid: 71e604e6db2094ff7b9d1752ad4c83cb, type: 3}
+  - {fileID: 21300000, guid: fae951088fcd34448a22a2f27b2b7b7f, type: 3}
+  - {fileID: 21300000, guid: 5445f118bb791482c9f4e2cd3d6f3102, type: 3}
+  - {fileID: 21300000, guid: b26fd528a67084e7d8c4e2afbcc5ee4e, type: 3}
+  - {fileID: 21300000, guid: 36d2d628d5a694250ae053bb6594d7f6, type: 3}
+  - {fileID: 21300000, guid: d8c48078b0e714a0895480136e8aca1e, type: 3}
+  - {fileID: 21300000, guid: e76c9ec8261bb4abcb4b7b02e7635db8, type: 3}
+  - {fileID: 21300000, guid: ee416fe8950ec4723a024b5461a78cbd, type: 3}
+  - {fileID: 21300000, guid: 78e992f8a27cf4a23b65c6ee3b0afe11, type: 3}
+  - {fileID: 21300000, guid: e8bb6d09d52144b1ab685839b88f052f, type: 3}
+  - {fileID: 21300000, guid: bccaff2920bcd43ddb460640382224b9, type: 3}
+  - {fileID: 21300000, guid: 316f80399d4114abeafd22f6f4df5ee8, type: 3}
+  - {fileID: 21300000, guid: 26e27ae9eea1d40dc90b6c4e3b7baa42, type: 3}
+  - {fileID: 21300000, guid: 377274f9a43a0474fa03d8147df735c8, type: 3}
+  - {fileID: 21300000, guid: bae1bc0b72ba14a3b903cb1d3767c364, type: 3}
+  - {fileID: 21300000, guid: 270ed05b7df414a48991781d5adfad3e, type: 3}
+  - {fileID: 21300000, guid: f867415bcf8594a08813364895f6ce67, type: 3}
+  - {fileID: 21300000, guid: 90e6807b3e52f414faf768385291771f, type: 3}
+  - {fileID: 21300000, guid: 93e435ebe6c8b4040b4e4323c0a31793, type: 3}
+  - {fileID: 21300000, guid: f7a4ee4c16a8d4293bae0e48393ae330, type: 3}
+  - {fileID: 21300000, guid: 9023859c05647486e976c5ba706d2c3c, type: 3}
+  - {fileID: 21300000, guid: 475e8fec967a043abb6687d849a4de4b, type: 3}
+  - {fileID: 21300000, guid: ed318bfcc5cfb48ce992f36fae25a57c, type: 3}
+  - {fileID: 21300000, guid: c4f2e62d1d3a64629bc94967a9774a50, type: 3}
+  - {fileID: 21300000, guid: 5c30cb5dc64ab4148b8ea89ee459085d, type: 3}
+  - {fileID: 21300000, guid: 650dd89df0dd34854a0fe64cc850debb, type: 3}
+  - {fileID: 21300000, guid: 4fbb9d4e32db24f1cbe0c0beb279fb76, type: 3}
+  - {fileID: 21300000, guid: 553fae9e247e04f709462797b81b4ea4, type: 3}
+  - {fileID: 21300000, guid: 0dc170be9d4dd4e90baff519ddd8cbf4, type: 3}
+  - {fileID: 21300000, guid: 9fddc1be95cff4dbe9a517c08ea7b9be, type: 3}
+  - {fileID: 21300000, guid: 15bb2c0fc94374a238644a0bf133d292, type: 3}
+  - {fileID: 21300000, guid: 2857cc2f80af948bdbf97674a3838dc5, type: 3}
+  - {fileID: 21300000, guid: 44ff173fb01f14fbbbb4b44b18c251a9, type: 3}
+  - {fileID: 21300000, guid: 94efbebf0b2c8403cab33f6946996823, type: 3}
+  - {fileID: 21300000, guid: 1edf46ff214294fbfb07532dd89fc757, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 6
+  - 18
+  - 4
+  - 15
+  - 21
+  - 44
+  - 9
+  - 19
+  - 11
+  - 40
+  - 1
+  - 51
+  - 29
+  - 13
+  - 17
+  - 46
+  - 50
+  - 48
+  - 22
+  - 2
+  - 31
+  - 23
+  - 38
+  - 34
+  - 28
+  - 5
+  - 8
+  - 10
+  - 7
+  - 37
+  - 27
+  - 41
+  - 32
+  - 45
+  - 47
+  - 30
+  - 12
+  - 24
+  - 42
+  - 52
+  - 33
+  - 35
+  - 16
+  - 26
+  - 14
+  - 3
+  - 20
+  - 25
+  - 43
+  - 39
+  - 49
+  - 36
+  m_RenderDataMap: {}
+  m_Tag: emoji
+  m_IsVariant: 0
