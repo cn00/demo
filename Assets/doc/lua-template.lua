@@ -25,9 +25,7 @@ local this = {}
 local ___SCRIPTNAME___ = this
 
 -- example-begin
-local yield_return = xutil.async_to_sync(function (to_yield, callback)
-    mono:YieldAndCallback(to_yield, callback)
-end)
+local yield_return = xutil.async_to_sync(function (to_yield, callback) mono:YieldAndCallback(to_yield, callback) end)
 function this.coroutine_demo()
     print('coroutine start!')
     yield_return(UnityEngine.WaitForSeconds(1))
@@ -50,7 +48,7 @@ end
 -- function ___SCRIPTNAME___.OnEnable() end
 
 function ___SCRIPTNAME___.Start()
-	--util.coroutine_call(this.coroutine_demo)
+	-- xutil.coroutine_call(function()  end)
 end
 
 -- example-begin
