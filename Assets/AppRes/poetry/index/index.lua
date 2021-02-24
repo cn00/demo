@@ -118,7 +118,7 @@ function index.Start()
         yield_return(CS.AssetSys.GetAsset("font/fzkt/STKaiti.ttf"))
 
         -- chat emoji
-        yield_return(CS.AssetSys.GetAsset(string.format("common/emoni/%d.png", 1)))
+        yield_return(CS.AssetSys.GetAsset(string.format("common/emoji/%d.png", 1)))
         
         local obj
         if(AppGlobal.Client == nil)then

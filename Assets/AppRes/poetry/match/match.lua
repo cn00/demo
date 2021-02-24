@@ -24,9 +24,6 @@ local sqlite = require("lsqlite3")
 local manager = G.AppGlobal.manager
 local config = require("common.config.config")
 
-local dbpath = config.dbCachePath;
-local userDbpath = config.userDbPath;
-
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
     mono:YieldAndCallback(to_yield, callback)
 end)
@@ -127,7 +124,7 @@ function match.onCardClick(idx)
 end
 
 function match.saveResult()
-    local db = sqlite.open(userDbpath)
+    local db = sqlite.open(config.userDbPath)
     local nameA, scoreA, nameB, scoreB, useTime, date 
         = this.myname, this.scoreA, this.clientName, this.scoreB, UnityEngine.Time.time - this.startTime, os.date("%Y-%m-%d %H:%M:%S")
     local sql = string.format([[insert into "history" 
@@ -168,33 +165,15 @@ function match.throwCard(role)
 
 end
 
----getPoetryIds
----@param count number
----@param filter string sql conditions where where
-function match.getPoetryIds(count, filter)
-    count = count or 1000
-    local sql = string.format([[select id from poetry %s limit %s;]], filter, count)
-    print("getPoetryIds", sql)
-    local db = sqlite.open(dbpath)
-    local res = {}
-    for row in db:nrows(sql) do
-        res[1+#res] = row.id
-    end
-    db:close()
-    return res
-end
-
 ---@param id table
 ---@return table
 function match.mergeCardsInfo()
     local ids =  table.select(this.cardsInfo, function(o) return o.id end)
     local sids = table.concat(ids, ",")
-    local db = sqlite.open(dbpath)
-    local sql = string.format([[select id, content from poetry where id in (%s)]], sids)
-    local res = {}
-    for row in db:nrows(sql) do
-        row.content = row.content
-                :gsub("(。)%s*", "%1|")
+    local filter = string.format([[where id in (%s)]], sids)
+    local res = AppGlobal.Datasys.getdata("poetry", {"id", "content"}, filter)
+    for _, row in ipairs(res) do
+        row.content = string.gsub(row.content, "(。)%s*", "%1|")
                 :gsub("(？)%s*", "%1|")
                 :gsub("(！)%s*", "%1|")
                 :split("|")
@@ -203,7 +182,6 @@ function match.mergeCardsInfo()
     for i, v in ipairs(this.cardsInfo) do
         v.content = res[v.id]
     end
-    db:close()
 end
 
 --AutoGenInit Begin
@@ -298,9 +276,9 @@ function match.LoadData(cb)
     xutil.coroutine_call(function()
         this.noteText_Text.text = "正在准备,马上就好..."
         local dburl = "db.db"
-        local cachePath = dbpath -- AssetSys.CacheRoot .. "db.db"
+        local cachePath = config.dbCachePath -- AssetSys.CacheRoot .. "db.db"
         local fi =  CS.System.IO.FileInfo(cachePath);
-        if not fi.Exists or fi.Length == 0  then
+        if not fi.Exists or fi.Length < 512  then
             yield_return(AssetSys.Download(dburl, cachePath))
         else
             print("use cache:", cachePath)

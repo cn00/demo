@@ -15,6 +15,10 @@ local util = require "util"
 local xutil = require "xlua.util"
 local Vector2 = UnityEngine.Vector2
 
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
+
 -- chatMsg
 
 local print = function ( ... )
@@ -38,7 +42,7 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 ]]
 function this.AutoGenInit()
     this.chatContent_Text = chatContent:GetComponent(typeof(CS.UnityEngine.UI.Text))
-    this.emoji_RawImage = emoji:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
+    this.emoji_Image = emoji:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.userName_Text = userName:GetComponent(typeof(CS.UnityEngine.UI.Text))
 end
 --AutoGenInit End
@@ -51,11 +55,15 @@ function chatMsg.Start()
     this.userName_Text.text = "client_" .. this.info.clientId
     local emojiId = string.match(this.info.content, "{emoji:(%d+)}")
     if emojiId then
-        local af = string.format("common/emoji/%d.png", emojiId)
-        local tx = CS.AssetSys.GetAssetSync(af)
-        this.emoji_RawImage.texture =  tx
-        this.chatContent_Text.text = ""
-        emoji:SetActive(true)
+        xutil.coroutine_call(function()
+            local af = string.format("common/emoji/%d.png", emojiId)
+            yield_return(CS.AssetSys.GetAsset(af, function(sprite)
+                print("emoji", af, sprite)
+                this.emoji_Image.sprite = sprite
+                this.chatContent_Text.text = ""
+                emoji:SetActive(true)
+            end))
+        end)
     else
         emoji:SetActive(false)
         this.chatContent_Text.text = this.info.content

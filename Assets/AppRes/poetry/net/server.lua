@@ -178,17 +178,19 @@ function server.Start()
             retry = retry + 1
             local ip = this.ServerIP
             local port = this.ServerPort
-            print("<color=red>ServerStart", port)
+            print("<color=red>ServerStart_1", ip, port)
             local tcp, err = assert(socket.bind(ip, port))
+            print("<color=red>ServerStart_2", tcp, err)
             if tcp then
                 this.tcpServer = tcp
 
                 createNpc(5)
 
-                this.StartUdpBroadcastLoop()
                 this.ServerStartAcceptLoop()
                 this.ServerStartReceiveLoop()
                 print("StartServer ok, listen on *:", port)
+                
+                this.StartUdpBroadcastLoop()
             else
                 this.ServerPort = this.ServerPort + 1
                 print(err, "try next port", this.ServerPort)
@@ -203,14 +205,20 @@ function server.StartUdpBroadcastLoop()
     xutil.coroutine_call(function()
         local udp = socket.udp()
         this.sendUdp = udp
-        local host = CS.System.Net.IPAddress.Broadcast:ToString() -- [[desktop ok]] -- '10.23.25.255' --[[ok]] -- '10.23.24.239' --[[android]]--
+        local host = CS.System.Net.IPAddress.Broadcast:ToString() -- [[desktop ok]] 
+        -- local host = '10.23.25.255' --[[desktop ok]] 
+        if UNITY_ANDROID and not UNITY_EDITOR then
+            --host = "10.23.15.255" --[[android ok]]
+            host = "10.23.255.255" --[[android ok]]
+            --host = "255.255.255.255" --[[ desktop ok, android permission denied]]
+        end
         local port = this.broadcastPort
-        print('broadcastIp', host, host)
-        --CS.App.JavaUtil.Call("com.unity3d.player.UnityPlayerActivity", "RequireWifiLock")
-        assert(udp:settimeout(0.1))
-        assert(udp:setpeername(host, port))
-        assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
-        --CS.App.JavaUtil.Call("com.unity3d.player.UnityPlayerActivity", "ReleaseWifiLock")
+        print('broadcastIp', host, port)
+        CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.UnityPlayerActivity", "RequireWifiLock")
+            assert(udp:settimeout(0.1))
+            assert(udp:setpeername(host, port))
+            assert(udp:setoption('broadcast', true)) -- setsockopt will failed if before setpeername
+        CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.UnityPlayerActivity", "ReleaseWifiLock")
         local myip = assert(udp:getsockname())
         local hostname = System.Net.Dns.GetHostName()
         local count = 0
@@ -222,7 +230,9 @@ function server.StartUdpBroadcastLoop()
                 description = "wellcome",
             }
             local msgs = 'return' .. util.dump(msgt, false)
+            CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.UnityPlayerActivity", "RequireWifiLock")
             local udpsend, err = udp:send(string.hex(msgs))
+            CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.UnityPlayerActivity", "ReleaseWifiLock")
             count = count + 1
             if count%10 == 1 then print('broadcast', count, host, myip, port)end
             yield_return(UnityEngine.WaitForSeconds(count%10))
@@ -490,6 +500,7 @@ local function nextRound(roomId)
     this.SendMsgtToRoom(ret, roomId)
 
     -- NPC
+    room.userAnswers = room.userAnswers or {}
     local userAnswers = room.userAnswers[currentIdx] or {}
     if room.isNpc and #userAnswers == 0 then
         xutil.coroutine_call(function()
@@ -568,6 +579,7 @@ local function OnAnswer(msgt)
     local room = this.roomsInfo[roomId]
     msgt.currentIdx = room.currentIdx
 
+    room.userAnswers = room.userAnswers or {}
     local userAnswers = room.userAnswers[room.currentIdx] or {}
     table.insert(userAnswers, msgt.userAnswer)
     room.userAnswers[room.currentIdx] = userAnswers

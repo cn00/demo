@@ -15,6 +15,11 @@ local xutil = require "xlua.util"
 require("json")
 local manager = AppGlobal.manager
 
+
+local yield_return = xutil.async_to_sync(function (to_yield, callback)
+    mono:YieldAndCallback(to_yield, callback)
+end)
+
 -- login
 
 local print = function(...)
@@ -22,7 +27,9 @@ local print = function(...)
     -- _G.print("[login]", debug.traceback())
 end
 
-local login = {}
+local login = {
+    dbOK = false,
+}
 local this = login
 
 
@@ -41,6 +48,26 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
+local function junpToIndex()
+    local config = require("common.config.config")
+    local dburl = "db.db"
+    local cachePath = config.dbCachePath -- AssetSys.CacheRoot .. "db.db"
+    local fi =  CS.System.IO.FileInfo(cachePath);
+    local loadingtasks = {}
+    if not fi.Exists or fi.Length < 512  then
+        print("download db.db ...")
+        table.insert(loadingtasks, CS.AssetSys.Download(dburl, cachePath, function()
+            this.dbOK = true
+            print("download db.db ok")
+        end) )
+    else
+        print("use cache:", cachePath)
+    end
+    AppGlobal.SceneManager.push("poetry/index/index.prefab", {
+        loadingtasks = loadingtasks
+    }, true)
+end
+
 function this.loginBtn_OnClick()
     print('loginBtn_OnClick')
 
@@ -51,7 +78,7 @@ function this.loginBtn_OnClick()
     , UNITY_ANDROID, UNITY_IOS, UNITY_EDITOR, UNITY_EDITOR_OSX, UNITY_EDITOR_WIN))
 
     if UNITY_EDITOR  then
-        AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
+        junpToIndex()
     elseif UNITY_ANDROID then
         CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "login")
         local channel = CS.App.JavaUtil.CallStatic("com.bili.a3.BSGameSdkCenter", "channel")
@@ -59,7 +86,7 @@ function this.loginBtn_OnClick()
     --elseif UNITY_IOS then
     --elseif UNITY_EDITOR then -- uid input
     else
-        AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
+        junpToIndex()
     end
 end -- loginBtn_OnClick
 
@@ -83,7 +110,7 @@ function G.OnNativeMessageBLSdk(null, data)
                     result = 1,
                 }
             }]]
-            AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
+            junpToIndex()
         end,
         ["Logout"] = function(argt)  end
     }
@@ -104,6 +131,20 @@ function login.Start()
 
         self.url_InputField:Select()
     end)
+
+    --xutil.coroutine_call(function()
+    --    local config = require("common.config.config")
+    --    local dburl = "db.db"
+    --    local cachePath = config.dbCachePath -- AssetSys.CacheRoot .. "db.db"
+    --    local fi =  CS.System.IO.FileInfo(cachePath);
+    --    if not fi.Exists or fi.Length < 512  then
+    --        print("download db.db ...")
+    --        yield_return(CS.AssetSys.Download(dburl, cachePath))
+    --    else
+    --        print("use cache:", cachePath)
+    --    end
+    --    this.dbOK = true
+    --end)
 
     -- init sdk
     if UNITY_EDITOR then -- uid input

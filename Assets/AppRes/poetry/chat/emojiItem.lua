@@ -38,7 +38,7 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 ]]
 function this.AutoGenInit()
     this.RectTransform = gameObject:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.RawImage = gameObject:GetComponent(typeof(CS.UnityEngine.UI.RawImage))
+    this.Image = gameObject:GetComponent(typeof(CS.UnityEngine.UI.Image))
     this.Button = gameObject:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.Button.onClick:AddListener(this.emojiTemp_OnClick)
 end
@@ -61,9 +61,9 @@ end
 function emojiItem.Start()
      xutil.coroutine_call(function()
          local af = string.format("common/emoji/%d.png", this.info.id)
-         local tx = AssetSys.GetAssetSync(af)
-         print("af", af, tx)
-         this.RawImage.texture = tx
+         local sprite = AssetSys.GetAssetSync(af)
+         print("af", af, sprite)
+         this.Image.sprite = sprite
      end)
 end
 

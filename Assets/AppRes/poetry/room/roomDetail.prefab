@@ -43,7 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1950a11cd87a047959ce8e74145477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LuaAsset: {fileID: 0}
-  LuaPath: 
+  LuaAsset: {fileID: 1042094116111776886, guid: d972652a8d3824a97b18b76730931131,
+    type: 3}
+  LuaPath: Assets/AppRes/poetry/room/roomDetail.lua
   Injections: []
   InjectValues: []
