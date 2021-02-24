@@ -97,7 +97,21 @@ function Scene.push(prefabPath, arg, replace)
     --replace = replace or replace == nil
     xutil.coroutine_call(function()
         print('scene_manager push -->', prefabPath)
+        local parent = this.layer.middle
+        local callback
 
+        if type(arg) == "table" then
+            parent = arg.parent or parent;
+            callback = arg.callback
+            if type(arg.loadingtasks) == "table" then
+                for i, backgroundtask in ipairs(arg.loadingtasks) do
+                    print("backgroundtask runing ...", (backgroundtask))
+                    yield_return(backgroundtask)
+                    print("backgroundtask finished", (backgroundtask))
+                end
+            end
+        end
+        
         local last = loadstack[#loadstack]
         if(replace and last ~= nil and last.obj ~= nil)then
             local com = last.obj:GetComponent(typeof(CS.LuaMonoBehaviour))
@@ -113,10 +127,7 @@ function Scene.push(prefabPath, arg, replace)
             obj = asset
         end))
         
-        local parent = this.layer.middle
-        local callback
         if type(arg) == "function" then callback = arg end
-        if type(arg) == "table" then parent = arg.parent or parent; callback = arg.callback end
         local gameObj = GameObject.Instantiate(obj, parent)
         local com = gameObj:GetComponent(typeof(CS.LuaMonoBehaviour))
         if com and com.Lua and type(com.Lua.init) == "function" then
