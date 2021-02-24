@@ -42,13 +42,6 @@ function this.AutoGenInit()
 end
 --AutoGenInit End
 
-function string.split(s, delimiter)
-    local result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
 function this.Awake()
     print("Awake-0")
     this.AutoGenInit()
