@@ -158,7 +158,7 @@ namespace IFix.Editor
 //             }
         }
 
-        [MenuItem("InjectFix/Inject", false, 1)]
+        [MenuItem("IFix/Inject Editor", false, 1)]
         public static void InjectAssemblys()
         {
             if (EditorApplication.isCompiling || Application.isPlaying)
@@ -447,7 +447,8 @@ namespace IFix.Editor
         {
             android,
             ios,
-            standalone
+            osx, // 64bit
+            Windows64
         }
 
         //缓存：解析好的编译参数
@@ -632,35 +633,27 @@ namespace IFix.Editor
         }
 
         //生成特定平台的patch
-        public static void GenPlatformPatch(Platform platform, string patchOutputDir,
+        public static void GenPlatformPatch(BuildTargetGroup group,BuildTarget buildTarget,
             string corePath = IFixCoreDllPath)
         {
-            var outputDir = "Temp/ifix";
-            Directory.CreateDirectory("Temp");
-            Directory.CreateDirectory(outputDir);
 #if UNITY_2018_3_OR_NEWER
-            ScriptCompilationSettings scriptCompilationSettings = new ScriptCompilationSettings();
-            if (platform == Platform.android)
+            RuntimePlatform rplatform;
+            ScriptCompilationSettings scriptCompilationSettings = new ScriptCompilationSettings()
             {
-                scriptCompilationSettings.group = BuildTargetGroup.Android;
-                scriptCompilationSettings.target = BuildTarget.Android;
-            }
-            else if(platform == Platform.ios)
-            {
-                scriptCompilationSettings.group = BuildTargetGroup.iOS;
-                scriptCompilationSettings.target = BuildTarget.iOS;
-            }
-            else
-            {
-                scriptCompilationSettings.group = BuildTargetGroup.Standalone;
-                scriptCompilationSettings.target = BuildTarget.StandaloneWindows;
-            }
+                group = group,
+                target = buildTarget,
+            };
+            
+            var patchOutputDir = $"Assets/AppRes/ifix/{IFixCfg.TargetName(buildTarget)}/";
+            Directory.CreateDirectory(patchOutputDir);
 
-            ScriptCompilationResult scriptCompilationResult = PlayerBuildInterface.CompilePlayerScripts(scriptCompilationSettings, outputDir);
+            var assemblyOutputDir = $"obj/{IFixCfg.TargetName(buildTarget)}/";
+            Directory.CreateDirectory(assemblyOutputDir);
+            ScriptCompilationResult scriptCompilationResult = PlayerBuildInterface.CompilePlayerScripts(scriptCompilationSettings, assemblyOutputDir);
 
             foreach (var assembly in injectAssemblys)
             {
-                GenPatch(assembly, string.Format("{0}/{1}.dll", outputDir, assembly),
+                GenPatch(assembly, string.Format("{0}/{1}.dll", assemblyOutputDir, assembly),
                     IFixCoreDllPath, string.Format("{0}{1}.patch.ifix", patchOutputDir, assembly));
             }
 #else
@@ -847,14 +840,19 @@ namespace IFix.Editor
 
             AssetDatabase.Refresh();
         }
+        
+        public static string PatchOutputPath
+        {
+            get { return $"Assets/AppRes/ifix/{IFixCfg.PlatformName()}/"; }
+        }
 
-        [MenuItem("InjectFix/Gen IFix Patch", false, 2)]
+        [MenuItem("IFix/Gen IFix Patch", false, 2)]
         public static void Patch()
         {
             if(Application.isPlaying)
                 return;
 
-            var patchDir = $"Assets/AppRes/ifix/{IFixCfg.PlatformName()}/";
+            var patchDir = PatchOutputPath;
             if(! Directory.Exists(patchDir))
                 Directory.CreateDirectory(patchDir);
             var ts = IFixCfg.IFixTypes;
@@ -868,19 +866,43 @@ namespace IFix.Editor
         }
 
 #if UNITY_2018_3_OR_NEWER
-        [MenuItem("InjectFix/Fix(Android)", false, 3)]
+        [MenuItem("IFix/GenPatch(Android)", false, 3)]
         public static void CompileToAndroid()
         {
             EditorUtility.DisplayProgressBar("Generate Patch for Android", "patching...", 0);
-            GenPlatformPatch(Platform.android, "");
+            GenPlatformPatch(BuildTargetGroup.Android, BuildTarget.Android);
             EditorUtility.ClearProgressBar();
         }
 
-        [MenuItem("InjectFix/Fix(IOS)", false, 4)]
+        [MenuItem("IFix/GenPatch(IOS)", false, 4)]
         public static void CompileToIOS()
         {
             EditorUtility.DisplayProgressBar("Generate Patch for IOS", "patching...", 0);
-            GenPlatformPatch(Platform.ios, "");
+            GenPlatformPatch(BuildTargetGroup.iOS, BuildTarget.iOS);
+            EditorUtility.ClearProgressBar();
+        }
+         
+        [MenuItem("IFix/GenPatch(OSX)", false, 4)]
+        public static void CompileToOSX()
+        {
+            EditorUtility.DisplayProgressBar("Generate Patch for OSX", "patching...", 0);
+            GenPlatformPatch(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX);
+            EditorUtility.ClearProgressBar();
+        }
+       
+        [MenuItem("IFix/GenPatch(Windows)", false, 4)]
+        public static void CompileToWindows()
+        {
+            EditorUtility.DisplayProgressBar("Generate Patch for Windows", "patching...", 0);
+            GenPlatformPatch(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows);
+            EditorUtility.ClearProgressBar();
+        }
+       
+        [MenuItem("IFix/GenPatch(Windows64)", false, 4)]
+        public static void CompileToWindows64()
+        {
+            EditorUtility.DisplayProgressBar("Generate Patch for Windows", "patching...", 0);
+            GenPlatformPatch(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
             EditorUtility.ClearProgressBar();
         }
 #endif

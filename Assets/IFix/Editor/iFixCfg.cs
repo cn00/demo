@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 
 //1、配置类必须打[Configure]标签
@@ -58,6 +59,26 @@ public class IFixCfg
                 return platform.ToString();
         }
     }
+    
+    public static string TargetName(BuildTarget platform)
+    {
+        switch (platform)
+        {
+            case BuildTarget.Android:
+                return "Android";
+            case BuildTarget.iOS:
+                return "iOS";
+            case BuildTarget.StandaloneWindows:
+                return "Windows";
+            case BuildTarget.StandaloneWindows64:
+                return "Windows64";
+            case BuildTarget.StandaloneOSX:
+                return "OSX";
+            default:
+                return platform.ToString();
+        }
+    }
+
     
     [IFix]
     public static IEnumerable<Type> IFixTypes
