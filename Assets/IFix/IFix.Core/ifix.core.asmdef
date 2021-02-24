@@ -1,0 +1,7 @@
+﻿{
+	"name": "IFix.Core",
+	"references": [],
+    "allowUnsafeCode": true,
+    "autoReferenced": true,
+    "defineConstraints": []
+}
