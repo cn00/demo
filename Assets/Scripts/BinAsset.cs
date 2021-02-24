@@ -1,7 +1,7 @@
-namespace DefaultNamespace
+
+using UnityEngine;
+
+public class BinAsset  : ScriptableObject
 {
-    public class BinAsset
-    {
-        
-    }
+    public byte[] data;
 }
