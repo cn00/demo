@@ -17,7 +17,7 @@ function BridgingClass.ToStringLua( tab )
 	return tostring(tab)
 end
 
-local function GetFuncId( func )
+function GetFuncId( func )
 	local info = debug.getinfo(func, "S")
 	local id = info.source..":"..info.linedefined
 	return id
