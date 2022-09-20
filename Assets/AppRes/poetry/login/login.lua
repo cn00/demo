@@ -1,7 +1,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/27 18:37:36
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -42,7 +42,7 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 لا يدويا تحرير هذه الوظيفة
 ]]
 function this.AutoGenInit()
-    this.InputField_InputField = InputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.id_InputField = id:GetComponent(typeof(CS.UnityEngine.UI.InputField))
     this.loginBtn_Button = loginBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.loginBtn_Button.onClick:AddListener(this.loginBtn_OnClick)
 end
@@ -125,11 +125,11 @@ end
 
 function login.Start()
     --util.coroutine_call(this.coroutine_demo)
-    this.InputField_InputField.onEndEdit:AddListener(function(text)
+    this.id_InputField.onEndEdit:AddListener(function(text)
         print("InputField_InputField.onEndEdit:" .. text)
         AppGlobal.USER_ID = text
 
-        self.url_InputField:Select()
+        this.id_InputField:Select()
     end)
 
     --xutil.coroutine_call(function()
@@ -153,7 +153,7 @@ function login.Start()
         local MerchantId, AppId, ServerId, AppKey = "1", "265", "506", "82a737d38acf4bc6abb903ccdbd7a562"
         CS.App.JavaUtil.CallStaticVoid("com.bili.a3.BSGameSdkCenter", "init", true, MerchantId, AppId, ServerId, AppKey)
     elseif UNITY_IOS then
-        
+
     end
 end
 

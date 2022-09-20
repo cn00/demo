@@ -40,7 +40,7 @@ local function _Draw(self, opt)
 		return;
 	--elseif(type(self) ~= "table")then
 	end
-	
+
 	local grep = opt.grep
 
 	if (EditorGUI.indentLevel > 5) then
@@ -55,7 +55,7 @@ local function _Draw(self, opt)
 	local isdrawed = rawget(self, "__Drawed");
 	if (Foldout and not isdrawed) then
 		 rawset(self, "__Drawed", true);
-		
+
 		local drawv = function(k, v)
 			-- print("drawv_" .. tostring(k), type(v))
 			local typev = type(v)
@@ -63,7 +63,7 @@ local function _Draw(self, opt)
 				local tmp = EditorGUILayout.Toggle(v);
 				self[k] = tmp;
 			elseif (typev == "number") then
-				local tmp = EditorGUILayout.LongField(v);
+				local tmp = EditorGUILayout.FloatField(v);
 				self[k] = tmp;
 			elseif (typev == "string") then
 				local tmp = EditorGUILayout.TextField(v);
@@ -143,14 +143,14 @@ local function _Draw(self, opt)
 				end
 				if (vtype == "userdata") then
 					local umeta = getmetatable(v)
-					if (string.match(tostring(v), "LuaMonoBehaviour")) then
+					if (string.match(tostring(v), "LuaBehaviour")) then
 						local t = v.Lua;
 						opt.ltname = ""
 						opt.indent = 1
 						Draw(t , opt);
 					else
 						--if umeta ~= nil then
-						----	if type(umeta) == "table" then 
+						----	if type(umeta) == "table" then
 						----		opt.ltname = "_ud_meta"
 						----		opt.indent = 1
 						----		_Draw(umeta , opt);
@@ -256,7 +256,7 @@ function DrawObj(name, obj, begincb, endcb)
 end
 
 function BridgingClass.GetTable(name, id, key)
-	if     Lua_Table[name] == nil 
+	if     Lua_Table[name] == nil
 		or Lua_Table[name][id] == nil
 		or Lua_Table[name][id][key] == nil
 	then

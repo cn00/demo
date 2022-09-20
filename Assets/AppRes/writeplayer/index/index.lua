@@ -52,7 +52,7 @@ function this.Awake()
     end)
 
     util.coroutine_call(this.LoadData)
-    
+
 end
 
 function this.AddBtnOnClick()
@@ -75,7 +75,7 @@ function this.LoadData()
 
     local db = sqlite3.open(cachePath);
     db:exec(sql)
-    
+
     yield_return(AssetSys.GetAsset("writeplayer/index/itemlist.sql", function(asset)
         sql = asset.text
     end))
@@ -120,20 +120,20 @@ function this.LoadData()
     assert(vm:finalize() == sqlite3.OK)
     print('====================================', #records)
     this.DataSource = records
-    
+
     db:close()
-    
+
     this.InitTableViewData()
     this.tableview_TableView:ReloadData()
 end
 
 function this.InitTableViewData()
-        
+
     this.tableview_TableViewController.GetDataCount = function(table)
         return #this.DataSource
     end
     this.tableview_TableViewController.GetCellSize = function(table, row)
-        
+
         -- print("GetCellSize: "..row)
         local size = 160;
         --local hightperline = 40
@@ -151,7 +151,7 @@ function this.InitTableViewData()
         --        if tmp > size then size = tmp end
         --    end
         --end
-        
+
         -- if table.tableView.LayoutOrientation == 1 then
         --     size = cell.rectTransform.height
         -- else
@@ -166,7 +166,7 @@ function this.InitTableViewData()
         print("cellidentifier",cellidentifier,row,celltypenumber)
         local cell = tb:ReusableCellForRow(cellidentifier, row)
         cell.name = "lua-Cell-" ..(row)
-        local cellmono = cell:GetComponent("LuaMonoBehaviour")
+        local cellmono = cell:GetComponent("LuaBehaviour")
         local ct = cellmono.Lua
         local cdata = this.DataSource[row + 1]
         ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage)
@@ -176,7 +176,7 @@ function this.InitTableViewData()
             local dbpath = AssetSys.CacheRoot .. "db.db"
             local db = sqlite3.open(dbpath)
             assert(db:exec("delete from item where id = " .. ct.data.id .. ";"))
-            
+
             -- row changed  after remove
             for i, v in ipairs(this.DataSource) do
                 if v.id == ct.data.id then
@@ -185,7 +185,7 @@ function this.InitTableViewData()
             end
             this.tableview_TableView:ReloadData()
             --this.LoadData()
-            
+
             -- TODO remove cache files confirm
             local cachePath = AssetSys.CacheRoot .. ct.data.cpath
             if(File.Exists(cachePath))then
@@ -196,10 +196,10 @@ function this.InitTableViewData()
         -- print("CellAtRow", row)
         return cell
     end
-    
+
     -- this.initData()
     -- this.tableview_TableViewController.tableView:ReloadData()
-    
+
     this.grep_Button.onClick:AddListener(function()
         -- this.grepData()
         this.ColumnIdxA = this.ColumnIdxA - 1

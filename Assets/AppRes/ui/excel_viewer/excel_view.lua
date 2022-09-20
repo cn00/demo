@@ -6,11 +6,11 @@ local xutil = require "xlua.util"
 
 local excel_view = {
     RowIdxA = 1,
-    
+
     ColumnIdxA = 0,
     ColumnPerPage = 5,
     ColumnPerPageMax = 7,
-    
+
     dataSource = {}
 }
 local this = excel_view
@@ -42,7 +42,7 @@ function this.AutoGenInit()
     this.SliderV_Slider = SliderV:GetComponent("UnityEngine.UI.Slider")
     this.SliderVText_Text = SliderVText:GetComponent("UnityEngine.UI.Text")
     this.SheetContent_RectTransform = SheetContent:GetComponent("UnityEngine.RectTransform")
-    this.sheet_tab_LuaMonoBehaviour = sheet_tab:GetComponent("LuaMonoBehaviour")
+    this.sheet_tab_LuaBehaviour = sheet_tab:GetComponent("LuaBehaviour")
     this.SliderColum_Slider = SliderColum:GetComponent("UnityEngine.UI.Slider")
     this.SliderColumText_Text = SliderColumText:GetComponent("UnityEngine.UI.Text")
 end
@@ -59,9 +59,9 @@ function this.Awake()
 
 -- function this.Start()
     print("this.Start")
-    
+
     xlua.private_accessible(CS.TableView.TableView)
-    
+
     this.tableview_TableViewController.GetDataCount = function(table)
         -- return this.dataSource.LastRowNum - this.dataSource.FirstRowNum
         return #this.dataSource
@@ -85,7 +85,7 @@ function this.Awake()
                 if tmp > size then size = tmp end
             end
         end
-        
+
         -- if table.tableView.LayoutOrientation == 1 then
         --     size = cell.rectTransform.height
         -- else
@@ -104,13 +104,13 @@ function this.Awake()
             cell = tb:ReusableCellForRow("table_view_cell_03", row)
         end
         cell.name = "lua-Cell-" ..(row)
-        local cellmono = cell:GetComponent("LuaMonoBehaviour")
+        local cellmono = cell:GetComponent("LuaBehaviour")
         -- cellmono.luaTable.SetData(this.dataSource[row+1])
         cellmono.luaTable.SetExcelCellData(this.dataSource[row + 1], this.ColumnIdxA, this.ColumnPerPage)
         -- print("CellAtRow", row)
         return cell
     end
-    
+
     local subpath = "Streaming/Excel.tmp/StringDB-diff-1.10-2.2-zh.xlsx"
     local assetPath = "/Users/cn/Documents/2-中级预言成就顺理.xlsx" -- CS.AssetSys.CacheRoot .. "../" .. subpath
     -- local assetPath = CS.UnityEngine.Application.streamingAssetsPath .. "/Excel.tmp/EtudeLessonInfo.xlsx"
@@ -131,7 +131,7 @@ function this.Awake()
         local new_sheet_tab = GameObject.Instantiate(sheet_tab)
         new_sheet_tab.name = "sheet_tab_" .. sheet.SheetName
         new_sheet_tab.transform:SetParent(SheetContent.transform)
-        local lua_sheet_tab = new_sheet_tab:GetComponent("LuaMonoBehaviour").luaTable
+        local lua_sheet_tab = new_sheet_tab:GetComponent("LuaBehaviour").luaTable
         -- lua_sheet_tab.SetData(excel_view, sheet)
         lua_sheet_tab.Text_Text.text = sheet.SheetName
         lua_sheet_tab.Button_Button.onClick:AddListener(function()
@@ -147,14 +147,14 @@ function this.Awake()
     end -- for
     GameObject.DestroyImmediate(sheet_tab)
     this.SheetTabs[1].Button_Image.color = selcolor
-    
+
     if #this.Sheets > 0 then
         local sheet = this.Sheets[1].sheet
         this.initSheetData(sheet)
         -- this.tableview_TableView:ReloadData()
         this.SliderColum_Slider.value = this.ColumnPerPage / this.ColumnPerPageMax
     end
-    
+
     -- this.initData()
     -- this.tableview_TableViewController.tableView:ReloadData()
     this.reset_Button.onClick:AddListener(function()
@@ -164,10 +164,10 @@ function this.Awake()
             this.ColumnIdxA = 10
         end
         this.Slider_Slider.value = this.ColumnIdxA / 10
-        
+
         this.tableview_TableViewController.tableView:ReloadData()
     end)
-    
+
     this.grep_Button.onClick:AddListener(function()
         -- this.grepData()
         this.ColumnIdxA = this.ColumnIdxA - 1
@@ -192,7 +192,7 @@ function this.Awake()
         this.SliderVText_Text.text = string.format("%.0f", fval * 100)
         this.tableview_TableViewController.tableView:SetPosition(fval * this.tableview_TableViewController.tableView.ContentSize)
     end)
-    
+
     this.back_Button.onClick:AddListener(function()
         this.Back()
     end)
@@ -215,7 +215,7 @@ function this.Back()
             obj = asset
         end))
         local gameObj = GameObject.Instantiate(obj)
-        
+
         GameObject.DestroyImmediate(mono.gameObject)
     end)))
 end

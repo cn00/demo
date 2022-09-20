@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/08 19:18:14
---- Description: 
+--- Description:
 --[[
 -[ ] 单人模式
 -[ ] 团队模式
@@ -55,15 +55,15 @@ local this = {
     stateStartTime = 0, -- 状态开始时间
     playerPreparingCountdown = 10, -- 状态读秒
     round = -1, -- 回合
-    startTime = -1, -- 
+    startTime = -1, --
     roundStartTime = 0, -- 回合开始时间
     roundCountdown = 6, -- 回合读秒
     userAnswer = -1, -- 当前双方选手的答案
     scoreA = 0, -- 得分
     scoreB = 0,
     availableIdxs = {}, -- available questions index
-    availableIdxsA = {}, -- 
-    availableIdxsB = {}, -- 
+    availableIdxsA = {}, --
+    availableIdxsB = {}, --
     currentIdx = -1, -- current question idx [1 - #cqs]
     myname = "libai",
     loginInfo = nil,
@@ -101,9 +101,9 @@ end
 ---myAnswer
 ---@param idx number
 function match.onCardClick(idx)
-    if this.userAnswer > 0 or this.matchState ~= MatchState.fighting then 
+    if this.userAnswer > 0 or this.matchState ~= MatchState.fighting then
         print("game not start yet.", idx)
-        return 
+        return
     end
 
     if this.userAnswer == idx then print("慢了一步") return end
@@ -125,10 +125,10 @@ end
 
 function match.saveResult()
     local db = sqlite.open(config.userDbPath)
-    local nameA, scoreA, nameB, scoreB, useTime, date 
+    local nameA, scoreA, nameB, scoreB, useTime, date
         = this.myname, this.scoreA, this.clientName, this.scoreB, UnityEngine.Time.time - this.startTime, os.date("%Y-%m-%d %H:%M:%S")
-    local sql = string.format([[insert into "history" 
-        (nameA, scoreA, nameB, scoreB, useTime, date) 
+    local sql = string.format([[insert into "history"
+        (nameA, scoreA, nameB, scoreB, useTime, date)
         VALUES ('%s', '%s', '%s', '%s', '%s', '%s')]]
     , nameA, scoreA, nameB, scoreB, useTime, date) --os.date("%Y-%m-%d %H:%M:%S",os.time())
     local errn = db:exec(sql)
@@ -154,7 +154,7 @@ function match.nextRound()
         this.say(card.id, card.qi)
         card.Lua.showAnswer()
         this.question_Text.text = card.content[card.qi]
-        
+
         ----print("host tts",  string.gsub(card.content[card.qi], "\n", "\\n"))
         --CS.App.JavaUtil.CallStaticVoid("com.unity3d.player.TTS", "Say", card.content[card.qi])
     end
@@ -250,14 +250,14 @@ function match.Start()
     this.Client = AppGlobal.Client
     Chat:SetActive(false)
     startBtn:SetActive(false)
-    
+
     this.Client.AddListeners(this.OnServerMsg())
 
     this.Client.SendMsgt({
         type = "joinRoom",
             roomId = this.info.roomId
     })
-    
+
     this.stateStartTime = UnityEngine.Time.now
 
     this.QRcode_QRCodeEncodeController:onQREncodeFinished('+', function(s)
@@ -291,7 +291,7 @@ local stateUpdate = {
     [MatchState.fighting] = function()
         if this.matchState == MatchState.fighting then
             if this.round >= 0 then
-                this.noteText_Text.text = string.format("%s:%s", 
+                this.noteText_Text.text = string.format("%s:%s",
                         this.round, math.modf(os.time() - this.roundStartTime))
             end
         end
@@ -362,14 +362,14 @@ function match.loadCard()
             --print("apa", ap)
             yield_return(AssetSys.GetAsset(ap, function(clip) end))
         end)
-        
+
         local h = #cardsInfo/2/11 * 110
         cardRootA.sizeDelta = Vector2(0, h)
         cardRootB.sizeDelta = Vector2(0, h)
-        
+
         v.onClickCallback = this.onCardClick
 
-        local Lua = c:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+        local Lua = c:GetComponent(typeof(CS.LuaBehaviour)).Lua
         Lua.info = v
         v.Lua = Lua
     end
@@ -412,17 +412,17 @@ local function OnJoinRoomResult(msgt)
     this.roomInfo = body.roomInfo or this.roomInfo
 
     this.mergeCardsInfo() -- table.select(this.cardIds, function(o) return o.id end))
-    
+
     -- TODO: visitor
     --this.loadCard()
-    
+
     if this.roomInfo.isNpc or (this.roomInfo.masterId == this.Client.clientId and #this.clientIds > 0) then
         startBtn:SetActive(true)
         this.noteText_Text.text = "点击 Start 开始"
     else
         this.noteText_Text.text = "准备就绪，等待开局。。。"
     end
-    
+
     -- TODO: 查看房间及卡牌信息 refresh ui
     return true
 end
@@ -437,7 +437,7 @@ local function OnLeaveRoom(msgt)
     else
         util.removeValue(this.clientIds, body.clientId)
     end
-    
+
     if body.clientId == this.Client.clientId or #this.clientIds < 2 then
         this.Client.SendMsgt({
             type = "leaveRoom",
@@ -445,7 +445,7 @@ local function OnLeaveRoom(msgt)
         })
         AppGlobal.SceneManager.pop()
     end
-    
+
     return true
 end
 
@@ -495,7 +495,7 @@ end
 ---OnMatchResult
 ---@param msgt table {result}
 local function OnMatchResult(msgt)
-    
+
     return true
 end
 
@@ -571,7 +571,7 @@ local function OnGameOver(msgt)
             this.audio_AudioSource.clip = clip
             this.audio_AudioSource:Play()
         end))
-        
+
         this.question_Text.text = string.format("%s:%s 你%s啦", this.scoreA, this.scoreB, (this.scoreA > this.scoreB and '赢' or '输'))
         yield_return(UnityEngine.WaitForSeconds(10))
         AppGlobal.SceneManager.pop()

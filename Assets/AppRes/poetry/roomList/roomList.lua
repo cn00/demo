@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/20 18:40:19
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -85,7 +85,7 @@ end
 
 function roomList.Start()
 	--util.coroutine_call(this.coroutine_demo)
-    
+
     itemTemplate:SetActive(false)
 
     xutil.coroutine_call(function()
@@ -123,7 +123,7 @@ function roomList.Update()
                 v.onClickRoomCallback = this.OnRoomSelect
                 local obj = GameObject.Instantiate(itemTemplate, scrollContent.transform)
                 obj:SetActive(true)
-                local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+                local com = obj:GetComponent(typeof(CS.LuaBehaviour)).Lua
                 com.init(v)
                 v.obj = obj
             end

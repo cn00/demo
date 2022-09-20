@@ -63,7 +63,7 @@ function this.LoadData()
 end
 
 function this.InitTableViewData()
-        
+
     this.tableview_TableViewController.GetDataCount = function(table)
         return #this.DataSource
     end
@@ -78,13 +78,13 @@ function this.InitTableViewData()
         --print("cellidentifier",cellidentifier,row,celltypenumber)
         local cell = tb:ReusableCellForRow(cellidentifier, row)
         cell.name = "lua-Cell-" ..(row)
-        local cellmono = cell:GetComponent("LuaMonoBehaviour")
+        local cellmono = cell:GetComponent("LuaBehaviour")
         local ct = cellmono.Lua
         local cdata = this.DataSource[row + 1]
         cdata.row = row+1
-        
+
         if(cdata.scoreA > cdata.scoreB)then ct.Image_Image.color = Color(0.3, 0.2, 0, 0.2) end
-        
+
         --local delcallback = function(cbid)
         --    -- row changed  after remove
         --    for i, v in ipairs(this.DataSource) do
@@ -94,12 +94,12 @@ function this.InitTableViewData()
         --    end
         --    this.tableview_TableView:ReloadData()
         --end
-        
+
         ct.init({ data = cdata})
 
         return cell
     end
-    
+
     -- this.initData()
     -- this.tableview_TableViewController.tableView:ReloadData()
 

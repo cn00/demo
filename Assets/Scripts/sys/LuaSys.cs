@@ -52,7 +52,7 @@ public class LuaSys : SingleMono<LuaSys>
         return GlobalEnv.DoString(lua, chunkName);
     }
 
-    public LuaTable Inject(LuaMonoBehaviour lb)
+    public LuaTable Inject(LuaBehaviour lb)
     {
         LuaTable luaTable = luaEnv.NewTable();
 
@@ -89,7 +89,7 @@ public class LuaSys : SingleMono<LuaSys>
     {
         if(string.IsNullOrEmpty(luapath))
             return null;
-            
+
         var LuaExtension = BuildConfig.LuaExtension;
 
         if(luapath.EndsWith(LuaExtension))
@@ -142,7 +142,7 @@ public class LuaSys : SingleMono<LuaSys>
         luaEnv.AddBuildin("luasql.mysql", XLua.LuaDLL.Lua.LoadLuasqlMysql);
 
         luaEnv.AddBuildin("lxp", XLua.LuaDLL.Lua.LoadLxp);
-        
+
         #if UNITY_EDITOR
         luaEnv.Global.Set("UNITY_EDITOR", true);
         #endif
@@ -152,7 +152,7 @@ public class LuaSys : SingleMono<LuaSys>
         #if UNITY_EDITOR_WIN
         luaEnv.Global.Set("UNITY_EDITOR_WIN", true);
         #endif
-        
+
         #if UNITY_STANDALONE
         luaEnv.Global.Set("UNITY_STANDALONE", true);
         #endif
@@ -162,7 +162,7 @@ public class LuaSys : SingleMono<LuaSys>
         #if UNITY_STANDALONE_WIN
         luaEnv.Global.Set("UNITY_STANDALONE_WIN", true);
         #endif
-        
+
         #if UNITY_ANDROID
         luaEnv.Global.Set("UNITY_ANDROID", true);
         #endif
@@ -205,7 +205,7 @@ public class LuaSys : SingleMono<LuaSys>
         return GetLuaFunc(GlobalEnv.Global, luaMethodPath);
     }
 
-    public LuaTable GetLuaTable(byte[] textBytes, LuaMonoBehaviour self = null, string name = "LuaMonoBehaviour")
+    public LuaTable GetLuaTable(byte[] textBytes, LuaBehaviour self = null, string name = "LuaBehaviour")
     {
         LuaTable env = null;
         if(self != null)

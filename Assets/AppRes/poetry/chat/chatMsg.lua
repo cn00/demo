@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/29 21:30:14
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -57,9 +57,9 @@ function chatMsg.Start()
     if emojiId then
         xutil.coroutine_call(function()
             local af = string.format("common/emoji/%d.png", emojiId)
-            yield_return(CS.AssetSys.GetAsset(af, function(sprite)
-                print("emoji", af, sprite)
-                this.emoji_Image.sprite = sprite
+            yield_return(CS.AssetSys.GetAsset(af, function(t2d)
+                print("emoji", af, t2d)
+                this.emoji_Image.sprite = UnityEngine.Sprite.Create(t2d, this.emoji_Image.sprite.rect,this.emoji_Image.sprite..sprite.pivot)
                 this.chatContent_Text.text = ""
                 emoji:SetActive(true)
             end))

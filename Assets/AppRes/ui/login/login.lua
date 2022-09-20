@@ -45,12 +45,23 @@ function login.OpenTest(...)
 end
 
 --AutoGenInit Begin
-function login.AutoGenInit()
-	login.Login_Button = Login:GetComponent("UnityEngine.UI.Button")
-	login.id_InputField = id:GetComponent("UnityEngine.UI.InputField")
-	login.pwd_InputField = pwd:GetComponent("UnityEngine.UI.InputField")
+--[[
+请勿手动编辑此函数
+手動でこの関数を編集しないでください。
+DO NOT EDIT THIS FUNCTION MANUALLY.
+لا يدويا تحرير هذه الوظيفة
+]]
+function this.AutoGenInit()
+    this.id_InputField = id:GetComponent(typeof(CS.UnityEngine.UI.InputField))
+    this.Login_Button = Login:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    this.Login_Button.onClick:AddListener(this.Login_OnClick)
+    this.pwd_InputField = pwd:GetComponent(typeof(CS.UnityEngine.UI.InputField))
 end
 --AutoGenInit End
+
+function this.Login_OnClick()
+    print('Login_OnClick')
+end -- Login_OnClick
 
 function login.Awake()
 	self.AutoGenInit()
@@ -75,7 +86,7 @@ function login.Awake()
 
 	-- -- test message center
 	-- local global = GameObject.Find("Global")
-	-- gmono = global:GetComponent("LuaMonoBehaviour")
+	-- gmono = global:GetComponent("LuaBehaviour")
 	-- gmono.luaTable.login = self
 end
 

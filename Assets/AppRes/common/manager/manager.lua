@@ -20,16 +20,16 @@ G.manager = manager
 --AutoGenInit Begin
 --DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
-    this.console_LuaMonoBehaviour = console:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.message_LuaMonoBehaviour = message:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.network_LuaMonoBehaviour = network:GetComponent(typeof(CS.LuaMonoBehaviour))
-    this.scene_LuaMonoBehaviour = scene:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.console_LuaBehaviour = console:GetComponent(typeof(CS.LuaBehaviour))
+    this.message_LuaBehaviour = message:GetComponent(typeof(CS.LuaBehaviour))
+    this.network_LuaBehaviour = network:GetComponent(typeof(CS.LuaBehaviour))
+    this.scene_LuaBehaviour = scene:GetComponent(typeof(CS.LuaBehaviour))
 end
 --AutoGenInit End
 
 function this.Awake()
     this.AutoGenInit()
-    
+
     print("manager.Awake")
 
 end
@@ -40,13 +40,13 @@ end
 
 function this.Start()
     print("manager.Start")
-    this.Network = this.network_LuaMonoBehaviour.Lua
-    this.Scene = this.scene_LuaMonoBehaviour.Lua
-    this.Message = this.message_LuaMonoBehaviour.Lua
-    this.Console = this.console_LuaMonoBehaviour.Lua
+    this.Network = this.network_LuaBehaviour.Lua
+    this.Scene = this.scene_LuaBehaviour.Lua
+    this.Message = this.message_LuaBehaviour.Lua
+    this.Console = this.console_LuaBehaviour.Lua
 
     --assert(coroutine.resume(manager.coroutine_demo()))
 
 end
-    
+
 return manager

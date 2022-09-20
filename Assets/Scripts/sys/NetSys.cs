@@ -135,7 +135,7 @@ public class NetSys : SingleMono<NetSys>
 
     public void SendDebugMessage(object sender, AppLog.OnMessageReceivedHandler e)
     {
-        m_debugServer.BroadcastMessage(e.Message);
+        // m_debugServer.BroadcastMessage(e.Message);
         // var endpoint = new IPEndPoint(IPAddress.Broadcast, DebugListenPort);
         // m_debugServer.GetSocket().SendTo(System.Text.Encoding.UTF8.GetBytes(e.Message), endpoint);
     }

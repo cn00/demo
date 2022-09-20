@@ -144,12 +144,12 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     public class Config
     {
         public string Name = "name";
-    
+
         public AppChannel Channel = AppChannel.and_bili;
-    
+
         // public BuildTarget targetPlatform = BuildTarget.Android;
         public AppVersion version = new AppVersion("1.0.0");
-    
+
         public uint BtnPerRow = 3;
         public bool BatchBuild = false;
         public bool AddTime = false;
@@ -158,17 +158,17 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         public string PackageName = "a3";
         public string BuildNum = "0";
         public List<string> DefineSymbols = new List<string>();
-    
+
         #if UNITY_EDITOR
         public int BuildType = (int) AndroidBuildType.Debug;
         public AndroidBuildSystem AndroidBuildSystem = AndroidBuildSystem.Gradle;
         public iOSSdkVersion iOSSdkVersion = iOSSdkVersion.SimulatorSDK;
         public AppBuildOptions BuildOptionFlags = 0;
         #endif
-    
+
         [NonSerialized] public bool Foldout = false;
     }
-    
+
     public List<Config> Configs = new List<Config>();
 
     const string Tag = "BuildConfig";
@@ -632,8 +632,8 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         {
             PlayerSettings.iOS.sdkVersion = config.iOSSdkVersion;
             PlayerSettings.iOS.buildNumber = config.BuildNum;
-            EditorUserBuildSettings.iOSBuildConfigType = (iOSBuildType) config.BuildType;
-            EditorUserBuildSettings.symlinkLibraries = true;
+            EditorUserBuildSettings.iOSXcodeBuildConfig = (XcodeBuildConfig) config.BuildType;
+            EditorUserBuildSettings.symlinkSources = true;
         }
         else
         {

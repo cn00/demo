@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/02/18 19:24:15
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -40,7 +40,7 @@ DO NOT EDIT THIS FUNCTION MANUALLY.
 function this.AutoGenInit()
     this.chatContent_RectTransform = chatContent:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.chatInputField_InputField = chatInputField:GetComponent(typeof(CS.UnityEngine.UI.InputField))
-    this.chatMsgTemp_LuaMonoBehaviour = chatMsgTemp:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.chatMsgTemp_LuaBehaviour = chatMsgTemp:GetComponent(typeof(CS.LuaBehaviour))
     this.chatSendBtn_Button = chatSendBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.chatSendBtn_Button.onClick:AddListener(this.chatSendBtn_OnClick)
     this.emojiBtn_Button = emojiBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
@@ -74,7 +74,7 @@ local function refreshChat()
                     local obj = GameObject.Instantiate(chatMsgTemp, this.chatContent_RectTransform)
                     obj:SetActive(true)
                     v.obj = obj
-                    local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+                    local com = obj:GetComponent(typeof(CS.LuaBehaviour)).Lua
                     com.init(v)
                 end
             end
@@ -106,7 +106,7 @@ function chat.Start()
             local item = GameObject.Instantiate(emojiTemp, this.emojiContent_RectTransform)
             item:SetActive(true)
             item.name = "emoji_" .. i
-            local com = item:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+            local com = item:GetComponent(typeof(CS.LuaBehaviour)).Lua
             if com then com.init({id = i, onClick = function(id)
                 AppGlobal.Client.SendMsgt({
                     type = "chat",

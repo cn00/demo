@@ -80,9 +80,9 @@ end
 function this.init(data)
     util.coroutine_call(function()
 	    AppGlobal.SceneManager.openloading()
-	    
+
 	    local videourl = data.url
-		
+
         local cachePath = AssetSys.CacheRoot .. data.cpath
         if not File.Exists(cachePath) then
             yield_return(AssetSys.Download(videourl, cachePath))
@@ -100,7 +100,7 @@ function this.init(data)
 			print('waiting for video prepared ...')
 			yield_return(UnityEngine.WaitForSeconds(0.3))
 		end
-		
+
 		this.op_movie_VideoPlayer.waitForFirstFrame = true
 		--this.op_movie_VideoPlayer:Play()
 
@@ -119,11 +119,11 @@ function this.init(data)
 			--print("拆字:", i)
 			---- if i:gmatch("[%z，。；？“”]") == nil then
 			--if i ~= "，"
-			--and i ~= "。" 
-			--and i ~= "；" 
-			--and i ~= "？" 
-			--and i ~= "“" 
-			--and i ~= "”" 
+			--and i ~= "。"
+			--and i ~= "；"
+			--and i ~= "？"
+			--and i ~= "“"
+			--and i ~= "”"
 			--then
 				wcount = wcount + 1
 				local btni = citems[wcount] or { frame = 0}
@@ -143,7 +143,7 @@ function this.init(data)
 			end
 			--print(i, v.c, v.frame)
 		end
-		
+
 		citems[1+#citems] = { c="", frame = this.op_movie_VideoPlayer.frameCount}
 
 		-- -- UnityEngine.VideoPlayer ？？？ GetComponent("UnityEngine.Video.VideoPlayer") 取不到？
@@ -191,7 +191,7 @@ function this.InitTableViewData()
 		--print("cellidentifier", cellidentifier, row, celltypenumber)
 		local cell = tb:ReusableCellForRow(cellidentifier, row)
 		cell.name = "lua-Cell-" .. (row)
-		local ct = cell:GetComponent("LuaMonoBehaviour").Lua
+		local ct = cell:GetComponent("LuaBehaviour").Lua
 		local cdata = this.DataSource[row + 1]
 		cdata.resetui = function()
 			local cell = tb:CellForRow(row)
@@ -206,7 +206,7 @@ function this.InitTableViewData()
 			print("----updateui", row)
 			cell:GetComponent(typeof(CS.UnityEngine.UI.Image)).color = new Color(0.6, 0.4, 0.2, 0.5)
 		end
-		ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage) 
+		ct.SetCellData(cdata, this.ColumnIdxA, this.ColumnPerPage)
 		ct.Text_Text.text = cdata.c
 		ct.TableViewCell:DidPointClickEvent("+", function(row2)
 			local v = this.DataSource[row2+1]

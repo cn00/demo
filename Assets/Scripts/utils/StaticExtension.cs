@@ -296,9 +296,9 @@ public static class LuaTableExtension
                             drawv(k,v);
                         }
                         EditorGUILayout.EndHorizontal();
-                        if (v is LuaMonoBehaviour)
+                        if (v is LuaBehaviour)
                         {
-                            var t = (v as LuaMonoBehaviour).Lua;
+                            var t = (v as LuaBehaviour).Lua;
                             t.Draw("LuaMono", 1);
                         }
                     }

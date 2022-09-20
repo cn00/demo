@@ -24,6 +24,10 @@ function _M.connect6(address, port, laddress, lport)
     return socket.connect(address, port, laddress, lport, "inet6")
 end
 
+---bind
+---@param host string
+---@param port number
+---@param backlog table
 function _M.bind(host, port, backlog)
     if host == "*" then host = "0.0.0.0" end
     local addrinfo, err = socket.dns.getaddrinfo(host);

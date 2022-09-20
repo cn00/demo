@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
@@ -278,7 +277,7 @@ namespace TableView
 
         private Range CurrentVisibleCellsRange()
         {
-            float startPosition = Math.Max(position - tableViewLayout.StartPadding - tableViewSize, 0);
+            float startPosition = System.Math.Max(position - tableViewLayout.StartPadding - tableViewSize, 0);
             float endPosition = position + (tableViewSize * 2.0f);
 
             if (endPosition > tableViewScroll.Size)

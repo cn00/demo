@@ -190,7 +190,7 @@ namespace UnityEditor
                 var p = i.upath();
                 var prefab = AssetDatabase.LoadAssetAtPath(p, typeof(GameObject));
                 var go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                var luamonos = go.GetComponents<LuaMonoBehaviour>();
+                var luamonos = go.GetComponents<LuaBehaviour>();
                 foreach (var luamono in luamonos)
                 {
                     if (luamono.LuaAsset == null) //|| luamono.LuaScript.Text == null)

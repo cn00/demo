@@ -78,7 +78,7 @@ function boot.coroutine_boot(first, ...)
             obj = asset
         end))
         obj = GameObject.Instantiate(obj, this.back_Transform)
-        local manager = obj:GetComponent("LuaMonoBehaviour").Lua
+        local manager = obj:GetComponent("LuaBehaviour").Lua
         yield_return(UnityEngine.WaitForSeconds(0.3))
         AppGlobal.SceneManager.layer = {
             front = this.front_Transform,
@@ -93,7 +93,7 @@ function boot.coroutine_boot(first, ...)
             end))
             local go = GameObject.Instantiate(obj, this.front_Transform)
             go:SetActive(false)
-            local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+            local lua = go:GetComponent(typeof(CS.LuaBehaviour)).Lua
             AppGlobal.SceneManager.loading = {
                 go = go,
                 lua = lua
@@ -101,7 +101,7 @@ function boot.coroutine_boot(first, ...)
         end
 
         yield_return(CS.AssetSys.GetAsset("ui/dialog/dialog01.prefab"))
-        
+
         yield_return(CS.AssetSys.GetAsset("font/fzxz/方正小篆体.ttf"))
 
         yield_return(CS.UpdateSys.Instance:CheckUpdate())
@@ -111,7 +111,7 @@ function boot.coroutine_boot(first, ...)
         --AppGlobal.SceneManager.push("poetry/match/match.prefab")
         --AppGlobal.SceneManager.push("don-quixote/index/index.prefab")
         --AppGlobal.SceneManager.push("don-quixote/linkText/linkText.prefab")
-        
+
     end)
 end
 

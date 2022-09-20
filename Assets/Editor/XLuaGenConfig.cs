@@ -36,7 +36,7 @@ public static class XLuaGenConfig
         typeof(TableView.TableView),
         typeof(TableView.TableViewController),
         typeof(TableView.TableViewCell),
-               
+
         typeof(NPOI.SS.UserModel.ICell),
         typeof(NPOI.SS.UserModel.IRow),
         typeof(NPOI.SS.UserModel.ISheet),
@@ -52,13 +52,13 @@ public static class XLuaGenConfig
         typeof(UpdateSys),
         typeof(LuaSys),
         typeof(LuaEnv),
-        typeof(LuaMonoBehaviour),
+        typeof(LuaBehaviour),
         typeof(NetSys),
         //typeof(QRCodeEncodeController),
         //typeof(QRCodeDecodeController),
         //typeof(JavaUtil),
         typeof(AppLog),
-        
+
         // ios not ok
         // typeof(Mono.Data.Sqlite.SqliteConnection),
         // typeof(Mono.Data.Sqlite.SqliteCommand),
@@ -82,7 +82,7 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Texture2D),
         typeof(UnityEngine.GameObject),
         typeof(UnityEngine.Transform),
-        
+
         typeof(UnityEngine.Animator),
 
         typeof(UnityEngine.Rigidbody),
@@ -94,15 +94,15 @@ public static class XLuaGenConfig
         typeof(UnityEngine.Vector4),
         typeof(UnityEngine.WaitForSeconds),
         typeof(UnityEngine.AssetBundle),
-        
+
         typeof(UnityEngine.Networking.UnityWebRequest),
         typeof(UnityEngine.Networking.DownloadHandler),
         typeof(UnityEngine.Networking.UnityWebRequestAsyncOperation),
-        
+
         typeof(UnityEngine.Video.VideoPlayer),
         typeof(UnityEngine.Video.VideoClip),
         typeof(UnityEngine.UI.Toggle),
-        
+
         typeof(UnityEngine.Color),
         typeof(UnityEngine.Time),
         typeof(UnityEngine.Color),
@@ -188,7 +188,7 @@ public static class XLuaGenConfig
         typeof(System.Action<float>),
         typeof(System.Action<bool>),
         typeof(Action<FileStream>),
-        
+
         typeof(UnityEngine.Events.UnityAction),
         typeof(UnityEngine.Events.UnityAction<byte[]>),
         typeof(UnityEngine.Events.UnityAction<string>),
@@ -261,12 +261,12 @@ public static class XLuaGenConfig
         new List<string>() {"System.Text.Encoding", "GetCharCount"},
         new List<string>() {"System.Text.Encoding", "GetByteCount"},
         new List<string>() {"System.Text.Encoding", "GetBytes"},
-        
+
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
         new List<string>(){"UnityEngine.AudioSettings", "GetSpatializerPluginNames","SetSpatializerPluginName"},
         new List<string>(){"UnityEngine.UI.Text", "OnRebuildRequested"},
         new List<string>(){"UnityEngine.Texture", "imageContentsHash"},
-        
+
         // new List<string>(){"Mono.Data.Sqlite.SqliteConnection", "EnlistTransaction"},
     };
 }

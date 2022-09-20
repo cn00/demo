@@ -1,7 +1,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/13 13:01:28
---- Description: 
+--- Description:
 --[[
 -[ ] android 广播
 -[x] 生成机器人
@@ -26,17 +26,18 @@ local yield_return = xutil.async_to_sync(function(to_yield, callback)
 end)
 
 -- server
-
+local _print = _G.print
 local print = function(...)
-    _G.print("<color=yellow>server</color>", os.date(), ...)
+    _print("<color=yellow>server</color>", os.date(), ...)
 end
 local this = {
+    AI_delay = 1, -- ai 等待时间
     socket= socket,
     ServerIP = "*",
     ServerPort = Port, -- from mono inject values
     tcpServer = nil, -- game Server
     sendUdp = nil, -- broadcast server
-    broadcastPort = BroadcastPort, 
+    broadcastPort = BroadcastPort,
 
     tcpClients = {}, -- tcpClients -- for socket.select
     clientsInfo = {}, -- {[clientId] = {status, userId, tcp}, ...}
@@ -61,6 +62,7 @@ local newRoomId = util.newIdx(1)
 local newClientId = util.newIdx(1)
 
 local function getDbData(sql)
+    print("db.path:", config.dbCachePath)
     local db = sqlite.open(config.dbCachePath)
     -- print("getDbData", sql)
     local ret = {}
@@ -99,12 +101,14 @@ end
 
 local function getRandomCard(n)
     local count = n
-    local filter = "WHERE tags like '%思琪限定%'"
+    --local filter = "WHERE tags like '%思琪限定%'"
+    local filter = "WHERE true"
     local sql = string.format([[
 			SELECT a.id, a.content, a.author
 			FROM `poetryAuthor` a
 			JOIN (
-				SELECT ROUND(substr(random(), 2, 4) / 10000.0 * (( SELECT MAX(id) FROM `poetry` %s) - ( SELECT MIN(id) FROM `poetry` %s) - %d) + (SELECT MIN(id) FROM `poetry` %s)) AS id
+				SELECT ROUND(substr(random(), 2, 4) / 10000.0 * (( SELECT MAX(id) FROM `poetry` %s)
+				- ( SELECT MIN(id) FROM `poetry` %s) - %d) + (SELECT MIN(id) FROM `poetry` %s)) AS id
 			) AS b
 			%s and a.id >= b.id
 			LIMIT %d;]], filter, filter, count, filter, filter, count):gsub("\n\t\t", " ")
@@ -136,7 +140,7 @@ end
 ---createNpc roomId [1, 9]
 local function createNpc(num)
     local t0 = os.clock()
-    
+
     --print("rit", util.dump(rit))
     for i = 1, num do
         local roomId = newRoomId()
@@ -170,7 +174,7 @@ local function createNpc(num)
     print("createNpc 100 use", t0, os.clock() - t0)
 end
 
----ServerStart 
+---ServerStart
 function server.Start()
     local retry = 0
     xutil.coroutine_call(function()
@@ -179,8 +183,8 @@ function server.Start()
             local ip = this.ServerIP
             local port = this.ServerPort
             print("<color=red>ServerStart_1", ip, port)
-            local tcp, err = assert(socket.bind(ip, port))
-            print("<color=red>ServerStart_2", tcp, err)
+            local tcp = assert(socket.bind(ip, port))
+            print("<color=red>ServerStart_2", tcp)
             if tcp then
                 this.tcpServer = tcp
 
@@ -189,14 +193,14 @@ function server.Start()
                 this.ServerStartAcceptLoop()
                 this.ServerStartReceiveLoop()
                 print("StartServer ok, listen on *:", port)
-                
+
                 this.StartUdpBroadcastLoop()
             else
                 this.ServerPort = this.ServerPort + 1
                 print(err, "try next port", this.ServerPort)
             end
         end
-        
+
     end)
 end
 
@@ -205,8 +209,8 @@ function server.StartUdpBroadcastLoop()
     xutil.coroutine_call(function()
         local udp = socket.udp()
         this.sendUdp = udp
-        local host = CS.System.Net.IPAddress.Broadcast:ToString() -- [[desktop ok]] 
-        -- local host = '10.23.25.255' --[[desktop ok]] 
+        local host = CS.System.Net.IPAddress.Broadcast:ToString() -- [[desktop ok]]
+        -- local host = '10.23.25.255' --[[desktop ok]]
         if UNITY_ANDROID and not UNITY_EDITOR then
             --host = "10.23.15.255" --[[android ok]]
             host = "10.23.255.255" --[[android ok]]
@@ -330,7 +334,7 @@ function server.ServerOnReceiveMsgs(msgs, tcp)
         local type = msgt.type
         local body = msgt or {}
         body.tcp = tcp
-        if(this.OnClientMsgType[type]) then 
+        if(this.OnClientMsgType[type]) then
             this.OnClientMsgType[type](msgt)
         else
             print("no listener for type: " .. type)
@@ -417,7 +421,7 @@ local function OnRoomList(msgt)
 end
 
 ---原有成员只发送 clientId， 新成员发送 this.clientIds[body.roomId]
----@param msgt table body = 
+---@param msgt table body =
 local function OnJoinRoom(msgt)
     local body = msgt or {}
     local roomId = body.roomId
@@ -425,7 +429,7 @@ local function OnJoinRoom(msgt)
 
     local rt = {
         type = "joinRoom",
-        roomId = body.roomId, 
+        roomId = body.roomId,
         clientId = body.clientId,
     }
 
@@ -449,10 +453,10 @@ local function OnLeaveRoom(msgt)
     local body = msgt or {}
     local roomId = body.roomId
     local room = this.roomsInfo[roomId]
-    if room == nil then return end -- 
+    if room == nil then return end --
     local rt = {
         type = "leaveRoom",
-        roomId = body.roomId, 
+        roomId = body.roomId,
         clientId = body.clientId,
     }
     this.SendMsgtToRoom(rt, body.roomId)
@@ -504,7 +508,7 @@ local function nextRound(roomId)
     local userAnswers = room.userAnswers[currentIdx] or {}
     if room.isNpc and #userAnswers == 0 then
         xutil.coroutine_call(function()
-            yield_return(UnityEngine.WaitForSeconds(7))
+            yield_return(UnityEngine.WaitForSeconds(this.AI_delay))
             local userAnswers = room.userAnswers[currentIdx] or {}
             if currentIdx == room.currentIdx and #userAnswers == 0 then -- player answered within 5 seconds?
                 --yield_return(UnityEngine.WaitForSeconds(0.01*math.random(200, 500)))
@@ -515,7 +519,7 @@ local function nextRound(roomId)
                     currentIdx = currentIdx,
                     userAnswer = currentIdx,
                 }, roomId)
-                
+
                 this.endRound(roomId)
             end
         end)
@@ -583,7 +587,7 @@ local function OnAnswer(msgt)
     local userAnswers = room.userAnswers[room.currentIdx] or {}
     table.insert(userAnswers, msgt.userAnswer)
     room.userAnswers[room.currentIdx] = userAnswers
-    
+
     this.SendMsgtToRoom(msgt, roomId)
 
     this.endRound(roomId)

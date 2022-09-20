@@ -66,18 +66,18 @@ function import.Awake()
 	local dbpath = AssetSys.CacheRoot .. "db.db"
 	local db = sqlite3.open(dbpath)
 	this.db = db
-	
+
 	self.title_InputField.onEndEdit:AddListener(function(text)
 		print("title_InputField.onEndEdit:" .. text)
 		this.titlestr = text
-		
+
 		self.url_InputField:Select()
 	end)
 	self.localpath_InputField.onEndEdit:AddListener(function(text)
 		print("localpath_InputField.onEndEdit:" .. text)
 		--local exist = AssetSys.UrlIsExist(text)
 		this.localpath = text
-		
+
 		self.content_InputField:Select()
 	end)
 	self.url_InputField.onEndEdit:AddListener(function(text)
@@ -113,7 +113,7 @@ function import.Awake()
 
 	-- -- test message center
 	-- local global = GameObject.Find("Global")
-	-- gmono = global:GetComponent("LuaMonoBehaviour")
+	-- gmono = global:GetComponent("LuaBehaviour")
 	-- gmono.luaTable.import = self
 end
 

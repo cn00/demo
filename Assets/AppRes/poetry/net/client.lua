@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/15 18:28:48
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -28,7 +28,7 @@ local useUdp = true
 
 local print = function ( ... )
     _G.print("<color=green>client</color>", ...)
-    -- _G.print("client", debug.traceback())
+     _G.print("client", debug.traceback())
 end
 
 local this = {
@@ -40,7 +40,7 @@ local this = {
 		connected = 2,
 	},
 	tcpClient = nil, -- tcpClient
-	cinfo = nil, -- client info 
+	cinfo = nil, -- client info
 	listeners = {}, -- regist callback
 	clientId = -1,
 	roomId = -1,
@@ -60,7 +60,7 @@ function client.ConnectToServer(ip, port, callback)
 		assert("already connected a server")
 		return
 	end
-	
+
 	if this.tcpClient ~= nil and this.tcpClient:getstats() == 1 then
 		--https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
 		-- this.conn:shutdown()
@@ -85,13 +85,13 @@ function client.ConnectToServer(ip, port, callback)
 				print("<color=green>connected to server ok</color>.")
 				-- else if err == "connection refused" then
 				-- 	print(err)
-				
-				this.AddListener("connect", function(msgt) 
+
+				this.AddListener("connect", function(msgt)
 					this.clientId = msgt.clientId
 				end)
-				
+
 				this.AddListener("heartbeat", function(msgt)  end)
-				
+
 				if type(callback) == "function" then callback(true) end
 			else
 				print("connect err", err, msg)
@@ -141,7 +141,7 @@ function client.StartHeartbeatLoop()
 	xutil.coroutine_call(function ()
 		while true do
 			if os.time() - this.lastActive > deltas then
-				this.SendMsgt({ type = "heartbeat", "do you know my heart?", clientId = this.clientId })
+				this.SendMsgt({ type = "heartbeat", "do you fell my heart?", clientId = this.clientId })
 			end
 			yield_return(UnityEngine.WaitForSeconds(deltas))
 		end
@@ -237,7 +237,7 @@ function client.closeConnect()
 		print("shutdown client")
 		this.tcpClient = nil
 	end
-	
+
 	-- TODO: clean ...
 end
 

@@ -69,7 +69,7 @@ function this.Start()
         ct.Animator:Play("cell_scale", 0)
         --this.Play()
         AppGlobal.SceneManager.push("writeplayer/player/player.prefab",function(player)
-            local playermono = player:GetComponent(typeof(CS.LuaMonoBehaviour))
+            local playermono = player:GetComponent(typeof(CS.LuaBehaviour))
             local ct = playermono.Lua
             ct.SetData(this.data)
         end)
@@ -87,7 +87,7 @@ function this.SetCellData(data, columnidx, num)
     --if num <= 0 then num = 1 end
     this.data = data
     print("this.SetCellData", data.id, data.url)
-    
+
     self.Text_Text.text = data.id
     --[[
     {
@@ -102,12 +102,12 @@ function this.SetCellData(data, columnidx, num)
     self.Text_2_Text.text = data.url
     self.Text_3_Text.text = data.cpath
     self.Text_4_Text.text = data.tpath
-    --for i = 1, 7 do 
+    --for i = 1, 7 do
     --    local key = "Text_"..i.. "_Text"
     --    if i > num then
     --        self[key].gameObject:SetActive(false)
     --    else
-    --        self[key].gameObject:SetActive(true) 
+    --        self[key].gameObject:SetActive(true)
     --        self[key].transform.sizeDelta = {x = (mono.gameObject.transform.sizeDelta.x-100) / num, y = 80}
     --        local cell = row:GetCell(columnidx + i - 1)
     --        if cell ~= nil then

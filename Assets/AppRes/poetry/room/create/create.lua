@@ -1,7 +1,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/20 15:44:34
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -43,7 +43,7 @@ function this.AutoGenInit()
     this.roomDescription_Text = roomDescription:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.roomName_Text = roomName:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.tagContentRoot_RectTransform = tagContentRoot:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.tagItemTemplate_LuaMonoBehaviour = tagItemTemplate:GetComponent(typeof(CS.LuaMonoBehaviour))
+    this.tagItemTemplate_LuaBehaviour = tagItemTemplate:GetComponent(typeof(CS.LuaBehaviour))
     this.testBtn_Button = testBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.testBtn_Button.onClick:AddListener(this.testBtn_OnClick)
     this.testContent_Text = testContent:GetComponent(typeof(CS.UnityEngine.UI.Text))
@@ -146,7 +146,7 @@ function create.Start()
 
         -- 思琪限定
         local go = GameObject.Instantiate(tagItemTemplate, this.tagContentRoot_RectTransform)
-        local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+        local lua = go:GetComponent(typeof(CS.LuaBehaviour)).Lua
         local info = {
             text = suzukiLimitTag,
             clickCallback = tagOnClick
@@ -159,7 +159,7 @@ function create.Start()
                 clickCallback = tagOnClick
             }
             local go = GameObject.Instantiate(tagItemTemplate, this.tagContentRoot_RectTransform)
-            local lua = go:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+            local lua = go:GetComponent(typeof(CS.LuaBehaviour)).Lua
             lua.init(info)
         end
     end)

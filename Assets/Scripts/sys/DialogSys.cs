@@ -11,7 +11,7 @@ public class DialogSys : SingleMono<AssetSys>
     {
         var asset = AssetSys.GetAssetSync("ui/dialog/dialog01.prefab") as GameObject;
         var go = Instantiate(asset);
-        var lua = go.GetComponent<LuaMonoBehaviour>().Lua;
+        var lua = go.GetComponent<LuaBehaviour>().Lua;
         var contentText = lua.GetInPath<Text>("ContentText_Text");
         var titleText = lua.GetInPath<Text>("TitleText_Text");
 

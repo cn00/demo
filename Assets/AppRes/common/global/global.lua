@@ -26,9 +26,9 @@ local self = global
 
 --AutoGenInit Begin
 function global.AutoGenInit()
-    global.manager_LuaMonoBehaviour = manager:GetComponent("LuaMonoBehaviour")
-    global.scene_manager_LuaMonoBehaviour = scene_manager:GetComponent("LuaMonoBehaviour")
-    global.manager_sys_LuaMonoBehaviour = manager_sys:GetComponent("LuaMonoBehaviour")
+    global.manager_LuaBehaviour = manager:GetComponent("LuaBehaviour")
+    global.scene_manager_LuaBehaviour = scene_manager:GetComponent("LuaBehaviour")
+    global.manager_sys_LuaBehaviour = manager_sys:GetComponent("LuaBehaviour")
 end
 --AutoGenInit End
 

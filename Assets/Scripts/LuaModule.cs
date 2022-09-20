@@ -54,7 +54,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
             return luaopen_mime_core(L);
         }
 
-        
+
         [DllImport("serial", CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_socket_serial(System.IntPtr L);
 
@@ -94,7 +94,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         {
             return luaopen_p7zip(L);
         }
-        
+
         [DllImport("luasql", CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_luasql_mysql(System.IntPtr L);
         [MonoPInvokeCallback(typeof(LuaCSFunction))]

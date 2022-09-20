@@ -27,12 +27,12 @@ public class Boot : SingleMono<Boot>
         yield return AssetSys.Instance.Init();
 
         yield return LuaSys.Instance.Init() ;
-        
+
         string luas = AssetSys.GetStreamingAsset("config.lua") as string;
         LuaSys.Instance.DoString(luas, "config");
 
         yield return SdkSys.Instance.Init();
-        
+
         // download boot res
         {
             var ifix_patch_path = $"ifix/{AssetSys.PlatformName()}/Assembly-CSharp.patch.ifix";
@@ -63,19 +63,19 @@ public class Boot : SingleMono<Boot>
             yield return AssetSys.GetAsset("common/config/config.lua");
             yield return AssetSys.GetAsset("common/root/root.prefab");
         }
-        
+
         yield return AssetSys.GetAsset<GameObject>("common/root/root.prefab", asset =>
         {
             var obj = GameObject.Instantiate(asset);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.eulerAngles = Vector3.zero;
         });
-        
+
         yield return base.Init();
     }
 
     public delegate void Action6(int i1, int i2, int i3, float f1, float f2, float f3);
-    
+
     [IFix.Patch]
     public static IEnumerator IFixTest()
     {
@@ -95,7 +95,7 @@ public class Boot : SingleMono<Boot>
 #if UNITY_EDITOR //patch 后 UNITY_EDITOR 宏内的代码会在手机端执行
     [IFix.Interpret]
     public static float iFixNewFieldTest = 3.1415926f;
-    
+
     [IFix.Interpret]
     public static int iFixNewPropertyTest
     {
@@ -112,7 +112,7 @@ public class Boot : SingleMono<Boot>
         var tuple = new Tuple<bool, int, int, float, string>(false, 1,2,3f, "4s");
         Debug.LogError($"IFix 别慌，我是 Tuple 测试: b:{tuple.Item1} i:{tuple.Item2} i:{tuple.Item3} f:{tuple.Item4} s:{tuple.Item5}");
     }
-    
+
     [IFix.Interpret]
     public class IFixNewClassTest
     {
@@ -122,6 +122,6 @@ public class Boot : SingleMono<Boot>
         }
     }
 #endif
-    
+
     private void Update(){}
 }

@@ -104,16 +104,23 @@ public class DllCompile : SingletonAsset<DllCompile>
                     break;
                 }
             }
-        } 
+        }
 
         // var monoversion = PlayerSettings.scriptingRuntimeVersion;
         // var apilevel = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup);
-        var msgs = EditorUtility.CompileCSharp(sources, reference.ToArray(), info.Defineds.ToArray(), info.OutPath);
-
-        foreach (var msg in msgs)
+        var b = new UnityEditor.Compilation.AssemblyBuilder(info.OutPath, sources);
+        // b.buildTarget =
+        b.additionalReferences = reference.ToArray();
+        b.additionalDefines = info.Defineds.ToArray();
+        b.buildFinished += (s, messages) =>
         {
-            AppLog.d(Tag, "CompileCSharp: " + msg);
-        }
+            AppLog.d(Tag, s);
+            foreach (var msg in messages)
+            {
+                AppLog.d(Tag, "CompileCSharp: " + msg);
+            }
+        };
+        var msgs = b.Build();
         AssetDatabase.ImportAsset(info.OutPath);
         if(!info.KeepMdb)
             File.Delete(info.OutPath.Replace(".dll", ".pdb"));

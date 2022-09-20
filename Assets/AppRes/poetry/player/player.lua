@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/08 19:20:28
---- Description: 
+--- Description:
 --[[
 对局双方本地为 playerA，对手为 playerB
 观战以房主为 playerA
@@ -25,7 +25,7 @@ local stateIdx = util.newIdx()
 local state = {
 	locked        = 0,
 	idle          = stateIdx(),
-	cardPreparing = stateIdx(), 
+	cardPreparing = stateIdx(),
 	cardPrepared  = stateIdx(), -- 布战
 	remberCard    = stateIdx(), -- 记忆时间
 }
@@ -38,11 +38,11 @@ local player = {
 local this = player
 
 function player.swepCard(x0, y0, x1, y1)
-	
+
 end
 
 function player.cardAutoLayout()
-	local allcards = cardArea:GetComponentsInChildren(typeof(CS.LuaMonoBehaviour))
+	local allcards = cardArea:GetComponentsInChildren(typeof(CS.LuaBehaviour))
 	for i = 0, allcards.Length - 1 do
 		local c = allcards[i]
 		c.transform.localPosition = Vector3()
@@ -68,7 +68,7 @@ end
 ---receiveMsg
 ---@param msg table {type, {args}}
 function player.receiveMsg(msg)
-	
+
 end
 
 ---AddCard

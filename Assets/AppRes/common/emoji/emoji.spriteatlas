@@ -7,6 +7,7 @@ SpriteAtlas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: emoji
+  serializedVersion: 2
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -20,7 +21,19 @@ SpriteAtlas:
       readable: 0
       crunchedCompression: 0
       sRGB: 1
-    platformSettings: []
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
       serializedVersion: 2
       padding: 4
@@ -28,11 +41,11 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 1
       enableTightPacking: 1
+      enableAlphaDilation: 0
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: 717ef7496011643aaaf45b4f4fadffaa, type: 3}
-    totalSpriteSurfaceArea: 308308
+    - {fileID: 102900000, guid: 88e2cde5c07264f2cbe93095ca8a6d15, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -146,3 +159,4 @@ SpriteAtlas:
   m_RenderDataMap: {}
   m_Tag: emoji
   m_IsVariant: 0
+  m_IsPlaceholder: 0

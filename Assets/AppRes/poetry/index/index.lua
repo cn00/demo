@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/12 12:07:03
---- Description: 
+--- Description:
 --[[
 -[ ] 人机对战
 -[ ] 自动匹配
@@ -119,18 +119,18 @@ function index.Start()
 
         -- chat emoji
         yield_return(CS.AssetSys.GetAsset(string.format("common/emoji/%d.png", 1)))
-        
+
         local obj
+        if(AppGlobal.Server == nil) then
+            yield_return(CS.AssetSys.GetAsset("poetry/net/server.prefab", function(asset) obj = asset  end))
+            GameObject.Instantiate(obj, AppGlobal.SceneManager.layer.back)
+        end
+
         if(AppGlobal.Client == nil)then
             yield_return(CS.AssetSys.GetAsset("poetry/net/client.prefab", function(asset) obj = asset  end))
             GameObject.Instantiate(obj, AppGlobal.SceneManager.layer.back)
         end
 
-        if(AppGlobal.Server == nil) then
-            yield_return(CS.AssetSys.GetAsset("poetry/net/server.prefab", function(asset) obj = asset  end))
-            GameObject.Instantiate(obj, AppGlobal.SceneManager.layer.back)
-        end
-        
         btnRoot:SetActive(true)
 
         -- init userdata db

@@ -9,7 +9,7 @@ local AssetSys = CS.AssetSys
 local this = AppGlobal.SceneManager
 if this ~= nil then return this end
 
-this =  { 
+this =  {
     layer = {}, -- front, middle, back
     loading = nil,
 }
@@ -55,7 +55,7 @@ function Scene.load(prefabPath, arg, replace)
 
         local last = loadstack[#loadstack]
         if(replace and last ~= nil and last.obj ~= nil)then
-            local com = last.obj:GetComponent(typeof(CS.LuaMonoBehaviour))
+            local com = last.obj:GetComponent(typeof(CS.LuaBehaviour))
             if com and com.Lua then
                 last.savedState = com.Lua.info
             end
@@ -67,19 +67,19 @@ function Scene.load(prefabPath, arg, replace)
         yield_return(CS.AssetSys.GetAsset(prefabPath, function(asset)
             obj = asset
         end))
-        
+
         local parent = this.layer.middle
         local callback
         if type(arg) == "function" then callback = arg end
         if type(arg) == "table" then parent = arg.parent or parent; callback = arg.callback end
         local gameObj = GameObject.Instantiate(obj, parent)
-        local com = gameObj:GetComponent(typeof(CS.LuaMonoBehaviour))
+        local com = gameObj:GetComponent(typeof(CS.LuaBehaviour))
         if com and com.Lua and type(com.Lua.init) == "function" then
             com.Lua.init(arg)
         end
         -- table.insert(loadstack, {path = prefabPath, obj = gameObj, savedState = arg})
         if callback then callback() end
-        
+
         this.closeloading()
 
     end)
@@ -111,10 +111,10 @@ function Scene.push(prefabPath, arg, replace)
                 end
             end
         end
-        
+
         local last = loadstack[#loadstack]
         if(replace and last ~= nil and last.obj ~= nil)then
-            local com = last.obj:GetComponent(typeof(CS.LuaMonoBehaviour))
+            local com = last.obj:GetComponent(typeof(CS.LuaBehaviour))
             if com and com.Lua then
                 last.savedState = com.Lua.info
             end
@@ -126,16 +126,16 @@ function Scene.push(prefabPath, arg, replace)
         yield_return(CS.AssetSys.GetAsset(prefabPath, function(asset)
             obj = asset
         end))
-        
+
         if type(arg) == "function" then callback = arg end
         local gameObj = GameObject.Instantiate(obj, parent)
-        local com = gameObj:GetComponent(typeof(CS.LuaMonoBehaviour))
+        local com = gameObj:GetComponent(typeof(CS.LuaBehaviour))
         if com and com.Lua and type(com.Lua.init) == "function" then
             com.Lua.init(arg)
         end
         table.insert(loadstack, {path = prefabPath, obj = gameObj, savedState = arg})
         if callback then callback() end
-        
+
         this.closeloading()
 
     end)
@@ -158,5 +158,5 @@ end
 function Scene.AutoGenInit()
 end
 --AutoGenInit End
-    
+
 return Scene

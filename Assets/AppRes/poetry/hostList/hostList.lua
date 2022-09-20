@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/20 18:40:19
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -64,7 +64,7 @@ end
 
 function hostList.Start()
 	--util.coroutine_call(this.coroutine_demo)
-    
+
     itemTemplate:SetActive(false)
 
     this.needQuitUdp = false
@@ -89,7 +89,7 @@ function hostList.Update()
                 end
                 local obj = GameObject.Instantiate(itemTemplate, scrollContent.transform)
                 obj:SetActive(true)
-                local com = obj:GetComponent(typeof(CS.LuaMonoBehaviour)).Lua
+                local com = obj:GetComponent(typeof(CS.LuaBehaviour)).Lua
                 com.init(v)
                 v.obj = obj
             end
