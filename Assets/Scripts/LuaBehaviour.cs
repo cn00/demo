@@ -52,6 +52,7 @@ public class LuaBehaviour : MonoBehaviour
     private Action luaOnEnable;
     private Action luaStart;
     private Action luaFixedUpdate;
+    private Action luaOnDrawGizmos;
 
     private Action<BaseEventData> luaOnEventTrigger;
     private Action<Collider> luaOnTriggerEnter;
@@ -116,26 +117,8 @@ public class LuaBehaviour : MonoBehaviour
             Lua.Get("OnMouseDown", out luaOnMouseDown);
             Lua.Get("OnMouseUp", out luaOnMouseUp);
             Lua.Get("OnMouseDrag", out luaOnMouseDrag);
+            Lua.Get("OnDrawGizmos", out luaOnDrawGizmos);
         }
-
-        // var a = GetComponent<Animator>();
-        // a.GetCurrentAnimatorClipInfo(0);
-        // // a.ResetTrigger("jump");
-        // a.Play("jump");
-
-        // {
-        //     Lua.Get("OnEventTrigger", out luaOnEventTrigger);
-        //     if (luaOnEventTrigger != null)
-        //     {
-        //         var tr = gameObject.GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
-        //         var et = new EventTrigger.Entry()
-        //         {
-        //             eventID = EventTriggerType.Drop,
-        //         };
-        //         et.callback.AddListener(OnEventTrigger);
-        //         tr.triggers.Add(et);
-        //     }
-        // }
 
         Lua.Get("Update", out luaUpdate);
         Lua.Get("LateUpdate", out luaLateUpdate);
@@ -232,6 +215,11 @@ public class LuaBehaviour : MonoBehaviour
         {
             luaOnCollisionEnter(other);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (luaOnDrawGizmos != null) luaOnDrawGizmos();
     }
     #endregion OnTrigger
 
@@ -352,5 +340,4 @@ public class LuaBehaviour : MonoBehaviour
         if(callback != null)
             callback();
     }
-
 }

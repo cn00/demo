@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Net
 {
@@ -85,7 +87,7 @@ namespace Net
                 // If the data length is in the following 8 indexes
                 if (Data[1] - 128 == 127)
                 {
-                    // Get the following 8 bytes to combine to get the data 
+                    // Get the following 8 bytes to combine to get the data
                     byte[] combine = new byte[8];
                     for (int i = 0; i < 8; i++) combine[i] = Data[i + 2];
 
@@ -121,7 +123,7 @@ namespace Net
             SFrameMaskData frameData = GetFrameData(Data);
             if(frameData != null)
             {
-                AppLog.d(Tag, "" + frameData.Dump());
+                Debug.Log(Tag+"" + frameData.Dump());
                 // Get the decode frame key from the frame data
                 byte[] decodeKey = new byte[4];
                 for (int i = 0; i < 4; i++)
@@ -137,12 +139,12 @@ namespace Net
                     count++;
                 }
 
-                // Return the decoded message 
+                // Return the decoded message
                 return Encoding.Default.GetString(Data, dataIndex, frameData.DataLength);
             }
             else
             {
-                AppLog.e(Tag, "GetFrameData return null");
+                Debug.LogError(Tag+"GetFrameData return null");
                 return Encoding.Default.GetString(Data, 0, Data.Length);
             }
         }
@@ -268,7 +270,7 @@ namespace Net
 
             Random random = new Random();
 
-            // Loop and get a random index in the ids and append to id 
+            // Loop and get a random index in the ids and append to id
             for (short i = 0; i < Length; i++) final += ids[random.Next(0, ids.Length)];
 
             // Return the guid without a prefix

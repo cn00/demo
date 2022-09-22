@@ -1,7 +1,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-
+local util = require "utility.util"
 BridgingClass = {}
 
 function BridgingClass.GetMetaTable( tab )
@@ -30,7 +30,7 @@ end
 
 local EditorGUI = CS.UnityEditor.EditorGUI
 local EditorGUILayout = CS.UnityEditor.EditorGUILayout
-local Draw
+local Draw0
 ---Draw
 ---@param self table
 ---@param opt table
@@ -38,7 +38,8 @@ local function _Draw(self, opt)
 	opt = opt or {ltname = "t", indent = 0}
 	if self == nil then
 		return;
-	--elseif(type(self) ~= "table")then
+	elseif(type(self) ~= "table")then
+		self = {self}
 	end
 
 	local grep = opt.grep
@@ -119,7 +120,7 @@ local function _Draw(self, opt)
 						--  t.RawSet("Drawed", true);
 						opt.ltname = kk
 						opt.indent = 1
-						Draw(t , opt);
+						Draw0(t , opt);
 					else
 					 	EditorGUILayout.LabelField(kk .. "->" .. tostring(t));
 					end
@@ -147,7 +148,7 @@ local function _Draw(self, opt)
 						local t = v.Lua;
 						opt.ltname = ""
 						opt.indent = 1
-						Draw(t , opt);
+						Draw0(t , opt);
 					else
 						--if umeta ~= nil then
 						----	if type(umeta) == "table" then
@@ -174,7 +175,7 @@ local function _Draw(self, opt)
 				if type(meta) == "table" then
 					opt.ltname = "__meta"
 					opt.indent = 1
-					Draw(meta, opt);
+					Draw0(meta, opt);
 				else
 					EditorGUILayout.BeginHorizontal()
 					do
@@ -196,11 +197,22 @@ local function CleanDrawedFlag(self)
 		end
 	end
 end
-function Draw(self, opt)
+function Draw0(self, opt)
 	_Draw(self, opt)
 	CleanDrawedFlag(self)
 end
-BridgingClass.Draw = Draw
+
+local luacli = ""
+local clires = ""
+function BridgingClass.Draw(self, opt)
+	Draw0(self, opt)
+
+	EditorGUILayout.LabelField("luacli")
+	luacli = EditorGUILayout.DelayedTextField(luacli) or "0"
+	local r = load("return "..luacli, "luacli", nil, self.__env)()
+	clires=util.dump(r, true)
+	EditorGUILayout.TextArea(tostring(clires))
+end
 
 function DrawObj(name, obj, begincb, endcb)
 --[[

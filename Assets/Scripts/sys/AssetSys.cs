@@ -46,9 +46,6 @@ public static class AssetExtern
 
 public static class BundleHelper
 {
-    [DllImport(Lua.LUADLL, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int p7zip_executeCommand(string cmd);
-
     public static string Tag = "BundleHelper";
 
     #region 压缩
@@ -188,7 +185,7 @@ public class AssetSys : SingleMono<AssetSys>
     static string mCacheRoot = "";
 
     /// <summary>
-    /// Application.dataPath + "/AssetBundle/${PlatformName}/" 
+    /// Application.dataPath + "/AssetBundle/${PlatformName}/"
     /// </summary>
     public static string CacheRoot
     {
@@ -278,7 +275,7 @@ public class AssetSys : SingleMono<AssetSys>
         var cfg = AudioSettings.GetConfiguration();
         cfg.dspBufferSize = 0;
         AudioSettings.Reset(cfg);
-        
+
         if (!Directory.Exists(CacheRoot))
         {
             Directory.CreateDirectory(CacheRoot);
@@ -299,15 +296,15 @@ public class AssetSys : SingleMono<AssetSys>
             }
 
             mLoadedBundles.Remove(manifestBundleName);
-            
+
             yield return GetBundle(manifestBundleName, (bundle) =>
             {
                 mManifest = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                AppLog.d(Tag, "load manifest: " + manifestBundleName);
+                Debug.Log(Tag+"load manifest: " + manifestBundleName);
             });
         }
     }
-    
+
 
     /// <summary>
     /// 同步方式加载资源, 用于加载少量小型资源
@@ -319,7 +316,7 @@ public class AssetSys : SingleMono<AssetSys>
         if (!UseBundle)
         {
             return AssetDatabase.LoadAssetAtPath<T>(BuildConfig.BundleResRoot + assetSubPath);
-        } 
+        }
         else
         #endif // UNITY_EDITOR
         {
@@ -334,7 +331,7 @@ public class AssetSys : SingleMono<AssetSys>
             // try streaming asset
             if (asset == null)
             {
-                AppLog.w(Tag, "[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
+                Debug.LogWarningFormat(Tag+"[{0}({2}):{1}] not find.", bundleName, BuildConfig.BundleResRoot + assetSubPath, bundle);
             }
 
             return asset;
@@ -357,7 +354,7 @@ public class AssetSys : SingleMono<AssetSys>
             var bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
             return bundle.LoadAsset<UnityEngine.Object>(assetSubPath);
         }
-        
+
         object asset = null;
         #if UNITY_ANDROID && !UNITY_EDITOR
         {
@@ -388,7 +385,7 @@ public class AssetSys : SingleMono<AssetSys>
         var dirs = assetSubPath.Split('/');
         if (dirs.Length < 2)
         {
-            AppLog.w(Tag, "bundle not found for: " + assetSubPath);
+            Debug.LogWarning(Tag+"bundle not found for: " + assetSubPath);
             return null;
         }
 
@@ -399,7 +396,7 @@ public class AssetSys : SingleMono<AssetSys>
     }
 
     /// <summary>
-    /// 异步方式加载资源, 以加载后的 (Object)res 为参数调用 callBack 
+    /// 异步方式加载资源, 以加载后的 (Object)res 为参数调用 callBack
     /// </summary>
     public static IEnumerator GetAsset(string assetSubPath, Action<UnityEngine.Object> callBack = null)
     {
@@ -409,7 +406,7 @@ public class AssetSys : SingleMono<AssetSys>
     public static IEnumerator GetAsset<T>(string assetSubPath, Action<T> callBack = null) where T : UnityEngine.Object
     {
         T resObj = null; //default(T);
-        
+
         #if UNITY_EDITOR
         var UseBundle = BuildConfig.Instance().UseBundle;
         if (!UseBundle)
@@ -420,10 +417,10 @@ public class AssetSys : SingleMono<AssetSys>
         #endif // UNITY_EDITOR
         {
             string bundleName = GetBundlePath(assetSubPath).ToLower(); // dirs[0] + '/' + dirs[1] + BuildConfig.BundlePostfix;
-            AppLog.d(Tag, "from bundle: " + assetSubPath);
+            Debug.Log(Tag+"from bundle: " + assetSubPath);
             yield return GetBundle(bundleName, (bundle) => { resObj = bundle.LoadAsset<T>(BuildConfig.BundleResRoot + assetSubPath); });
         }
-        AppLog.d(Tag, "{0}:{1}", assetSubPath, resObj?.GetType());
+        Debug.LogFormat(Tag+"{0}:{1}", assetSubPath, resObj?.GetType());
         if (callBack != null)
             callBack(resObj);
     }
@@ -437,7 +434,7 @@ public class AssetSys : SingleMono<AssetSys>
     {
         if (string.IsNullOrEmpty(bundlePath))
         {
-            AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
+            Debug.LogWarningFormat(Tag+"bundlePath [{0}] not correct.", bundlePath);
             return null;
         }
 
@@ -452,16 +449,16 @@ public class AssetSys : SingleMono<AssetSys>
                 var dl = Download(bundlePath);
                 while (dl.MoveNext()) ;
             }
-            
+
             if (File.Exists(cachePath))
                 bundle = AssetBundle.LoadFromFile(cachePath);
-            
+
             if (bundle == null) // try Resources.Load
             {
                 bundle = Resources.Load<AssetBundle>(bundlePath);
             }
 
-            AppLog.d(Tag, "GetBundleSync: {0}", bundlePath);
+            Debug.LogFormat(Tag+"GetBundleSync: {0}", bundlePath);
         }
 
         if (bundle != null)
@@ -470,34 +467,34 @@ public class AssetSys : SingleMono<AssetSys>
         }
         else
         {
-            AppLog.e(Tag, "[{0}] did not download yet.", bundlePath);
+            Debug.LogWarningFormat(Tag+ "[{0}] did not download yet.", bundlePath);
         }
         return bundle;
     }
 
     /// <summary>
-    /// AssetBundle 加载, 自动处理更新和依赖, 
-    /// 以加载后的 AssetBundle 为参数调用 callBack 
+    /// AssetBundle 加载, 自动处理更新和依赖,
+    /// 以加载后的 AssetBundle 为参数调用 callBack
     /// </summary>
     public static IEnumerator GetBundle(string bundlePath, Action<UnityEngine.AssetBundle> callBack = null)
     {
         if (string.IsNullOrEmpty(bundlePath))
         {
-            AppLog.w(Tag, "bundlePath [{0}] not correct.", bundlePath);
+            Debug.LogWarningFormat(Tag+"bundlePath [{0}] not correct.", bundlePath);
             yield break;
         }
 
         if(bundlePath != PlatformName() && Instance.mManifest == null) // Manifest it self
             yield return Instance.LoadManifest();
-        
+
         // Dependencies
         if (Instance.mManifest != null) // 加载 manifest 时本身为空
         {
-            AppLog.d(Tag, "GetAllDependencies for {0}", bundlePath);
+            Debug.LogFormat(Tag+"GetAllDependencies for {0}", bundlePath);
             var deps = Instance.mManifest.GetAllDependencies(bundlePath);
             foreach (var i in deps)
             {
-                AppLog.d(Tag, "Dependencies: {0} +> {1}", bundlePath, i);
+                Debug.LogFormat(Tag+"Dependencies: {0} +> {1}", bundlePath, i);
                 yield return GetBundle(i);
             }
         }
@@ -537,7 +534,7 @@ public class AssetSys : SingleMono<AssetSys>
             // thread.Start();
             // while (thread.IsAlive)
             // {
-            //     AppLog.d(Tag, "解压中。。。{0}", fileUrl);
+            //     Debug.Log(Tag+"解压中。。。{0}", fileUrl);
             //     yield return new WaitForSeconds(0.3f);
             // }
             //
@@ -546,7 +543,7 @@ public class AssetSys : SingleMono<AssetSys>
             //     UnloadBundle(bundlePath);
             // }
             // lzmaStream.Close();
-            
+
         }
         var outStream = new FileStream(cachePath, FileMode.Open);
         Instance.mLoadedBundles[bundlePath] = AssetBundle.LoadFromStream(outStream);
@@ -586,10 +583,10 @@ public class AssetSys : SingleMono<AssetSys>
 
             // webRequest.KeepAlive = true; // default = true
 
-            //打开上次下载的文件或新建文件 
+            //打开上次下载的文件或新建文件
             temfs = new System.IO.FileStream(tmpPath, System.IO.FileMode.OpenOrCreate);
             var startPos = temfs.Seek(temfs.Length, SeekOrigin.Current);
-            AppLog.d(Tag, "download: {0} +{1}", url, temfs.Length);
+            Debug.LogFormat(Tag+"download: {0} +{1}", url, temfs.Length);
 
             //webRequest.AllowReadStreamBuffering = true; // wrong
             if (temfs.Length > 0)
@@ -652,7 +649,7 @@ public class AssetSys : SingleMono<AssetSys>
         }
 
         temfs.Flush(true);
-        AppLog.d(Tag, "download ok {0}:{1}", url, totalLength);
+        Debug.LogFormat(Tag+"download ok {0}:{1}", url, totalLength);
 
         cb?.Invoke(temfs);
         temfs.Close();
@@ -673,10 +670,10 @@ public class AssetSys : SingleMono<AssetSys>
         var dbPath = CacheRoot + "db.db";
         IntPtr db;
         var errno = SQLite.SQLite3.Open(dbPath, out db);
-        AppLog.d(Tag, "open db: {0}", errno);
+        Debug.LogFormat(Tag+"open db: {0}", errno);
         var sql = string.Format("insert into cache_info (id, path, etag, length) VALUES ( last_insert_rowid(), '{0}',  '{1}' , '{2}' ) on conflict(path) do update set etag = excluded.etag, length=excluded.length;", path, etag, length);
         errno = SQLite.SQLite3.Exec(db, sql);
-        AppLog.d(Tag, "{0}:{1}", errno, sql);
+        Debug.LogFormat(Tag+"{0}:{1}", errno, sql);
         SQLite.SQLite3.Close(db);
     }
 
@@ -712,7 +709,7 @@ public class AssetSys : SingleMono<AssetSys>
         {
             outBundle.Unload(unloadAllLoadedObjects);
             Instance.mLoadedBundles.Remove(path);
-            AppLog.d(Tag, "UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
+            Debug.LogFormat(Tag+"UnloadBundle: {0}, {1}", path, unloadAllLoadedObjects);
         }
     }
 
@@ -735,7 +732,7 @@ public class AssetSys : SingleMono<AssetSys>
             stream.EndWrite(result);
             stream.Close();
             stream.Dispose();
-            AppLog.d(Tag, "Saved:" + fpath);
+            Debug.Log(Tag+"Saved:" + fpath);
         }, writer);
     }
 

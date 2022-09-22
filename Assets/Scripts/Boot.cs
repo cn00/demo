@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using App;
-using Helper;
-using IFix.Core;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -22,7 +20,7 @@ public class Boot : SingleMono<Boot>
     public override IEnumerator Init()
     {
         AppLog.isEditor = Application.isEditor;
-        AppLog.d(Tag, "App.Awake 0");
+        Debug.Log(Tag+"App.Awake 0");
 
         yield return AssetSys.Instance.Init();
 
@@ -33,37 +31,38 @@ public class Boot : SingleMono<Boot>
 
         yield return SdkSys.Instance.Init();
 
+        // if(false)
+        // {
+        //     var ifix_patch_path = $"ifix/{AssetSys.PlatformName()}/Assembly-CSharp.patch.ifix";
+        //     yield return AssetSys.GetAsset<IFixAsset>(ifix_patch_path, asset =>
+        //     {
+        //         if(asset!=null)
+        //         {
+        //             try
+        //             {
+        //                 PatchManager.Load(new MemoryStream(asset.data));
+        //                 IFixPatched = true;
+        //                 StartCoroutine(IFixTest());
+        //             }
+        //             catch (Exception e)
+        //             {
+        //                 UnityEngine.Debug.LogError(e);
+        //             }
+        //         }
+        //         else
+        //         {
+        //             Debug.LogError($"AppResourceManager.Load({ifix_patch_path}) failed.");
+        //         }
+        //     });
+        //
+        //     yield return AssetSys.GetAsset("lua/utility/util.lua");
+        //     yield return AssetSys.GetAsset("ui/loading/loading.prefab");
+        //     yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
+        //     yield return AssetSys.GetAsset("common/config/config.lua");
+        //     yield return AssetSys.GetAsset("common/root/root.prefab");
+        // }
+
         // download boot res
-        {
-            var ifix_patch_path = $"ifix/{AssetSys.PlatformName()}/Assembly-CSharp.patch.ifix";
-            yield return AssetSys.GetAsset<IFixAsset>(ifix_patch_path, asset =>
-            {
-                if(asset!=null)
-                {
-                    try
-                    {
-                        PatchManager.Load(new MemoryStream(asset.data));
-                        IFixPatched = true;
-                        StartCoroutine(IFixTest());
-                    }
-                    catch (Exception e)
-                    {
-                        UnityEngine.Debug.LogError(e);
-                    }
-                }
-                else
-                {
-                    Debug.LogError($"AppResourceManager.Load({ifix_patch_path}) failed.");
-                }
-            });
-
-            yield return AssetSys.GetAsset("lua/utility/util.lua");
-            yield return AssetSys.GetAsset("ui/loading/loading.prefab");
-            yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
-            yield return AssetSys.GetAsset("common/config/config.lua");
-            yield return AssetSys.GetAsset("common/root/root.prefab");
-        }
-
         yield return AssetSys.GetAsset<GameObject>("common/root/root.prefab", asset =>
         {
             var obj = GameObject.Instantiate(asset);
@@ -76,7 +75,7 @@ public class Boot : SingleMono<Boot>
 
     public delegate void Action6(int i1, int i2, int i3, float f1, float f2, float f3);
 
-    [IFix.Patch]
+    // [IFix.Patch]
     public static IEnumerator IFixTest()
     {
 #if UNITY_EDITORs // && USE_LOG // 上线请加上 USE_LOG
@@ -93,16 +92,16 @@ public class Boot : SingleMono<Boot>
     }
 
 #if UNITY_EDITOR //patch 后 UNITY_EDITOR 宏内的代码会在手机端执行
-    [IFix.Interpret]
+    // [IFix.Interpret]
     public static float iFixNewFieldTest = 3.1415926f;
 
-    [IFix.Interpret]
+    // [IFix.Interpret]
     public static int iFixNewPropertyTest
     {
         get{return 10086;}
     }
 
-    [IFix.Interpret]
+    // [IFix.Interpret]
     public static void IFixNewMethodTest(int  i, string s)
     {
         Debug.LogError($"IFix 别慌，我是新增函数测试：IFixNewMethodTest，Interpret 里别搞匿名函数，不支持");
@@ -113,7 +112,7 @@ public class Boot : SingleMono<Boot>
         Debug.LogError($"IFix 别慌，我是 Tuple 测试: b:{tuple.Item1} i:{tuple.Item2} i:{tuple.Item3} f:{tuple.Item4} s:{tuple.Item5}");
     }
 
-    [IFix.Interpret]
+    // [IFix.Interpret]
     public class IFixNewClassTest
     {
         public IFixNewClassTest()

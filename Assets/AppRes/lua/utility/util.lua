@@ -19,7 +19,7 @@ function util.cleanFlag(tab, flag)
     if type(tab) ~= "table" then return end
     tab[flag] = undef
     for i, v in pairs(tab) do
-        if type(v) == "table" and v[flag] then 
+        if type(v) == "table" and v[flag] then
             util.cleanFlag(v, flag)
         end
     end
@@ -29,7 +29,7 @@ local table = table
 function util.copy(tab, filter)
     local ntab = {}
     for k, v in tab do
-        if type(v) == "table" 
+        if type(v) == "table"
            and not v.__copyed__  -- nested table
         then
             ntab[k] = util.copy(v)
@@ -93,8 +93,8 @@ function util.dump(obj, pretty, prefix)
             return val and "true" or "false"
         elseif tv == "string" then
             return quoteStr(val:gsub("[\0-\15]", ""):gsub("\n", "\\n"):gsub("\r", "\\r"))
-        --elseif tv == "function" then
-        --    return quoteStr(string.hex(string.dump(val)))
+        elseif tv == "function" then
+            return quoteStr(string.hex(string.dump(val)))
         else
             return quoteStr(tostring(val))
         end
@@ -111,7 +111,7 @@ function util.dump(obj, pretty, prefix)
             for k, v in pairs(obj) do
                 if k == "__wraped__" then goto continue end
                 if type(v) == "function" then
-                    tokens[#tokens + 1] = getIndent(level) .. wrapKey(k.. "_func") .. wrapVal(v, level) .. ","
+                    tokens[#tokens + 1] = getIndent(level).. "fun_" .. wrapKey(k) .. wrapVal(v, level) .. ","
                 else
                     if type(v) == "table" then
                         if v["__wraped__"] == true then goto continue end

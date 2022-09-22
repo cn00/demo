@@ -41,7 +41,7 @@ end
 local yield_return = util.async_to_sync(YieldAndCallback)
 
 --[[
-	        
+
         if os == ios then
             octest()
 
@@ -109,11 +109,11 @@ end
 
 function this.ffitest()
 	print("ffitest began")
-	
-	
+
+
     local ffi = require "ffi"
 	this.ffi = ffi
-	
+
 	local L = CS.LuaSys.Instance.GlobalEnv.L
 	print("ffi", ffi, CS.LuaSys.Instance.GlobalEnv, CS.LuaSys.Instance.GlobalEnv.L)
 	ffi.cdef[[
@@ -145,7 +145,7 @@ function this.ffitest()
         } Vector4;
     ]]
 
-	
+
     local vector = ffi.typeof('Vector4 *')
 	local v = CS.UnityEngine.Vector4(12.3, 23.4, 34.5, 45.6)
 	--[[
@@ -172,9 +172,9 @@ function this.ffitest()
 		-- print("before ffi.C.printf")
 		-- local ffir = ffi.C.printf("testffi: %s\n", "fooffffffffff")
 		-- print("ffir", ffir)
-		
+
 		ffi.cdef [[
-			/*int fprintf(void * , const char * , ...); ok in sim*/ 
+			/*int fprintf(void * , const char * , ...); ok in sim*/
 			int fprintf(void *, const char *, ...);
 			/*int test_pow(int v);*/
 		]]
@@ -269,77 +269,22 @@ function this.CheckUpdate()
 		end))
 		local update = GameObject.Instantiate(obj)
 		update.name = "update"
-		
+
 		this.Destroy()
 	end)
 end
 
 function this.Qrcode()
-	coroutine_call(function()
-		local obj = nil
-		yield_return(CS.AssetSys.GetAsset(
-		"common/qrcode/qrcode.prefab",
-		function(asset)
-			obj = asset
-		end))
-		local qrcode = GameObject.Instantiate(obj)
-		qrcode.name = "qrcode"
-		
-		this.Destroy()
-	end)
+	AppGlobal.SceneManager.push("common/qrcode/qrcode.prefab")
 end
 
 function this.Op()
-	coroutine_call(function()
-		print("open Op")
-		local obj = nil
-		yield_return(CS.AssetSys.GetAsset(
-		"video/op/op.prefab",
-		function(asset)
-			obj = asset
-		end))
-		local loading = GameObject.Instantiate(obj)
-		loading.name = "op"
-		local oldLoading = GameObject.Find("loading")
-		GameObject.DestroyImmediate(oldLoading)
-		
-		this.Destroy()
-	end)
+	print("open Op")
+	AppGlobal.SceneManager.push("video/op/op.prefab")
 end
 
 function this.TableViewTest()
-	coroutine_call(function()
-		print("open TableViewTest")
-		
-		-- local subpath = "../Streaming/Excel.tmp/EtudeLessonInfo.xlsx"
-		-- local localPath = CS.AssetSys.CacheRoot .. "download/" .. subpath
-		-- local endCallback = function(www)
-		-- 	if www.progress >= 1 and (www.error == nil or www.error == "") then
-		-- 		print("download ok", subpath)
-		-- 		CS.AssetSys.AsyncSave(localPath, www.bytes)
-		-- 	else
-		-- 		-- print(www.error)
-		-- 	end
-		-- end
-		-- local progressCallback = function(progress)
-		-- 	print("downloading " .. progress)
-		-- end
-		-- local url = CS.AssetSys.HttpRoot .. subpath
-		-- yield_return(CS.AssetSys.Www(url, endCallback, progressCallback))
-		
-		local obj = nil
-		yield_return(CS.AssetSys.GetAsset(
-		"ui/excel_viewer/excel_view.prefab",
-		function(asset)
-			obj = asset
-		end))
-		local go = GameObject.Instantiate(obj)
-		go.name = "table_view"
-		local oldLoading = GameObject.Find("loading")
-		GameObject.DestroyImmediate(oldLoading)
-		
-		this.Destroy()
-	end)
+	AppGlobal.SceneManager.push("ui/excel_viewer/excel_view.prefab")
 end
 
 function this.SqliteInsert(x, y)
@@ -373,7 +318,7 @@ function this.SqliteSelect()
 		local c1 = sqlite.ColumnString(stmt, 1)
 		local c2 = sqlite.ColumnString(stmt, 2)
 		collect[count] = table.concat({tostring(result2), c0, c1, c2}, ",")
-		
+
 		result2 = sqlite.Step(stmt)
 	end
 	sqlite.Finalize(stmt)
@@ -391,7 +336,7 @@ function this.GetIpAddresses()
 	for i = 0, ips.Length - 1 do
 		print("arr", i, ips[i])
 	end
-	
+
 	-- List<string>
 	local ipl = CS.NetSys.LocalIpAddressStrList()
 	for i = 0, ipl.Count - 1 do
@@ -406,7 +351,7 @@ end
 function this.InsertOnClick()
 	local input0 = this.ix_InputField.text
 	local input1 = this.iy_InputField.text
-	
+
 	print("clicked, you input is [" .. input0 .. input1 .. "]")
 	this.SqliteInsert(input0, input1)
 end
@@ -439,7 +384,7 @@ function this.coroutine_insert_10000()
 			print("db busy")
 		end
 		print()
-		
+
 		this.Insert_10000_Button.interactable = true
 		local lastid = sqlite.LastInsertRowid(db)
 		print(result2, "lastid" .. lastid, "coast:" .. os.time() - t)
@@ -469,7 +414,7 @@ function this.PlanetTest(  )
 
 		local oldLoading = GameObject.Find("loading")
 		GameObject.DestroyImmediate(oldLoading)
-		
+
 		this.Destroy()
 	end)
 end
@@ -521,7 +466,7 @@ function this.Start()
 	this.ffi_test_Button.onClick:AddListener(this.ffitest)
 
 	this.lfb_test_Button.onClick:AddListener(this.lfb_test)
-	
+
 	this.planet_Button.onClick:AddListener(this.PlanetTest)
 
 	this.p7zip_Button.onClick:AddListener(this.P7zipTest)
@@ -536,14 +481,14 @@ function this.Start()
 	end
 	this.ix_InputField.onEndEdit:AddListener(ixonEndEdit)
 	this.iy_InputField.onEndEdit:AddListener(iyonEndEdit)
-	
+
 	this.IpAddress_Button.onClick:AddListener(this.octest)
-	
+
 	local sqlpath = CS.AssetSys.CacheRoot .. "this.sqlite3"
 	print(sqlpath)
 	local result, db = sqlite.Open(sqlpath)
 	print("this.Awake sqlite.Open", result, db)
-	
+
 	if result == sqlite.Result.OK then
 		this.db = db
 		local sql = [[create table if not exists `test_map` (
@@ -578,4 +523,4 @@ function this.Destroy()
 	GameObject.DestroyImmediate(mono.gameObject)
 end
 
-return test 
+return test

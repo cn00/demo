@@ -196,9 +196,6 @@ function this.AutoGenInit()
     this.BackBtn_Button = BackBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
     this.BackBtn_Button.onClick:AddListener(this.BackBtn_OnClick)
     this.cardTemplate_RectTransform = cardTemplate:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.Chat_RectTransform = Chat:GetComponent(typeof(CS.UnityEngine.RectTransform))
-    this.ChatBtn_Button = ChatBtn:GetComponent(typeof(CS.UnityEngine.UI.Button))
-    this.ChatBtn_Button.onClick:AddListener(this.ChatBtn_OnClick)
     this.noteText_Text = noteText:GetComponent(typeof(CS.UnityEngine.UI.Text))
     this.playerA_RectTransform = playerA:GetComponent(typeof(CS.UnityEngine.RectTransform))
     this.playerB_RectTransform = playerB:GetComponent(typeof(CS.UnityEngine.RectTransform))
@@ -247,10 +244,9 @@ function match.Awake()
 end
 
 function match.Start()
-    this.Client = AppGlobal.Client
-    Chat:SetActive(false)
     startBtn:SetActive(false)
 
+    this.Client = AppGlobal.Client
     this.Client.AddListeners(this.OnServerMsg())
 
     this.Client.SendMsgt({

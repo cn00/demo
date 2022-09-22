@@ -18,7 +18,7 @@ namespace UnityEditor
         const string Tag = "LuaMonoBebaviourEdirot";
         LuaBehaviour mTarget = null;
         string mLuaText = "";
-        
+
         public void OnEnable()
         {
             mTarget = (LuaBehaviour) target;
@@ -83,13 +83,13 @@ namespace UnityEditor
             if (Path.GetExtension(assetPath) == ".lua")
             {
                 mTarget.LuaAsset = newLuaAsset;
-                mTarget.LuaPath = assetPath;
+                mTarget.LuaPath = assetPath.Replace("Assets/AppRes/", "");
             }
             else
             {
                 AppLog.d(Tag, $"{assetPath} not a lua script");
             }
-            
+
             base.OnInspectorGUI();
 
             #region Injections
@@ -200,9 +200,9 @@ namespace UnityEditor
                         EditorGUILayout.EndHorizontal();
                     }
                 }
-            }            
+            }
             #endregion
-            
+
             // gen lua code
             if(!Application.isPlaying)
             {

@@ -32,7 +32,8 @@ end
 --AutoGenInit End
 
 function this.BackBtn_OnClick()
-    AppGlobal.SceneManager.push("poetry/index/index.prefab", nil, true)
+    --AppGlobal.SceneManager.push("ui/test/test.prefab", nil, true)
+    AppGlobal.SceneManager.pop()
 end -- BackBtn_OnClick
 
 function this.testBtn_OnClick()
@@ -85,10 +86,10 @@ end
 function qrcode.OnScanResult(strResult)
     print("ScanResult: " .. strResult)
     this.DecodeResult_Text.text = strResult
-    local head = strResult:sub(1, 7)
-    if head == "a3mkgp:" then
+    local head = strResult:sub(1, 8)
+    if head == "https://" then
         -- callback
-        if type(this.info) == "table" and type(this.info.scanCallback) == "function" then 
+        if type(this.info) == "table" and type(this.info.scanCallback) == "function" then
             this.info.scanCallback(strResult)
             GameObject.DestroyImmediate(gameObject)
         end

@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: d68fc8a140b0e4be28c021a4e32983bb
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: gobang/net.bd
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

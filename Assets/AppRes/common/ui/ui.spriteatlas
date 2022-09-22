@@ -64,6 +64,8 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 75b2ecb0f76cb4227aa6514765d86f43, type: 3}
+  - {fileID: 21300000, guid: 96ab6703c60cb49e8837a1467f4099ef, type: 3}
+  - {fileID: 21300000, guid: 45b079e47c84140f0b5214f44079f1c4, type: 3}
   - {fileID: 21300000, guid: bab464b517be64c669641d58c260d084, type: 3}
   - {fileID: 21300000, guid: fdfcd1b60583248bb8abb28d6d878dc0, type: 3}
   - {fileID: 21300000, guid: cc3fd1271f2bb4c72ada098909442fb2, type: 3}
@@ -74,6 +76,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5d71c9edfd96eb04f86c5c6e8969767b, type: 3}
   m_PackedSpriteNamesToIndex:
   - diamond
+  - grid07
+  - th
   - grid04
   - grid02
   - grid01

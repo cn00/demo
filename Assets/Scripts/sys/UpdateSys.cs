@@ -36,7 +36,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var cachePath = AssetSys.CacheRoot + "resversion.txt";
         var localVersionUrl = cachePath;
-        AppLog.d(Tag, "GetLocalVersion: {0}", localVersionUrl);
+        Debug.LogFormat(Tag+"GetLocalVersion: {0}", localVersionUrl);
 
         if(File.Exists(cachePath))
         {
@@ -48,7 +48,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             File.WriteAllText(cachePath, "1.0.0");
         }
 
-        AppLog.d(Tag, "LocalVersion {0}", mLocalVersion.ToString());
+        Debug.LogFormat(Tag+"LocalVersion {0}", mLocalVersion.ToString());
 
         yield return null;
     }
@@ -61,7 +61,7 @@ public class UpdateSys : SingleMono<UpdateSys>
         var temp = Path.GetTempFileName().upath();
         yield return AssetSys.Download(remoteVersionUrl, temp);
         mRemoteVersion = new Version(File.ReadAllText(temp));
-        AppLog.d(Tag, "RemoteVersion {0}", mRemoteVersion.ToString());
+        Debug.LogFormat(Tag+"RemoteVersion {0}", mRemoteVersion.ToString());
         yield return null;
     }
 
@@ -139,7 +139,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             var l = mLocalManifest.Find(i => i.Name == r);
             if(!File.Exists(cachePath) || l == null || l.Hash != rh.ToString() )
             {
-                AppLog.d(Tag, "diff: {0}:[{1} {2}]", r, rh, (l != null ? l.Hash : ""));
+                Debug.LogFormat(Tag+"diff: {0}:[{1} {2}]", r, rh, (l != null ? l.Hash : ""));
                 mDiffList.Add(r);
             }
         }
@@ -165,12 +165,12 @@ public class UpdateSys : SingleMono<UpdateSys>
             // download md5 list & uncompress & clean zip
             yield return GetLocalManifest();
             yield return GetRemoteManifest();
-        
+
             Diff();
-        
+
             // yield return DownloadDiffFiles();
-        
-        
+
+
             // 更新完成后保存
             var cacheUrl = AssetSys.CacheRoot + "resversion.txt";
             var strRemoteVersion = mRemoteVersion.ToString();
@@ -194,7 +194,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Updated(string subPath)
     {
-        // AppLog.d(Tag, "Updated: {0}", subPath);
+        // Debug.Log(Tag+"Updated: {0}", subPath);
         //lock(mDiffListLock)
         {
 
@@ -212,13 +212,13 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             if(newi != null)
             {
-                AppLog.d(Tag, "Updated: {0} {1}=>{2}", newi, binfo.Hash, hash);
+                Debug.LogFormat(Tag+"Updated: {0} {1}=>{2}", newi, binfo.Hash, hash);
                 binfo.Hash = hash;
                 SaveManifest(mLocalManifest, LocalManifestPath);
 
                 mDiffList.Remove(newi);
             }
-            
+
             AssetSys.UnloadBundle(subPath, false);
             AssetSys.GetBundleSync(subPath);
 

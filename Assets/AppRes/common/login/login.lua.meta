@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: ac4202559c40548a1b182489a5149540
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: common/login.bd
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 92329295c930142d3838d9b94307f2ed, type: 3}

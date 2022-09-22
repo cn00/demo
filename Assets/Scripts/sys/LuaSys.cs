@@ -52,6 +52,7 @@ public class LuaSys : SingleMono<LuaSys>
         return GlobalEnv.DoString(lua, chunkName);
     }
 
+    // env table
     public LuaTable Inject(LuaBehaviour lb)
     {
         LuaTable luaTable = luaEnv.NewTable();
@@ -99,7 +100,7 @@ public class LuaSys : SingleMono<LuaSys>
 
         byte[] bytes = null;
         var assetName = search + luapath.Replace(".", "/") + LuaExtension;
-        // AppLog.d(Tag, "require: " + assetName);
+        // Debug.Log(Tag+"require: " + assetName);
 #if UNITY_EDITOR
         if(!BuildConfig.Instance().UseBundle)
         {
@@ -222,6 +223,7 @@ public class LuaSys : SingleMono<LuaSys>
         if(table != null && table.Length > 0)
         {
             var luaTable = table[0] as LuaTable;
+            luaTable.Set("__env", env);
             return luaTable;
         }
         else

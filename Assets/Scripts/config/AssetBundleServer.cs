@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,7 +18,7 @@ namespace AssetBundleServer
     {
         const string Tag = "AssetBundleServer";
         public int Port = 8008;
-        
+
         [NonSerialized]
         public bool Runing = false;
 
@@ -26,14 +27,14 @@ namespace AssetBundleServer
         public Thread thread = null;
         public void WatchDog(object processID)
         {
-            AppLog.d(Tag, "Watching parent processID: {0}!", processID);
+            Debug.LogFormat(Tag+"Watching parent processID: {0}!", processID);
             Process masterProcess = Process.GetProcessById((int)processID);
             while (masterProcess == null || !masterProcess.HasExited)
             {
                 Thread.Sleep(1000);
             }
 
-            AppLog.d(Tag, "Exiting because parent process has exited!");
+            Debug.Log(Tag+"Exiting because parent process has exited!");
             Environment.Exit(0);
         }
 
@@ -64,10 +65,7 @@ namespace AssetBundleServer
                         await Listen(listener);
                     listener.Stop();
                 }, TaskCreationOptions.LongRunning);
-                AppLog.d(Tag, "Starting up asset bundle server.", Port);
-                AppLog.d(Tag, "Port: {0}", Port);
-                AppLog.d(Tag, "Directory: {0}", BasePath);
-
+                Debug.LogFormat(Tag+"Starting up asset bundle server.Port:{0} Directory: {1}", Port, BasePath);
             }
         }
 
@@ -85,10 +83,10 @@ namespace AssetBundleServer
             string path = basePath + rawUrl;
 
             if (detailedLogging)
-                AppLog.d(Tag, "Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
+                Debug.LogFormat(Tag+"Requesting file: '{0}'. \nRelative url: {1} \nFull url: '{2}' \nAssetBundleDirectory: '{3}''"
                     , path, request.RawUrl, request.Url, basePath);
             // else
-            //     AppLog.d(Tag, "Requesting file: '{0}' ... ", request.RawUrl);
+            //     Debug.Log(Tag+"Requesting file: '{0}' ... ", request.RawUrl);
 
             var response = ctx.Response;
             try
@@ -146,7 +144,7 @@ namespace AssetBundleServer
             }
             catch (System.Exception exc)
             {
-                AppLog.e(Tag, "Requested failed path: '{0}'. \nRawUrl: {1} \nUrl: '{2}' \nbasePath: '{3}' \nException: {4}: {5}:"
+                Debug.LogErrorFormat(Tag+"Requested failed path: '{0}'. \nRawUrl: {1} \nUrl: '{2}' \nbasePath: '{3}' \nException: {4}: {5}:"
                     , path, request.RawUrl, request.Url, basePath, exc.GetType(), exc.Message);
                 response.Abort();
             }
@@ -157,7 +155,7 @@ namespace AssetBundleServer
             if (thread != null && thread.IsAlive && Runing)
                 thread.Abort();
             thread = new Thread(Main);
-            AppLog.d(Tag, "http thread: " + thread.ManagedThreadId);
+            Debug.Log(Tag+"http thread: " + thread.ManagedThreadId);
             Runing = true;
             thread.Start();
         }

@@ -94,6 +94,9 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
         {
             return luaopen_p7zip(L);
         }
+        [DllImport(P7ZIP_DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int p7zip_executeCommand(string cmd);
+
 
         [DllImport("luasql", CallingConvention = CallingConvention.Cdecl)]
         public static extern int luaopen_luasql_mysql(System.IntPtr L);

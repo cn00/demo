@@ -11,6 +11,7 @@ using System.Diagnostics;
 using UnityEditor;
 #endif //UNITY_EDITOR
 using BundleManifest = System.Collections.Generic.List<BuildConfig.GroupInfo>;
+using Debug = UnityEngine.Debug;
 
 public static class BundleManifestExtension
 {
@@ -403,7 +404,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     // if(GUILayout.Button(f.Name.Replace(Name + "/", "- "), guiOpts))
                     // {
                     //     var path = BundleResRoot+f.Name.RReplace(".bd$", "");
-                    //     AppLog.d(Tag, "reimport {0}", path);
+                    //     Debug.Log(Tag+"reimport {0}", path);
                     //     AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
                     // }
                     if (f.Size < 1024) //B
@@ -613,7 +614,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     {
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            AppLog.e(Tag, "workspace not in this config");
+            Debug.LogError(Tag+"workspace not in this config");
             return;
         }
 
@@ -637,7 +638,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         }
         else
         {
-            AppLog.e(Tag, "Unknow ChannelConfig: " + config.Channel);
+            Debug.LogError(Tag+"Unknow ChannelConfig: " + config.Channel);
         }
 
         PlayerSettings.SetApplicationIdentifier(config.Channel.BuildTargetGroup(), config.BundleId);
@@ -661,7 +662,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         AssetDatabase.Refresh();
 
-        AppLog.d(Tag, "DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
+        Debug.LogFormat(Tag+"DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
     }
 
     public static void BuildPkg(ChannelConfig config)
@@ -674,7 +675,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            AppLog.e(Tag, "workspace not in this config");
+            Debug.LogErrorFormat(Tag+"workspace not in this config");
             return;
         }
 

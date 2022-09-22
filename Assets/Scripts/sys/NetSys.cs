@@ -91,22 +91,22 @@ public class NetSys : SingleMono<NetSys>
         server.OnClientConnected += (object sender, OnClientConnectedHandler e) =>
         {
             // server.SendCacheMessage(e.GetClient());
-            AppLog.d(Tag, "Client {0} Connected", e.GetClient().GetGuid());
+            Debug.LogFormat(Tag+"Client {0} Connected", e.GetClient().GetGuid());
         };
 
         server.OnClientDisconnected += (object sender, OnClientDisconnectedHandler e) =>
         {
-            AppLog.d(Tag, "Client {0} Disconnected", e.GetClient().GetGuid());
+            Debug.LogFormat(Tag+"Client {0} Disconnected", e.GetClient().GetGuid());
         };
 
         server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
         {
-            AppLog.d(Tag, "Client {0} Message: {1}", e.GetClient().GetGuid(), e.GetMessage());
+            Debug.LogFormat(Tag+"Client {0} Message: {1}", e.GetClient().GetGuid(), e.GetMessage());
         };
 
         server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
         {
-            //AppLog.d(Tag, "Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
+            //Debug.Log(Tag+"Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
         };
 
         m_gameServer = server;
@@ -121,7 +121,7 @@ public class NetSys : SingleMono<NetSys>
     {
         while(true)
         {
-            AppLog.d(Tag, " ******* ReceiveMessage ******* ");
+            Debug.Log(Tag+" ******* ReceiveMessage ******* ");
             if (m_debugServer != null)
             {
                 EndPoint endpoint = new IPEndPoint(IPAddress.Any, DebugListenPort);
@@ -153,7 +153,7 @@ public class NetSys : SingleMono<NetSys>
 
         server.OnClientDisconnected += (object sender, OnClientDisconnectedHandler e) =>
         {
-            AppLog.d(Tag, "Client {0} Disconnected", e.GetClient().GetGuid());
+            Debug.LogFormat(Tag+"Client {0} Disconnected", e.GetClient().GetGuid());
         };
 
         server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
@@ -164,7 +164,7 @@ public class NetSys : SingleMono<NetSys>
 
         server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
         {
-			//AppLog.d(Tag, "Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
+			//Debug.Log(Tag+"Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
 		};
 
         m_debugServer = server;
@@ -183,7 +183,7 @@ public class NetSys : SingleMono<NetSys>
         var s = ipHost.AddressList
             .Select(i => i.ToString())
             .Aggregate((i,j) => i.ToString() + "=" + j.ToString());
-        AppLog.d(Tag, "{0}: {1}", hostname, s);
+        Debug.LogFormat(Tag+"{0}: {1}", hostname, s);
 
         return ipHost.AddressList;
     }
