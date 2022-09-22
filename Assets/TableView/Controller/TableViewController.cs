@@ -38,7 +38,7 @@ namespace TableView
             }
             else
             {
-                AppLog.w(Tag, "delegate null");
+                Debug.LogWarning(Tag + "delegate null");
                 var cell = CellAt(tableView, row);
                 return 100f;
             }

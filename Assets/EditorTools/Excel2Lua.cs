@@ -40,10 +40,10 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
     public static int BookConfig(string path)
     {
-        var book = ExcelUtils.Open(path); 
+        var book = ExcelUtils.Open(path);
         if(book == null)
             return -1;
-        
+
         var config = book.GetSheet("config");
         if(config == null)
         {
@@ -80,7 +80,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         string sheetname = sheet.SheetName.RReplace(PathUtils.PunctuationRegex + "+", "_").TrimEnd('_');
         StringBuilder luabuild = new StringBuilder(2048000);
         luabuild.Append("-- usage: \n--\t" + sheetname + "[id][ColumnName] \n--\t" + sheetname + "[id].ColumnName\n");
-        
+
         //columnIdxs
         IRow headerRow = sheet.GetRow(headerRowIdx);
         int columnCount = headerRow.LastCellNum;
@@ -111,7 +111,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
                     continue;
 
                 var v0 = cell0.SValue();
-                if(cell0.CellType == CellType.String 
+                if(cell0.CellType == CellType.String
                     || (cell0.CellType == CellType.Formula && cell0.CachedFormulaResultType ==  CellType.String))
                     v0 = "\"" + v0 + "\"";
                 luabuild.Append("\n\t[" + v0 + "]" + "={" + v0);
@@ -121,7 +121,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
                     var v = cell.SValueOneline();
                     if(cell.CellType == CellType.Blank)
                         v = "nil";
-                    else if(cell.CellType == CellType.String 
+                    else if(cell.CellType == CellType.String
                         || (cell.CellType == CellType.Formula && cell.CachedFormulaResultType ==  CellType.String))
                         v = "\"" + v + "\"";
                     luabuild.Append(",\t" + v);
@@ -172,7 +172,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         {
             if (file.LastWriteTime.ToFileTimeUtc() > mConfig.LastBuildTime || mConfig.Rebuild)
             {
-                AppLog.d(Tag, "building [" + file.Name + "] ...");
+                Debug.Log(Tag+"building [" + file.Name + "] ...");
 
                 IWorkbook workbook = ExcelUtils.Open(file.FullName);
 
@@ -213,7 +213,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
         if (errno > 0)
         {
-            AppLog.e(Tag, "{0} errors", errno);
+            Debug.LogErrorFormat(Tag+"{0} errors", errno);
             AppLog.e(Tag, errmsg);
         }
 
@@ -221,10 +221,10 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
     private void Build()
     {
-        AppLog.d(Tag, "{0} => {1}", mConfig.InPath, mConfig.OutPath);
+        Debug.LogFormat(Tag+"{0} => {1}", mConfig.InPath, mConfig.OutPath);
 
         long lastWriteTime = mConfig.LastBuildTime;
-        AppLog.d(Tag, "上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
+        Debug.LogFormat(Tag+"上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
 
         DirectoryInfo dir = new DirectoryInfo(mConfig.InPath);
         // try
@@ -234,7 +234,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         // }
         // catch (Exception e)
         // {
-        //     AppLog.e(Tag, "error：" + e.Message);
+        //     Debug.LogError(Tag+"error：" + e.Message);
         // }
 
         mConfig.LastBuildTime = DateTime.Now.ToFileTimeUtc();

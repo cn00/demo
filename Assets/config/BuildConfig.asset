@@ -16,13 +16,13 @@ MonoBehaviour:
   m_UseBundle: 0
   LogLevel: 2
   runInBackground: 1
-  LastBuildTime: 132552600421226070
+  LastBuildTime: 133083117099669010
   Version:
     Major: 1
     Minor: 0
     Patch: 0
     BtnPerRow: 3
-  Ip: 10.23.24.239
+  Ip: 192.168.31.154
   Port: 8008
   BuildScene: 0
   mGroups:
@@ -31,6 +31,11 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 1
     mBundles:
+    - Name: common/chat.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/click.bd
       Size: 81516
       Hash: 40bbc95ae4336f265b18d55af56a9733
@@ -41,22 +46,32 @@ MonoBehaviour:
       Hash: 
       Version: 
       Rebuild: 0
+    - Name: common/emoji.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/excel.bd
       Size: 12960
       Hash: 1adbad37a3a27e0a5786164b3c4e0545
       Version: 1.0.0
       Rebuild: 1
+    - Name: common/font.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 0
     - Name: common/global.bd
       Size: 2475
       Hash: 656d2590dcd7d0d81a75e224d79bee19
       Version: 1.0.0
       Rebuild: 1
-    - Name: common/hint.bd
+    - Name: common/loading.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 1
-    - Name: common/loading.bd
+      Rebuild: 0
+    - Name: common/login.bd
       Size: 0
       Hash: 
       Version: 
@@ -87,29 +102,39 @@ MonoBehaviour:
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
-    Name: don_uixote
+    Name: gobang
     mInclude: 0
     mRebuild: 1
     mBundles:
-    - Name: don_uixote/index.bd
+    - Name: gobang/hostList.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 0
-    - Name: don_uixote/linkText.bd
+      Rebuild: 1
+    - Name: gobang/index.bd
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 0
-  - Foldout: 0
-    Name: font
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: font/fzxz.bd
-      Size: 9120314
-      Hash: 6b18abc7e0b9180e6c5bf47eedd13092
-      Version: 1.0.0
+      Rebuild: 1
+    - Name: gobang/match.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 1
+    - Name: gobang/net.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 1
+    - Name: gobang/player.bd
+      Size: 0
+      Hash: 
+      Version: 
+      Rebuild: 1
+    - Name: gobang/sql.bd
+      Size: 0
+      Hash: 
+      Version: 
       Rebuild: 1
   - Foldout: 0
     Name: lua
@@ -149,7 +174,7 @@ MonoBehaviour:
   - Foldout: 0
     Name: poetry
     mInclude: 0
-    mRebuild: 1
+    mRebuild: 0
     mBundles:
     - Name: poetry/boot.bd
       Size: 1910
@@ -160,11 +185,6 @@ MonoBehaviour:
       Size: 22346
       Hash: f7728bb1988ac80e42de995294f8a609
       Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/chat.bd
-      Size: 0
-      Hash: 
-      Version: 
       Rebuild: 0
     - Name: poetry/data.bd
       Size: 0
@@ -180,11 +200,6 @@ MonoBehaviour:
       Size: 0
       Hash: 
       Version: 
-      Rebuild: 0
-    - Name: poetry/img.bd
-      Size: 16387
-      Hash: af8cfcf215d8e475cdf978e5495bd3c9
-      Version: 1.0.0
       Rebuild: 0
     - Name: poetry/index.bd
       Size: 8550
@@ -232,21 +247,6 @@ MonoBehaviour:
       Version: 
       Rebuild: 0
   - Foldout: 0
-    Name: proto
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: proto/bfbs.bd
-      Size: 2083
-      Hash: 8f8dd575471578cd99e204bdc0abad89
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: proto/common.bd
-      Size: 3019
-      Hash: 0cd6f384b9c8252589f354694a136484
-      Version: 1.0.0
-      Rebuild: 1
-  - Foldout: 1
     Name: ui
     mInclude: 0
     mRebuild: 1
@@ -304,23 +304,23 @@ MonoBehaviour:
   - Foldout: 0
     Name: writeplayer
     mInclude: 0
-    mRebuild: 1
+    mRebuild: 0
     mBundles:
     - Name: writeplayer/impoter.bd
       Size: 16882
       Hash: b2014fe5ae5a2ea133e7eca0fbc42c60
       Version: 1.0.0
-      Rebuild: 1
+      Rebuild: 0
     - Name: writeplayer/index.bd
       Size: 31328
       Hash: 200eee6070040de83df7faa71b1b94b7
       Version: 1.0.0
-      Rebuild: 1
+      Rebuild: 0
     - Name: writeplayer/player.bd
       Size: 1071344
       Hash: 174ad4cf2981d16153df54c3987f5b4b
       Version: 1.0.0
-      Rebuild: 1
+      Rebuild: 0
   BundleBuildOptions: 272
   mChannels:
   - Name: and

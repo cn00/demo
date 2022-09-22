@@ -117,7 +117,7 @@ public class DllCompile : SingletonAsset<DllCompile>
             AppLog.d(Tag, s);
             foreach (var msg in messages)
             {
-                AppLog.d(Tag, "CompileCSharp: " + msg);
+                Debug.Log(Tag+"CompileCSharp: " + msg);
             }
         };
         var msgs = b.Build();

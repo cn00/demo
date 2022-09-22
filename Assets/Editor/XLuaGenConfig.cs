@@ -15,12 +15,13 @@ using UnityEngine;
 using XLua;
 using System.Runtime;
 using TableView;
+using UnityEngine.EventSystems;
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
 using LuaCSFunction = UniLua.CSharpFunctionDelegate;
 #else
-using LuaAPI = XLua.LuaDLL.Lua;
+// using LuaAPI = XLua.LuaDLL.Lua;
 using RealStatePtr = System.IntPtr;
 using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 #endif
@@ -76,6 +77,7 @@ public static class XLuaGenConfig
         #endregion system
 
         #region UnityEngine
+        typeof(UnityEngine.RectTransformUtility),
         typeof(UnityEngine.Application),
         typeof(UnityEngine.RuntimePlatform),
         typeof(UnityEngine.Object),
@@ -188,6 +190,7 @@ public static class XLuaGenConfig
         typeof(System.Action<float>),
         typeof(System.Action<bool>),
         typeof(Action<FileStream>),
+        typeof(Action<PointerEventData>),
 
         typeof(UnityEngine.Events.UnityAction),
         typeof(UnityEngine.Events.UnityAction<byte[]>),
@@ -261,6 +264,7 @@ public static class XLuaGenConfig
         new List<string>() {"System.Text.Encoding", "GetCharCount"},
         new List<string>() {"System.Text.Encoding", "GetByteCount"},
         new List<string>() {"System.Text.Encoding", "GetBytes"},
+        new List<string>() {"System.Text.Encoding", "Preamble"},
 
         new List<string>(){"UnityEngine.MonoBehaviour", "runInEditMode"},
         new List<string>(){"UnityEngine.AudioSettings", "GetSpatializerPluginNames","SetSpatializerPluginName"},

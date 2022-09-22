@@ -1,5 +1,4 @@
 using System.IO;
-using Helper;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace App
         {
             var asset = ScriptableObject.CreateInstance<BinAsset>();
             asset.data = File.ReadAllBytes(ctx.assetPath);
-       
+
             ctx.AddObjectToAsset("main obj", asset);
             ctx.SetMainObject(asset);
         }

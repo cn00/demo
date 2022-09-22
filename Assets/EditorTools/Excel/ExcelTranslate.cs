@@ -106,7 +106,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                                 // }
 
                                 var v = row.Cell(ic).SValueOneline();
-                                // AppLog.d(Tag, "{0}: {1}", v, v.Length);
+                                // Debug.Log(Tag+"{0}: {1}", v, v.Length);
                                 var matches = Regex.Matches(v, JPRegular + "+.*");
                                 if (matches.Count > 0)
                                 {
@@ -167,7 +167,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
 
                 var outStream = new FileStream(outExcelPath, FileMode.Create);
                 outBook.Write(outStream);
-                AppLog.d(Tag, "CollectJp: " + outExcelPath);
+                Debug.Log(Tag+"CollectJp: " + outExcelPath);
 
                 CountWordUniq = wordCount;
                 CountWord = totalWordCount;
@@ -216,7 +216,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         var jp = trrow.Cell(head[HeadIdx.jp]).SValueOneline();
                         if(jp[0] == '$')
                         {
-                            AppLog.d(Tag, "使用引用: " + jp);
+                            Debug.Log(Tag+"使用引用: " + jp);
                             var row = transSheet.Row(int.Parse(jp.Substring(1)));
                             jp = row.Cell(head[HeadIdx.jp]).SValueOneline();
                             trans = row.Cell(head[HeadIdx.trans]).SValueOneline();
@@ -243,7 +243,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                     inbook.Write(path);
                 } // path
 
-                AppLog.d(Tag, "Translate: " + transExcelPath);
+                Debug.Log(Tag+"Translate: " + transExcelPath);
             }
             finally
             {

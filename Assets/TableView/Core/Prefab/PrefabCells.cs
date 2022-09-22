@@ -16,7 +16,7 @@ namespace TableView
         public void RegisterPrefabForCellReuseIdentifier(GameObject prefab, string cellReuseIdentifier)
         {
             if (string.IsNullOrEmpty(cellReuseIdentifier)){
-                AppLog.e(Tag, "CellReuseIdentifier can not be NullOrEmpty");
+                Debug.LogError(Tag + "CellReuseIdentifier can not be NullOrEmpty");
                 return;
             }
             if (registeredCells.ContainsKey(cellReuseIdentifier)) return;

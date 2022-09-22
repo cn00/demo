@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace TableView
 {
+    [RequireComponent(typeof(RectMask2D), typeof(CanvasRenderer))]
     public class TableView : MonoBehaviour, ITableView
     {
         #region Property
@@ -108,8 +109,8 @@ namespace TableView
             tableViewLayout.Spacing = interItemSpacing;
             tableViewLayout.Padding = padding;
 
-            this.gameObject.GetOrAddComponent<RectMask2D>();
-            this.gameObject.GetOrAddComponent<CanvasRenderer>();
+            if (this.gameObject.GetComponent<RectMask2D>()==null)this.gameObject.AddComponent<RectMask2D>();
+            if (this.gameObject.GetComponent<CanvasRenderer>()==null)this.gameObject.AddComponent<CanvasRenderer>();
         }
 
         void Update()

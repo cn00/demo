@@ -11,6 +11,7 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using SevenZip;
+using Debug = UnityEngine.Debug;
 
 [ExecuteInEditMode]
 public class BuildScript
@@ -46,7 +47,7 @@ public class BuildScript
         }
         catch (Exception e)
         {
-            AppLog.e(Tag, "BuildPlayer failure: " + e);
+            Debug.LogError(Tag+"BuildPlayer failure: " + e);
         }
     }
 
@@ -147,10 +148,10 @@ public class BuildScript
                 if (hash != oldhash || !File.Exists(lzmaPath))
                 {
                     EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
-                    AppLog.d(Tag, "{0} {2} => {1}", i, hash, oldhash);
+                    Debug.LogFormat(Tag+"{0} {2} => {1}", i, hash, oldhash);
 
                     // TODO: encode bundle
-                    
+
                     BundleHelper.CompressFileLZMA(path, lzmaPath);
 
                     var bundleInfo = BuildConfig.Instance().GetBundleInfo(i);
@@ -176,7 +177,7 @@ public class BuildScript
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
-            AppLog.d(Tag, "BuildAssetBundle coast: {0}", DateTime.Now - t);
+            Debug.LogFormat(Tag+"BuildAssetBundle coast: {0}", DateTime.Now - t);
         }
         yield return null;
         if(callback != null)
@@ -248,19 +249,19 @@ public class BuildScript
             {
                 File.Delete(manifestbf);
             }
-            
+
             // generate md5 sheet
             var manifestPath = rootDir + BuildConfig.ManifestName;
             if (File.Exists(manifestPath))
             {
                 File.Copy(manifestPath, manifestPath + ".bak", true);
             }
-            
+
             // YamlHelper.Serialize(BuildConfig.Instance().AllBundles, manifestPath);
             var manifest = AppBundleManifest.Instance();
             manifest.BundleInfos = BuildConfig.Instance().AllBundles;
             manifest.Save();
-            
+
             // BundleHelper.CompressFileLZMA(manifestPath, manifestbf);
         }
         finally
