@@ -11,7 +11,7 @@ local print = function ( ... )
     _G.print("writeplayer.index.cell", ... )
 end
 
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local cell = {
     id = nil,

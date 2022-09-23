@@ -47,11 +47,6 @@ public class NetSys : SingleMono<NetSys>
     // Use this for initialization
     void Start()
     {
-        if(m_debugServer != null)
-        {
-            AppLog.OnMessageReceived += SendDebugMessage;
-        }
-
         // var t = new System.Threading.Thread(ReceiveMessage);
         // t.Start();
     }
@@ -70,7 +65,6 @@ public class NetSys : SingleMono<NetSys>
 
     void OnDestroy()
     {
-        AppLog.OnMessageReceived -= SendDebugMessage;
         if (m_debugServer != null)
             m_debugServer.Stop();
     }
@@ -90,23 +84,23 @@ public class NetSys : SingleMono<NetSys>
         server.GetSocket().SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 500);
         server.OnClientConnected += (object sender, OnClientConnectedHandler e) =>
         {
-            // server.SendCacheMessage(e.GetClient());
-            Debug.LogFormat(Tag+"Client {0} Connected", e.GetClient().GetGuid());
+            // server.SendCacheMessage(LogErrorFormat.GetClient());
+            UnityEngine.Debug.LogFormat(Tag+": Client {0} Connected", e.GetClient().GetGuid());
         };
 
         server.OnClientDisconnected += (object sender, OnClientDisconnectedHandler e) =>
         {
-            Debug.LogFormat(Tag+"Client {0} Disconnected", e.GetClient().GetGuid());
+            UnityEngine.Debug.LogFormat(Tag+": Client {0} Disconnected", e.GetClient().GetGuid());
         };
 
         server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
         {
-            Debug.LogFormat(Tag+"Client {0} Message: {1}", e.GetClient().GetGuid(), e.GetMessage());
+            UnityEngine.Debug.LogFormat(Tag+": Client {0} Message: {1}", e.GetClient().GetGuid(), e.GetMessage());
         };
 
         server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
         {
-            //Debug.Log(Tag+"Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
+            //Debug.Log(Tag+": Sent message: '{0}' to client {1}", LogErrorFormat.GetMessage(), LogErrorFormat.GetClient().GetGuid());
         };
 
         m_gameServer = server;
@@ -121,7 +115,7 @@ public class NetSys : SingleMono<NetSys>
     {
         while(true)
         {
-            Debug.Log(Tag+" ******* ReceiveMessage ******* ");
+            UnityEngine.Debug.Log(Tag+":  ******* ReceiveMessage ******* ");
             if (m_debugServer != null)
             {
                 EndPoint endpoint = new IPEndPoint(IPAddress.Any, DebugListenPort);
@@ -133,12 +127,6 @@ public class NetSys : SingleMono<NetSys>
         }
     }
 
-    public void SendDebugMessage(object sender, AppLog.OnMessageReceivedHandler e)
-    {
-        // m_debugServer.BroadcastMessage(e.Message);
-        // var endpoint = new IPEndPoint(IPAddress.Broadcast, DebugListenPort);
-        // m_debugServer.GetSocket().SendTo(System.Text.Encoding.UTF8.GetBytes(e.Message), endpoint);
-    }
     public void StartDebugTcpServer(int port)
     {
         var endpoint = new IPEndPoint(IPAddress.Any, port);
@@ -153,18 +141,18 @@ public class NetSys : SingleMono<NetSys>
 
         server.OnClientDisconnected += (object sender, OnClientDisconnectedHandler e) =>
         {
-            Debug.LogFormat(Tag+"Client {0} Disconnected", e.GetClient().GetGuid());
+            UnityEngine.Debug.LogFormat(Tag+": Client {0} Disconnected", e.GetClient().GetGuid());
         };
 
         server.OnMessageReceived += (object sender, OnMessageReceivedHandler e) =>
         {
-            // server.GetSocket().SendTo(System.Text.Encoding.UTF8.GetBytes(e.GetMessage()), endpoint);
+            // server.GetSocket().SendTo(System.Text.Encoding.UTF8.GetBytes(LogErrorFormat.GetMessage()), endpoint);
 			server.BroadcastMessage(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:\n\t{1}", e.GetClient().GetGuid(), e.GetMessage())), e.GetClient());
         };
 
         server.OnSendMessage += (object sender, OnSendMessageHandler e) =>
         {
-			//Debug.Log(Tag+"Sent message: '{0}' to client {1}", e.GetMessage(), e.GetClient().GetGuid());
+			//Debug.Log(Tag+": Sent message: '{0}' to client {1}", LogErrorFormat.GetMessage(), LogErrorFormat.GetClient().GetGuid());
 		};
 
         m_debugServer = server;
@@ -174,7 +162,7 @@ public class NetSys : SingleMono<NetSys>
     public static IPAddress[] LocalIpAddress()
     {
         var hostname = Dns.GetHostName();
-        Debug.Log($"hostname:{hostname}");
+        UnityEngine.Debug.Log($"hostname:{hostname}");
         // if (!hostname.EndsWith(".local"))
         //     hostname = hostname + ".local";
 
@@ -183,7 +171,7 @@ public class NetSys : SingleMono<NetSys>
         var s = ipHost.AddressList
             .Select(i => i.ToString())
             .Aggregate((i,j) => i.ToString() + "=" + j.ToString());
-        Debug.LogFormat(Tag+"{0}: {1}", hostname, s);
+        UnityEngine.Debug.LogFormat(Tag+": {0}: {1}", hostname, s);
 
         return ipHost.AddressList;
     }

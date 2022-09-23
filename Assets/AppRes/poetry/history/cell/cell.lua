@@ -11,7 +11,7 @@ local print = function ( ... )
     _G.print("history.cell", ... )
 end
 
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local cell = {
     data = nil, --{id, na, a, nb, b, date}

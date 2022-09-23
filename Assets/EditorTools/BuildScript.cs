@@ -47,7 +47,7 @@ public class BuildScript
         }
         catch (Exception e)
         {
-            Debug.LogError(Tag+"BuildPlayer failure: " + e);
+            UnityEngine.Debug.LogError(Tag+": BuildPlayer failure: " + e);
         }
     }
 
@@ -148,7 +148,7 @@ public class BuildScript
                 if (hash != oldhash || !File.Exists(lzmaPath))
                 {
                     EditorUtility.DisplayCancelableProgressBar("compressing ...", i, (float)(++n) / allAssetBundles.Count);
-                    Debug.LogFormat(Tag+"{0} {2} => {1}", i, hash, oldhash);
+                    UnityEngine.Debug.LogFormat(Tag+": {0} {2} => {1}", i, hash, oldhash);
 
                     // TODO: encode bundle
 
@@ -177,7 +177,7 @@ public class BuildScript
             AssetDatabase.Refresh();
 
             EditorUtility.ClearProgressBar();
-            Debug.LogFormat(Tag+"BuildAssetBundle coast: {0}", DateTime.Now - t);
+            UnityEngine.Debug.LogFormat(Tag+": BuildAssetBundle coast: {0}", DateTime.Now - t);
         }
         yield return null;
         if(callback != null)
@@ -209,7 +209,7 @@ public class BuildScript
             BuildOptions.BuildAdditionalStreamedScenes);
 
         var lzmaPath = outPath + BuildConfig.CompressedExtension;
-        BundleHelper.CompressFileLZMA(outPath, lzmaPath);
+        // BundleHelper.CompressFileLZMA(outPath, lzmaPath);
 
         // copy
         var outLzmaPath = lzmaPath.Replace(TargetName(targetPlatform)
@@ -278,7 +278,7 @@ public class BuildScript
             foreach (var i in files)
             {
                 var f = i.upath();
-                AppLog.d(Tag, f);
+                Debug.LogFormat($"{Tag}, BuildStreamingScene: {f}");
                 EditorUtility.DisplayCancelableProgressBar("StreamingScene ...", f, count / files.Length);
                 BuildStreamingScene(f, buildTarget);
             }

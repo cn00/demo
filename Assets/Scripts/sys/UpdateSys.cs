@@ -36,7 +36,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     {
         var cachePath = AssetSys.CacheRoot + "resversion.txt";
         var localVersionUrl = cachePath;
-        Debug.LogFormat(Tag+"GetLocalVersion: {0}", localVersionUrl);
+        UnityEngine.Debug.LogFormat(Tag+": GetLocalVersion: {0}", localVersionUrl);
 
         if(File.Exists(cachePath))
         {
@@ -48,7 +48,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             File.WriteAllText(cachePath, "1.0.0");
         }
 
-        Debug.LogFormat(Tag+"LocalVersion {0}", mLocalVersion.ToString());
+        UnityEngine.Debug.LogFormat(Tag+": LocalVersion {0}", mLocalVersion.ToString());
 
         yield return null;
     }
@@ -56,12 +56,13 @@ public class UpdateSys : SingleMono<UpdateSys>
     public IEnumerator GetRemoteVersion()
     {
         var remoteVersionUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + "resversion.txt";
-        AppLog.d(Tag, remoteVersionUrl);
 
-        var temp = Path.GetTempFileName().upath();
-        yield return AssetSys.Download(remoteVersionUrl, temp);
-        mRemoteVersion = new Version(File.ReadAllText(temp));
-        Debug.LogFormat(Tag+"RemoteVersion {0}", mRemoteVersion.ToString());
+        var webRequest = UnityWebRequest.Get(remoteVersionUrl);
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        yield return webRequest.SendWebRequest();
+
+        mRemoteVersion = new Version(DownloadHandlerBuffer.GetContent(webRequest));
+        Debug.LogFormat(Tag+": RemoteVersion {0}", mRemoteVersion.ToString());
         yield return null;
     }
 
@@ -81,20 +82,29 @@ public class UpdateSys : SingleMono<UpdateSys>
 
     public IEnumerator GetRemoteManifest()
     {
-        var remoteManifestUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + mRemoteVersion + "/" + AssetSys.PlatformName();
+        var remoteManifestUrl = AssetSys.WebRoot + AssetSys.PlatformName() + "/" + AssetSys.PlatformName();
 
         var old = AssetBundle.GetAllLoadedAssetBundles().ToList().Find(i => i.name == ""); //AssetBundleManifest);
         if(old)
         {
-            AppLog.d(Tag, $"unload AssetBundleManifest {old.name}:{old}");
+            Debug.LogFormat($"{Tag} unload AssetBundleManifest {old.name}:{old}");
             old.Unload(true);
         }
 
-        var temp = Path.GetTempFileName().upath();
-        yield return AssetSys.Download(remoteManifestUrl, temp, fs =>
-        {
-            mRemoteManifest = AssetBundle.LoadFromStream(fs).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-        });
+
+        var temp = AssetSys.CacheRoot + AssetSys.PlatformName() + "/" + AssetSys.PlatformName()+".remote";
+        if(File.Exists(temp))
+            File.Delete(temp);
+
+        var webRequest = UnityWebRequest.Get(remoteManifestUrl);
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        yield return webRequest.SendWebRequest();
+
+        var s = DownloadHandlerBuffer.GetContent(webRequest);
+        var ms = new MemoryStream(System.Text.Encoding.Default.GetBytes(s));
+        mRemoteManifest = AssetBundle.LoadFromStream(ms).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+        File.Delete(temp);
+
     }
 
     private static string CompressedExtension = "";
@@ -139,7 +149,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             var l = mLocalManifest.Find(i => i.Name == r);
             if(!File.Exists(cachePath) || l == null || l.Hash != rh.ToString() )
             {
-                Debug.LogFormat(Tag+"diff: {0}:[{1} {2}]", r, rh, (l != null ? l.Hash : ""));
+                UnityEngine.Debug.LogFormat(Tag+": diff: {0}:[{1} {2}]", r, rh, (l != null ? l.Hash : ""));
                 mDiffList.Add(r);
             }
         }
@@ -194,7 +204,7 @@ public class UpdateSys : SingleMono<UpdateSys>
     /// </summary>
     public void Updated(string subPath)
     {
-        // Debug.Log(Tag+"Updated: {0}", subPath);
+        // Debug.Log(Tag+": Updated: {0}", subPath);
         //lock(mDiffListLock)
         {
 
@@ -212,7 +222,7 @@ public class UpdateSys : SingleMono<UpdateSys>
             }
             if(newi != null)
             {
-                Debug.LogFormat(Tag+"Updated: {0} {1}=>{2}", newi, binfo.Hash, hash);
+                UnityEngine.Debug.LogFormat(Tag+": Updated: {0} {1}=>{2}", newi, binfo.Hash, hash);
                 binfo.Hash = hash;
                 SaveManifest(mLocalManifest, LocalManifestPath);
 

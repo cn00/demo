@@ -142,7 +142,7 @@ public class QRCodeEncodeController : MonoBehaviour {
 			onQREncodeFinished (m_EncodedTex);
 		else
 		{
-			Debug.LogWarning($"no QREncodeFinished listener");
+			UnityEngine.Debug.LogWarning($"no QREncodeFinished listener");
 		}
 		return 0;
 	}

@@ -5,7 +5,7 @@ public class Utility
 {
 	public static bool CheckIsUrlFormat(string strValue)
 	{
-		return Utility.CheckIsFormat("(http://)?([\\w-]+\\.)+[\\w-]+(/[\\w- ./?%&=]*)?", strValue);
+		return Utility.CheckIsFormat("(http://)?([\\LogWarningFormat-]+\\.)+[\\LogWarningFormat-]+(/[\\LogWarningFormat- ./?%&=]*)?", strValue);
 	}
 
 	public static bool CheckIsFormat(string strRegex, string strValue)

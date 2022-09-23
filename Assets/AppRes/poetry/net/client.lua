@@ -12,8 +12,8 @@ local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "utility.util"
-local xutil = require "xlua.util"
-local socket = require("socket.socket")
+local xutil = require "utility.xlua.util"
+local socket = require("utility.socket.socket")
 
 local this = AppGlobal.Client
 if this then return this end

@@ -4,8 +4,8 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 
 --require "init"
-local util = require "xlua.util"
-local socket = require "socket.socket"
+local util = require "utility.xlua.util"
+local socket = require "utility.socket.socket"
 local sprotoparser = require "sprotoparser"
 
 local http = require "socket.http"
@@ -25,7 +25,7 @@ end
 -- local post_data = "post_data"
 -- -- local res, code, headers, status = http.request "http://localhost:8008"
 -- local res, code, headers, status = http.request
--- {  
+-- {
 -- 	url = "http://anbolihua.iteye.com/blog/2316423",
 -- 	-- url = "http://localhost:8008/index.html",
 -- 	method = "GET",
@@ -117,14 +117,14 @@ function this.lfb_test()
 		-- end
 		-- local ey = os.clock()
 		-- print("encode 10000 times", ey-ex, #buf, buf:gsub("[\0-\13]",""))
-			
+
 		this.conn:send(protoid)
 		this.conn:send(10000000 + #buf)
 		-- this.conn:send(1000+offset)
 		this.conn:send(buf)
 
 		local ey = os.clock()
-		local t  
+		local t
 		for i = 1, 10000 do
 			t = assert(lfb:decode(protopath, proto[protoid], buf))
 		end
@@ -135,7 +135,7 @@ end
 
 function this.coroutine_start_receive()
 	print('coroutine_start_receive')
-	while true 
+	while true
 	do
 		local canread, sendt, status = socket.select({this.conn}, nil, 0.001)
 		-- print("canread", #canread, #this.client)
@@ -144,11 +144,11 @@ function this.coroutine_start_receive()
 		for _, c in ipairs(canread) do
 			c:settimeout(0.1)
 			local protoid, err = c:receive(8)
-			if protoid == nil then 
+			if protoid == nil then
 				print("goto continue", err)
 				this.connect_stat = conn_stat.offline
 				c:close()
-				goto continue 
+				goto continue
 			end
 			protoid = tonumber(protoid, 10)
 			local size = tonumber(c:receive(8), 10) - 10000000
@@ -162,7 +162,7 @@ function this.coroutine_start_receive()
 				local t = assert(lfb:decode(protopath, proto[protoid], data))
 				res_cb(t)
 				this.wait_for_res[protoid - 10000000] = nil
-			end 
+			end
 
 			if not err then
 				--print()
@@ -193,7 +193,7 @@ function this.send(protoid, dt, res_cb)
 end
 
 function this.Connect()
-	if this.conn ~= nil and this.conn:getstats() == 1 then 
+	if this.conn ~= nil and this.conn:getstats() == 1 then
 		--https://stackoverflow.com/questions/4160347/close-vs-shutdown-socket
 		-- this.conn:shutdown()
 		this.conn:close()
@@ -233,7 +233,7 @@ end
 
 -- function this.FixedUpdate() end
 
-function this.Update() 
+function this.Update()
 	if (this.connect_stat == conn_stat.offline)then
 		print("reconnect ...")
 		this.Connect()
@@ -243,7 +243,7 @@ end
 -- function this.LateUpdate() end
 
 function this.OnDestroy()
-	if this.conn ~= nil and this.conn:getstats() == 1 then 
+	if this.conn ~= nil and this.conn:getstats() == 1 then
 		this.conn:close()
 	end
 end

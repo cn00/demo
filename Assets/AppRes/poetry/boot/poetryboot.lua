@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/08 18:45:31
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -48,8 +48,8 @@ function poetryboot.Start()
 		end))
 		GameObject.Instantiate(obj)
 
-		yield_return(CS.AssetSys.GetAsset("font/fzxz/方正小篆体.ttf"))
-		
+		yield_return(CS.AssetSys.GetAsset("common/font/fzxz/fzxz.ttf"))
+
 	end)
 end
 

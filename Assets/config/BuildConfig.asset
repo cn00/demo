@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BuildConfig
   m_EditorClassIdentifier: 
   Configs: []
-  m_UseBundle: 0
+  m_UseBundle: 1
   LogLevel: 2
   runInBackground: 1
-  LastBuildTime: 133083117099669010
+  LastBuildTime: 133083259282523370
   Version:
     Major: 1
     Minor: 0
@@ -27,111 +27,181 @@ MonoBehaviour:
   BuildScene: 0
   mGroups:
   - Foldout: 0
-    Name: common
+    Name: ui
     mInclude: 0
     mRebuild: 1
     mBundles:
-    - Name: common/chat.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: common/click.bd
-      Size: 81516
-      Hash: 40bbc95ae4336f265b18d55af56a9733
+    - Name: ui/bg.bd
+      Size: 6389745
+      Hash: ef221a6e7d0c8511799d792a2d0b537d
       Version: 1.0.0
       Rebuild: 1
-    - Name: common/config.bd
-      Size: 0
-      Hash: 
-      Version: 
+    - Name: ui/dialog.bd
+      Size: 15596
+      Hash: 6d0bc584e5d3c49153ac861b7cc486eb
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/excel_viewer.bd
+      Size: 31545
+      Hash: 7aa64e1bfb9522ee7b7b076a4a8580c7
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/linktext.bd
+      Size: 7671
+      Hash: a9d2c23fb1fefb789c2764a5eccb8a08
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/loading.bd
+      Size: 70247
+      Hash: 1821840bc7c71fb0fa91799df0fa00e1
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/login.bd
+      Size: 21698
+      Hash: e4b67d299c0d6d7e1fda9e9a42f4bbee
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/test.bd
+      Size: 28549
+      Hash: 6aa6ed8d0669b5a8a6c2b68253421efa
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: ui/update.bd
+      Size: 17701
+      Hash: a0446d5cdf78d78b80b224ffa7030b45
+      Version: 1.0.0
+      Rebuild: 1
+  - Foldout: 0
+    Name: writeplayer
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: writeplayer/impoter.bd
+      Size: 17094
+      Hash: 59d59551f10dfc56708a426bd2089d32
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: writeplayer/index.bd
+      Size: 31481
+      Hash: 83c77ca026712726447d772099ddaf09
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: writeplayer/player.bd
+      Size: 999074
+      Hash: e05142ad16a543bdb63017060f43f2a0
+      Version: 1.0.0
+      Rebuild: 0
+  - Foldout: 0
+    Name: common
+    mInclude: 0
+    mRebuild: 0
+    mBundles:
+    - Name: common/font.bd
+      Size: 7506250
+      Hash: d6cbcad855756cfdf8bca77ce19e19ca
+      Version: 1.0.0
       Rebuild: 0
     - Name: common/emoji.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: common/excel.bd
-      Size: 12960
-      Hash: 1adbad37a3a27e0a5786164b3c4e0545
+      Size: 182307
+      Hash: 74480bb65ed2844baf1d0ec490686034
       Version: 1.0.0
-      Rebuild: 1
-    - Name: common/font.bd
-      Size: 0
-      Hash: 
-      Version: 
       Rebuild: 0
-    - Name: common/global.bd
-      Size: 2475
-      Hash: 656d2590dcd7d0d81a75e224d79bee19
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: common/loading.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: common/login.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: common/manager.bd
-      Size: 10790
-      Hash: 935b36a902dca12d1a401f54db32e0f0
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: common/material.bd
-      Size: 1209
-      Hash: fe0dc8e55a960b2143fab647e0206bea
+    - Name: common/click.bd
+      Size: 81889
+      Hash: cc199d74590da46381b31fa697986bb1
       Version: 1.0.0
       Rebuild: 1
     - Name: common/qrcode.bd
-      Size: 59963
-      Hash: 00e9bf487165948eb6d674eff36a6595
+      Size: 68254
+      Hash: 35ba9eb2bac5e9782ba7af5be7beb4bc
       Version: 1.0.0
       Rebuild: 1
-    - Name: common/root.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
     - Name: common/ui.bd
-      Size: 31043
-      Hash: 01c49cb6faab7549f87cfb6bfab6b150
+      Size: 38827
+      Hash: 8d2eeccd97b5d866f00701e6c98f37d9
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: common/chat.bd
+      Size: 20953
+      Hash: 9a54cefbbbc33ece69212cd9a98e350d
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: common/login.bd
+      Size: 16824
+      Hash: fd4a9cf9cf3c68f70c4d22763c585650
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: common/excel.bd
+      Size: 13324
+      Hash: 36047ef2f66e84513eb79058d53e1ad3
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: common/manager.bd
+      Size: 11923
+      Hash: 70dd07e2b9f9b0fd047dae26c1f96a95
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: common/loading.bd
+      Size: 10292
+      Hash: 2d7672479c26a5dd0cbe0f770b17ab04
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: common/root.bd
+      Size: 5243
+      Hash: 04797a9758c69b1bbc99cee95b67a967
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: common/global.bd
+      Size: 2463
+      Hash: cbb04bcb643d35acb68ef489c5a66773
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: common/config.bd
+      Size: 1351
+      Hash: aade0cc64635917dd3928148abcd56eb
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: common/material.bd
+      Size: 1207
+      Hash: 054d60062ea6f409d7817f25ef3f1717
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
     Name: gobang
     mInclude: 0
-    mRebuild: 1
+    mRebuild: 0
     mBundles:
-    - Name: gobang/hostList.bd
-      Size: 0
-      Hash: 
-      Version: 
+    - Name: gobang/doc.bd
+      Size: 106633
+      Hash: 6a2ef57f32d6b12f0fb4e31663de8a7a
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: gobang/match.bd
+      Size: 50853
+      Hash: 903e856cf0613619da08aa88be453731
+      Version: 1.0.0
       Rebuild: 1
     - Name: gobang/index.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 1
-    - Name: gobang/match.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 16505
+      Hash: 0f5d28e32b9a075ac8255185e5ad06a3
+      Version: 1.0.0
       Rebuild: 1
     - Name: gobang/net.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 11513
+      Hash: b8116cc7f554af388766132c525e88a7
+      Version: 1.0.0
       Rebuild: 1
     - Name: gobang/player.bd
-      Size: 0
-      Hash: 
-      Version: 
+      Size: 8990
+      Hash: ae6eae1740508f0e542b217432508d21
+      Version: 1.0.0
       Rebuild: 1
     - Name: gobang/sql.bd
+      Size: 1361
+      Hash: 604e7f9e71865dac874a3ab27a8ef75c
+      Version: 1.0.0
+      Rebuild: 1
+    - Name: gobang/hostList.bd
       Size: 0
       Hash: 
       Version: 
@@ -142,33 +212,33 @@ MonoBehaviour:
     mRebuild: 1
     mBundles:
     - Name: lua/excel.bd
-      Size: 4063
-      Hash: d09551a8058a93b416c6361f20460136
+      Size: 4061
+      Hash: f69dad15a97c267e26c70adf78f20eda
       Version: 1.0.0
       Rebuild: 1
     - Name: lua/lxp.bd
-      Size: 12488
-      Hash: adee6f2d0fcc8076967bf8440356d424
+      Size: 12486
+      Hash: 69ae3d77678371d8b73b004a613191bd
       Version: 1.0.0
       Rebuild: 1
     - Name: lua/proto.bd
-      Size: 1462
-      Hash: 30fffed6e08cde1330c7a23896e46b30
+      Size: 1460
+      Hash: da45220ad224efff2ca0133cbca176e4
       Version: 1.0.0
       Rebuild: 1
     - Name: lua/table.bd
-      Size: 1718
-      Hash: 048be374e517399bfb86319f4508353b
+      Size: 1716
+      Hash: 82de93488a8415a38c7101433fa3334f
       Version: 1.0.0
       Rebuild: 1
     - Name: lua/test.bd
-      Size: 11798
-      Hash: a09c521022c1d802e9649032ddd12c33
+      Size: 11796
+      Hash: f262442ec5788abf43ca7fbd57089fca
       Version: 1.0.0
       Rebuild: 1
     - Name: lua/utility.bd
-      Size: 98244
-      Hash: fee824c8aa1becdd54e7b71b43137368
+      Size: 107181
+      Hash: 8cb397a9585db93133bb2b58050f5241
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
@@ -176,62 +246,67 @@ MonoBehaviour:
     mInclude: 0
     mRebuild: 0
     mBundles:
-    - Name: poetry/boot.bd
-      Size: 1910
-      Hash: 15eec59b72aa985698ae3368c2ea79f0
+    - Name: poetry/match.bd
+      Size: 33882
+      Hash: 612eb83e98313ea5bd4d0b4d18ca7003
       Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/card.bd
-      Size: 22346
-      Hash: f7728bb1988ac80e42de995294f8a609
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/data.bd
-      Size: 0
-      Hash: 
-      Version: 
       Rebuild: 0
     - Name: poetry/history.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: poetry/hostList.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: poetry/index.bd
-      Size: 8550
-      Hash: d9f53a6e5b3abf48f8b6e28e08c2cde5
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/login.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: poetry/match.bd
-      Size: 27419
-      Hash: e0277eb46856932aa4d6ad0890ccb7eb
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/net.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-    - Name: poetry/player.bd
-      Size: 8831
-      Hash: 6c94f3e860af0ae71a422b710684797c
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: poetry/result.bd
-      Size: 1634
-      Hash: 54ea1deecdca3d404a1986a518ea1a35
+      Size: 31112
+      Hash: 8a2649b1e6c3fbc2252be4356587e9bf
       Version: 1.0.0
       Rebuild: 0
     - Name: poetry/room.bd
+      Size: 24865
+      Hash: 0397931d4c390d6789818bb29828992d
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/card.bd
+      Size: 22645
+      Hash: bf477b5a927ff7ab3968b5fa3db2de71
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/index.bd
+      Size: 16801
+      Hash: cca807c11df94a35e296b5a8e082a2a6
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/login.bd
+      Size: 16772
+      Hash: 176fd6c69d1a752a55e02c32c0d0a195
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/net.bd
+      Size: 11547
+      Hash: 28871647e940325a6a9d82986119bb05
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/player.bd
+      Size: 9000
+      Hash: 51d006504c4be2bb2a87df89f7f4ed7a
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/data.bd
+      Size: 1966
+      Hash: 74049a9f985b55e20dfab683a67ac02a
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/boot.bd
+      Size: 1889
+      Hash: b05117e2888f5e6b1915eb3319d53a1e
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/result.bd
+      Size: 1632
+      Hash: f31aebf1b0912e1d9202d92006d362e4
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/util.bd
+      Size: 1629
+      Hash: dc0d47e5d7498c51247934294b98550f
+      Version: 1.0.0
+      Rebuild: 0
+    - Name: poetry/hostList.bd
       Size: 0
       Hash: 
       Version: 
@@ -241,84 +316,24 @@ MonoBehaviour:
       Hash: 
       Version: 
       Rebuild: 0
-    - Name: poetry/util.bd
-      Size: 0
-      Hash: 
-      Version: 
-      Rebuild: 0
-  - Foldout: 0
-    Name: ui
-    mInclude: 0
-    mRebuild: 1
-    mBundles:
-    - Name: ui/bg.bd
-      Size: 2577706
-      Hash: 870712768594e46b98fa88f89e565d6f
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/loading.bd
-      Size: 93290
-      Hash: 13f0b04f7704788e6dc42f807c9374d4
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/excel_viewer.bd
-      Size: 30452
-      Hash: 68897629b6f7fd88f44402a72b21ae9e
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/test.bd
-      Size: 28571
-      Hash: a75264e57c124c84349387fd6cca2f72
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/login.bd
-      Size: 21161
-      Hash: 50a00fd26cba4c633bfbac6c86ac200c
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/update.bd
-      Size: 16722
-      Hash: 745d53ca0cf66fec4effdfcfa22e8b19
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/dialog.bd
-      Size: 15513
-      Hash: 3d6cdaf6394cceb57776debcf86fb5a2
-      Version: 1.0.0
-      Rebuild: 1
-    - Name: ui/linktext.bd
-      Size: 7679
-      Hash: fa3247e7fabfba7d790530386a9f1e6b
-      Version: 1.0.0
-      Rebuild: 1
   - Foldout: 0
     Name: video
     mInclude: 0
     mRebuild: 1
     mBundles:
     - Name: video/op.bd
-      Size: 13732
-      Hash: dbd7c49a95b4cd26d39fc04d60addc35
+      Size: 13900
+      Hash: a7703e5b5baac6f9beb76f2045d1bf61
       Version: 1.0.0
       Rebuild: 1
   - Foldout: 0
-    Name: writeplayer
+    Name: config
     mInclude: 0
-    mRebuild: 0
+    mRebuild: 1
     mBundles:
-    - Name: writeplayer/impoter.bd
-      Size: 16882
-      Hash: b2014fe5ae5a2ea133e7eca0fbc42c60
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: writeplayer/index.bd
-      Size: 31328
-      Hash: 200eee6070040de83df7faa71b1b94b7
-      Version: 1.0.0
-      Rebuild: 0
-    - Name: writeplayer/player.bd
-      Size: 1071344
-      Hash: 174ad4cf2981d16153df54c3987f5b4b
+    - Name: config/config.bd
+      Size: 4545
+      Hash: abd80ee8cd233244507b297a514842a2
       Version: 1.0.0
       Rebuild: 0
   BundleBuildOptions: 272

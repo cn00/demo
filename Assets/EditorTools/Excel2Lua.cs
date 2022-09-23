@@ -131,7 +131,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         }
         catch (Exception e)
         {
-            AppLog.e(Tag, e);
+            Debug.LogErrorFormat(Tag+ e);
         }
         luabuild.Append("\n}\n");
 
@@ -159,7 +159,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         if(!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
         File.WriteAllText(path, luabuild.ToString());
-        AppLog.d(Tag, path);
+        Debug.LogFormat($"{Tag}, {path}");
         return true;
     }
 
@@ -172,7 +172,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         {
             if (file.LastWriteTime.ToFileTimeUtc() > mConfig.LastBuildTime || mConfig.Rebuild)
             {
-                Debug.Log(Tag+"building [" + file.Name + "] ...");
+                UnityEngine.Debug.Log(Tag+": building [" + file.Name + "] ...");
 
                 IWorkbook workbook = ExcelUtils.Open(file.FullName);
 
@@ -200,7 +200,7 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
                     if (writeLua(sheet, OutPath, headerRowIdx))
                     {
-                        AppLog.d(Tag, file.Name + ": " + sheetname + " ok.");
+                        Debug.LogFormat(file.Name + ": " + sheetname + " ok.");
                     }
                     else
                     {
@@ -213,18 +213,17 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
 
         if (errno > 0)
         {
-            Debug.LogErrorFormat(Tag+"{0} errors", errno);
-            AppLog.e(Tag, errmsg);
+            UnityEngine.Debug.LogError(Tag+$": {errno} {errmsg}");
         }
 
     }
 
     private void Build()
     {
-        Debug.LogFormat(Tag+"{0} => {1}", mConfig.InPath, mConfig.OutPath);
+        UnityEngine.Debug.LogFormat(Tag+": {0} => {1}", mConfig.InPath, mConfig.OutPath);
 
         long lastWriteTime = mConfig.LastBuildTime;
-        Debug.LogFormat(Tag+"上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
+        UnityEngine.Debug.LogFormat(Tag+": 上次转换时间：" + DateTime.FromFileTimeUtc(lastWriteTime));
 
         DirectoryInfo dir = new DirectoryInfo(mConfig.InPath);
         // try
@@ -232,9 +231,9 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
             Build(dir.GetFiles("*.xls", SearchOption.AllDirectories));
             Build(dir.GetFiles("*.xlsx", SearchOption.AllDirectories));
         // }
-        // catch (Exception e)
+        // catch (Exception LogErrorFormat)
         // {
-        //     Debug.LogError(Tag+"error：" + e.Message);
+        //     Debug.LogError(Tag+": error：" + LogErrorFormat.Message);
         // }
 
         mConfig.LastBuildTime = DateTime.Now.ToFileTimeUtc();
@@ -251,7 +250,6 @@ class Excel2Lua : SingletonAsset<Excel2Lua>
         {
             foreach(var f in Directory.GetFiles(Instance().mConfig.InPath, "*.xlsx", SearchOption.AllDirectories))
             {
-                AppLog.d(Tag, f);
                 Excel2Lua.BookConfig(f);
             }
         }

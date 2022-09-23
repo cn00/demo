@@ -21,6 +21,6 @@ public class testHref : MonoBehaviour
 
     private void OnHrefClick(string hrefName)
     {
-        Debug.Log("点击了 " + hrefName);
+        UnityEngine.Debug.Log("点击了 " + hrefName);
     }
 }

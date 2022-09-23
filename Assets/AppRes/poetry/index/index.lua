@@ -14,8 +14,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
 local sqlite3 = require("lsqlite3")
 local manager = AppGlobal.manager
 local config = require("common.config.config")
@@ -115,7 +115,7 @@ end
 function index.Start()
     btnRoot:SetActive(false)
     xutil.coroutine_call(function()
-        yield_return(CS.AssetSys.GetAsset("font/fzkt/STKaiti.ttf"))
+        yield_return(CS.AssetSys.GetAsset("common/font/fzkt/STKaiti.ttf"))
 
         -- chat emoji
         yield_return(CS.AssetSys.GetAsset(string.format("common/emoji/%d.png", 1)))

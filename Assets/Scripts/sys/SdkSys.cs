@@ -11,10 +11,10 @@ namespace App
         {
             if(luaJsonDecoder == null)
                 luaJsonDecoder = LuaSys.Instance.GetGLuaFunc("json.decode");
-            Debug.Assert(luaJsonDecoder!= null, $"luaJsonDecoder not found");
+            UnityEngine.Debug.Assert(luaJsonDecoder!= null, $"luaJsonDecoder not found");
             
             LuaTable lt = luaJsonDecoder(jsonstr, null) as LuaTable;
-            Debug.Assert(lt != null, $"json to lua decode err:[{jsonstr}]");
+            UnityEngine.Debug.Assert(lt != null, $"json to lua decode err:[{jsonstr}]");
             
             var type = lt.Get<string>("type") ?? "";
             var gluafunc = "OnNativeMessage" + type;
@@ -22,7 +22,7 @@ namespace App
             if (luaf != null)
                 luaf(null, lt);
             else
-                Debug.LogError($"global lua function [{gluafunc}] not found");
+                UnityEngine.Debug.LogError($"global lua function [{gluafunc}] not found");
         }
     }
 }

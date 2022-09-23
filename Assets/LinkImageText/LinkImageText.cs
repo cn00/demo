@@ -72,7 +72,7 @@ public class LinkImageText : Text, IPointerClickHandler
     /// 正则取出所需要的属性
     /// </summary>
     [HideInInspector]
-    public List<string> m_ImageRegex = new List<string>(1){@"<quad name=(.+?) size=(\d*\.?\d+%?) width=(\d*\.?\d+%?) />"};
+    public List<string> m_ImageRegex = new List<string>(1){@"<quad name=(.+?) size=(\LogFormat*\.?\LogFormat+%?) width=(\LogFormat*\.?\LogFormat+%?) />"};
 
     /// <summary>
     /// 超链接正则
@@ -320,7 +320,7 @@ public class LinkImageText : Text, IPointerClickHandler
 
     private void OnHrefClick(string hrefName)
     {
-        Debug.Log("点击了 " + hrefName);
+        UnityEngine.Debug.Log("点击了 " + hrefName);
     }
 
 }

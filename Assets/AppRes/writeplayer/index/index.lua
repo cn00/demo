@@ -11,7 +11,7 @@ local print = function ( ... )
     _G.print("1:", ... )
 end
 
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 local sqlite3 = require("lsqlite3")
 
 local excel_view = {

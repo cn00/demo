@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local xutil = require "xlua.util"
+local xutil = require "utility.xlua.util"
 local AssetSys = CS.AssetSys
 
 local this = AppGlobal.SceneManager

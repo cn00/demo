@@ -35,12 +35,12 @@ public class AssetImporter : UnityEditor.AssetPostprocessor
         // }
         foreach (string str in deletedAssets)
         {
-            Debug.Log("Deleted Asset: " + str);
+            UnityEngine.Debug.Log("Deleted Asset: " + str);
         }
 
         for (int i = 0; i < movedAssets.Length; i++)
         {
-            Debug.Log(movedFromAssetPaths[i] + " => " + movedAssets[i]);
+            UnityEngine.Debug.Log(movedFromAssetPaths[i] + " => " + movedAssets[i]);
         }
     }
 }    

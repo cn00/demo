@@ -77,7 +77,6 @@ public static class ExcelUtils
 
     public static IWorkbook Open(string path)
     {
-        // AppLog.d(Tag, path);
         var stream = new FileStream(path, FileMode.Open);
         stream.Position = 0;
         IWorkbook inbook = null;

@@ -83,7 +83,7 @@ public class DllCompile : SingletonAsset<DllCompile>
 
     static void Build(Config info)
     {
-        // AppLog.d("dll", "{0} => {1}", info.Name, info.OutPath);
+        // Debug.LogFormat("dll", "{0} => {1}", info.Name, info.OutPath);
         var sources = Directory.GetFiles(info.SourceDir, "*.cs", SearchOption.AllDirectories);
 
         var reference = new List<string>(); //info.References.Clone();
@@ -100,7 +100,6 @@ public class DllCompile : SingletonAsset<DllCompile>
                 if(File.Exists(path))
                 {
                     reference.Add(path);
-                    AppLog.d(Tag, path);
                     break;
                 }
             }
@@ -114,10 +113,9 @@ public class DllCompile : SingletonAsset<DllCompile>
         b.additionalDefines = info.Defineds.ToArray();
         b.buildFinished += (s, messages) =>
         {
-            AppLog.d(Tag, s);
             foreach (var msg in messages)
             {
-                Debug.Log(Tag+"CompileCSharp: " + msg);
+                UnityEngine.Debug.Log(Tag+": CompileCSharp: " + msg);
             }
         };
         var msgs = b.Build();
@@ -168,7 +166,7 @@ public class DllCompile : SingletonAsset<DllCompile>
                 s = Regex.Replace(s, "-- example-begin(.|\r|\n)*?-- example-end", "", RegexOptions.Multiline)
                     .Replace("-- put this to path/to/unity3d/Editor/{Data|Contents}/Resources/ScriptTemplates/87-LuaScript-NewLuaScript.lua.txt", "");
                 File.WriteAllText(distDir, s);
-                Debug.Log($"{tempLua} ==> {distDir}");
+                UnityEngine.Debug.Log($"{tempLua} ==> {distDir}");
             }
 
             // //BaseDirectory: /Applications/Unity-2017.4.1f1

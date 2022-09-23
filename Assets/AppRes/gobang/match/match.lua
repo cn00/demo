@@ -18,8 +18,8 @@ local EventTrigger= UnityEngine.EventSystems.EventTrigger
 local EventTriggerType = UnityEngine.EventSystems.EventTriggerType
 local PointerEventData = UnityEngine.EventSystems.PointerEventData
 local Input = UnityEngine.Input
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "lua/utility/util"
+local xutil = require "utility.xlua.util"
 
 -- match
 

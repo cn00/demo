@@ -199,10 +199,10 @@ namespace XLua
             {
                 luaEnv.translator.PushByType(luaEnv.L, p);
             }
-            catch (Exception e)
+            catch (Exception LogErrorFormat)
             {
                 InvokeSessionEnd();
-                throw e;
+                throw LogErrorFormat;
             }
         }
 
@@ -215,10 +215,10 @@ namespace XLua
                     luaEnv.translator.PushByType<T>(luaEnv.L, ps[i]);
                 }
             }
-            catch (Exception e)
+            catch (Exception LogErrorFormat)
             {
                 InvokeSessionEnd();
-                throw e;
+                throw LogErrorFormat;
             }
         }
 
@@ -235,10 +235,10 @@ namespace XLua
             {
                 luaEnv.translator.Get(luaEnv.L, _oldTop + 2 + pos, out ret);
             }
-            catch (Exception e)
+            catch (Exception LogErrorFormat)
             {
                 InvokeSessionEnd();
-                throw e;
+                throw LogErrorFormat;
             }
         }
 #endif

@@ -194,7 +194,7 @@ public static class LuaTableExtension
             mLuaFuncDelegate(self, opt);
         else
         {
-            Debug.LogError($"place call require \"BridgingClass\" first");
+            UnityEngine.Debug.LogError($"place call require \"BridgingClass\" first");
         }
             
         /*

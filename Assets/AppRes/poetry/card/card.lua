@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/01/12 11:48:34
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -11,7 +11,7 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local xutil = require "xlua.util"
+local xutil = require "utility.xlua.util"
 local Vector3 = UnityEngine.Vector3
 local EventTrigger= UnityEngine.EventSystems.EventTrigger
 local EventTriggerType = UnityEngine.EventSystems.EventTriggerType
@@ -136,7 +136,7 @@ function card.Start()
             Submit = 15,/// Intercepts ISubmitHandler.Submit.
             Cancel = 16 /// Intercepts ICancelHandler.OnCancel.
     }]]
-     local tr = gameObject:GetComponent(typeof(EventTrigger)) 
+     local tr = gameObject:GetComponent(typeof(EventTrigger))
      if tr == nil then tr = gameObject:AddComponent(typeof(EventTrigger)) end
      local et = EventTrigger.Entry()
      et.eventID = EventTriggerType.PointerClick,
@@ -156,13 +156,13 @@ end
     eligibleForClick: True
     pointerEnter: Text (UnityEngine.GameObject)
     pointerPress: card (UnityEngine.GameObject)
-    lastPointerPress: 
+    lastPointerPress:
     pointerDrag: card (UnityEngine.GameObject)
     Use Drag Threshold: True
     Current Raycast:
     Name: Text (UnityEngine.GameObject)
     module: Name: match(Clone) (UnityEngine.GameObject)
-    eventCamera: 
+    eventCamera:
     sortOrderPriority: 0
     renderOrderPriority: 1
     distance: 0
@@ -178,7 +178,7 @@ end
     Press Raycast:
     Name: Text (UnityEngine.GameObject)
     module: Name: match(Clone) (UnityEngine.GameObject)
-    eventCamera: 
+    eventCamera:
     sortOrderPriority: 0
     renderOrderPriority: 1
     distance: 0
@@ -235,7 +235,7 @@ function card.OnClick(eventData)
     if this.info.onClickCallback then
         this.info.onClickCallback(this.info.idx)
     end
-    
+
     --print("OnClick", p, eventData)
 end
 

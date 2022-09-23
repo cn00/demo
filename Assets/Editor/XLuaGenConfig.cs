@@ -58,7 +58,7 @@ public static class XLuaGenConfig
         //typeof(QRCodeEncodeController),
         //typeof(QRCodeDecodeController),
         //typeof(JavaUtil),
-        typeof(AppLog),
+        typeof(Debug),
 
         // ios not ok
         // typeof(Mono.Data.Sqlite.SqliteConnection),

@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local xutil = require "xlua.util"
+local xutil = require "utility.xlua.util"
 local manager = AppGlobal.manager
 
 local qrcode = {

@@ -10,8 +10,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "lua/utility/util"
+local xutil = require "utility.xlua.util"
 local manager = AppGlobal.manager
 local Vector2 = UnityEngine.Vector2
 -- create

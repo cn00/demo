@@ -81,7 +81,7 @@ public class Inspector
             }
             catch(Exception e)
             {
-                AppLog.e(Tag, e);
+                Debug.LogError(e);
             }
             finally
             {
@@ -127,7 +127,7 @@ public class Inspector
             --EditorGUI.indentLevel;
         }
     }
-    protected static object Default(Type t) 
+    protected static object Default(Type t)
     {
         if (t.IsValueType )
             return default(int);
@@ -233,7 +233,7 @@ public class Inspector
             var type = obj.GetType();
             var fields = type.GetFields(
                       BindingFlags.Default
-                    // | BindingFlags.DeclaredOnly // no inherited 
+                    // | BindingFlags.DeclaredOnly // no inherited
                     | BindingFlags.Instance
                     | BindingFlags.Public
                 ).ToList();
@@ -268,7 +268,7 @@ public class Inspector
             {
                 var actionfild = type.GetMethods(
                       BindingFlags.Default
-                    | BindingFlags.DeclaredOnly // no inherited 
+                    | BindingFlags.DeclaredOnly // no inherited
                     | BindingFlags.Instance
                     | BindingFlags.Public
                     // | BindingFlags.InvokeMethod

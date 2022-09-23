@@ -2,8 +2,8 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
-local socket = require "socket.socket"
+local util = require "utility.xlua.util"
+local socket = require "utility.socket.socket"
 local loadstring = loadstring
 local lpeg = require "lpeg"
 local P = lpeg.P
@@ -29,7 +29,7 @@ end)
 
 function this.coroutine_start_accept()
 	print('coroutine_start_accept')
-	while this.listing 
+	while this.listing
 	do
 		this.server:settimeout(0.01)
 		local c, err = this.server:accept()
@@ -37,7 +37,7 @@ function this.coroutine_start_accept()
 		if (not err) then
 			-- c:settimeout(0.1)
 			local clientname = tostring(c) .. "="
-			.. tostring(c:getpeername()) 
+			.. tostring(c:getpeername())
 			-- .. ", sock:" .. tostring(c:getsockname()) --c:receive()
 			print(clientname .. " connect at " .. os.date("%m/%d/%Y %H:%M:%S"))
 			c:send(tostring("[" .. clientname .. "], wellcom!!!\r\n"))
@@ -50,7 +50,7 @@ end
 
 function this.coroutine_start_receive()
 	print('coroutine_start_receive')
-	while this.listing 
+	while this.listing
 	do
 		local canread, sendt, status = socket.select(this.client, nil, 0.001)
 		-- print("canread", #canread, #this.client)
@@ -72,7 +72,7 @@ function this.coroutine_start_receive()
 	end
 end
 
-local man = 
+local man =
 [[
 	lua:		execute lua code
 	bc:			broadcast msg
@@ -119,7 +119,7 @@ function this.passercmd( c, cmd )
 				end
 				c:send("\n")
 			end
-			if(p == "off")then 
+			if(p == "off")then
 				UnityEngine.Application.logMessageReceived("-", this.logl)
 				c:send("remote log off\n")
 			else

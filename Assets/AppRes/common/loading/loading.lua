@@ -2,7 +2,7 @@
 --- Author: cn
 --- Email: cool_navy@qq.com
 --- Date: 2021/02/05 19:23:41
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -11,8 +11,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "lua/utility/util"
+local xutil = require "utility.xlua.util"
 
 -- loading
 

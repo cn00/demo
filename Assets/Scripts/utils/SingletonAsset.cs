@@ -76,7 +76,6 @@ public class SingletonAsset<T> : AssetBase<T> where T : AssetBase<T>
 
     public static T Instance()
     {
-        AppLog.isEditor = Application.isEditor;
         T tmp = null;
 #if UNITY_EDITOR
         tmp = InstanceEditor();

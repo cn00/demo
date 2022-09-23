@@ -2,13 +2,13 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local assetsys= {}
 local this = assetsys
 
 local CacheRoot = CS.AssetSys.CacheRoot
 function assetsys.getStreamingAsset( subpath )
-	local 
+	local
 end
 return assetsys

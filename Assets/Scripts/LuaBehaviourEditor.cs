@@ -15,7 +15,7 @@ namespace UnityEditor
     [CustomEditor(typeof(LuaBehaviour))]
     public class LuaBehaviourEditor : Editor
     {
-        const string Tag = "LuaMonoBebaviourEdirot";
+        const string Tag = "LuaBebaviourEdirot";
         LuaBehaviour mTarget = null;
         string mLuaText = "";
 
@@ -87,7 +87,7 @@ namespace UnityEditor
             }
             else
             {
-                AppLog.d(Tag, $"{assetPath} not a lua script");
+                Debug.LogFormat(Tag + $": {assetPath} not a lua script");
             }
 
             base.OnInspectorGUI();
@@ -239,7 +239,7 @@ namespace UnityEditor
                         RegexOptions.Multiline).ToString();
                     mLuaText = mLuaText.Replace(pattern.ToString(), luaMember.ToString());
                     File.WriteAllText(path, mLuaText);
-                    AppLog.d(Tag, path + " updated");
+                    Debug.LogFormat(Tag +": "+ path + " updated");
                 }
 
                 mShowLuaAutogens = EditorGUILayout.Foldout(mShowLuaAutogens, "LuaAutogen", true);

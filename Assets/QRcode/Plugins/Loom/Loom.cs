@@ -120,7 +120,7 @@ public class Loom : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Queued Exception: " + e.ToString());
+                UnityEngine.Debug.LogError("Queued Exception: " + e.ToString());
             }
         }
         toBeRun.Clear();
@@ -140,11 +140,10 @@ public class Loom : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Delayed Exception:" + e.ToString());
+                UnityEngine.Debug.LogError("Delayed Exception:" + e.ToString());
             }
         }
         toBeDelayed.Clear();
 
     }
 }
-

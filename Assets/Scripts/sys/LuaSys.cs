@@ -100,7 +100,7 @@ public class LuaSys : SingleMono<LuaSys>
 
         byte[] bytes = null;
         var assetName = search + luapath.Replace(".", "/") + LuaExtension;
-        // Debug.Log(Tag+"require: " + assetName);
+        // Debug.Log(Tag+": require: " + assetName);
 #if UNITY_EDITOR
         if(!BuildConfig.Instance().UseBundle)
         {

@@ -1727,7 +1727,7 @@ namespace XLua
                         emitLiteralLoad(il, paramRawType, paramInfo.DefaultValue, argStore.LocalIndex);
                         il.Emit(OpCodes.Stloc, argStore);
                     }
-                    //UnityEngine.Debug.LogWarning(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name + " pos(d):" + argStore.LocalIndex + ", pt:" + paramRawType + ", j:" + j);
+                    //UnityEngine.Debug.LogWarning(declaringType.Name + "." + method.Name + "." + paramInfos[j].Name + " pos(LogFormat):" + argStore.LocalIndex + ", pt:" + paramRawType + ", j:" + j);
                     if (argStoreStart == -1)
                     {
                         argStoreStart = argStore.LocalIndex;

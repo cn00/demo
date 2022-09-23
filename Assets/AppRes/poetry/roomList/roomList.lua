@@ -13,8 +13,8 @@ local System = CS.System
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "lua.utility.util"
-local xutil = require "xlua.util"
-local socket = require("socket.socket")
+local xutil = require "utility.xlua.util"
+local socket = require("utility.socket.socket")
 local Vector2 = UnityEngine.Vector2
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)

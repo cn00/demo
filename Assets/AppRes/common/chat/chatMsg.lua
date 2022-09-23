@@ -11,8 +11,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
 local Vector2 = UnityEngine.Vector2
 
 local yield_return = xutil.async_to_sync(function (to_yield, callback)
@@ -59,9 +59,13 @@ function chatMsg.Start()
             local af = string.format("common/emoji/%d.png", emojiId)
             yield_return(CS.AssetSys.GetAsset(af, function(t2d)
                 print("emoji", af, t2d)
-                this.emoji_Image.sprite = UnityEngine.Sprite.Create(t2d,
-                        this.emoji_Image.sprite.rect,
-                        this.emoji_Image.sprite.pivot)
+                if UNITY_EDITOR0 then
+                    this.emoji_Image.sprite = UnityEngine.Sprite.Create(t2d,
+                            this.emoji_Image.sprite.rect,
+                            this.emoji_Image.sprite.pivot)
+                else
+                    this.emoji_Image.sprite = t2d
+                end
                 this.chatContent_Text.text = ""
                 emoji:SetActive(true)
             end))
@@ -71,7 +75,7 @@ function chatMsg.Start()
         this.chatContent_Text.text = this.info.content
     end
 
-        --this.RectTransform.sizeDelta = Vector2(0, this.chatContent_Text.rectTransform.sizeDelta.y)
+    --this.RectTransform.sizeDelta = Vector2(0, this.chatContent_Text.rectTransform.sizeDelta.y)
     end
 
 return chatMsg

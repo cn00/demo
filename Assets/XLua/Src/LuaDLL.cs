@@ -288,7 +288,7 @@ namespace XLua.LuaDLL
         public static extern bool lua_checkstack(IntPtr L,int extra);//[-0, +0, m]
 
         [DllImport(LUADLL,CallingConvention=CallingConvention.Cdecl)]
-        public static extern int lua_next(IntPtr L,int index);//[-1, +(2|0), e]
+        public static extern int lua_next(IntPtr L,int index);//[-1, +(2|0), LogErrorFormat]
 
         [DllImport(LUADLL,CallingConvention=CallingConvention.Cdecl)]
         public static extern void lua_pushlightuserdata(IntPtr L, IntPtr udata);

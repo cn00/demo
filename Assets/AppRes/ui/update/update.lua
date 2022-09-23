@@ -4,7 +4,7 @@ local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local AssetSys = CS.AssetSys
 
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local update = {
 	process = 0,
@@ -90,11 +90,11 @@ function update.CheckUpdate()
 
 	    local obj = nil
 
-	    
+
 		yield_return(CS.UpdateSys.Instance:CheckUpdate())
-	    
+
 		update.name = "update"
-		
+
 		self.Back()
 	end)
 end

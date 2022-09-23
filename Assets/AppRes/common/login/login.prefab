@@ -812,7 +812,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LuaAsset: {fileID: 1042094116111776886, guid: ac4202559c40548a1b182489a5149540,
     type: 3}
-  LuaPath: Assets/AppRes/gobang/login/login.lua
+  LuaPath: common/login/login.lua
   Injections:
   - obj: {fileID: 4422238730399892907}
     exportComIdx: 3

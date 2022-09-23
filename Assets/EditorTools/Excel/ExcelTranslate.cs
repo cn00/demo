@@ -106,7 +106,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                                 // }
 
                                 var v = row.Cell(ic).SValueOneline();
-                                // Debug.Log(Tag+"{0}: {1}", v, v.Length);
+                                // Debug.Log(Tag+": {0}: {1}", v, v.Length);
                                 var matches = Regex.Matches(v, JPRegular + "+.*");
                                 if (matches.Count > 0)
                                 {
@@ -167,7 +167,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
 
                 var outStream = new FileStream(outExcelPath, FileMode.Create);
                 outBook.Write(outStream);
-                Debug.Log(Tag+"CollectJp: " + outExcelPath);
+                UnityEngine.Debug.Log(Tag+": CollectJp: " + outExcelPath);
 
                 CountWordUniq = wordCount;
                 CountWord = totalWordCount;
@@ -189,7 +189,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
             {
                 var transExcelPath = outRoot + "/" + Name.Substring(Name.LastIndexOf('/') + 1) + ".xlsx";
                 var transStream = new FileStream(transExcelPath, FileMode.Open);
-                
+
                 var transBook = new XSSFWorkbook(transStream);
                 transStream.Dispose();
 
@@ -216,7 +216,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         var jp = trrow.Cell(head[HeadIdx.jp]).SValueOneline();
                         if(jp[0] == '$')
                         {
-                            Debug.Log(Tag+"使用引用: " + jp);
+                            UnityEngine.Debug.Log(Tag+": 使用引用: " + jp);
                             var row = transSheet.Row(int.Parse(jp.Substring(1)));
                             jp = row.Cell(head[HeadIdx.jp]).SValueOneline();
                             trans = row.Cell(head[HeadIdx.trans]).SValueOneline();
@@ -237,13 +237,13 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                         }
                         else
                         {
-                            AppLog.e(Tag, i, j, ojp, " != ", jp, trans);
+                            Debug.LogError($"{Tag}, i:{i}, j:{j}, ojp:{ojp} <> jp:{jp}, trans:{trans}");
                         }
                     }
                     inbook.Write(path);
                 } // path
 
-                Debug.Log(Tag+"Translate: " + transExcelPath);
+                UnityEngine.Debug.Log(Tag+": Translate: " + transExcelPath);
             }
             finally
             {
@@ -316,7 +316,7 @@ public class ExcelTranslate : SingletonAsset<ExcelTranslate>
                     subConfig.Pathes = xls.ToList();
                     if (subConfig.Pathes.Count() > 0)
                         mTarget.mRootconfig.Groups.Add(subConfig);
-                    AppLog.d(Tag, i + ": " + xls.Count());
+                    Debug.LogFormat(i + ": " + xls.Count());
                 }
 
                 EditorUtility.SetDirty(mTarget);

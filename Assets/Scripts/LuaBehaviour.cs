@@ -94,7 +94,7 @@ public class LuaBehaviour : MonoBehaviour
 
         if (Lua == null)
         {
-            Debug.LogErrorFormat("error load lua:{0}", LuaPath);
+            UnityEngine.Debug.LogErrorFormat("error load lua:{0}", LuaPath);
             yield break;
         }
 

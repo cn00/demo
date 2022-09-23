@@ -1,8 +1,8 @@
-local util = require "util"
-local xutil = require "xlua.util"
-require("BridgingClass")
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
+require("utility.BridgingClass")
 --local lpeg = require "lpeg"
-local mobdebug = require('mobdebug')
+local mobdebug = require('utility.mobdebug')
 
 local CS = CS
 local AssetSys = CS.AssetSys
@@ -102,7 +102,7 @@ function boot.coroutine_boot(first, ...)
 
         yield_return(CS.AssetSys.GetAsset("ui/dialog/dialog01.prefab"))
 
-        yield_return(CS.AssetSys.GetAsset("font/fzxz/方正小篆体.ttf"))
+        --yield_return(CS.AssetSys.GetAsset("common/font/fzxz/fzxz.ttf"))
 
         yield_return(CS.UpdateSys.Instance:CheckUpdate())
 

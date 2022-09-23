@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local table_view_cell = {}
 local self = table_view_cell
@@ -66,12 +66,12 @@ function table_view_cell.SetExcelCellData(row, columnidx, num)
     self.data = row
     -- print("table_view_cell.SetExcelCellData", row:GetCell(columnidx))
     self.Text_Text.text = table_view_cell.TableViewCellController.RowNumber
-    for i = 1, 7 do 
+    for i = 1, 7 do
         local key = "Text_"..i.. "_Text"
         if i > num then
             self[key].gameObject:SetActive(false)
         else
-            self[key].gameObject:SetActive(true) 
+            self[key].gameObject:SetActive(true)
             self[key].transform.sizeDelta = {x = (mono.gameObject.transform.sizeDelta.x-100) / num, y = 80}
             local cell = row:GetCell(columnidx + i - 1)
             if cell ~= nil then

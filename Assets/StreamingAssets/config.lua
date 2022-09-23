@@ -11,7 +11,7 @@ local print = function ( ... )
     _G.print("config", ...)
 end
 
-local oss = "http://192.168.31.154:8008/"
+local oss = "http://192.168.31.154/ab/"
 AssetSys.WebRoot = oss -- "http://10.23.24.239/assets/test/ab/"
 
 print(AssetSys.WebRoot)

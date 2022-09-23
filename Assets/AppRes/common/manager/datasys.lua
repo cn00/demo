@@ -7,8 +7,8 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
 local sqlite = require("lsqlite3")
 
 local config = require("common.config.config")
@@ -95,7 +95,7 @@ function datasys.updateUser(strtab, records, filter)
 end
 
 function datasys.getUserPoetry()
-    
+
 end
 
 function datasys.Start()

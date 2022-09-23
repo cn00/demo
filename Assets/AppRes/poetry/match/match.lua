@@ -17,9 +17,9 @@ local File = CS.System.IO.File
 local Vector2 = UnityEngine.Vector2
 
 local stringx = require("stringx") -- split
-local xutil = require "xlua.util"
+local xutil = require "utility.xlua.util"
 local util = require "lua.utility.util"
-local socket = require("socket.socket")
+local socket = require("utility.socket.socket")
 local sqlite = require("lsqlite3")
 local manager = G.AppGlobal.manager
 local config = require("common.config.config")

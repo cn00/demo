@@ -13,8 +13,8 @@ local System = CS.System
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
 local util = require "utility.util"
-local xutil = require "xlua.util"
-local socket = require("socket.socket")
+local xutil = require "utility.xlua.util"
+local socket = require("utility.socket.socket")
 local config = require("common.config.config")
 local sqlite = require("lsqlite3")
 

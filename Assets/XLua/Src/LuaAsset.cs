@@ -60,7 +60,7 @@ public class LuaAsset : ScriptableObject
             bytes = Require(luapath, LuaSearchingPaths[retry], 1+retry);
         }
 
-        Debug.Assert(bytes != null, $"{luapath} not found.");
+        UnityEngine.Debug.Assert(bytes != null, $"{luapath} not found.");
         return bytes;
     }
 }

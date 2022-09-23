@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local message_sys = {}
 local this = message_sys
@@ -25,9 +25,9 @@ end
 function message_sys.Trigger( key, data )
     for k, v in pairs(msgs[key]) do
         if type(v) == "function" then
-             v(data) 
-        else 
-            print("no a function " .. k .. ":" .. tostring(v)) 
+             v(data)
+        else
+            print("no a function " .. k .. ":" .. tostring(v))
             msgs[key] = nil
         end
     end

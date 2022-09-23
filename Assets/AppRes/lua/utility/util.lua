@@ -1,6 +1,6 @@
 
-require("stringx")
-require("tablex")
+require("utility.stringx")
+require("utility.tablex")
 
 local util = {}
 function util.newIdx(start)

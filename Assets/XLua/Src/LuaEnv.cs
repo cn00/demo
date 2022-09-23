@@ -507,7 +507,7 @@ namespace XLua
                 error('No such type: ' .. rawget(self,'.fqn'), 2)
             end
 
-            -- A non-type has been called; e.g. foo = System.Foo()
+            -- A non-type has been called; LogErrorFormat.g. foo = System.Foo()
             function metatable:__call(...)
                 local n = select('#', ...)
                 local fqn = rawget(self,'.fqn')

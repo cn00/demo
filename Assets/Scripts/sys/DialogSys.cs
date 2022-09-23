@@ -1,17 +1,26 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using XLua;
 using Object = System.Object;
 
 public class DialogSys : SingleMono<AssetSys>
 {
-    public static void Alert(string message, string title, Action onFinished = null)
+    public static GameObject go;
+    public static LuaTable lua;
+    public override IEnumerator Init()
     {
         var asset = AssetSys.GetAssetSync("ui/dialog/dialog01.prefab") as GameObject;
-        var go = Instantiate(asset);
-        var lua = go.GetComponent<LuaBehaviour>().Lua;
+        go = Instantiate(asset);
+        lua = go.GetComponent<LuaBehaviour>().Lua;
+        return base.Init();
+    }
+
+    public static void Alert(string message, string title, Action onFinished = null)
+    {
         var contentText = lua.GetInPath<Text>("ContentText_Text");
         var titleText = lua.GetInPath<Text>("TitleText_Text");
 

@@ -135,7 +135,7 @@ namespace UnityEditor
                         return;
                     if (e.Data.StartsWith(processingtag))
                         ++processing;
-                    // UnityEngine.Debug.Log(e.Data);
+                    // UnityEngine.Debug.Log(LogErrorFormat.Data);
                 };
                 process.ErrorDataReceived += (sender, e) =>
                 {
@@ -195,7 +195,7 @@ namespace UnityEditor
                 {
                     if (luamono.LuaAsset == null) //|| luamono.LuaScript.Text == null)
                     {
-                        AppLog.w(Tag, p + " luamono.LuaAsset not set");
+                        Debug.LogWarningFormat(p + " luamono.LuaAsset not set");
                         continue;
                     }
                 }
@@ -270,7 +270,7 @@ namespace UnityEditor
 
                 if (GUI.Button(rect.Split(++idx, sn), "CleanMac"))
                 {
-                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.iOS), true);
+                    Directory.Delete(BuildScript.BundleOutDir + (BuildTarget.StandaloneOSX), true);
                 }
             }
 
@@ -371,7 +371,6 @@ namespace UnityEditor
 
             if (GUI.changed)
             {
-                AppLog.LogLevel = mTarget.LogLevel;
                 PlayerSettings.bundleVersion = mTarget.Version.ToString();
                 EditorUtility.SetDirty(mTarget);
             }
@@ -395,5 +394,3 @@ namespace UnityEditor
     #endregion CustomEditor
 }
 #endif //UNITY_EDITOR
-
-

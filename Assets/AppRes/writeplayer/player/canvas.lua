@@ -7,7 +7,7 @@ local Vector2 = UnityEngine.Vector2
 local Vector3 = UnityEngine.Vector3
 
 local GameObject = UnityEngine.GameObject
-local util = require "lua.utility.xlua.util"
+local util = require "utility.xlua.util"
 
 local canvas = {}
 local this = canvas

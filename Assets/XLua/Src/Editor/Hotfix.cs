@@ -893,9 +893,9 @@ namespace XLua
                 writeAssembly(injectAssembly, injectAssemblyPath);
                 Info(injectAssemblyPath + " inject finish!");
             }
-            catch(Exception e)
+            catch(Exception LogErrorFormat)
             {
-                Error(injectAssemblyPath + " inject Exception! " + e);
+                Error(injectAssemblyPath + " inject Exception! " + LogErrorFormat);
             }
             finally
             {

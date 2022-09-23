@@ -11,8 +11,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
 local AssetSys = CS.AssetSys
 
 -- emojiItem
@@ -61,10 +61,15 @@ end
 function emojiItem.Start()
      xutil.coroutine_call(function()
          local af = string.format("common/emoji/%d.png", this.info.id)
-         local t2d = AssetSys.GetAssetSync(af)
-         this.Image.sprite = UnityEngine.Sprite.Create(t2d,
-                 this.Image.sprite.rect,
-                 this.Image.sprite.pivot)
+         print(af)
+         if UNITY_EDITOR0 then
+             local t2d = AssetSys.GetAssetSync(af)
+             this.Image.sprite = UnityEngine.Sprite.Create(t2d,
+                     this.Image.sprite.rect,
+                     this.Image.sprite.pivot)
+         else
+             this.Image.sprite = af
+         end
      end)
 end
 

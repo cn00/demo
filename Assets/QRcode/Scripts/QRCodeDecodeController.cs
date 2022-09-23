@@ -50,7 +50,7 @@ public class QRCodeDecodeController : MonoBehaviour
             e_DeviceController = GameObject.FindObjectOfType<DeviceCameraController>();
             if (!e_DeviceController)
             {
-                Debug.LogError("the Device Controller is not exsit,Please Drag DeviceCamera from project to Hierarchy");
+                UnityEngine.Debug.LogError("the Device Controller is not exsit,Please Drag DeviceCamera from project to Hierarchy");
             }
         }
     }
@@ -117,7 +117,7 @@ public class QRCodeDecodeController : MonoBehaviour
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Decode Error: " + e.Data.ToString());
+                        UnityEngine.Debug.LogError("Decode Error: " + e.Data.ToString());
                         decoding = false;
                     }
                 });

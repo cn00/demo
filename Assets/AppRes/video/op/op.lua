@@ -2,7 +2,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 local coroutine_call = util.coroutine_call
 
 local op = {}
@@ -21,7 +21,7 @@ function op.coroutine_back()
 			obj = asset
 		end))
 		local gameObj = GameObject.Instantiate(obj)
-		
+
 		GameObject.DestroyImmediate(mono.gameObject)
 	end)
 end
@@ -35,7 +35,7 @@ end
 --AutoGenInit End
 function op.Awake()
 	self.AutoGenInit()
-	
+
 	self.Back_Button.onClick:AddListener(function()
 		self.coroutine_back()
 	end)
@@ -43,12 +43,12 @@ end
 
 function op.OnEnable()
 	print("op.OnEnable")
-	
+
 end
 
 function op.Start()
 	print("op.Start", op.Camera_Camera, op.VideoPlayer_VideoPlayer, op.Back_Button)
-	
+
 	--assert(coroutine.resume(op.coroutine_demo()))
 end
 

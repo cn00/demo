@@ -10,9 +10,9 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
-require("json")
+local util = require "lua/utility/util"
+local xutil = require "utility.xlua.util"
+local json = require("utility.json")
 local manager = AppGlobal.manager
 
 

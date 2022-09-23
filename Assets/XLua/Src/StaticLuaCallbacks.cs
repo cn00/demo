@@ -127,9 +127,9 @@ namespace XLua
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
                 return translator.CallCSharpWrapper(L, funcidx, top);
             }
-            catch (Exception e)
+            catch (Exception LogErrorFormat)
             {
-                return LuaAPI.luaL_error(L, "c# exception:" + e);
+                return LuaAPI.luaL_error(L, "c# exception:" + LogErrorFormat);
             }
         }
 #endif

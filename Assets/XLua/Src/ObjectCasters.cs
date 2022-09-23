@@ -672,9 +672,9 @@ namespace XLua
                                 prop.SetValue(obj, GetCaster(prop.PropertyType)(L, n + 1,
                                     target == null || prop.PropertyType.IsPrimitive() || prop.PropertyType == typeof(string) ? null : prop.GetValue(obj, null)), null);
                             }
-                            catch (Exception e)
+                            catch (Exception LogErrorFormat)
                             {
-                                throw new Exception("exception in tran " + prop.Name + ", msg=" + e.Message);
+                                throw new Exception("exception in tran " + prop.Name + ", msg=" + LogErrorFormat.Message);
                             }
                         }
                         LuaAPI.lua_pop(L, 1);

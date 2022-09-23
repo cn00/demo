@@ -99,7 +99,7 @@ namespace Net
             }
             catch (System.Exception e)
             {
-                AppLog.e(Tag, e.ToString());
+                Debug.LogError( e.ToString());
             }
 
             // error
@@ -123,7 +123,7 @@ namespace Net
             SFrameMaskData frameData = GetFrameData(Data);
             if(frameData != null)
             {
-                Debug.Log(Tag+"" + frameData.Dump());
+                UnityEngine.Debug.Log(Tag+": " + frameData.Dump());
                 // Get the decode frame key from the frame data
                 byte[] decodeKey = new byte[4];
                 for (int i = 0; i < 4; i++)
@@ -144,7 +144,7 @@ namespace Net
             }
             else
             {
-                Debug.LogError(Tag+"GetFrameData return null");
+                UnityEngine.Debug.LogError(Tag+": GetFrameData return null");
                 return Encoding.Default.GetString(Data, 0, Data.Length);
             }
         }

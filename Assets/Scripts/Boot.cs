@@ -19,8 +19,7 @@ public class Boot : SingleMono<Boot>
     public static bool IFixPatched = false;
     public override IEnumerator Init()
     {
-        AppLog.isEditor = Application.isEditor;
-        Debug.Log(Tag+"App.Awake 0");
+        UnityEngine.Debug.Log(Tag+": App.Awake 0");
 
         yield return AssetSys.Instance.Init();
 
@@ -44,9 +43,9 @@ public class Boot : SingleMono<Boot>
         //                 IFixPatched = true;
         //                 StartCoroutine(IFixTest());
         //             }
-        //             catch (Exception e)
+        //             catch (Exception LogErrorFormat)
         //             {
-        //                 UnityEngine.Debug.LogError(e);
+        //                 UnityEngine.Debug.LogError(LogErrorFormat);
         //             }
         //         }
         //         else
@@ -55,10 +54,13 @@ public class Boot : SingleMono<Boot>
         //         }
         //     });
         //
-        //     yield return AssetSys.GetAsset("lua/utility/util.lua");
-        //     yield return AssetSys.GetAsset("ui/loading/loading.prefab");
-        //     yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
-        //     yield return AssetSys.GetAsset("common/config/config.lua");
+
+        yield return AssetSys.GetAsset("lua/utility/util.lua");
+        yield return AssetSys.GetAsset("ui/loading/loading.prefab");
+        yield return AssetSys.GetAsset("ui/dialog/dialog01.prefab");
+        yield return DialogSys.Instance.Init();
+
+        yield return AssetSys.GetAsset("common/config/config.lua");
         //     yield return AssetSys.GetAsset("common/root/root.prefab");
         // }
 
@@ -104,12 +106,12 @@ public class Boot : SingleMono<Boot>
     // [IFix.Interpret]
     public static void IFixNewMethodTest(int  i, string s)
     {
-        Debug.LogError($"IFix 别慌，我是新增函数测试：IFixNewMethodTest，Interpret 里别搞匿名函数，不支持");
-        Debug.LogError($"IFix 别慌，我是新增属性测试: iFixNewPropertyTest={iFixNewPropertyTest}");
-        Debug.LogError($"IFix 别慌，我是新增字段测试: iFixNewFieldTest={iFixNewFieldTest}");
+        UnityEngine.Debug.LogError($"IFix 别慌，我是新增函数测试：IFixNewMethodTest，Interpret 里别搞匿名函数，不支持");
+        UnityEngine.Debug.LogError($"IFix 别慌，我是新增属性测试: iFixNewPropertyTest={iFixNewPropertyTest}");
+        UnityEngine.Debug.LogError($"IFix 别慌，我是新增字段测试: iFixNewFieldTest={iFixNewFieldTest}");
         new IFixNewClassTest();
         var tuple = new Tuple<bool, int, int, float, string>(false, 1,2,3f, "4s");
-        Debug.LogError($"IFix 别慌，我是 Tuple 测试: b:{tuple.Item1} i:{tuple.Item2} i:{tuple.Item3} f:{tuple.Item4} s:{tuple.Item5}");
+        UnityEngine.Debug.LogError($"IFix 别慌，我是 Tuple 测试: b:{tuple.Item1} i:{tuple.Item2} i:{tuple.Item3} f:{tuple.Item4} s:{tuple.Item5}");
     }
 
     // [IFix.Interpret]
@@ -117,7 +119,7 @@ public class Boot : SingleMono<Boot>
     {
         public IFixNewClassTest()
         {
-            Debug.LogError("IFix 别慌，我是新增类测试:IFixNewClassTest");
+            UnityEngine.Debug.LogError("IFix 别慌，我是新增类测试:IFixNewClassTest");
         }
     }
 #endif

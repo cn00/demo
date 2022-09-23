@@ -3,7 +3,7 @@
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "xlua.util"
+local util = require "utility.xlua.util"
 
 local table_manager = {}
 local this = table_manager
@@ -60,5 +60,5 @@ function table_manager.OnDestroy()
     print("table_manager.OnDestroy")
 
 end
-    
+
 return table_manager

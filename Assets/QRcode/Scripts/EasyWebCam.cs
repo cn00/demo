@@ -245,7 +245,7 @@ namespace TBEasyWebCam
 		{
 			if (isActive) {
 				if (easyWebCamInterface != null) {
-					Debug.Log ("current is pasued is " + isPaused);
+					UnityEngine.Debug.Log ("current is pasued is " + isPaused);
 					easyWebCamInterface.OnPause (isPaused);
 				}
 			}

@@ -2,7 +2,7 @@
 --- Author: #AuthorName#
 --- Email: #AuthorEmail#
 --- Date: #CreateTime#
---- Description: 
+--- Description:
 --[[
 
 ]]
@@ -11,8 +11,8 @@ local G = _G
 local CS = CS
 local UnityEngine = CS.UnityEngine
 local GameObject = UnityEngine.GameObject
-local util = require "util"
-local xutil = require "xlua.util"
+local util = require "utility.util"
+local xutil = require "utility.xlua.util"
 
 -- ___SCRIPTNAME___
 

@@ -181,7 +181,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
     public const string ManifestName = "manifest.yaml";
     public const string BundlePostfix = ".bd";
-    public const string CompressedExtension = ""; //.lzma
+    public const string CompressedExtension = ".lzma"; //
     public const string LuaExtension = ".lua";
 
     #endregion const
@@ -205,8 +205,6 @@ public class BuildConfig : SingletonAsset<BuildConfig>
             #endif
         }
     }
-
-    public AppLog.Level LogLevel = AppLog.Level.Debug;
 
     //runInBackground
     [HideInInspector, SerializeField] public bool runInBackground = false;
@@ -404,7 +402,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     // if(GUILayout.Button(f.Name.Replace(Name + "/", "- "), guiOpts))
                     // {
                     //     var path = BundleResRoot+f.Name.RReplace(".bd$", "");
-                    //     Debug.Log(Tag+"reimport {0}", path);
+                    //     Debug.Log(Tag+": reimport {0}", path);
                     //     AssetDatabase.ImportAsset(path, ImportAssetOptions.ImportRecursive);
                     // }
                     if (f.Size < 1024) //B
@@ -545,7 +543,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
                     return;
                 if (e.Data.StartsWith(processingtag))
                     ++processing;
-                // UnityEngine.Debug.Log(e.Data);
+                // UnityEngine.Debug.Log(LogErrorFormat.Data);
             };
             process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
             {
@@ -614,7 +612,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
     {
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            Debug.LogError(Tag+"workspace not in this config");
+            UnityEngine.Debug.LogError(Tag+": workspace not in this config");
             return;
         }
 
@@ -638,7 +636,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
         }
         else
         {
-            Debug.LogError(Tag+"Unknow ChannelConfig: " + config.Channel);
+            UnityEngine.Debug.LogError(Tag+": Unknow ChannelConfig: " + config.Channel);
         }
 
         PlayerSettings.SetApplicationIdentifier(config.Channel.BuildTargetGroup(), config.BundleId);
@@ -662,7 +660,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         AssetDatabase.Refresh();
 
-        Debug.LogFormat(Tag+"DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
+        UnityEngine.Debug.LogFormat(Tag+": DefineSymbols: " + PlayerSettings.GetScriptingDefineSymbolsForGroup(config.Channel.BuildTargetGroup()));
     }
 
     public static void BuildPkg(ChannelConfig config)
@@ -675,7 +673,7 @@ public class BuildConfig : SingletonAsset<BuildConfig>
 
         if (EditorUserBuildSettings.activeBuildTarget != config.Channel.BuildTarget())
         {
-            Debug.LogErrorFormat(Tag+"workspace not in this config");
+            UnityEngine.Debug.LogErrorFormat(Tag+": workspace not in this config");
             return;
         }
 
