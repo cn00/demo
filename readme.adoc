@@ -6,4 +6,4 @@
 - 设计文档 link:Assets/AppRes/gobang/readme.adoc[]
 - 核心代码 link:Assets/AppRes/gobang/match/match.lua[]
 
-image::record.gif[]
+image::record.gif[record.gif]
