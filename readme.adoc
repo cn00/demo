@@ -5,3 +5,5 @@
 - 五子棋代码在 link:./Assets/AppRes/gobang[]
 - 设计文档 link:Assets/AppRes/gobang/readme.adoc[]
 - 核心代码 link:Assets/AppRes/gobang/match/match.lua[]
+
+image::record.gif[]
