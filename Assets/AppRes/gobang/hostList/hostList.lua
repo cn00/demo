@@ -1,10 +1,10 @@
 
 --- Author: cn
 --- Email: cool_navy@qq.com
---- Date: 2021/01/20 18:40:19
+--- Date: 2021/09/20 18:40:19
 --- Description:
 --[[
-
+局域网联机，通过广播发现客户端
 ]]
 
 local G = _G
