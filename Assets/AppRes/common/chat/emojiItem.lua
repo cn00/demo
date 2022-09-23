@@ -62,7 +62,7 @@ function emojiItem.Start()
      xutil.coroutine_call(function()
          local af = string.format("common/emoji/%d.png", this.info.id)
          print(af)
-         if UNITY_EDITOR0 then
+         if UNITY_EDITOR then
              local t2d = AssetSys.GetAssetSync(af)
              this.Image.sprite = UnityEngine.Sprite.Create(t2d,
                      this.Image.sprite.rect,

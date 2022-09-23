@@ -59,7 +59,7 @@ function chatMsg.Start()
             local af = string.format("common/emoji/%d.png", emojiId)
             yield_return(CS.AssetSys.GetAsset(af, function(t2d)
                 print("emoji", af, t2d)
-                if UNITY_EDITOR0 then
+                if UNITY_EDITOR then
                     this.emoji_Image.sprite = UnityEngine.Sprite.Create(t2d,
                             this.emoji_Image.sprite.rect,
                             this.emoji_Image.sprite.pivot)
