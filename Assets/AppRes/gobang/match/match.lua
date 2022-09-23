@@ -4,7 +4,7 @@
 --- Date: 2022/09/21 16:17:21
 --- Description:
 --[[
-
+五子棋对局
 ]]
 
 local G = _G
@@ -141,6 +141,7 @@ local function destroyChess(l)
     end
 end
 
+--- 重置对局
 function match.Reset()
     this.turn = 0
     this.state = State.setting
